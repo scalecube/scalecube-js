@@ -16,6 +16,7 @@ describe('Greeting suite', () =>{
       .create();
 
     expect(greetingService.hello('Idan')).toBe("Hello Idan");
+    expect(greetingService.hello('Idan')).toBe("Hello Idan");
   });
 });
 

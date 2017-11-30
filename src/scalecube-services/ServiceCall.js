@@ -6,7 +6,7 @@ export class ServiceCall{
     this.router = router;
   }
   invoke(message) {
-    const inst = this.router.route(message).service;
-    return inst[message.method](...message.data);
+    const inst = this.router.route(message);
+    return inst.service[message.method](...message.data);
   }
 }
