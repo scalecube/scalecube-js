@@ -1,0 +1,7 @@
+.idea/
+node_modules/
+es/
+lib/
+dist/
+flow-typed/
+coverage/

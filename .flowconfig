@@ -1,0 +1,11 @@
+[ignore]
+./node_modules
+./git
+./idea
+/old
+[include]
+*/**/*.js
+[libs]
+./flow-typed
+[options]
+module.system.node.resolve_dirname=./

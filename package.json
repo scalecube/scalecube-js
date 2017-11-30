@@ -1,0 +1,36 @@
+{
+  "name": "sdk",
+  "version": "1.0.0",
+  "description": "define API's cross convention,",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:es": "babel ./App.js ./GreetingService.js ./sdk/**/* --out-dir es",
+    "build": "npm run build:es",
+    "start": "npm run build:es -- --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "flow": "^0.2.3",
+    "flow-bin": "^0.59.0",
+    "jest": "^21.2.1",
+    "regenerator-runtime": "^0.11.0"
+  },
+  "jest": {
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "./"
+    ]
+  }
+}
