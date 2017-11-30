@@ -26,4 +26,5 @@ To run/debug jest tests:
 First implementation, we be restructured to something normal  
 - [ ] Create CI, include publish to NPM, run tests etc
 - [ ] Browser & NodeJS computability
-- [ ] TS, Flow, AMD, ES, CommonJS computability 
+- [ ] TS, Flow, AMD, ES, CommonJS computability
+- [ ] Github book

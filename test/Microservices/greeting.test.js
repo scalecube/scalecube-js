@@ -1,15 +1,8 @@
 // @flow
 
-import GreetingService from 'GreetingService.js';
-import { Microservices } from 'sdk/Microservices.js';
+import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
+import { Microservices } from 'src/scalecube-services';
 
-
-class Test {
-  hello(x, y, z){
-    console.log(x(),y,z);
-    return 'world';
-  }
-}
 describe('Greeting suite', () =>{
   it('Greeting should greet Idan with hello', ()=>{
 
@@ -22,7 +15,6 @@ describe('Greeting suite', () =>{
       .api(GreetingService)
       .create();
 
-    console.log(greetingService);
     expect(greetingService.hello('Idan')).toBe("Hello Idan");
   });
 });

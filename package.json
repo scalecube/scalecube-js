@@ -1,13 +1,21 @@
 {
   "name": "sdk",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "define API's cross convention,",
   "main": "App.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:es": "babel ./App.js ./GreetingService.js ./sdk/**/* --out-dir es",
+    "clean": "rimraf lib dist es coverage",
+    "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
+    "test": "cross-env BABEL_ENV=jest jest --runInBand --no-cache --env=jsdom",
+    "test:snapshot": "cross-env BABEL_ENV=jest jest --maxWorkers=4 -u",
+    "test:inspect": "cross-env BABEL_ENV=jest NODE_ENV=development node --debug-brk ./node_modules/jest/bin/jest.js --runInBand --no-cache",
+    "test:watch": "npm test -- --watch",
+    "test:cov": "npm test -- --coverage",
+    "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
+    "build:es": "babel ./src --out-dir es",
     "build": "npm run build:es",
-    "start": "npm run build:es -- --watch"
+    "postinstall": "flow-typed install",
+    "flow": "flow"
   },
   "author": "",
   "license": "ISC",
@@ -18,8 +26,10 @@
     "babel-jest": "^21.2.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
+    "cross-env": "^5.1.1",
     "flow": "^0.2.3",
     "flow-bin": "^0.59.0",
+    "flow-typed": "^2.2.3",
     "jest": "^21.2.1",
     "regenerator-runtime": "^0.11.0"
   },

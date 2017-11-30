@@ -2,10 +2,12 @@
 ./node_modules
 ./git
 ./idea
-/old
+./es
 [include]
-*/**/*.js
+./**/*.js
 [libs]
+./src
+./test
+./examples
 ./flow-typed
-[options]
-module.system.node.resolve_dirname=./
+
