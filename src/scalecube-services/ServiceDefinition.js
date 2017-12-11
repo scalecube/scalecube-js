@@ -1,9 +1,10 @@
 // @flow
 import { utils } from 'src/scalecube-services'
+type Methods = {[string]: (any)=>any};
 export class ServiceDefinition {
   serviceInterface: any;
   serviceName: string;
-  methods: any[];
+  methods: Methods;
   /**
    * Constructor of service definition instance.
    *
@@ -11,7 +12,7 @@ export class ServiceDefinition {
    * @param serviceName - the qualifier of the service.
    * @param methods - the methods to invoke the service.
    */
-  constructor(serviceInterface: Object, serviceName: string, methods: any[]) {
+  constructor(serviceInterface: Object, serviceName: string, methods: Methods) {
     this.serviceInterface = utils.getServiceInterface(serviceInterface);
     this.serviceName = serviceName; // TODO check what to do with it if module
     this.methods = methods;

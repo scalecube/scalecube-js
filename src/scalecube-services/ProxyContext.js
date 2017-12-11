@@ -1,14 +1,14 @@
 // @flow
-import { RoundRobinServiceRouter, DispatcherContext } from "src/scalecube-services";
+import { Router, RoundRobinServiceRouter, DispatcherContext, ServiceRegistery } from "src/scalecube-services";
 
 export class ProxyContext{
-  api: any;
+  myapi: any;
   router: Router;
-  constructor(registery) {
+  constructor(registery: ServiceRegistery) {
     this.router = new RoundRobinServiceRouter(registery);
   }
 
-  createProxy(api, router){
+  createProxy(api: any, router: Router){
     const dispatcher = new DispatcherContext(router).create();
     const obj = Object.create(api);
     Object.getOwnPropertyNames(obj.prototype).map((prop)=>{
@@ -34,7 +34,7 @@ export class ProxyContext{
     return this.createProxy(this.api, this.router);
   }
   api(api: any) {
-    this.api = api;
+    this.myapi = api;
     return this;
   }
 }

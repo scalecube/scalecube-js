@@ -1,5 +1,5 @@
 {
-  "name": "sdk",
+  "name": "@scalecube/scalecube-js",
   "version": "0.0.1",
   "description": "define API's cross convention,",
   "main": "App.js",
@@ -13,9 +13,13 @@
     "test:cov": "npm test -- --coverage",
     "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
     "build:es": "babel ./src --out-dir es",
-    "build": "npm run build:es",
+    "build": "npm run build:es && npm run flow:gen",
     "postinstall": "flow-typed install",
-    "flow": "flow"
+    "flow": "flow",
+    "flow:gen": "flow gen-flow-files ./src/scalecube-services/libdef.js --out-dir ./es/scalecube-services && npm run flow:gen:move",
+    "flow:gen:move": "rname \"./es/scalecube-services/libdef.js.flow\" \"./es/scalecube-services/index.js.flow\"",
+    "flowToTs": "node build/flowToTs es/scalecube-services/index.js.flow es/scalecube-services/index.d.ts",
+    "flow:reset": "flow stop && flow start"
   },
   "author": "",
   "license": "ISC",
@@ -31,7 +35,8 @@
     "flow-bin": "^0.59.0",
     "flow-typed": "^2.2.3",
     "jest": "^21.2.1",
-    "regenerator-runtime": "^0.11.0"
+    "regenerator-runtime": "^0.11.0",
+    "rename-cli": "^5.0.0"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",

@@ -1,7 +1,9 @@
 // @flow
 
+import { Message } from './Message';
 import { DispatcherContext } from './DispatcherContext';
-import { Microservices, MicroservicesBuilder } from './Microservices';
+import { Microservices } from './Microservices';
+import { ServiceInstance } from './ServiceInstance';
 import { ProxyContext } from './ProxyContext';
 import { RoundRobinServiceRouter } from './RoundRobinRouter';
 import { Router } from './Router';
@@ -12,9 +14,10 @@ import { ServiceRegistery } from './ServiceRegistery';
 import * as utils from './utils';
 
 export {
+  Message,
   DispatcherContext,
   Microservices,
-  MicroservicesBuilder,
+  ServiceInstance,
   ProxyContext,
   RoundRobinServiceRouter,
   Router,
@@ -24,3 +27,4 @@ export {
   ServiceRegistery,
   utils
 };
+

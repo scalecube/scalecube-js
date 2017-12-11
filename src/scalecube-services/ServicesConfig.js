@@ -1,21 +1,22 @@
 // @flow
-import { MicroservicesBuilder, ServiceDefinition } from 'src/scalecube-services';
+import { Microservices, ServiceDefinition } from 'src/scalecube-services';
 
 class Builder {
   servicesBuilder: ServicesConfig[];
-  microservicesBuilder: MicroservicesBuilder;
+  microservicesBuilder: Microservices.Builder;
 
-  constructor(){
+  constructor(builder: Microservices.Builder){
     this.servicesBuilder = [];
+    this.microservicesBuilder = builder;
   }
-  builder(builder: MicroservicesBuilder) {
+  builder(builder: Microservices.Builder) {
     this.microservicesBuilder = builder;
   }
   build() { // TODO return Microservices.Builder
     return this.microservicesBuilder.services(
       new ServicesConfig(this.servicesBuilder));
   }
-  services(...services:any) {
+  services(...services:any[]) {
     services[0].map((o)=>{
       if( typeof o === 'function') {
         console.error(new Error(`${o.name} is a class not instance`));
@@ -34,14 +35,15 @@ class Builder {
 }
 //extends ServicesConfigApi
 export class ServicesConfig{
-  service;
-  serviceDefinition;
-  mcBuilder;
-  servicesConfig;
+  static Builder = Builder; // getter can't be validate by flow; const not supported; if you hack it, it's your problem
+  service: any;
+  serviceDefinition: ServiceDefinition;
+  mcBuilder: Microservices.Builder;
+  servicesConfig: ServicesConfig[];
 
   // public ServiceConfig(Object service) {
   // public ServiceConfig(Builder builder, Object service) {
-  constructor(service: any, builder: ?Builder) {
+  constructor(service: any, builder: ?Microservices.Builder) {
     if( service && Array.isArray(service) ) {
       this.servicesConfig = service;
       return this;
@@ -53,7 +55,7 @@ export class ServicesConfig{
     this.serviceDefinition = ServiceDefinition.from(service);
     return this;
   }
-  static builder(builder) {
+  static builder(builder: Microservices.Builder) {
     // TODO change it when splitting to files
     return new Builder(builder);
   }

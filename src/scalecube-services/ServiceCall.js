@@ -1,12 +1,17 @@
 // @flow
 
+import { Router } from 'src/scalecube-services';
+
 export class ServiceCall{
-  router;
-  constructor(router){
+  router: Router;
+  constructor(router: Router, timeout:number = 5000){
     this.router = router;
   }
-  invoke(message) {
+  invoke(message:any) {
     const inst = this.router.route(message);
-    return inst.service[message.method](...message.data);
+    if( inst ) {
+      return inst.service[message.method](...message.data);
+    }
+    console.warn(`Service not found for message ${message}`);
   }
 }

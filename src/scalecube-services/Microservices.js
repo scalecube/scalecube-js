@@ -2,11 +2,9 @@
 import { ServicesConfig, ServiceRegistery, ProxyContext } from 'src/scalecube-services'
 
 class Builder {
-  servicesConfig;
-  constructor(){
-    return this;
-  }
-  services(...services){
+  servicesConfig: ServicesConfig;
+
+  services(...services:any[]){
     this.servicesConfig = ServicesConfig.builder(this)
       .services(services)
       .create();
@@ -17,6 +15,7 @@ class Builder {
   }
 }
 export class Microservices {
+  static Builder = Builder;
   serviceRegistery: ServiceRegistery;
   constructor(serviceConfig: ServicesConfig){
     this.serviceRegistery = new ServiceRegistery(serviceConfig);
@@ -29,5 +28,3 @@ export class Microservices {
     return new ProxyContext(this.serviceRegistery);
   }
 }
-
-export type MicroservicesBuilder = Builder;

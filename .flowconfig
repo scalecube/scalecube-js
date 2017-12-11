@@ -1,13 +1,15 @@
 [ignore]
-./node_modules
-./git
-./idea
-./es
+.*/node_modules/.*
+.*/.git/.*
+.*/idea/.*
+.*/dist/.*
+.*/es/.*
+.*/api/.*
 [include]
-./**/*.js
 [libs]
-./src
 ./test
 ./examples
 ./flow-typed
-
+[options]
+module.name_mapper='src' -> '<PROJECT_ROOT>/src'
+include_warnings=true

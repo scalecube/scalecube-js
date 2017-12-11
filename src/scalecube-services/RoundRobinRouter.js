@@ -1,13 +1,15 @@
 // @flow
 
+import { ServiceRegistery, Message, Router, ServiceInstance } from 'src/scalecube-services';
+
 export class RoundRobinServiceRouter implements Router {
   registry: ServiceRegistery;
-  counter: Set<string, number>;
+  counter: Map<string, number>;
   constructor(registry: ServiceRegistery) {
     this.registry = registry;
     this.counter = new Map();
   }
-  route(request:Messsage): ServiceInstance {
+  route(request:Message): ServiceInstance | null {
     const instances = this.registry.serviceLookup(request.serviceName)
       .filter(inst => inst.serviceDefinition.methods[request.method] !== "undefined" );
 
@@ -15,7 +17,7 @@ export class RoundRobinServiceRouter implements Router {
       let index = ((this.counter.get(request.serviceName) || 0) + 1) % instances.length;
       this.counter.set(request.serviceName, index);
       return instances[index];
-    } else if ( instances.length == 1 ) {
+    } else if ( instances.length === 1 ) {
       return instances[0];
     } else {
       return null;

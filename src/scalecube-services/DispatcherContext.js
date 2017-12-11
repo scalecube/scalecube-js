@@ -4,9 +4,9 @@ import { ServiceCall, Router } from 'src/scalecube-services';
 export class DispatcherContext {
   router: Router;
   timeout: number;
-  constructor(router: Router){
+  constructor(router: Router, timeout:number = 5000){
     this.router = router;
-    this.timeout = 5000;
+    this.timeout = timeout;
   }
   create(): ServiceCall {
     return new ServiceCall(this.router, this.timeout);
