@@ -1,5 +1,5 @@
 // @flow
-import { ServiceCall, Router } from 'src/scalecube-services';
+import { ServiceCall, Router } from 'src/scalecube-services/services';
 
 export class DispatcherContext {
   router: Router;

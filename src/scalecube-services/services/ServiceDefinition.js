@@ -1,5 +1,5 @@
 // @flow
-import { utils } from 'src/scalecube-services'
+import { utils } from 'src/scalecube-services/services'
 type Methods = {[string]: (any)=>any};
 export class ServiceDefinition {
   serviceInterface: any;

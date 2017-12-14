@@ -1,7 +1,7 @@
 // @flow
 
 import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
-import { Microservices } from 'src/scalecube-services';
+import { Microservices } from 'src/scalecube-services/services';
 
 describe('Greeting suite', () =>{
   it('Greeting should greet Idan with hello', ()=>{

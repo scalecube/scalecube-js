@@ -1,6 +1,6 @@
 // @flow
 
-import { Router } from 'src/scalecube-services';
+import { Router } from 'src/scalecube-services/services';
 
 export class ServiceCall{
   router: Router;

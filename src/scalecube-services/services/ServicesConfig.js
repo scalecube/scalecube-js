@@ -1,5 +1,5 @@
 // @flow
-import { Microservices, ServiceDefinition } from 'src/scalecube-services';
+import { Microservices, ServiceDefinition } from 'src/scalecube-services/services';
 
 class Builder {
   servicesBuilder: ServicesConfig[];
@@ -35,7 +35,8 @@ class Builder {
 }
 //extends ServicesConfigApi
 export class ServicesConfig{
-  static Builder = Builder; // getter can't be validate by flow; const not supported; if you hack it, it's your problem
+  static Builder: Builder;
+  // static Builder = Builder; // getter can't be validate by flow; const not supported; if you hack it, it's your problem
   service: any;
   serviceDefinition: ServiceDefinition;
   mcBuilder: Microservices.Builder;
@@ -60,3 +61,5 @@ export class ServicesConfig{
     return new Builder(builder);
   }
 }
+
+ServicesConfig.Builder = Builder;
