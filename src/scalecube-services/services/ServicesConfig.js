@@ -3,13 +3,13 @@ import { Microservices, ServiceDefinition } from 'src/scalecube-services/service
 
 class Builder {
   servicesBuilder: ServicesConfig[];
-  microservicesBuilder: Microservices.Builder;
+  microservicesBuilder: typeof Microservices.Builder;
 
-  constructor(builder: Microservices.Builder){
+  constructor(builder: typeof Microservices.Builder){
     this.servicesBuilder = [];
     this.microservicesBuilder = builder;
   }
-  builder(builder: Microservices.Builder) {
+  builder(builder: typeof Microservices.Builder) {
     this.microservicesBuilder = builder;
   }
   build() { // TODO return Microservices.Builder
@@ -35,16 +35,16 @@ class Builder {
 }
 //extends ServicesConfigApi
 export class ServicesConfig{
-  static Builder: Builder;
+  static Builder: typeof Builder;
   // static Builder = Builder; // getter can't be validate by flow; const not supported; if you hack it, it's your problem
   service: any;
   serviceDefinition: ServiceDefinition;
-  mcBuilder: Microservices.Builder;
+  mcBuilder: typeof Microservices.Builder;
   servicesConfig: ServicesConfig[];
 
   // public ServiceConfig(Object service) {
   // public ServiceConfig(Builder builder, Object service) {
-  constructor(service: any, builder: ?Microservices.Builder) {
+  constructor(service: any, builder: ? typeof Microservices.Builder) {
     if( service && Array.isArray(service) ) {
       this.servicesConfig = service;
       return this;
@@ -56,7 +56,7 @@ export class ServicesConfig{
     this.serviceDefinition = ServiceDefinition.from(service);
     return this;
   }
-  static builder(builder: Microservices.Builder) {
+  static builder(builder: typeof Microservices.Builder) {
     // TODO change it when splitting to files
     return new Builder(builder);
   }
