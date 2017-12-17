@@ -11,7 +11,7 @@ export class ServiceRegistery {
     return this;
   }
   serviceLookup(name: string){
-    return this.services[name];
+    return this.services[name] || [];
   }
   register(serviceConfig: ServicesConfig) {
     if(this.services[serviceConfig.serviceDefinition.serviceName]) {
