@@ -35,7 +35,7 @@ class Builder {
 }
 //extends ServicesConfigApi
 export class ServicesConfig{
-  static Builder: typeof Builder;
+  static Builder: Builder;
   // static Builder = Builder; // getter can't be validate by flow; const not supported; if you hack it, it's your problem
   service: any;
   serviceDefinition: ServiceDefinition;
@@ -62,4 +62,4 @@ export class ServicesConfig{
   }
 }
 
-ServicesConfig.Builder = Builder;
+// ServicesConfig.Builder = new Builder();

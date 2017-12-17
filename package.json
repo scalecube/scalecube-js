@@ -16,9 +16,9 @@
     "build": "npm run build:es && npm run flow:gen",
     "postinstall": "flow-typed install",
     "flow": "flow",
-    "flow:gen": "flow gen-flow-files ./src/scalecube-services/libdef.js --out-dir ./es/scalecube-services && npm run flow:gen:move",
-    "flow:gen:move": "rname \"./es/scalecube-services/libdef.js.flow\" \"./es/scalecube-services/index.js.flow\"",
-    "flowToTs": "node build/flowToTs es/scalecube-services/index.js.flow es/scalecube-services/index.d.ts",
+    "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir ./es/scalecube-services/services && npm run flow:gen:move",
+    "flow:gen:move": "rname \"./es/scalecube-services/services/libdef.js.flow\" \"./es/scalecube-services/services/index.js.flow\"",
+    "flowToTs": "node build/flowToTs es/scalecube-services/services/index.js.flow es/scalecube-services/services/index.d.ts",
     "flow:reset": "flow stop && flow start"
   },
   "author": "",

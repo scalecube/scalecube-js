@@ -29,4 +29,5 @@ export class Microservices {
   }
 }
 
-Microservices.Builder = Builder;
+
+// Microservices.Builder = new Builder();
