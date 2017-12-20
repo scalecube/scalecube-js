@@ -27,7 +27,13 @@ export class ProxyContext{
           method: m,
           data: args
         };
-        return dispatcher.invoke(message);
+        if( api.meta.methods[m].type === 'Promise' ) {
+          return dispatcher.invoke(message);
+        } else if ( api.meta.methods[m].type === 'Observable' ) {
+          return dispatcher.listen(message);
+        } else {
+          return new Error(`service method unknown type error: ${api.name}.${m}`);
+        }
       }
     });
     return obj;

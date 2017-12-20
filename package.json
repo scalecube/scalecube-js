@@ -47,5 +47,8 @@
       "node_modules",
       "./"
     ]
+  },
+  "dependencies": {
+    "rxjs": "^5.5.5"
   }
 }
