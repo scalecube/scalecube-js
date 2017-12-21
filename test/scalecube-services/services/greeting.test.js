@@ -74,6 +74,7 @@ describe('Greeting suite', () => {
       .builder()
       .services(new GreetingService(), new GreetingService())
       .build()
+
       .proxy()
       .api(GreetingService)
       .create();

@@ -12,7 +12,7 @@ export interface Message {
 }
 export interface ServiceCall {
   invoke(Message: message): Promise<Message>;
-  // listen(Message: message): Observable<Message>; TBD might use Iterators instead
+  listen(Message: message): Observable<Message>; TBD might use Iterators instead
 }
 export interface DispatcherContext {
   create(): ServiceCall;
@@ -29,7 +29,9 @@ export interface ServiceRegistry {
   unregisterService(serviceObject: Object): void;
   serviceLookup(serviceName: string): List<ServiceInstance> ;
   getLocalInstance(serviceName: string, method:string): Optional<ServiceInstance>;
+
   services(): Collection<ServiceInstance>;
+
   getServiceDefinition(serviceName: string): Optional<ServiceDefinition>;
   registerInterface<T>(serviceInterface: T): ServiceDefinition;
 }

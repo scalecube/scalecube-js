@@ -2,7 +2,6 @@
   "name": "@scalecube/scalecube-js",
   "version": "0.0.1",
   "description": "define API's cross convention,",
-  "main": "App.js",
   "scripts": {
     "clean": "rimraf lib dist es coverage",
     "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
@@ -13,7 +12,8 @@
     "test:cov": "npm test -- --coverage",
     "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
     "build:es": "babel ./src --out-dir es",
-    "build": "npm run build:es && npm run flow:gen",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build": "npm run build:es && npm run build:commonjs && npm run flow:gen",
     "postinstall": "flow-typed install",
     "flow": "flow",
     "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir ./es/scalecube-services/services && npm run flow:gen:move",
@@ -21,13 +21,24 @@
     "flowToTs": "node build/flowToTs es/scalecube-services/services/index.js.flow es/scalecube-services/services/index.d.ts",
     "flow:reset": "flow stop && flow start"
   },
-  "author": "",
+  "main": "lib/scalecube-services/services/index.js",
+  "#module": "es/scalecube-services/services/index.js",
+  "files": [
+    "lib",
+    "es",
+    "src",
+    "index.d.ts",
+    "index.js.flow"
+  ],
+  "author": "I",
   "license": "ISC",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^21.2.0",
+    "babel-plugin-module-resolver": "^3.0.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
     "cross-env": "^5.1.1",
