@@ -11,6 +11,7 @@ import { ServiceCall } from './ServiceCall';
 import { ServicesConfig } from './ServicesConfig';
 import { ServiceDefinition } from './ServiceDefinition';
 import { ServiceRegistery } from './ServiceRegistery';
+import { ServicePromise } from './ServicePromise';
 import * as utils from './utils';
 
 export {
@@ -25,6 +26,7 @@ export {
   ServicesConfig,
   ServiceDefinition,
   ServiceRegistery,
+  ServicePromise,
   utils
 };
 

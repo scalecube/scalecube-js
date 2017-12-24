@@ -1,6 +1,6 @@
 // @flow
 
-import { Router, Message } from 'src/scalecube-services/services';
+import { Router, Message, utils } from 'src/scalecube-services/services';
 
 interface Subscription {
   unsubscribe() : void;
@@ -26,7 +26,11 @@ export class ServiceCall{
         return reject(new Error(`Message format error: data must be Array`));
       }
       const inst = this.router.route(message);
-      if( inst ) {
+      if( utils.isLoader(inst) ) {
+        return inst.service.promise.then((myservice)=>{
+          return resolve(myservice[message.method](...message.data))
+        });
+      } else if( inst ) {
         return resolve(inst.service[message.method](...message.data));
       }
       reject(new Error(`Service not found error: ${message.serviceName}.${message.method}`));

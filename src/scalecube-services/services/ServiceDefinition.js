@@ -1,5 +1,5 @@
 // @flow
-import { utils } from 'src/scalecube-services/services'
+import { utils, ServicePromise } from 'src/scalecube-services/services'
 type Methods = {[string]: (any)=>any};
 export class ServiceDefinition {
   serviceInterface: any;
@@ -17,10 +17,32 @@ export class ServiceDefinition {
     this.serviceName = serviceName; // TODO check what to do with it if module
     this.methods = methods;
   }
-
+  static getMethod(meta:any, service:any, key:string) {
+    if( meta.type === 'Promise' ) {
+      return service;
+    } else {
+      return service[key];
+    }
+  }
   static from(service: Object) {
     const methods = {};
     //const x = new service();
+    /*Object.getOwnPropertyNames(Object.getPrototypeOf(service)).map((method) => {
+      if (method !== 'constructor' && typeof service[ method ] === 'function') {
+        methods[ method ] = service[ method ];
+      }
+    });*/
+    const meta = service.constructor.meta || service.meta;
+    Object.keys(meta.methods).map((key)=>{
+        methods[ key ] = ServiceDefinition.getMethod(meta, service, key);
+    });
+    return new ServiceDefinition(service, utils.getServiceName(service), methods);
+  }
+  /*static fromPromise(service: ServicePromise<Object>){
+    const methods = {};
+
+
+
     Object.getOwnPropertyNames(Object.getPrototypeOf(service)).map((method) => {
       if (method !== 'constructor' && typeof service[ method ] === 'function') {
         methods[ method ] = service[ method ];
@@ -28,5 +50,5 @@ export class ServiceDefinition {
     });
 
     return new ServiceDefinition(service, utils.getServiceName(service), methods);
-  }
+  }*/
 }

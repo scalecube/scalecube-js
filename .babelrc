@@ -21,6 +21,9 @@
           }
         ]
       ]
+    },
+    "jest": {
+      "plugins": ["dynamic-import-node"]
     }
   }
 }

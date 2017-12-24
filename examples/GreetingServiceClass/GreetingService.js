@@ -6,6 +6,9 @@ interface api {
 }
 class GreetingService implements api {
   static meta: any;
+  constructor(){
+    console.log('Constructor called >>>>>>>>>>', new Error());
+  }
   hello(name: string) {
     return new Promise((resolve, reject)=>{
       if( name === undefined ) {
