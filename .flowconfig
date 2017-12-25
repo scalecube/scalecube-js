@@ -5,10 +5,12 @@
 .*/dist/.*
 .*/es/.*
 .*/api/.*
+.*/test/.*
+.*/examples/.*
+.*/index.js.flow/.*
+index.js.flow
 [include]
 [libs]
-./test
-./examples
 ./flow-typed
 [options]
 module.name_mapper='src' -> '<PROJECT_ROOT>/src'

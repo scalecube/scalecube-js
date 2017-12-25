@@ -12,13 +12,19 @@ const output = path.join(process.cwd(),process.argv[3]);
 
 function addClass(file) {
   return `
-  declare class Class<T> {};
+  declare class Class<T> {}
   ${file}
   `;
 }
 function addMapClass(file) {
   return `
-  declare class Map<K,V>{};
+  declare class Map<K,V>{}
+  ${file}
+  `;
+}
+function addObservableClass(file) {
+  return `
+  declare class rxjs$Observable<T>{}
   ${file}
   `;
 }
@@ -45,6 +51,7 @@ let file = fs.readFileSync(path.join(process.cwd(),input), "utf8");
 file = fixClasses(file);
 file = addClass(file);
 file = addMapClass(file);
+file = addObservableClass(file);
 file = removeImports(file);
 file = declearExportVar(file);
 file = removeConstructorReturnType(file);

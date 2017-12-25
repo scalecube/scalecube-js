@@ -1,107 +1,122 @@
 
+  declare class rxjs$Observable<T>{}
+  
   declare class Map<K,V>{}
-
+  
   declare class Class<T> {}
   // @flow
 
-interface Class1 {
+interface Class3 {
 
   data: Array<any>;
   method: string;
   serviceName: string;
 }
-interface Class2 {
+interface Class4 {
 
   service: any;
 }
-interface Class0 {
+interface Class2 {
 
-  route(message: Class1): Class2 | null;
+  route(message: Class3): Class4 | null;
 }
-interface Class4 {
+interface Class1 {
 
-  microservicesBuilder: Class3;
+  microservicesBuilder: Class0;
   servicesBuilder: Array<ServicesConfig>;
-  add(serviceBuilder: ServicesConfig): Class4;
-  build(): Class3;
-  builder(builder: Class3): void;
-  constructor(builder: Class3);
+  add(serviceBuilder: ServicesConfig): Class1;
+  build(): Class0;
+  builder(builder: Class0): void;
+  constructor(builder: Class0);
   create(): ServicesConfig;
-  services(...services: Array<any>): Class4;
+  services(...services: Array<any>): Class1;
 }
-interface Class3 {
+interface Class0 {
 
   servicesConfig: ServicesConfig;
   build(): Microservices;
-  constructor();
-  services(...services: Array<any>): Class3;
+  serviceLoaders(...services: Array<{loader: () => {promise: Promise<any>}, serviceClass: any}>): Class0;
+  services(...services: Array<any>): Class0;
 }
 export class DispatcherContext {
 
-  router: Class0;
+  microservices: Microservices;
+  myrouter: any;
   timeout: number;
-  constructor(router: Class0, timeout?: number);
+  constructor(microservices: Microservices, router?: Class<Class2>, timeout?: number);
   create(): ServiceCall;
+  router(router: Class<Class2>): DispatcherContext;
 }
-declare var Message: Class<Class1>;
+declare var Message: Class<Class3>;
 export class Microservices {
-  static Builder: Class3;
-  static builder(): Class3;
+  static Builder: Class0;
+  static builder(): Class0;
 
   serviceRegistery: ServiceRegistery;
   constructor(serviceConfig: ServicesConfig);
+  dispatcher(): DispatcherContext;
   proxy(): ProxyContext;
 }
 export class ProxyContext {
 
+  microservices: Microservices;
   myapi: any;
-  router: Class0;
+  router: Class<Class2>;
   api(api: any): ProxyContext;
-  constructor(registery: ServiceRegistery);
+  constructor(microservices: Microservices);
   create(): {};
-  createProxy(api: any, router: Class0): {};
+  createProxy(api: any, router: Class<Class2>): {};
 }
-export class RoundRobinServiceRouter implements Class0 {
+export class RoundRobinServiceRouter implements Class2 {
 
   counter: Map<string, number>;
   registry: ServiceRegistery;
   constructor(registry: ServiceRegistery);
-  route(request: Class1): Class2 | null;
+  route(request: Class3): Class4 | null;
 }
-declare var Router: Class<Class0>;
+declare var Router: Class<Class2>;
 export class ServiceCall {
 
-  router: Class0;
-  constructor(router: Class0, timeout?: number);
-  invoke(message: any): void | any;
+  router: Class2;
+  constructor(router: Class2, timeout?: number);
+  invoke(message: Class3): Promise<Class3>;
+  listen(message: Class3): rxjs$Observable<Class3>;
 }
 export class ServiceDefinition {
   static from(service: Object): ServiceDefinition;
+  static getMethod(meta: any, service: any, key: string): any | any;
 
   methods: {[_: string]: (_: any) => any};
   serviceInterface: any;
   serviceName: string;
   constructor(serviceInterface: Object, serviceName: string, methods: {[_: string]: (_: any) => any});
 }
-declare var ServiceInstance: Class<Class2>;
+declare var ServiceInstance: Class<Class4>;
+export class ServicePromise<T> extends Promise<T> {
+
+  loader: (registery: ServiceRegistery) => Promise<T>;
+  meta: any;
+}
+
 export class ServiceRegistery {
 
   services: Object;
   constructor(serviceConfig: ServicesConfig);
   register(serviceConfig: ServicesConfig): void;
-  serviceLookup(name: string): any;
+  serviceLookup(name: string): Array<any>;
 }
 export class ServicesConfig {
-  static Builder: Class4;
-  static builder(builder: Class3): Class4;
+  static Builder: Class1;
+  static builder(builder: Class0): Class1;
 
-  mcBuilder: Class3;
+  mcBuilder: Class0;
   service: any;
   serviceDefinition: ServiceDefinition;
   servicesConfig: Array<ServicesConfig>;
-  constructor(service: any, builder?:Class3);
+  constructor(service: any, builder?:Class0);
 }
-declare var utils: {getServiceInterface: (o: Object) => any, getServiceName: (o: Object) => any};
+declare var utils: {getServiceInterface: (o: Object) => any, getServiceName: (o: Object) => any | any | any | any | any, isLoader: (inst: Object | null) => null | any | any | boolean, makeLoader: (loadFunction: {promise: Promise<any>}, Class: any) => {meta: any, promise: {promise: Promise<any>}}};
 
+  
   
   

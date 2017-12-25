@@ -10,7 +10,7 @@ const isObservable = (obj: any): boolean => {
   return false;
 }
 const createServiceObserver = (message, service, observer) => {
-  const obs = service[message.method](...message.data);
+  const obs = service[ message.method ](...message.data);
   if (isObservable(obs)) {
     const sub = obs.subscribe(
       val => observer.next(val),
@@ -19,7 +19,8 @@ const createServiceObserver = (message, service, observer) => {
     return () => sub.unsubscribe();
   } else {
     observer.error(new Error(`Service method not observable error: ${message.serviceName}.${message.method}`));
-    return () => {};
+    return () => {
+    };
   }
 }
 
@@ -36,7 +37,7 @@ export class ServiceCall {
         return reject(new Error(`Message format error: data must be Array`));
       }
       const inst = this.router.route(message);
-      if (utils.isLoader(inst)) {
+      if (inst && inst.service && utils.isLoader(inst)) {
         return inst.service.promise.then((myservice) => {
           return resolve(myservice[ message.method ](...message.data))
         });
@@ -61,8 +62,8 @@ export class ServiceCall {
         promise.then((service) => {
           unsubscribe = createServiceObserver(message, service, observer);
         });
-        return ()=>{
-          promise.then(()=>unsubscribe())
+        return () => {
+          promise.then(() => unsubscribe())
         };
       } else {
         return createServiceObserver(message, inst.service, observer);

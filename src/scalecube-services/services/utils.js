@@ -12,7 +12,7 @@ export const getServiceName = (o: Object) => {
 export const isLoader = (inst: Object | null) => {
   return inst && inst.service && inst.service.meta && inst.service.meta.type === 'Loader';
 }
-export const makeLoader = (loadFunction, Class) => {
+export const makeLoader = (loadFunction: {promise:Promise<any>}, Class:any) => {
   return {
     promise: loadFunction,
     meta: Object.assign(Class.meta, {

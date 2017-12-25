@@ -10,7 +10,7 @@ export class ServiceRegistery {
     });
     return this;
   }
-  serviceLookup(name: string){
+  serviceLookup(name: string): any[]{
     return this.services[name] || [];
   }
   register(serviceConfig: ServicesConfig) {

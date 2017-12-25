@@ -12,7 +12,7 @@ class Builder {
       .create();
     return this;
   }
-  serviceLoaders(...services:{loader:Promise<T>, serviceClass:Class}[]){
+  serviceLoaders(...services:{loader:()=>{promise:Promise<any>}, serviceClass:any}[]){
     services.map((s)=>this.services(utils.makeLoader(s.loader(), s.serviceClass)));
     return this;
   }
