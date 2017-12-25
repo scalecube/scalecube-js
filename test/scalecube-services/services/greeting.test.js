@@ -34,7 +34,7 @@ describe('Greeting suite', () => {
       .create();
 
     expect.assertions(1);
-    return expect(greetingService.hello()).rejects.toEqual(new Error("please provide user to greet"));
+    return expect().rejects.toEqual(new Error("please provide user to greet"));
 
   });
   it('Greeting.repeatToStream should return observable of greetings ', () => {
