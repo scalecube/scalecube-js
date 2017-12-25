@@ -10,7 +10,7 @@ export const getServiceName = (o: Object) => {
   return o.meta && o.meta.serviceName || o.constructor.meta && o.constructor.meta.serviceName || o.constructor.name;
 };
 export const isLoader = (inst: Object | null) => {
-  return inst.service && inst.service.meta && inst.service.meta.type === 'Loader';
+  return inst && inst.service && inst.service.meta && inst.service.meta.type === 'Loader';
 }
 export const makeLoader = (loadFunction, Class) => {
   return {
