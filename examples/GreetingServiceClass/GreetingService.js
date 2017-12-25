@@ -6,9 +6,6 @@ interface api {
 }
 class GreetingService implements api {
   static meta: any;
-  constructor(){
-    console.log('Constructor called >>>>>>>>>>', new Error());
-  }
   hello(name: string) {
     return new Promise((resolve, reject)=>{
       if( name === undefined ) {
@@ -21,9 +18,11 @@ class GreetingService implements api {
   repeatToStream(...greetings: string[]) {
     return Observable.create((observer) => {
       if( greetings === undefined || !Array.isArray(greetings) || greetings.length === 0 ) {
-        return observer.error(new Error('please provide Array of greetings'))
+        observer.error(new Error('please provide Array of greetings'));
+        return ()=>{};
       }
       greetings.map((i)=>observer.next(i));
+      return ()=>{};
     });
   }
 }

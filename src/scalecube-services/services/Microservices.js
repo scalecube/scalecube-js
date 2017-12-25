@@ -1,5 +1,5 @@
 // @flow
-import { ServicesConfig, ServiceRegistery, ProxyContext, DispatcherContext } from 'src/scalecube-services/services'
+import { ServicesConfig, ServiceRegistery, ProxyContext, DispatcherContext, utils } from 'src/scalecube-services/services'
 
 class Builder {
   servicesConfig: ServicesConfig;
@@ -10,6 +10,10 @@ class Builder {
     this.servicesConfig = ServicesConfig.builder(this)
       .services(services)
       .create();
+    return this;
+  }
+  serviceLoaders(...services:{loader:Promise<T>, serviceClass:Class}[]){
+    services.map((s)=>this.services(utils.makeLoader(s.loader(), s.serviceClass)));
     return this;
   }
   build(): Microservices {

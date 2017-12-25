@@ -80,9 +80,9 @@ describe('Greeting suite', () => {
       .create();
 
     expect.assertions(1);
-    greetingService.repeatToStream().catch(e=>{
-      expect(e).toEqual(new Error('please provide Array of greetings'));
-    }).subscribe(()=>{},(err)=>console.log(err));
+    greetingService.repeatToStream().subscribe(res=>expect(0).toBe(1), err=>{
+      expect(err).toEqual(new Error('please provide Array of greetings'));
+    });
 
   });
 
