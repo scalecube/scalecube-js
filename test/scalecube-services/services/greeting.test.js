@@ -83,9 +83,22 @@ describe('Greeting suite', () => {
     greetingService.repeatToStream().subscribe(res=>expect(0).toBe(1), err=>{
       expect(err).toEqual(new Error('please provide Array of greetings'));
     });
-
   });
+  it('Greeting.repeatToStream should trigger unsubscribe ', () => {
+    let x = GreetingService;
+    const greetingService = Microservices
+      .builder()
+      .services(new GreetingService(), new GreetingService())
+      .build()
 
+      .proxy()
+      .api(GreetingService)
+      .create();
+
+    expect.assertions(1);
+    greetingService.repeatToStream('hey', 'hello').subscribe().unsubscribe();
+    expect(window['repeatToStreamUnsubscribe']).toBe(true);
+  });
   it('Dispatcher should greet Idan with hello', () => {
 
     const microservices = Microservices.builder()

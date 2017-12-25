@@ -22,7 +22,7 @@ class GreetingService implements api {
         return ()=>{};
       }
       greetings.map((i)=>observer.next(i));
-      return ()=>{};
+      return ()=>{window['repeatToStreamUnsubscribe']=true};
     });
   }
 }

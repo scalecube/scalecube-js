@@ -9,7 +9,7 @@ const isObservable = (obj: any): boolean => {
   }
   return false;
 }
-const chainObs = (message, service, observer) => {
+const createServiceObserver = (message, service, observer) => {
   const obs = service[message.method](...message.data);
   if (isObservable(obs)) {
     const sub = obs.subscribe(
@@ -56,11 +56,16 @@ export class ServiceCall {
       if (!inst) {
         observer.error(new Error(`Service not found error: ${message.serviceName}.${message.method}`));
       } else if (utils.isLoader(inst)) {
-        inst.service.promise.then((service) => {
-          chainObs(message, service, observer);
+        let unsubscribe;
+        const promise = inst.service.promise;
+        promise.then((service) => {
+          unsubscribe = createServiceObserver(message, service, observer);
         });
+        return ()=>{
+          promise.then(()=>unsubscribe())
+        };
       } else {
-        return chainObs(message, inst.service, observer);
+        return createServiceObserver(message, inst.service, observer);
       }
     });
   }
