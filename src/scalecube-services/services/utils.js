@@ -1,7 +1,6 @@
 // @flow
 
 
-
 export const getServiceInterface = (o: Object) => {
   // we`ll have to think about this one... right new just a name
   return o.constructor.name;
@@ -12,7 +11,7 @@ export const getServiceName = (o: Object) => {
 export const isLoader = (inst: Object | null) => {
   return inst && inst.service && inst.service.meta && inst.service.meta.type === 'Loader';
 }
-export const makeLoader = (loadFunction: {promise:Promise<any>}, Class:any) => {
+export const makeLoader = (loadFunction: Promise<any>, Class: any) => {
   return {
     promise: loadFunction,
     meta: Object.assign(Class.meta, {

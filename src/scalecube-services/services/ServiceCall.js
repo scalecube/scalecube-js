@@ -36,10 +36,12 @@ export class ServiceCall {
       if (!Array.isArray(message.data)) {
         return reject(new Error(`Message format error: data must be Array`));
       }
+
       const inst = this.router.route(message);
+
       if (inst && inst.service && utils.isLoader(inst)) {
         return inst.service.promise.then((myservice) => {
-          return resolve(myservice[ message.method ](...message.data))
+          return resolve(myservice[ message.method ](...message.data));
         });
       } else if (inst) {
         return resolve(inst.service[ message.method ](...message.data));
