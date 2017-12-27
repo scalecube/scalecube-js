@@ -1,0 +1,13 @@
+sudo: false
+cache:
+  directories:
+    - node_modules
+
+language: node_js
+node_js:
+  - "6"
+
+go install:
+  - yarn install
+  - npm test
+
