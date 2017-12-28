@@ -2,6 +2,9 @@
 
 import { Router, Message, utils } from 'src/scalecube-services/services';
 import { Observable } from 'rxjs/Observable';
+// $FlowFixMe
+import 'rxjs/add/operator/catch';
+
 
 const isObservable = (obj: any): boolean => {
   if (obj.constructor.name === 'Observable') {
@@ -60,12 +63,14 @@ export class ServiceCall {
         observer.error(new Error(`Service not found error: ${message.serviceName}.${message.method}`));
       } else if (utils.isLoader(inst)) {
         let unsubscribe;
-        const promise = inst.service.promise;
-        promise.then((service) => {
-          unsubscribe = createServiceObserver(message, service, observer);
+        const promise = new Promise(resolve=>{
+          inst.service.promise.then((service) => {
+            resolve(createServiceObserver(message, service, observer));
+          }).catch(e=>observer.error(e));
+
         });
         return () => {
-          promise.then(() => unsubscribe())
+          promise.then(unsubscribe => unsubscribe());
         };
       } else {
         return createServiceObserver(message, inst.service, observer);
