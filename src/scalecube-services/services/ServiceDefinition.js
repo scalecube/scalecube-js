@@ -26,29 +26,11 @@ export class ServiceDefinition {
   }
   static from(service: Object) {
     const methods = {};
-    //const x = new service();
-    /*Object.getOwnPropertyNames(Object.getPrototypeOf(service)).map((method) => {
-      if (method !== 'constructor' && typeof service[ method ] === 'function') {
-        methods[ method ] = service[ method ];
-      }
-    });*/
+
     const meta = service.constructor.meta || service.meta;
     Object.keys(meta.methods).map((key)=>{
         methods[ key ] = ServiceDefinition.getMethod(meta, service, key);
     });
     return new ServiceDefinition(service, utils.getServiceName(service), methods);
   }
-  /*static fromPromise(service: ServicePromise<Object>){
-    const methods = {};
-
-
-
-    Object.getOwnPropertyNames(Object.getPrototypeOf(service)).map((method) => {
-      if (method !== 'constructor' && typeof service[ method ] === 'function') {
-        methods[ method ] = service[ method ];
-      }
-    });
-
-    return new ServiceDefinition(service, utils.getServiceName(service), methods);
-  }*/
 }

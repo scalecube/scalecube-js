@@ -34,7 +34,7 @@ describe('Greeting suite', () => {
       .create();
 
     expect.assertions(1);
-    return expect().rejects.toEqual(new Error("please provide user to greet"));
+    return expect(greetingService.hello()).rejects.toEqual(new Error("please provide user to greet"));
 
   });
   it('Greeting.repeatToStream should return observable of greetings ', () => {
@@ -95,7 +95,7 @@ describe('Greeting suite', () => {
       .api(GreetingService)
       .create();
 
-    expect.assertions(1);
+      expect.assertions(1);
     greetingService.repeatToStream('hey', 'hello').subscribe().unsubscribe();
     expect(window['repeatToStreamUnsubscribe']).toBe(true);
   });

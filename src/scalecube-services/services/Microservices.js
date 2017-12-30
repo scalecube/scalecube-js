@@ -1,21 +1,31 @@
 // @flow
-import { ServicesConfig, ServiceRegistery, ProxyContext, DispatcherContext, utils } from 'src/scalecube-services/services'
+import {
+  ServicesConfig,
+  ServiceRegistery,
+  ProxyContext,
+  DispatcherContext,
+  utils
+} from 'src/scalecube-services/services'
 
 class Builder {
   servicesConfig: ServicesConfig;
-  constructor(){
+
+  constructor() {
     this.servicesConfig = new ServicesConfig([]);
   }
-  services(...services:any[]){
+
+  services(...services: any[]) {
     this.servicesConfig = ServicesConfig.builder(this)
       .services(services)
       .create();
     return this;
   }
-  serviceLoaders(...services:{loader:()=>{promise:Promise<any>}, serviceClass:any}[]){
-    services.map((s)=>this.services(utils.makeLoader(s.loader(), s.serviceClass)));
+
+  serviceLoaders(...services: { loader: () => Promise<any>, serviceClass: any }[]) {
+    services.map((s) => this.services(utils.makeLoader(s.loader(), s.serviceClass)));
     return this;
   }
+
   build(): Microservices {
     return new Microservices(this.servicesConfig);
   }
@@ -23,16 +33,20 @@ class Builder {
 export class Microservices {
   static Builder: Builder;
   serviceRegistery: ServiceRegistery;
-  constructor(serviceConfig: ServicesConfig){
+
+  constructor(serviceConfig: ServicesConfig) {
     this.serviceRegistery = new ServiceRegistery(serviceConfig);
     return this;
   }
+
   static builder() {
     return new Builder();
   };
+
   proxy() {
     return new ProxyContext(this);
   }
+
   dispatcher() {
     return new DispatcherContext(this);
   }
