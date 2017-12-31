@@ -5,8 +5,9 @@ class Builder {
   servicesBuilder: ServicesConfig[];
   microservicesBuilder: typeof Microservices.Builder;
 
-  constructor(builder: typeof Microservices.Builder){
-    this.servicesBuilder = [];
+  constructor(builder: typeof Microservices.Builder) {
+    // $FlowFixMe
+    this.servicesBuilder = [ ...builder.servicesConfig.servicesConfig ];
     this.microservicesBuilder = builder;
   }
   builder(builder: typeof Microservices.Builder) {
