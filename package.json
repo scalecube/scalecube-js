@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
   "keywords": [
     "scalecube",
