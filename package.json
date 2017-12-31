@@ -1,7 +1,13 @@
 {
   "name": "@scalecube/scalecube-js",
   "version": "0.0.1",
-  "description": "define API's cross convention,",
+  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
+  "keywords": [
+    "scalecube",
+    "scalecube-js",
+    "microservices",
+    "services"
+  ],
   "scripts": {
     "clean": "rimraf lib dist es coverage index.js.flow index.d.ts",
     "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
@@ -30,7 +36,7 @@
     "index.d.ts",
     "index.js.flow"
   ],
-  "author": "I",
+  "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "devDependencies": {
     "babel": "^6.23.0",
