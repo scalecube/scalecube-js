@@ -1,11 +1,36 @@
 # Scalecube-js
-First version for scalecube js
-Implemented only the Microservices basic pattern only local services without remote services (no gossip or SWIM)
-Support CommonJS and ES6 modules with TS & Flow support
+Microservices library inspired by the java scalecube-services. scalecube-js provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupeling between service implemntation and technology.
 
-> First version documention will improve ;-)
+With scalecube-js decouple service by interface and agnostic to the location of service implementaion, location, and technology.
+in the roadmap scalecube-js will support client side and server side. as such services may be:
+* Deployable unit of same application and technology
+* Deployable unit of diffrent application and diffrent technology
+* Diffrent service workers in a browser
+* Node-js services on same host
+* Node-js services on diffrent host communicating via api.
 
-## usage
+## Project Status
+currently the project is at very early stage and only support the basic pattern of service provisioning and consuming (locally)
+it means it can be used to decouple components by interface for same running process.
+
+## Basic Usage
+
+```javascript
+// build microservices instance and provision (N) in this case two microservices to play role in our application.
+// the builder inspect the service instances and find the service api and register it.
+let microservices = Microservices.builder()
+  .services(new GreetingService1(), new GreetingService2())
+  .build();
+
+// create a proxy to the service based on a given service interface. 
+const greetingService = microservices.proxy()
+  .api(GreetingService)
+  .create();  
+  
+// invoke the service using the proxy. 
+// the proxy will locate and route and balance the request to the given matching instances.
+greetingService.hello('joe');
+```
 
 ```javascript
 /// With proxies
