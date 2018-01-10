@@ -15,11 +15,33 @@ it means it can be used to decouple components by interface for same running pro
 
 ## Basic Usage
 
+### Define service in TypeScript:
+```javascript
+
+@Service
+class GreetingService {
+
+  @ServiceMethod('Observable')
+  notifications(): Observable<Greeting> {
+  
+  }
+  
+  @ServiceMethod('Promise')
+  hello(): Promise<Greeting> {
+    return new Promise((resolve, reject) => {
+      // the resolve / reject functions control the fate of the promise
+    });
+  }
+}
+
+```
+
+### Bootstrap the service:
 ```javascript
 // build microservices instance and provision (N) in this case two microservices to play role in our application.
 // the builder inspect the service instances and find the service api and register it.
 let microservices = Microservices.builder()
-  .services(new GreetingService1(), new GreetingService2())
+  .services(new GreetingService())
   .build();
 
 // create a proxy to the service based on a given service interface. 
