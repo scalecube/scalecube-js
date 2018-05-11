@@ -6,12 +6,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 
 
-const isObservable = (obj: any): boolean => {
-  if (obj.constructor.name === 'Observable') {
-    return true;
-  }
-  return false;
-}
+const isObservable = (obj: any): boolean => obj instanceof Observable;
+
 const createServiceObserver = (message, service, observer) => {
   const obs = service[ message.method ](...message.data);
   if (isObservable(obs)) {
