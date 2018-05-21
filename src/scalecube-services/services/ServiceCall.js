@@ -4,9 +4,12 @@ import { Router, Message, utils } from 'src/scalecube-services/services';
 import { Observable } from 'rxjs/Observable';
 // $FlowFixMe
 import 'rxjs/add/operator/catch';
+import { symbolObservable } from './utils';
 
-
-const isObservable = (obj: any): boolean => obj instanceof Observable;
+const isObservable = obs => {
+    const observableS = symbolObservable();
+    return Boolean(obs && obs[observableS] && obs === obs[observableS]())
+};
 
 const createServiceObserver = (message, service, observer) => {
   const obs = service[ message.method ](...message.data);
