@@ -1,8 +1,15 @@
 // @flow
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/if';
 import 'rxjs/add/observable/from';
+
+let Observable;
+
+try {
+    Observable = require('rxjs-latest/Observable').Observable;
+} catch (e) {
+    Observable = require('rxjs/Observable').Observable;
+}
 
 interface api {
   static meta: any;

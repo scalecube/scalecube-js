@@ -39,7 +39,7 @@ const symbolObservablePonyfill = (root) => {
     return result;
 };
 
-export const symbolObservable = () => {
+export const isObservable = obs => {
     let root;
 
     if (typeof self !== 'undefined') {
@@ -53,5 +53,8 @@ export const symbolObservable = () => {
     } else {
         root = Function('return this')();
     }
-    return symbolObservablePonyfill(root);
+
+    const _observable = symbolObservablePonyfill(root);
+
+    return Boolean(obs && obs[_observable] && obs === obs[_observable]())
 };

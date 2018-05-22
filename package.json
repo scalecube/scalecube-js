@@ -54,7 +54,9 @@
     "flow-typed": "^2.2.3",
     "jest": "^21.2.1",
     "regenerator-runtime": "^0.11.0",
-    "rename-cli": "^5.0.0"
+    "rename-cli": "^5.0.0",
+    "rxjs-latest":"npm:rxjs@latest",
+    "rxjs-compat": "^6.1.0"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
