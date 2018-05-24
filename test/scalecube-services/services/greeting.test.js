@@ -220,35 +220,3 @@ describe('Greeting suite', () => {
 
   });
 });
-
-describe('Testing different types of Observables', () => {
-    it('Should return stream of numbers from 1 to 3 from first if case', () => {
-        const greetingService = Microservices
-            .builder()
-            .services(new GreetingService(), new GreetingService())
-            .build()
-            .proxy()
-            .api(GreetingService)
-            .create();
-        greetingService.chooseStream(true).subscribe((item) => {
-            expect([1,2,3]).toContain(item);
-        });
-
-
-    });
-    it('Should return stream of numbers from 4 to 6 from second if case', () => {
-        const greetingService = Microservices
-            .builder()
-            .services(new GreetingService(), new GreetingService())
-            .build()
-            .proxy()
-            .api(GreetingService)
-            .create();
-        greetingService.chooseStream(false).subscribe((item) => {
-            console.log(item)
-            expect([4,5,6]).toContain(item);
-        });
-
-
-    });
-});

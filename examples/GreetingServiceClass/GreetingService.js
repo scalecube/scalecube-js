@@ -1,15 +1,5 @@
 // @flow
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/if';
-import 'rxjs/add/observable/from';
-
-let Observable;
-
-try {
-    Observable = require('rxjs-latest/Observable').Observable;
-} catch (e) {
-    Observable = require('rxjs/Observable').Observable;
-}
+import { Observable } from 'rxjs/Observable';
 
 interface api {
   static meta: any;
@@ -35,13 +25,6 @@ class GreetingService implements api {
       return ()=>{window['repeatToStreamUnsubscribe']=true};
     });
   }
-  chooseStream(returnFirstSteam = false) {
-    return Observable.if(
-        () => returnFirstSteam,
-        Observable.of(1,2,3),
-        Observable.from([4,5,6]),
-    );
-  }
 }
 Object.defineProperty(GreetingService, 'meta', {
   value: {
@@ -53,9 +36,6 @@ Object.defineProperty(GreetingService, 'meta', {
       repeatToStream: {
         type: 'Observable'
       },
-      chooseStream: {
-        type: 'Observable'
-      }
     }
   }
 });
