@@ -23,7 +23,7 @@ export const makeLoader = (loadFunction: Promise<any>, Class: any) => {
 
 const symbolObservablePonyfill = (root) => {
     let result;
-    let Symbol = root.Symbol;
+    let Symbol = root.Symbol || null;
 
     if (typeof Symbol === 'function') {
         if (Symbol.observable) {
@@ -39,7 +39,7 @@ const symbolObservablePonyfill = (root) => {
     return result;
 };
 
-export const isObservable = obs => {
+export const isObservable = (obs:any) => {
     let root;
 
     if (typeof self !== 'undefined') {
@@ -51,7 +51,7 @@ export const isObservable = obs => {
     } else if (typeof module !== 'undefined') {
         root = module;
     } else {
-        root = Function('return this')();
+        root = {};
     }
 
     const _observable = symbolObservablePonyfill(root);
