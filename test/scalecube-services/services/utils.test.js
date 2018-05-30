@@ -1,39 +1,45 @@
 import { Observable } from 'rxjs/Observable';
-import { Observable as latestObservable } from 'rxjs-latest/Observable';
+import { Observable as rxjs6Observable } from 'rxjs6/Observable';
 import { createStore } from 'redux';
 import { isObservable } from 'src/scalecube-services/services/utils';
 import { Observable as esObservable } from './esObservable';
 
 describe('Check if isObservable method detects different kinds of Observables as Observable', () => {
-    it('Current version of RxJS should be supported', () => {
-        const obsFrom = Observable.from([1, 2, 3]);
+  it('isObservable should return true for RxJS v.5 observables', () => {
+    const obsFrom = Observable.from([1, 2, 3]);
 
-        const obsConditional = Observable.if(
-            () => Boolean(Math.floor(Math.random()*2)),
-            Observable.of(1, 2, 3),
-            Observable.from([4, 5, 6]),
-        );
-
-        const esObs = esObservable.from([4, 5, 6]);
-
-        expect(isObservable(obsFrom)).toBeTruthy();
-        expect(isObservable(obsConditional)).toBeTruthy();
-        expect(isObservable(esObs)).toBeTruthy();
-    });
-
-  it('Latest versions of RxJS should be supported', () => {
-    const obsFrom = latestObservable.from([1, 2, 3]);
-
-    const obsConditional = latestObservable.if(
-      () => true,
-      latestObservable.of(1, 2, 3),
-      latestObservable.from([4, 5, 6]),
+    const obsConditional = Observable.if(
+      () => Boolean(Math.floor(Math.random() * 2)),
+      Observable.of(1, 2, 3),
+      Observable.from([4, 5, 6]),
     );
 
     expect(isObservable(obsFrom)).toBeTruthy();
     expect(isObservable(obsConditional)).toBeTruthy();
   });
-  it('Redux should be supported', () => {
+
+  it('isObservable should return true for RxJS v.6 observables', () => {
+    const obsFrom = rxjs6Observable.from([1, 2, 3]);
+
+    const obsConditional = rxjs6Observable.if(
+      () => true,
+      rxjs6Observable.of(1, 2, 3),
+      rxjs6Observable.from([4, 5, 6]),
+    );
+    expect(isObservable(obsFrom)).toBeTruthy();
+    expect(isObservable(obsConditional)).toBeTruthy();
+  });
+
+  it('isObservable should return true for proposal-observable observables', () => {
+    const obsFrom = esObservable.from([1, 2, 3]);
+
+    expect(isObservable(obsFrom)).toBeTruthy();
+  });
+
+  it('Is observable should return false for Redux store', () => {
+    // this test is important because Redux build on top of observable and have subscribe method
+    // but the store is not observable, it important to cover this case and also be compatible with this lib
+
     const initialState = {
       value: 0,
     };

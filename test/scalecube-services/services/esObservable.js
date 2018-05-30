@@ -1,3 +1,6 @@
+// main repo: https://github.com/tc39/proposal-observable
+// file link: https://github.com/tc39/proposal-observable/blob/master/src/Observable.js
+
 // === Symbol Polyfills ===
 
 function polyfillSymbol(name) {
