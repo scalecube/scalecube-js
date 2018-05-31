@@ -35,10 +35,9 @@ Object.defineProperty(GreetingService, 'meta', {
       },
       repeatToStream: {
         type: 'Observable'
-      }
+      },
     }
   }
 });
-
 
 export default GreetingService;
