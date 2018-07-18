@@ -3,9 +3,6 @@
 import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
 import GreetingService2 from 'examples/GreetingServiceClass/GreetingService2.js';
 import { Microservices, Message } from 'src/scalecube-services/services';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-
 
 process.on('unhandledRejection', (reason, promise) => console.log(reason, promise));
 
@@ -223,4 +220,3 @@ describe('Greeting suite', () => {
 
   });
 });
-

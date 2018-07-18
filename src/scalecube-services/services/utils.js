@@ -20,3 +20,41 @@ export const makeLoader = (loadFunction: Promise<any>, Class: any) => {
     })
   };
 };
+
+const symbolObservablePonyfill = (root) => {
+    let result;
+    let Symbol = root.Symbol || null;
+
+    if (typeof Symbol === 'function') {
+        if (Symbol.observable) {
+            result = Symbol.observable;
+        } else {
+            result = Symbol('observable');
+            Symbol.observable = result;
+        }
+    } else {
+        result = '@@observable';
+    }
+
+    return result;
+};
+
+export const isObservable = (obs:any) => {
+    let root;
+
+    if (typeof self !== 'undefined') {
+        root = self;
+    } else if (typeof window !== 'undefined') {
+        root = window;
+    } else if (typeof global !== 'undefined') {
+        root = global;
+    } else if (typeof module !== 'undefined') {
+        root = module;
+    } else {
+        root = {};
+    }
+
+    const _observable = symbolObservablePonyfill(root);
+
+    return Boolean(obs && obs[_observable] && obs === obs[_observable]())
+};

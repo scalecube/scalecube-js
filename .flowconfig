@@ -7,8 +7,7 @@
 .*/api/.*
 .*/test/.*
 .*/examples/.*
-.*/index.js.flow/.*
-index.js.flow
+.*js.flow
 [include]
 [libs]
 ./flow-typed
