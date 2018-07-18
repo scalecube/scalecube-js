@@ -5,7 +5,7 @@
 .*/dist/.*
 .*/es/.*
 .*/api/.*
-.*/test/.
+.*/test/.*
 .*/examples/.*
 .*js.flow
 [include]
