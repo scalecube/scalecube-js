@@ -56,8 +56,8 @@
     "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
     "rename-cli": "^5.0.0",
-    "rxjs6": "npm:rxjs@6.1.0",
-    "rxjs-compat": "^6.1.0"
+    "rxjs-compat": "^6.1.0",
+    "rxjs6": "npm:rxjs@6.1.0"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",

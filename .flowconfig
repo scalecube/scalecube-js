@@ -4,7 +4,7 @@
 .*/idea/.*
 .*/dist/.*
 .*/es/.*
-.*/api/.*
+api/.*
 .*/test/.*
 .*/examples/.*
 .*js.flow
