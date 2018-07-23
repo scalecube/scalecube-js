@@ -3445,7 +3445,7 @@ rxjs-compat@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.1.0.tgz#935059623ee4c167728c9dd03ee6e4468cc5b583"
 
-"rxjs-latest@npm:rxjs@latest":
+"rxjs6@npm:rxjs@6.1.0":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.1.0.tgz#833447de4e4f6427b9cec3e5eb9f56415cd28315"
   dependencies:
