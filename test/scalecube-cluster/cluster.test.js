@@ -30,6 +30,10 @@ describe('Cluster suite', () => {
     const {clusterA, clusterB, clusterC} = createClusters();
     expect.assertions(8);
 
+    clusterA.metadata('clusterA');
+    clusterB.metadata('clusterB');
+    clusterC.metadata('clusterC');
+
     clusterA.join(clusterB);
     clusterB.join(clusterC);
 
@@ -45,9 +49,10 @@ describe('Cluster suite', () => {
 
     clusterA.shutdown();
 
-    //expect(clusterA).toBe(undefined);
-    expect(clusterB.members()).toEqual([ clusterB, clusterC ]);
-    expect(clusterC.members()).toEqual([ clusterC, clusterB ]);
+    // expect(clusterA).toBe(undefined);
+     expect(clusterB.members().map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
+     expect(clusterC.members().map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
+    //expect(clusterC.members()).toEqual([ clusterC, clusterB ]);
   });
   it('Messages are sent', (done) => {
     const {clusterA, clusterB, clusterC} = createClusters();

@@ -5,18 +5,46 @@ import {Cluster} from './api/Cluster';
 import {MembershipEvent} from './api/MembershiptEvent';
 import type {Type} from "./api/MembershiptEvent";
 
-interface LogicalClusterInternals {
+/*interface LogicalClusterInternals {
     message(message: MembershipEvent): void;
     send(member: Cluster, type: Type, data: any): void;
     add(members: Cluster[]): void;
     remove(member: Cluster): void;
-}
-class LogicalClusterInternalsImpl{
+    call(obj: LogicalClusterInternalsImpl | Cluster, method: string, args: any[]) {
+}*/
+class LogicalClusterInternals{
     cluster: any;
     clusters: WeakMap<LogicalClusterInternals, Cluster>;
     internals: WeakMap<Cluster, LogicalClusterInternals>;
 
-    constructor(cluster){
+    constructor(cluster: Cluster){
+        this.cluster = cluster;
+        this.clusters = new WeakMap();
+        this.internals = new WeakMap();
+        this.clusters.set(this, cluster);
+        this.internals.set(cluster, this);
+    }
+
+    call(obj: LogicalClusterInternals | Cluster, method: string, args: any[]) {
+        let inst = {};
+        if( obj instanceof LogicalClusterInternals ) {
+            inst = this.clusters.get(obj);
+        } else if( obj instanceof LogicalCluster ) {
+            inst = this.internals.get((obj:Cluster));
+        } else {
+            return;
+        }
+        if( !inst ) {
+            return;
+        }
+        //$FlowFixMe
+        if( typeof inst[method] === 'function' ) {
+            //$FlowFixMe
+            return inst[method](...args);
+        }
+    }
+
+    start(cluster: Cluster){
         this.cluster = cluster;
         this.clusters = new WeakMap();
         this.internals = new WeakMap();
@@ -28,8 +56,7 @@ class LogicalClusterInternalsImpl{
     }
 
     send(member: Cluster, type: Type, data: any): void {
-        const _member = this.internals.get(member);
-        _member && _member.message({
+        internal(member).message({
             type: type,
             id: member.id(),
             sender: this.cluster.id(),
@@ -38,14 +65,16 @@ class LogicalClusterInternalsImpl{
     }
 
     add(members: Cluster[]): void {
-        const self = this;
+        const self = this.cluster;
         const data = this.cluster.metadata();
         members.forEach(
-            (member) => {
-                if (!this.cluster.myMembers[member.id()]) {
+        (member) => {
+            if (!this.cluster.myMembers[member.id()]) {
                     this.cluster.myMembers[member.id()] = member;
-                    this.insts.get(member).add([self]);
-                    this.insts.get(this).send(member, 'add', data);
+                    internal(member).add([self]);
+                    internal(this.cluster).send(member, 'add', data);
+                    //member.internal.add([self])
+                    // this.call(this, 'send', [member, 'add', data]);
                 }
             }
         );
@@ -56,7 +85,13 @@ class LogicalClusterInternalsImpl{
         this.send(member, 'remove', {});
     }
 }
-
+// Let clusters: WeakMap<LogicalClusterInternals, Cluster>;
+const internals: WeakMap<Cluster, LogicalClusterInternals> = new WeakMap();
+const internal = (obj):any => new Proxy(internals.get(obj), {
+    apply: function(target:any, thisArg, args) {
+                return target && target(...args);
+    }
+});
 /**
  * This is logical scalecube-scalecube-cluster meaning it's just working without lot's of real life cases
  */
@@ -65,18 +100,16 @@ export class LogicalCluster implements Cluster {
     members$: Subject<any>;
     myMembers: { [string]: Cluster };
     myMetadata: any;
-    internal: LogicalClusterInternals;
 
     constructor() {
         this.myId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
         this.members$ = new Subject();
         this.myMembers = {[this.myId]: this};
-        this.internal =  new LogicalClusterInternalsImpl(this);
-        this.internal.send(this, 'add', {});
+        internals.set(this, new LogicalClusterInternals(this));
+        internal(this).send(this, 'add', {});
     }
 
-    // Cluster impl
-
+    // C
     id(): string {
         return this.myId;
     }
@@ -85,7 +118,7 @@ export class LogicalCluster implements Cluster {
         if (value) {
             this.myMetadata = value;
             this.members().forEach((member) => {
-                this.send(member, 'change', value);
+                internal(this).send(member, 'change', value);
             });
         } else {
             return this.myMetadata;
@@ -93,14 +126,16 @@ export class LogicalCluster implements Cluster {
     }
 
     join(cluster: Cluster): void {
-        this.add(cluster.members());
-        cluster.add(this.members());
+
+        internal(this).add(cluster.members());
+        internal(cluster).add(this.members());
+        //this.internal.call(cluster,'add', [this.members()]);
     }
 
     shutdown(): void {
         this.members().forEach(
             (member) => {
-                member.remove(this);
+                internal(member).remove(this);
             }
         );
         delete this.myMembers;
