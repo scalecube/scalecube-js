@@ -16,8 +16,8 @@ export const CreateLogicalClusterInternals = (internal) => class LogicalClusterI
     send(member: Cluster, type: Type, data: any): void {
         internal(member).message({
             type: type,
-            id: member.id(),
-            sender: this.cluster.id(),
+            memberId: this.cluster.id(),
+            senderId: this.cluster.id(),
             metadata: data
         });
     }
