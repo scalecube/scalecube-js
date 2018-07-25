@@ -115,7 +115,7 @@ export class ServicesConfig {
   servicesConfig: Array<ServicesConfig>;
   constructor(service: any, builder?:Class0);
 }
-declare var utils: {getServiceInterface: (o: Object) => any, getServiceName: (o: Object) => any | any | any | any | any, isLoader: (inst: Object | null) => null | any | any | boolean, makeLoader: (loadFunction: Promise<any>, Class: any) => {meta: any, promise: Promise<any>}};
+declare var utils: {getServiceInterface: (o: Object) => any, getServiceName: (o: Object) => any | any | any | any | any, isLoader: (inst: Object | null) => null | any | any | boolean, isObservable: (obs: any) => boolean, makeLoader: (loadFunction: Promise<any>, Class: any) => {meta: any, promise: Promise<any>}};
 
   
   

@@ -26,7 +26,8 @@
     "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir . && npm run flow:gen:move && npm run flowToTs ",
     "flow:gen:move": "rname \"./libdef.js.flow\" \"./index.js.flow\"",
     "flowToTs": "node build/flowToTs index.js.flow index.d.ts",
-    "flow:reset": "flow stop && flow start"
+    "flow:reset": "flow stop && flow start",
+    "flow:check":"npm run flow:reset && flow check"
   },
   "main": "lib/scalecube-services/services/index.js",
   "#module": "es/scalecube-services/services/index.js",
