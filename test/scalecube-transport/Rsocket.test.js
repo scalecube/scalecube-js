@@ -1,57 +1,34 @@
-import { createClient } from 'src/scalecube-transport/provider/Rsocket';
-import WebSocket from "ws";
-import RSocketWebSocketClient from "rsocket-websocket-client";
-import {FRAME_TYPES, deserializeFrame, serializeFrame, RSocketClient,
-  JsonSerializers,} from 'rsocket-core';
+import { RSocketProvider } from 'src/scalecube-transport/provider/Rsocket';
 
 describe('Rsocket tests', () => {
-  it('Test', (done) => {
-    const client = new RSocketClient({
-      // send/receive objects instead of strings/buffers
-      serializers: JsonSerializers,
-      setup: {
-        // ms btw sending keepalive to server
-        keepAlive: 60000,
-        // ms timeout if no keepalive response
-        lifetime: 180000,
-        // format of `data`
-        dataMimeType: 'application/json',
-        // format of `metadata`
-        metadataMimeType: 'application/json',
+  it('Test', async (done) => {
+    const rSocketProvider = new RSocketProvider();
+    rSocketProvider.buildClient();
+    const { socket, cancel } = await rSocketProvider.connect();
+    const flowablePojoOne = socket.requestResponse({
+      data: {
+        text: 'Some text to be tested'
       },
-      transport: new RSocketWebSocketClient({url: 'ws://localhost:8080', wsCreator: url => new WebSocket(url)}),
+      metadata: {
+        q: '/greeting/pojo/one'
+      },
     });
 
-    // Open the connection
-    client.connect().subscribe({
-      onComplete: socket => {
-        const flowable = socket.requestStream({
+    flowablePojoOne.subscribe({
+      onComplete: (data) => {
+        expect(data).toEqual({
           data: {
-            hello: 'world',
-            account: 'yes',
-            text: 'Come on'
+            text: 'Echo:Some text to be tested'
           },
           metadata: {
             q: '/greeting/pojo/one'
           },
         });
-
-        flowable.subscribe({
-          onComplete: (data) => console.log('done', data),
-          onNext: (data) => console.log('data', data),
-          onError: error => console.error(error),
-          onSubscribe: sub => sub.request(1)
-        });
-
-
+        console.log('data onComplete', data);
+        done();
       },
       onError: error => console.error(error),
-      onSubscribe: cancel => {/* call cancel() to abort */}
+      onSubscribe: cancelFlowable => {  }
     });
-
-    setTimeout(() => {
-      done();
-    }, 2000);
-
   })
-})
+});
