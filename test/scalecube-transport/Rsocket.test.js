@@ -5,15 +5,18 @@ describe('Rsocket tests', () => {
     const rSocketProvider = new RSocketProvider();
     await rSocketProvider.connect();
     const stream = rSocketProvider.request({
-      type: 'requestResponse',
+      type: 'requestStream',
       serviceName: 'greeting',
-      actionName: 'pojo/one',
+      actionName: 'pojo/many',
       data: { text: 'Some text to be tested' }
     });
     stream.subscribe((data) => {
       console.log('data', data);
-      done();
     });
+
+    setTimeout(() => {
+      done();
+    }, 2000);
 
   })
 });

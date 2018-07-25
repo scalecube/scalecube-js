@@ -50,12 +50,23 @@ export class RSocketProvider {
       let cancelSubscription;
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
+          onNext: (response) => {
+            subscriber.next(response.data);
+          },
           onComplete: (response) => {
             isSingle && subscriber.next(response.data);
             subscriber.complete();
           },
           onError: subscriber.error,
-          onSubscribe: cancelFlowable => { cancelSubscription = cancelFlowable }
+          onSubscribe: (data) => {
+            if (isStream) {
+              cancelSubscription = data.cancel;
+              data.request(7);
+            }
+            if (isSingle) {
+              cancelSubscription = data;
+            }
+          }
         });
 
       return cancelSubscription;
