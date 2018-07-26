@@ -42,27 +42,31 @@ export class RSocketProvider {
     });
   }
 
-  request({ type, serviceName, actionName, data, respondsLimit }) {
+  request({ type, serviceName, actionName, data, responsesLimit }) {
     const isSingle = type === 'requestResponse';
     const isStream = type === 'requestStream' || type === 'requestChannel';
-    const initialRespondsAmount = respondsLimit || 1;
+    const initialRespondsAmount = responsesLimit || 1;
 
     return Observable.create((subscriber) => {
       let unsubscribe;
       let socketSubscriber;
+      const handleResponseBySubscriber = ({ data }) => {
+        const methodName = !data.errorCode ? 'next' : 'error';
+        subscriber[methodName](data);
+      };
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
-            if (!respondsLimit) {
+            if (!responsesLimit) {
               socketSubscriber && socketSubscriber.request(1);
             }
-            subscriber.next(response.data);
+            handleResponseBySubscriber(response);
           },
           onComplete: (response) => {
-            isSingle && subscriber.next(response.data);
+            isSingle && handleResponseBySubscriber(response);
             subscriber.complete();
           },
-          onError: subscriber.error,
+          onError: (error) => subscriber.error(error),
           onSubscribe: (socketSubscriberData) => {
             if (isStream) {
               unsubscribe = socketSubscriberData.cancel;
