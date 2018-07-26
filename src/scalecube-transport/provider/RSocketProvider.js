@@ -4,18 +4,18 @@ import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 
 export class RSocketProvider {
-  constructor() {
+  constructor({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
     this.client = new RSocketClient({
       serializers: JsonSerializers,
       setup: {
-        keepAlive: 60000,
-        lifetime: 180000,
+        keepAlive,
+        lifetime,
         dataMimeType: 'application/json',
         metadataMimeType: 'application/json',
       },
-      transport: new RSocketWebSocketClient({ url: 'ws://localhost:8080', wsCreator: url => new WebSocket(url) }),
+      transport: new RSocketWebSocketClient({ url, wsCreator }),
     });
-    this.cancelConnection = null;
+    this.disconnect = null;
     this.socket = null;
   }
 
@@ -27,30 +27,35 @@ export class RSocketProvider {
           resolve();
         },
         onError: reject,
-        onSubscribe: cancel => { this.cancelConnection = cancel }
+        onSubscribe: disconnect => { this.disconnect = disconnect }
       });
     });
   }
 
-  closeConnection() {
+  disconnect() {
     return new Promise((resolve, reject) => {
-      if (!this.cancelConnection) {
+      if (!this.disconnect) {
         return reject('The connection is not opened');
       }
-      this.cancelConnection();
+      this.disconnect();
       resolve();
     });
   }
 
-  request({ type, serviceName, actionName, data }) {
+  request({ type, serviceName, actionName, data, respondsLimit }) {
     const isSingle = type === 'requestResponse';
     const isStream = type === 'requestStream' || type === 'requestChannel';
+    const initialRespondsAmount = respondsLimit || 1;
 
     return Observable.create((subscriber) => {
-      let cancelSubscription;
+      let unsubscribe;
+      let socketSubscriber;
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
+            if (!respondsLimit) {
+              socketSubscriber && socketSubscriber.request(1);
+            }
             subscriber.next(response.data);
           },
           onComplete: (response) => {
@@ -58,18 +63,19 @@ export class RSocketProvider {
             subscriber.complete();
           },
           onError: subscriber.error,
-          onSubscribe: (data) => {
+          onSubscribe: (socketSubscriberData) => {
             if (isStream) {
-              cancelSubscription = data.cancel;
-              data.request(7);
+              unsubscribe = socketSubscriberData.cancel;
+              socketSubscriber = socketSubscriberData;
+              socketSubscriberData.request(initialRespondsAmount);
             }
             if (isSingle) {
-              cancelSubscription = data;
+              unsubscribe = socketSubscriberData;
             }
           }
         });
 
-      return cancelSubscription;
+      return unsubscribe;
     });
   }
 
