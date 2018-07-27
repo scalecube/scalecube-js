@@ -15,7 +15,6 @@ export class RSocketProvider {
       },
       transport: new RSocketWebSocketClient({ url, wsCreator }),
     });
-    this.disconnect = null;
     this.socket = null;
   }
 
@@ -26,18 +25,18 @@ export class RSocketProvider {
           this.socket = socket;
           resolve();
         },
-        onError: reject,
-        onSubscribe: disconnect => { this.disconnect = disconnect }
+        onError: reject
       });
     });
   }
 
   disconnect() {
     return new Promise((resolve, reject) => {
-      if (!this.disconnect) {
+      if (!this.socket) {
         return reject('The connection is not opened');
       }
-      this.disconnect();
+      this.socket = null;
+      this.client.close();
       resolve();
     });
   }
