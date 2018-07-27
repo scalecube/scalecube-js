@@ -2,6 +2,7 @@ import RSocketWebSocketClient from 'rsocket-websocket-client';
 import WebSocket from 'ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
+import { validateRequest } from '../utils';
 
 export class RSocketProvider {
   constructor({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
@@ -41,12 +42,18 @@ export class RSocketProvider {
     });
   }
 
-  request({ type, serviceName, actionName, data, responsesLimit }) {
+  request(requestData) {
+    const { type, serviceName, actionName, data, responsesLimit } = requestData;
     const isSingle = type === 'requestResponse';
     const isStream = type === 'requestStream' || type === 'requestChannel';
     const initialRespondsAmount = responsesLimit || 1;
 
     return Observable.create((subscriber) => {
+      const validationError = validateRequest(requestData);
+      if (validationError) {
+        return subscriber.error(new Error(validationError));
+      }
+
       let unsubscribe;
       let socketSubscriber;
       const handleResponseBySubscriber = ({ data }) => {
@@ -56,9 +63,7 @@ export class RSocketProvider {
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
-            if (!responsesLimit) {
-              socketSubscriber && socketSubscriber.request(1);
-            }
+            !responsesLimit && socketSubscriber && socketSubscriber.request(1);
             handleResponseBySubscriber(response);
           },
           onComplete: (response) => {

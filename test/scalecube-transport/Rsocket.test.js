@@ -1,4 +1,5 @@
 import { RSocketProvider } from 'src/scalecube-transport/provider/RSocketProvider';
+import { errors } from 'src/scalecube-transport/errors';
 
 describe('Rsocket tests', () => {
 
@@ -236,7 +237,6 @@ describe('Rsocket tests', () => {
       },
       (error) => {
         expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-        subscription.unsubscribe();
         done();
       }
     );
@@ -260,7 +260,6 @@ describe('Rsocket tests', () => {
       },
       (error) => {
         expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-        subscription1.unsubscribe();
       }
     );
 
@@ -278,10 +277,25 @@ describe('Rsocket tests', () => {
         },
         (error) => {
           expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-          subscription2.unsubscribe();
           done();
         }
       );
+  });
+
+  it('Request "type" validation error', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      type: 'wrongType',
+      actionName: 'many',
+      data: text
+    });
+    stream.subscribe(
+      (data) => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.wrongType));
+        done();
+      }
+    );
   });
 
 });
