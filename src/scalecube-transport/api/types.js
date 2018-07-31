@@ -10,7 +10,7 @@ export interface TransportRequest {
 
 export interface TransportConfig {
   url: string;
-  keepAlive: number;
-  lifetime: number;
-  wsCreator: (url: string) => any
+  wsCreator: (url: string) => any;
+  keepAlive?: number;
+  lifetime?: number;
 }
