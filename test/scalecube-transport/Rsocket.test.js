@@ -2,13 +2,13 @@ import { RSocketProvider } from 'src/scalecube-transport/provider/RSocketProvide
 import { errors } from 'src/scalecube-transport/errors';
 
 describe('Rsocket tests', () => {
-
   const serviceName = 'greeting';
   const text = 'Test text';
   const textResponseSingle = `Echo:${text}`;
   const getTextResponseStream = index => `Greeting (${index}) to: ${text}`;
-  const url = 'ws://localhost:8080';
+
   const createRequestStream = async ({ type, actionName, data, responsesLimit }) => {
+    const url = 'ws://localhost:8080';
     const rSocketProvider = new RSocketProvider({ url });
     await rSocketProvider.connect();
     const stream = rSocketProvider.request({ serviceName, type, actionName, data, responsesLimit });
@@ -285,7 +285,7 @@ describe('Rsocket tests', () => {
   it('Request "type" validation error', async (done) => {
     expect.assertions(1);
     const { stream } = await createRequestStream({
-      type: 'wrongType',
+      type: 'requestStream',
       actionName: 'many',
       data: text
     });
@@ -296,6 +296,47 @@ describe('Rsocket tests', () => {
         done();
       }
     );
+  });
+
+  it('Request "actionName" validation error', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      type: 'wrongType',
+      actionName: '',
+      data: text
+    });
+    stream.subscribe(
+      (data) => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.wrongType));
+        done();
+      }
+    );
+  });
+
+  it('failing/many Test', async (done) => {
+    // TODO With responsesLimit we receive two success and error item, with unlimited requests - only one success and error item
+    const { stream } = await createRequestStream({
+      type: 'requestStream',
+      actionName: 'failing/many',
+      data: text,
+      responsesLimit: 777
+    });
+    stream.subscribe(
+      (data) => {
+        // console.log('data', data);
+      },
+      (error) => {
+        console.log('error', error);
+      },
+      (data) => {
+        console.log('Stream is completed');
+      }
+    );
+
+    setTimeout(() => {
+      done();
+    }, 2000);
   });
 
 });

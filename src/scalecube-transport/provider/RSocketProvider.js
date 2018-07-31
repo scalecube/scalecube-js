@@ -56,21 +56,19 @@ export class RSocketProvider {
 
       let unsubscribe;
       let socketSubscriber;
-      const handleResponseBySubscriber = ({ data }) => {
-        const methodName = !data.errorCode ? 'next' : 'error';
-        subscriber[methodName](data);
-      };
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
+            console.log('onNext response', response.data);
+            subscriber.next(response.data);
             !responsesLimit && socketSubscriber && socketSubscriber.request(1);
-            handleResponseBySubscriber(response);
           },
           onComplete: (response) => {
-            isSingle && handleResponseBySubscriber(response);
+            console.log('onComplete response', response);
+            isSingle && subscriber.next(response.data);
             subscriber.complete();
           },
-          onError: (error) => subscriber.error(error),
+          onError: error => subscriber.error(error),
           onSubscribe: (socketSubscriberData) => {
             if (isStream) {
               unsubscribe = socketSubscriberData.cancel;
