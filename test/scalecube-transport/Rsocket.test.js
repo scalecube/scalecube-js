@@ -365,7 +365,7 @@ describe('Rsocket tests', () => {
     );
   });
 
-  it('failing/many Test', async (done) => {
+  it('failing/many test', async (done) => {
     expect.assertions(3);
     // TODO With responsesLimit we receive two success and error item, with unlimited requests - only one success and error item
     const { stream } = await createRequestStream({
@@ -387,6 +387,26 @@ describe('Rsocket tests', () => {
         console.log('error', error);
       },
       () => {
+        done();
+      }
+    );
+  });
+
+  it('failing/one test', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      type: 'requestResponse',
+      actionName: 'failing/one',
+      data: text
+    });
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual({ errorCode: 500, errorMessage: text });
+      },
+      (error) => {
+        console.log('error', error);
+      },
+      (data) => {
         done();
       }
     );
