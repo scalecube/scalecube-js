@@ -3,8 +3,9 @@ import WebSocket from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest } from '../utils';
+import { TransportInterface } from '../api/TransportInterface';
 
-export class RSocketProvider {
+export class RSocketProvider implements TransportInterface {
   constructor({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
     this.client = new RSocketClient({
       serializers: JsonSerializers,

@@ -2,12 +2,11 @@ import { RSocketProvider } from 'src/scalecube-transport/provider/RSocketProvide
 import { errors } from 'src/scalecube-transport/errors';
 
 describe('Rsocket tests', () => {
-  const serviceName = 'greeting';
   const text = 'Test text';
   const textResponseSingle = `Echo:${text}`;
   const getTextResponseStream = index => `Greeting (${index}) to: ${text}`;
 
-  const createRequestStream = async ({ type, actionName, data, responsesLimit }) => {
+  const createRequestStream = async ({ serviceName = 'greeting', type, actionName, data, responsesLimit }) => {
     const url = 'ws://localhost:8080';
     const rSocketProvider = new RSocketProvider({ url });
     await rSocketProvider.connect();
@@ -298,6 +297,23 @@ describe('Rsocket tests', () => {
     );
   });
 
+  it('Request "serviceName" validation error', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      serviceName: '',
+      type: 'requestStream',
+      actionName: 'many',
+      data: text
+    });
+    stream.subscribe(
+      (data) => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.wrongServiceName));
+        done();
+      }
+    );
+  });
+
   it('Request "actionName" validation error', async (done) => {
     expect.assertions(1);
     const { stream } = await createRequestStream({
@@ -309,6 +325,40 @@ describe('Rsocket tests', () => {
       (data) => {},
       (error) => {
         expect(error).toEqual(new Error(errors.wrongActionName));
+        done();
+      }
+    );
+  });
+
+  it('Request "responsesLimit" validation error, if responsesLimit is a string', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      type: 'requestStream',
+      actionName: 'many',
+      data: text,
+      responsesLimit: '7'
+    });
+    stream.subscribe(
+      (data) => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.wrongResponsesLimit));
+        done();
+      }
+    );
+  });
+
+  it('Request "responsesLimit" validation error, if responsesLimit is less than zero', async (done) => {
+    expect.assertions(1);
+    const { stream } = await createRequestStream({
+      type: 'requestStream',
+      actionName: 'many',
+      data: text,
+      responsesLimit: -7
+    });
+    stream.subscribe(
+      (data) => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.wrongResponsesLimit));
         done();
       }
     );
