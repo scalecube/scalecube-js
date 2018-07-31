@@ -8,7 +8,7 @@ export interface TransportRequest {
   responsesLimit?: number;
 }
 
-export interface TransportConstructor {
+export interface TransportConfig {
   url: string;
   keepAlive: number;
   lifetime: number;

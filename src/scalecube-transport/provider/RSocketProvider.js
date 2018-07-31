@@ -60,12 +60,10 @@ export class RSocketProvider implements TransportInterface {
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
-            // console.log('onNext response', response.data);
             subscriber.next(response.data);
             !responsesLimit && socketSubscriber && socketSubscriber.request(1);
           },
           onComplete: (response) => {
-            // console.log('onComplete response', response);
             isSingle && subscriber.next(response.data);
             subscriber.complete();
           },

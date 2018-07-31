@@ -2,11 +2,12 @@ import { RSocketProvider } from 'src/scalecube-transport/provider/RSocketProvide
 import { errors } from 'src/scalecube-transport/errors';
 
 describe('Rsocket tests', () => {
+  const defaultServiceName = 'greeting';
   const text = 'Test text';
   const textResponseSingle = `Echo:${text}`;
   const getTextResponseStream = index => `Greeting (${index}) to: ${text}`;
 
-  const createRequestStream = async ({ serviceName = 'greeting', type, actionName, data, responsesLimit }) => {
+  const createRequestStream = async ({ serviceName = defaultServiceName, type, actionName, data, responsesLimit }) => {
     const url = 'ws://localhost:8080';
     const rSocketProvider = new RSocketProvider({ url });
     await rSocketProvider.connect();
@@ -264,7 +265,7 @@ describe('Rsocket tests', () => {
 
     let updates2 = 0;
     const subscription2 = rSocketProvider.request({
-      serviceName,
+      serviceName: defaultServiceName,
       type: 'requestStream',
       actionName: 'many',
       data: text
@@ -365,28 +366,30 @@ describe('Rsocket tests', () => {
   });
 
   it('failing/many Test', async (done) => {
+    expect.assertions(3);
     // TODO With responsesLimit we receive two success and error item, with unlimited requests - only one success and error item
     const { stream } = await createRequestStream({
       type: 'requestStream',
       actionName: 'failing/many',
       data: text,
-      responsesLimit: 777
+      responsesLimit: 2147483647
     });
+    let updates = 0;
     stream.subscribe(
       (data) => {
-        // console.log('data', data);
+        updates++;
+        if (updates < 3) {
+          expect(data).toEqual(textResponseSingle);
+        }
+        updates === 3 && expect(data).toEqual({ errorCode: 500, errorMessage: textResponseSingle });
       },
       (error) => {
         console.log('error', error);
       },
-      (data) => {
-        console.log('Stream is completed');
+      () => {
+        done();
       }
     );
-
-    setTimeout(() => {
-      done();
-    }, 2000);
   });
 
 });

@@ -1,9 +1,9 @@
 // @flow
-import { TransportRequest, TransportConstructor } from './types';
+import { TransportRequest, TransportConfig } from './types';
 import { Observable } from 'rxjs';
 
 export interface TransportInterface {
-  constructor(transportConstructor: TransportConstructor) : void
+  constructor(transportConfig: TransportConfig) : void;
   connect(): Promise<void>;
   disconnect(): Promise<void>;
   request(transportRequest: TransportRequest): Observable<any>;
