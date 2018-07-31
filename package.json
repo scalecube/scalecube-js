@@ -21,13 +21,12 @@
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build": "npm run clean && npm run build:es && npm run build:commonjs && npm run flow:gen",
     "flow": "flow",
-    "flow:check": "flow check",
     "flow:install": "flow-typed install",
     "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir . && npm run flow:gen:move && npm run flowToTs ",
     "flow:gen:move": "rname \"./libdef.js.flow\" \"./index.js.flow\"",
     "flowToTs": "node build/flowToTs index.js.flow index.d.ts",
     "flow:reset": "flow stop && flow start",
-    "flow:check":"npm run flow:reset && flow check"
+    "flow:check": "npm run flow:reset && flow check"
   },
   "main": "lib/scalecube-services/services/index.js",
   "#module": "es/scalecube-services/services/index.js",
@@ -72,6 +71,7 @@
     ]
   },
   "dependencies": {
+    "isomorphic-ws": "^4.0.1",
     "rsocket-core": "^0.0.8",
     "rsocket-websocket-client": "^0.0.8",
     "rxjs": "^5.5.5",

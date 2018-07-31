@@ -1,5 +1,5 @@
 import RSocketWebSocketClient from 'rsocket-websocket-client';
-import WebSocket from 'ws';
+import WebSocket from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest } from '../utils';
@@ -59,12 +59,12 @@ export class RSocketProvider {
       this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
         .subscribe({
           onNext: (response) => {
-            console.log('onNext response', response.data);
+            // console.log('onNext response', response.data);
             subscriber.next(response.data);
             !responsesLimit && socketSubscriber && socketSubscriber.request(1);
           },
           onComplete: (response) => {
-            console.log('onComplete response', response);
+            // console.log('onComplete response', response);
             isSingle && subscriber.next(response.data);
             subscriber.complete();
           },

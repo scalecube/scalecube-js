@@ -285,7 +285,7 @@ describe('Rsocket tests', () => {
   it('Request "type" validation error', async (done) => {
     expect.assertions(1);
     const { stream } = await createRequestStream({
-      type: 'requestStream',
+      type: 'wrongType',
       actionName: 'many',
       data: text
     });
@@ -301,14 +301,14 @@ describe('Rsocket tests', () => {
   it('Request "actionName" validation error', async (done) => {
     expect.assertions(1);
     const { stream } = await createRequestStream({
-      type: 'wrongType',
+      type: 'requestStream',
       actionName: '',
       data: text
     });
     stream.subscribe(
       (data) => {},
       (error) => {
-        expect(error).toEqual(new Error(errors.wrongType));
+        expect(error).toEqual(new Error(errors.wrongActionName));
         done();
       }
     );
