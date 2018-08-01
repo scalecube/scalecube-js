@@ -12,3 +12,18 @@ export const validateRequest = ({ headers: { type, responsesLimit }, entrypoint 
     return errors.wrongResponsesLimit;
   }
 };
+
+export const validateBuildConfig = ({ url }) => {
+  if (!url.match(/^wss?:\/\/.*/)) {
+    return errors.wrongUrl;
+  }
+};
+
+export const extractConnectionError = ({ message }) => {
+  if (message.includes('ENOTFOUND')) {
+    return new Error(errors.urlNotFound);
+  } else if (message.includes('ECONNREFUSED')) {
+    return new Error(errors.connectionRefused);
+  }
+  return new Error(message);
+};

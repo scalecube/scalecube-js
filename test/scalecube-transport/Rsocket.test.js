@@ -43,6 +43,29 @@ describe('Rsocket tests', () => {
     )
   });
 
+  it('Providing an url that does not exist causes an error while setting a provider', async (done) => {
+    const transport = new Transport();
+    transport.setProvider(RSocketProvider, { url: 'ws://lo' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.urlNotFound));
+      done();
+    });
+  });
+
+  it('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
+    const transport = new Transport();
+    transport.setProvider(RSocketProvider, { url: 'ws://localhost:9999' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.connectionRefused));
+      done();
+    });
+  });
+
+  // it('Test', async (done) => {
+  //   const transport = new Transport();
+  //   transport.setProvider(RSocketProvider, { url, keepAlive: 'test' }).catch((error) => {
+  //     done();
+  //   });
+  // });
+
   it('Use requestResponse type with "one" action - receive one response and the stream is completed', async (done) => {
     expect.assertions(2);
 

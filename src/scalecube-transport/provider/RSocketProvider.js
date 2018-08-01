@@ -2,7 +2,7 @@ import RSocketWebSocketClient from 'rsocket-websocket-client';
 import WebSocket from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
-import { validateRequest } from '../utils';
+import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
 
 export class RSocketProvider {
 
@@ -11,21 +11,35 @@ export class RSocketProvider {
     this._socket = null;
   }
 
+  // TODO Do we want to configure wsCreator?
   build({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
     return new Promise((resolve, reject) => {
-      this._client = new RSocketClient({
-        serializers: JsonSerializers,
-        setup: {
-          keepAlive,
-          lifetime,
-          dataMimeType: 'application/json',
-          metadataMimeType: 'application/json',
-        },
-        transport: new RSocketWebSocketClient({ url, wsCreator }),
-      });
+      const validationError = validateBuildConfig({ url, keepAlive, lifetime });
+      if (validationError) {
+        return reject(new Error(validationError))
+      }
+
+      try {
+        this._client = new RSocketClient({
+          serializers: JsonSerializers,
+          setup: {
+            keepAlive,
+            lifetime,
+            dataMimeType: 'application/json',
+            metadataMimeType: 'application/json',
+          },
+          transport: new RSocketWebSocketClient({ url, wsCreator }),
+        });
+      } catch(error) {
+        return reject(error);
+      }
+
       this._connect()
         .then(resolve)
-        .catch(reject)
+        .catch((error) => {
+          const formattedError = extractConnectionError(error);
+          reject(formattedError);
+        })
     });
   }
 
