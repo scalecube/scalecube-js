@@ -3,28 +3,37 @@ import WebSocket from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest } from '../utils';
-import { TransportInterface } from '../api/TransportInterface';
 
-export class RSocketProvider implements TransportInterface {
-  constructor({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
-    this.client = new RSocketClient({
-      serializers: JsonSerializers,
-      setup: {
-        keepAlive,
-        lifetime,
-        dataMimeType: 'application/json',
-        metadataMimeType: 'application/json',
-      },
-      transport: new RSocketWebSocketClient({ url, wsCreator }),
-    });
-    this.socket = null;
+export class RSocketProvider {
+
+  constructor() {
+    this._client = null;
+    this._socket = null;
   }
 
-  connect() {
+  build({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
     return new Promise((resolve, reject) => {
-      this.client.connect().subscribe({
+      this._client = new RSocketClient({
+        serializers: JsonSerializers,
+        setup: {
+          keepAlive,
+          lifetime,
+          dataMimeType: 'application/json',
+          metadataMimeType: 'application/json',
+        },
+        transport: new RSocketWebSocketClient({ url, wsCreator }),
+      });
+      this._connect()
+        .then(resolve)
+        .catch(reject)
+    });
+  }
+
+  _connect() {
+    return new Promise((resolve, reject) => {
+      this._client.connect().subscribe({
         onComplete: (socket) => {
-          this.socket = socket;
+          this._socket = socket;
           resolve();
         },
         onError: reject
@@ -32,19 +41,19 @@ export class RSocketProvider implements TransportInterface {
     });
   }
 
-  disconnect() {
+  _disconnect() {
     return new Promise((resolve, reject) => {
-      if (!this.socket) {
+      if (!this._socket) {
         return reject('The connection is not opened');
       }
-      this.socket = null;
-      this.client.close();
+      this._socket = null;
+      this._client.close();
       resolve();
     });
   }
 
   request(requestData) {
-    const { type, serviceName, actionName, data, responsesLimit } = requestData;
+    const { headers: { type, responsesLimit }, data, entrypoint } = requestData;
     const isSingle = type === 'requestResponse';
     const isStream = type === 'requestStream' || type === 'requestChannel';
     const initialRespondsAmount = responsesLimit || 1;
@@ -57,7 +66,7 @@ export class RSocketProvider implements TransportInterface {
 
       let unsubscribe;
       let socketSubscriber;
-      this.socket[type]({ data, metadata: { q: `/${serviceName}/${actionName}` }})
+      this._socket[type]({ data, metadata: { q: entrypoint }})
         .subscribe({
           onNext: (response) => {
             subscriber.next(response.data);

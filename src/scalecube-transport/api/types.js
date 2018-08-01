@@ -1,16 +1,15 @@
 // @flow
 
-export interface TransportRequest {
-  type: 'fireAndForget' | 'requestResponse' | 'requestStream' | 'requestChannel' | 'requestChannel';
-  serviceName: string;
-  actionName: string;
-  data: any;
-  responsesLimit?: number;
+export interface TransportRequestHeaders {
+  [key:string]: string | number;
 }
 
-export interface TransportConfig {
+export interface TransportRequest {
+  headers: TransportRequestHeaders;
+  entrypoint: string;
+  data: any;
+}
+
+export interface ProviderConfig {
   url: string;
-  wsCreator: (url: string) => any;
-  keepAlive?: number;
-  lifetime?: number;
 }
