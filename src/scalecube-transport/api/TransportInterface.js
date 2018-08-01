@@ -1,8 +1,9 @@
 // @flow
 import { TransportRequest, ProviderConfig } from './types';
+import { ProviderInterface } from './ProviderInterface';
 import { Observable } from 'rxjs';
 
 export interface TransportInterface {
-  setProvider(provider: ProviderInterface, config: ProviderConfig): Promise<void>;
+  setProvider(Provider: ProviderInterface, providerConfig: ProviderConfig): Promise<void>;
   request(transportRequest: TransportRequest): Observable<any>;
 }

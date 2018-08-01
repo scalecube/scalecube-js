@@ -13,9 +13,18 @@ export const validateRequest = ({ headers: { type, responsesLimit }, entrypoint 
   }
 };
 
-export const validateBuildConfig = ({ url }) => {
-  if (!url.match(/^wss?:\/\/.*/)) {
+export const validateBuildConfig = ({ URI = '', keepAlive, lifetime, WebSocket }) => {
+  if (!URI.match(/^wss?:\/\/.*/)) {
     return errors.wrongUrl;
+  }
+  if (keepAlive && (typeof keepAlive !== 'number' || keepAlive > 0)) {
+    return errors.wrongKeepAlive;
+  }
+  if (lifetime && (typeof lifetime !== 'number' || lifetime > 0)) {
+    return errors.wrongLifetime;
+  }
+  if (WebSocket && typeof WebSocket !== 'function') {
+    return errors.wrongWebSocket;
   }
 };
 

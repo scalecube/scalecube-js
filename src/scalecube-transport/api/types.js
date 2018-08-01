@@ -1,15 +1,15 @@
 // @flow
 
-export interface TransportRequestHeaders {
-  [key:string]: string | number;
-}
-
 export interface TransportRequest {
-  headers: TransportRequestHeaders;
+  headers: Object;
   entrypoint: string;
   data: any;
 }
 
 export interface ProviderConfig {
-  url: string;
+  URI: string;
+  keepAlive?: number;
+  keepAlive?: number;
+  lifetime?: number;
+  WebSocket?: any;
 }

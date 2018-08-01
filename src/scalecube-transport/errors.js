@@ -7,5 +7,8 @@ export const errors = {
   wrongResponsesLimit: 'ResponsesLimit should be a number and be greater than zero',
   noProvider: 'No provider has been set to the transport',
   urlNotFound: 'Provided url can not be found - no connection',
-  connectionRefused: 'Refused connection to the provided url'
+  connectionRefused: 'Refused connection to the provided url',
+  wrongKeepAlive: 'KeepAlive should be a positive number',
+  wrongLifetime: 'Lifetime should be a positive number',
+  wrongWebSocket: 'WebSocket should be a class'
 };

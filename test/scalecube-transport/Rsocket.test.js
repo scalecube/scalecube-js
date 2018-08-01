@@ -3,7 +3,7 @@ import { Transport } from 'src/scalecube-transport/Transport';
 import { errors } from 'src/scalecube-transport/errors';
 
 describe('Rsocket tests', () => {
-  const url = 'ws://localhost:8080';
+  const URI = 'ws://localhost:8080';
   const defaultServiceName = 'greeting';
   const text = 'Test text';
   const textResponseSingle = `Echo:${text}`;
@@ -13,7 +13,7 @@ describe('Rsocket tests', () => {
     const headers = { type, responsesLimit };
     const entrypoint = `/${serviceName}/${actionName}`;
     const transport = new Transport();
-    await transport.setProvider(RSocketProvider, { url });
+    await transport.setProvider(RSocketProvider, { URI });
     const stream = transport.request({ headers, data, entrypoint });
     return { transport, stream };
   };
@@ -32,7 +32,7 @@ describe('Rsocket tests', () => {
 
   it('Calling request without waiting for build to be completed will cause an error about missing provider', async (done) => {
     const transport = new Transport();
-    transport.setProvider(RSocketProvider, { url });
+    transport.setProvider(RSocketProvider, { URI });
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
     stream.subscribe(
       () => {},
@@ -45,7 +45,7 @@ describe('Rsocket tests', () => {
 
   it('Providing an url that does not exist causes an error while setting a provider', async (done) => {
     const transport = new Transport();
-    transport.setProvider(RSocketProvider, { url: 'ws://lo' }).catch((error) => {
+    transport.setProvider(RSocketProvider, { URI: 'ws://lo' }).catch((error) => {
       expect(error).toEqual(new Error(errors.urlNotFound));
       done();
     });
@@ -53,18 +53,35 @@ describe('Rsocket tests', () => {
 
   it('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
     const transport = new Transport();
-    transport.setProvider(RSocketProvider, { url: 'ws://localhost:9999' }).catch((error) => {
+    transport.setProvider(RSocketProvider, { URI: 'ws://localhost:9999' }).catch((error) => {
       expect(error).toEqual(new Error(errors.connectionRefused));
       done();
     });
   });
 
-  // it('Test', async (done) => {
-  //   const transport = new Transport();
-  //   transport.setProvider(RSocketProvider, { url, keepAlive: 'test' }).catch((error) => {
-  //     done();
-  //   });
-  // });
+  it('If keepAlive is not a number, there is a validation error', async (done) => {
+    const transport = new Transport();
+    transport.setProvider(RSocketProvider, { URI, keepAlive: 'test' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.wrongKeepAlive));
+      done();
+    });
+  });
+
+  it('If lifetime is not a number, there is a validation error', async (done) => {
+    const transport = new Transport();
+    transport.setProvider(RSocketProvider, { URI, lifetime: 'test' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.wrongLifetime));
+      done();
+    });
+  });
+
+  it('If WebSocket is not a function, there is a validation error', async (done) => {
+    const transport = new Transport();
+    transport.setProvider(RSocketProvider, { URI, WebSocket: 'test' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.wrongWebSocket));
+      done();
+    });
+  });
 
   it('Use requestResponse type with "one" action - receive one response and the stream is completed', async (done) => {
     expect.assertions(2);

@@ -1,22 +1,35 @@
+// @flow
 import RSocketWebSocketClient from 'rsocket-websocket-client';
-import WebSocket from 'isomorphic-ws';
+import WS from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
+import { ProviderInterface } from '../api/ProviderInterface';
 
-export class RSocketProvider {
+export class RSocketProvider implements ProviderInterface {
+  _client: any;
+  _socket: any;
 
   constructor() {
     this._client = null;
     this._socket = null;
   }
 
-  // TODO Do we want to configure wsCreator?
-  build({ url, keepAlive = 60000, lifetime = 180000, wsCreator = url => new WebSocket(url) }) {
+  build({ URI, keepAlive, lifetime, WebSocket }) {
+    const wsCreator = URI => new WebSocket(URI);
     return new Promise((resolve, reject) => {
-      const validationError = validateBuildConfig({ url, keepAlive, lifetime });
+      const validationError = validateBuildConfig({ URI, keepAlive, lifetime, WebSocket });
       if (validationError) {
         return reject(new Error(validationError))
+      }
+      if (!keepAlive) {
+        keepAlive = 60000;
+      }
+      if (!lifetime) {
+        lifetime = 180000;
+      }
+      if (!WebSocket) {
+        WebSocket = WS;
       }
 
       try {
@@ -26,9 +39,9 @@ export class RSocketProvider {
             keepAlive,
             lifetime,
             dataMimeType: 'application/json',
-            metadataMimeType: 'application/json',
+            metadataMimeType: 'application/json'
           },
-          transport: new RSocketWebSocketClient({ url, wsCreator }),
+          transport: new RSocketWebSocketClient({ url: URI, wsCreator }),
         });
       } catch(error) {
         return reject(error);
@@ -36,10 +49,7 @@ export class RSocketProvider {
 
       this._connect()
         .then(resolve)
-        .catch((error) => {
-          const formattedError = extractConnectionError(error);
-          reject(formattedError);
-        })
+        .catch(error => reject(extractConnectionError(error)))
     });
   }
 
