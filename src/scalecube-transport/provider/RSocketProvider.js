@@ -61,10 +61,15 @@ export class RSocketProvider implements ProviderInterface {
         subscriber.error(new Error(validationError));
       } else {
         let socketSubscriber;
+        let updates = 0;
         this._socket[type]({ data, metadata: { q: entrypoint }})
           .subscribe({
             onNext: (response) => {
               subscriber.next(response.data);
+              updates++;
+              if (responsesLimit && responsesLimit === updates) {
+                unsubscribe();
+              }
               !responsesLimit && socketSubscriber && socketSubscriber.request(1);
             },
             onComplete: (response) => {
@@ -74,7 +79,10 @@ export class RSocketProvider implements ProviderInterface {
             onError: error => subscriber.error(error),
             onSubscribe: (socketSubscriberData) => {
               if (isStream) {
-                unsubscribe = socketSubscriberData.cancel;
+                unsubscribe = () => {
+                  socketSubscriberData.cancel();
+                  subscriber.complete();
+                };
                 socketSubscriber = socketSubscriberData;
                 socketSubscriberData.request(initialRespondsAmount);
               }

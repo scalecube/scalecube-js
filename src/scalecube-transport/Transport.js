@@ -23,7 +23,7 @@ export class Transport implements TransportInterface {
       if (!this._provider) {
         return reject(new Error(errors.noProvider));
       }
-      return this._provider.destroy()
+      this._provider.destroy()
         .then(() => {
           this._provider = null;
           resolve();
