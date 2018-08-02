@@ -6,4 +6,5 @@ import { Observable } from 'rxjs';
 export interface TransportInterface {
   setProvider(Provider: ProviderInterface, providerConfig: ProviderConfig): Promise<void>;
   request(transportRequest: TransportRequest): Observable<any>;
+  removeProvider(): Promise<void>;
 }

@@ -1,3 +1,4 @@
+// @flow
 import { allowedRequestTypes } from './const';
 
 export const errors = {

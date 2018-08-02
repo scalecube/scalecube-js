@@ -1,10 +1,13 @@
 // @flow
+// $FlowFixMe
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import WS from 'isomorphic-ws';
+// $FlowFixMe
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
 import { ProviderInterface } from '../api/ProviderInterface';
+import { ProviderConfig, TransportRequest } from '../api/types';
 
 export class RSocketProvider implements ProviderInterface {
   _client: any;
@@ -15,21 +18,13 @@ export class RSocketProvider implements ProviderInterface {
     this._socket = null;
   }
 
-  build({ URI, keepAlive, lifetime, WebSocket }) {
+  build(config: ProviderConfig): Promise<void> {
+    let { URI, keepAlive = 60000, lifetime = 180000, WebSocket = WS } = config;
     const wsCreator = URI => new WebSocket(URI);
     return new Promise((resolve, reject) => {
       const validationError = validateBuildConfig({ URI, keepAlive, lifetime, WebSocket });
       if (validationError) {
         return reject(new Error(validationError))
-      }
-      if (!keepAlive) {
-        keepAlive = 60000;
-      }
-      if (!lifetime) {
-        lifetime = 180000;
-      }
-      if (!WebSocket) {
-        WebSocket = WS;
       }
 
       try {
@@ -53,7 +48,48 @@ export class RSocketProvider implements ProviderInterface {
     });
   }
 
-  _connect() {
+  request(requestData: TransportRequest): Observable<any> {
+    const { headers: { type, responsesLimit }, data, entrypoint } = requestData;
+    const isSingle = type === 'requestResponse';
+    const isStream = type === 'requestStream' || type === 'requestChannel';
+    const initialRespondsAmount = responsesLimit || 1;
+
+    return Observable.create((subscriber) => {
+      let unsubscribe;
+      const validationError = validateRequest(requestData);
+      if (validationError) {
+        subscriber.error(new Error(validationError));
+      } else {
+        let socketSubscriber;
+        this._socket[type]({ data, metadata: { q: entrypoint }})
+          .subscribe({
+            onNext: (response) => {
+              subscriber.next(response.data);
+              !responsesLimit && socketSubscriber && socketSubscriber.request(1);
+            },
+            onComplete: (response) => {
+              isSingle && subscriber.next(response.data);
+              subscriber.complete();
+            },
+            onError: error => subscriber.error(error),
+            onSubscribe: (socketSubscriberData) => {
+              if (isStream) {
+                unsubscribe = socketSubscriberData.cancel;
+                socketSubscriber = socketSubscriberData;
+                socketSubscriberData.request(initialRespondsAmount);
+              }
+              if (isSingle) {
+                unsubscribe = socketSubscriberData;
+              }
+            }
+          });
+      }
+
+      return unsubscribe;
+    });
+  }
+
+  _connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this._client.connect().subscribe({
         onComplete: (socket) => {
@@ -65,55 +101,11 @@ export class RSocketProvider implements ProviderInterface {
     });
   }
 
-  _disconnect() {
+  destroy(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (!this._socket) {
-        return reject('The connection is not opened');
-      }
       this._socket = null;
       this._client.close();
       resolve();
-    });
-  }
-
-  request(requestData) {
-    const { headers: { type, responsesLimit }, data, entrypoint } = requestData;
-    const isSingle = type === 'requestResponse';
-    const isStream = type === 'requestStream' || type === 'requestChannel';
-    const initialRespondsAmount = responsesLimit || 1;
-
-    return Observable.create((subscriber) => {
-      const validationError = validateRequest(requestData);
-      if (validationError) {
-        return subscriber.error(new Error(validationError));
-      }
-
-      let unsubscribe;
-      let socketSubscriber;
-      this._socket[type]({ data, metadata: { q: entrypoint }})
-        .subscribe({
-          onNext: (response) => {
-            subscriber.next(response.data);
-            !responsesLimit && socketSubscriber && socketSubscriber.request(1);
-          },
-          onComplete: (response) => {
-            isSingle && subscriber.next(response.data);
-            subscriber.complete();
-          },
-          onError: error => subscriber.error(error),
-          onSubscribe: (socketSubscriberData) => {
-            if (isStream) {
-              unsubscribe = socketSubscriberData.cancel;
-              socketSubscriber = socketSubscriberData;
-              socketSubscriberData.request(initialRespondsAmount);
-            }
-            if (isSingle) {
-              unsubscribe = socketSubscriberData;
-            }
-          }
-        });
-
-      return unsubscribe;
     });
   }
 

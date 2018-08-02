@@ -267,70 +267,67 @@ describe('Rsocket tests', () => {
     }, 2000);
   });
 
-  // TODO Decide on disconnect
-  // it('Disconnect - an error appears in the stream with the message about closed connection', async (done) => {
-  //   expect.assertions(4);
-  //   const { stream, rSocketProvider } = await createRequestStream({
-  //     type: 'requestStream',
-  //     actionName: 'many',
-  //     data: text
-  //   });
-  //   let updates = 0;
-  //   const subscription = stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseStream(updates));
-  //       updates++;
-  //       if (updates > 2) {
-  //         rSocketProvider.disconnect();
-  //       }
-  //     },
-  //     (error) => {
-  //       expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-  //       done();
-  //     }
-  //   );
-  // });
+  it('Disconnect - an error appears in the stream with the message about closed connection', async (done) => {
+    expect.assertions(4);
+    const { stream, transport } = await createRequestStream({
+      type: 'requestStream',
+      actionName: 'many',
+      data: text
+    });
+    let updates = 0;
+    const subscription = stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseStream(updates));
+        updates++;
+        if (updates > 2) {
+          transport.removeProvider();
+        }
+      },
+      (error) => {
+        expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+        done();
+      }
+    );
+  });
 
-  // TODO Decide on disconnect
-  // it('Disconnect - an error appears in multiple streams with the message about closed connection', async (done) => {
-  //   expect.assertions(7);
-  //   const { stream, rSocketProvider } = await createRequestStream({
-  //     type: 'requestStream',
-  //     actionName: 'many',
-  //     data: text
-  //   });
-  //   let updates1 = 0;
-  //   const subscription1 = stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseStream(updates1));
-  //       updates1++;
-  //       if (updates1 > 2) {
-  //         rSocketProvider.disconnect();
-  //       }
-  //     },
-  //     (error) => {
-  //       expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-  //     }
-  //   );
-  //
-  //   let updates2 = 0;
-  //   const subscription2 = rSocketProvider.request({
-  //     serviceName: defaultServiceName,
-  //     type: 'requestStream',
-  //     actionName: 'many',
-  //     data: text
-  //   })
-  //     .subscribe(
-  //       (data) => {
-  //         expect(data).toEqual(getTextResponseStream(updates2));
-  //         updates2++;
-  //       },
-  //       (error) => {
-  //         expect(error).toEqual(new Error('RSocket: The connection was closed.'));
-  //         done();
-  //       }
-  //     );
-  // });
+  it('Disconnect - an error appears in multiple streams with the message about closed connection', async (done) => {
+    expect.assertions(7);
+    const { stream, transport } = await createRequestStream({
+      type: 'requestStream',
+      actionName: 'many',
+      data: text
+    });
+    let updates1 = 0;
+    const subscription1 = stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseStream(updates1));
+        updates1++;
+        if (updates1 > 2) {
+          transport.removeProvider();
+        }
+      },
+      (error) => {
+        expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+      }
+    );
+
+    let updates2 = 0;
+    const subscription2 = transport.request({
+      headers: { type: 'requestStream' },
+      entrypoint: `/${defaultServiceName}/many`,
+      data: text
+    })
+      .subscribe(
+        (data) => {
+          expect(data).toEqual(getTextResponseStream(updates2));
+          updates2++;
+        },
+        (error) => {
+          expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+          done();
+        }
+      );
+  });
 
   it('Request "type" validation error', async (done) => {
     expect.assertions(1);
