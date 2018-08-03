@@ -1,8 +1,6 @@
 // @flow
-// $FlowFixMe
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import WS from 'isomorphic-ws';
-// $FlowFixMe
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
