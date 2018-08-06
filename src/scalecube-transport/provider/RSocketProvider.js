@@ -14,6 +14,7 @@ export class RSocketProvider implements ProviderInterface {
   constructor() {
     this._client = null;
     this._socket = null;
+    return this;
   }
 
   build(config: ProviderConfig): Promise<void> {
@@ -53,7 +54,7 @@ export class RSocketProvider implements ProviderInterface {
     const initialRespondsAmount = responsesLimit || 1;
 
     return Observable.create((subscriber) => {
-      let unsubscribe;
+      let unsubscribe = () => {};
       const validationError = validateRequest(requestData);
       if (validationError) {
         subscriber.error(new Error(validationError));
@@ -108,7 +109,7 @@ export class RSocketProvider implements ProviderInterface {
   }
 
   destroy(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._socket = null;
       this._client.close();
       resolve();

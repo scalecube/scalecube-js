@@ -3,6 +3,7 @@ import { TransportRequest, ProviderConfig } from './types';
 import { Observable } from 'rxjs';
 
 export interface ProviderInterface {
+  constructor(): ProviderInterface;
   /**
    * Method is used to prepare all the necessary connections to a server using the provided configuration
    *

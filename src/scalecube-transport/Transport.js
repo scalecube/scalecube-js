@@ -10,10 +10,10 @@ export class Transport implements TransportInterface {
 
   constructor() {
     this._provider = null;
+    return this;
   }
 
-  setProvider(Provider: ProviderInterface, providerConfig: ProviderConfig): Promise<void> {
-    // $FlowFixMe
+  setProvider(Provider: Class<ProviderInterface>, providerConfig: ProviderConfig): Promise<void> {
     const provider = new Provider();
     return provider.build(providerConfig).then(() => { this._provider = provider });
   }
