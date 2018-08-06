@@ -17,13 +17,13 @@ describe('Rsocket tests', () => {
     return transport;
   };
 
-  afterEach(async () => {
-    if (needToRemoveProvider) {
-      await transport.removeProvider();
-    }
-    transport = undefined;
-    needToRemoveProvider = true;
-  });
+  // afterEach(async () => {
+  //   if (needToRemoveProvider) {
+  //     await transport.removeProvider();
+  //   }
+  //   transport = undefined;
+  //   needToRemoveProvider = true;
+  // });
 
   it('Calling request without setting a provider will cause an error about missing provider', async (done) => {
     expect.assertions(1);
@@ -388,5 +388,31 @@ describe('Rsocket tests', () => {
       done
     );
   });
+
+  it('Test', (done) => {
+    const Worker = require('webworker-threads').Worker;
+
+    const worker = new Worker(function() {
+
+      console.log('this.postMessage', this.postMessage);
+
+      this.postMessage("I'm working before postMessage('ali').");
+      this.onmessage = function(event) {
+        console.log('received');
+        this.postMessage('Hi ' + event.data);
+        this.close();
+      };
+    });
+
+    worker.onmessage = function(event) {
+      console.log("Worker said : " + event.data);
+    };
+    worker.postMessage('ali');
+
+    setTimeout(() => {
+      done();
+    }, 2000);
+
+  })
 
 });
