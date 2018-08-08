@@ -8,12 +8,12 @@ import { errors } from '../errors';
 
 export class PostMessageProvider implements ProviderInterface {
   _worker: any;
-  _subscribers: any;
+  _activeRequests: any;
   _handleNewMessage: any;
 
   constructor() {
     this._worker = null;
-    this._subscribers = {};
+    this._activeRequests = {};
     this._handleNewMessage = this._handleNewMessage.bind(this);
     return this;
   }
@@ -35,7 +35,6 @@ export class PostMessageProvider implements ProviderInterface {
   }
 
   request(requestData: TransportRequest): Observable<any> {
-    let updates = 0;
     return Observable.create((subscriber) => {
       const validationError = validateRequest(requestData, { type: true });
       if (validationError) {
@@ -44,13 +43,16 @@ export class PostMessageProvider implements ProviderInterface {
         const requestId = Date.now();
         const { headers, data, entrypoint } = requestData;
         const { responsesLimit } = headers || {};
-        this._subscribers[requestId] = new Subject();
+        this._activeRequests[requestId] = { subscriber: new Subject(), responsesCount: 0, responsesLimit };
         this._worker.postMessage({ entrypoint, data, requestId });
-        this._subscribers[requestId].subscribe(
+        this._activeRequests[requestId].subscriber.subscribe(
           (data) => {
-            updates++;
-            if (!responsesLimit || updates <= responsesLimit) {
+            this._activeRequests[requestId].responsesCount++;
+            if (!this._activeRequests[requestId].responsesLimit ||
+              this._activeRequests[requestId].responsesCount <= this._activeRequests[requestId].responsesLimit) {
               subscriber.next(data);
+            } else {
+              delete this._activeRequests[requestId];
             }
           },
           error => subscriber.error(error),
@@ -63,23 +65,23 @@ export class PostMessageProvider implements ProviderInterface {
   }
 
   _handleNewMessage({ data }) {
-    const subscriber = this._subscribers[data.requestId];
+    const { subscriber } = this._activeRequests[data.requestId] || {};
     if (!subscriber) {
       return;
     }
     if (!data.completed) {
       subscriber.next(data.data);
     } else {
-      delete this._subscribers[data.requestId];
+      delete this._activeRequests[data.requestId];
       subscriber.complete();
     }
   }
 
   destroy(): Promise<void> {
     return new Promise((resolve) => {
-      Object.values(this._subscribers)
-        .forEach((subscriber: any) => subscriber.error(new Error(errors.closedConnection)));
-      this._subscribers = {};
+      Object.values(this._activeRequests)
+        .forEach(({ subscriber }) => subscriber.error(new Error(errors.closedConnection)));
+      this._activeRequests = {};
       this._worker = null;
       resolve();
     });
