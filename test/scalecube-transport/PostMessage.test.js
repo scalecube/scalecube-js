@@ -7,57 +7,58 @@ import { PostMessageProvider } from "../../src/scalecube-transport/provider/Post
 describe('PostMessage tests', () => {
   window.workers = {};
   const URI = 'https://localhost:8080';
+
   window.workers[URI] = new Worker(function () {
     const Observable = require('rxjs').Observable;
+    const getTextResponseSingle = text => `Echo:${text}`;
+    const getTextResponseMany = index => text => `Greeting (${index}) to: ${text}`;
+    const getFailingOneResponse = text => ({ errorCode: 500, errorMessage: text });
+    const getFailingManyResponse = text => ({ errorCode: 500, errorMessage: getTextResponseSingle(text) });
+
     self.onmessage = ({ data: { entrypoint, data, requestId } }) => {
-      if (entrypoint === '/greeting/many100') {
-        Observable.interval(100)
-          .subscribe(
-            result => postMessage({ requestId, data: `Greeting (${result}) to: ${data}`, completed: false }),
-            (error) => {},
-            () => postMessage({ requestId, data: undefined, completed: true })
-          );
-      }
-
-      if (entrypoint === '/greeting/many1000') {
-        Observable.interval(500)
-          .subscribe(
-            result => postMessage({ requestId, data: `Greeting (${result}) to: ${data}`, completed: false }),
-            (error) => {},
-            () => postMessage({ requestId, data: undefined, completed: true })
-          );
-      }
-
       if (entrypoint === '/greeting/one') {
-        postMessage({ requestId, data: `Echo: ${data}`, completed: false });
+        postMessage({ requestId, data: getTextResponseSingle(data), completed: false });
         postMessage({ requestId, data: undefined, completed: true });
       }
-
+      if (entrypoint === '/greeting/pojo/one') {
+        postMessage({ requestId, data: { text: getTextResponseSingle(data) }, completed: false });
+        postMessage({ requestId, data: undefined, completed: true });
+      }
+      if (entrypoint === '/greeting/many') {
+        Observable.interval(100)
+          .subscribe(
+            result => postMessage({ requestId, data: getTextResponseMany(result)(data), completed: false }),
+            (error) => {},
+            () => postMessage({ requestId, data: undefined, completed: true })
+          );
+      }
+      if (entrypoint === '/greeting/failing/one') {
+        postMessage({ requestId, data: getFailingOneResponse(data), completed: false });
+      }
+      if (entrypoint === '/greeting/failing/many') {
+        // TODO Complete this responses
+        postMessage({ requestId, data: getFailingOneResponse(data), completed: false });
+        postMessage({ requestId, data: getFailingOneResponse(data), completed: false });
+        postMessage({ requestId, data: getFailingOneResponse(data), completed: false });
+      }
     };
   });
 
   it('Test webworker-threads', async (done) => {
     const transport = new Transport();
     await transport.setProvider(PostMessageProvider, { URI });
-    transport.request({ headers: { responsesLimit: 3 }, data: 'Test for 100', entrypoint: '/greeting/many100' })
+    transport.request({ headers: { responsesLimit: 3 }, data: 'Test for 100', entrypoint: '/greeting/many' })
       .subscribe(
         data => console.log('onNext', data),
-        error => console.log('onError 100', error),
-        () => console.log('Stream for 100 completed!')
-      );
-
-    transport.request({ headers: { responsesLimit: 2 }, data: 'Test for 1000', entrypoint: '/greeting/many1000' })
-      .subscribe(
-        data => console.log('onNext', data),
-        error => console.log('onError 1000', error),
-        () => console.log('Stream for 1000 completed!')
+        error => console.log('onError', error),
+        () => console.log('Stream completed!')
       );
 
     setTimeout(() => {
       transport.removeProvider().then(done);
-    }, 3000);
+    }, 2000);
 
-  }, 5000);
+  });
 
   it('Test webworker-threads 2', async (done) => {
     const transport = new Transport();
