@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
 import { ProviderInterface } from '../api/ProviderInterface';
 import { ProviderConfig, TransportRequest } from '../api/types';
+import { errors } from '../errors';
 
 export class RSocketProvider implements ProviderInterface {
   _client: any;
@@ -75,7 +76,13 @@ export class RSocketProvider implements ProviderInterface {
               isSingle && subscriber.next(response.data);
               subscriber.complete();
             },
-            onError: error => subscriber.error(error),
+            onError: (error) => {
+              if (error.message === 'RSocket: The connection was closed.') {
+                subscriber.error(new Error(errors.closedConnection));
+              } else {
+                subscriber.error(error);
+              }
+            },
             onSubscribe: (socketSubscriberData) => {
               if (isStream) {
                 unsubscribe = () => {

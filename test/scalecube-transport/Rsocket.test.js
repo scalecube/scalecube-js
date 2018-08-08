@@ -258,7 +258,7 @@ describe('Rsocket tests', () => {
         }
       },
       (error) => {
-        expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+        expect(error).toEqual(new Error(errors.closedConnection));
         done();
       }
     );
@@ -279,7 +279,7 @@ describe('Rsocket tests', () => {
         }
       },
       (error) => {
-        expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+        expect(error).toEqual(new Error(errors.closedConnection));
       }
     );
 
@@ -295,7 +295,7 @@ describe('Rsocket tests', () => {
           updates2++;
         },
         (error) => {
-          expect(error).toEqual(new Error('RSocket: The connection was closed.'));
+          expect(error).toEqual(new Error(errors.closedConnection));
           done();
         }
       );

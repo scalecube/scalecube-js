@@ -3,22 +3,23 @@ import { errors } from './errors';
 import { allowedRequestTypes } from './const';
 import {ProviderConfig, TransportRequest} from './api/types';
 
-export const validateRequest = (requestData: TransportRequest) => {
-  const { headers: { type, responsesLimit }, entrypoint } = requestData;
-  if (!allowedRequestTypes.includes(type)) {
+export const validateRequest = (requestData: TransportRequest, propsToOmitValidation = {}) => {
+  const { headers = {}, entrypoint } = requestData;
+  const { type, responsesLimit } = headers;
+  if (!propsToOmitValidation.type && !allowedRequestTypes.includes(type)) {
     return errors.wrongType;
   }
-  if (!entrypoint || typeof entrypoint !== 'string' || entrypoint[0] !== '/' || entrypoint.length < 3) {
+  if (!propsToOmitValidation.entrypoint && (!entrypoint || typeof entrypoint !== 'string' || entrypoint[0] !== '/' || entrypoint.length < 3)) {
     return errors.wrongEntrypoint;
   }
-  if (responsesLimit && (typeof responsesLimit !== 'number' || responsesLimit < 1)) {
+  if (!propsToOmitValidation.responsesLimit && responsesLimit && (typeof responsesLimit !== 'number' || responsesLimit < 1)) {
     return errors.wrongResponsesLimit;
   }
 };
 
 export const validateBuildConfig = (config: ProviderConfig) => {
   const { URI = '', keepAlive, lifetime, WebSocket } = config;
-  if (!URI.match(/^wss?:\/\/.*/)) {
+  if (typeof URI !== 'string' || !URI) {
     return errors.wrongUrl;
   }
   if (keepAlive && (typeof keepAlive !== 'number' || keepAlive < 0)) {

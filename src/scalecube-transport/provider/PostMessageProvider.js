@@ -1,59 +1,88 @@
 // @flow
-import RSocketWebSocketClient from 'rsocket-websocket-client';
-import WS from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable, Subject } from 'rxjs';
-import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
+import { validateRequest, validateBuildConfig } from '../utils';
 import { ProviderInterface } from '../api/ProviderInterface';
 import { ProviderConfig, TransportRequest } from '../api/types';
+import { errors } from '../errors';
 
 export class PostMessageProvider implements ProviderInterface {
   _worker: any;
-  _subjects: any;
+  _subscribers: any;
   _handleNewMessage: any;
 
   constructor() {
     this._worker = null;
-    this._subjects = {};
+    this._subscribers = {};
     this._handleNewMessage = this._handleNewMessage.bind(this);
     return this;
   }
 
   build(config: ProviderConfig): Promise<void> {
-    let { URI } = config;
-    this._worker = window.workers[URI];
-    this._worker.addEventListener('message', this._handleNewMessage);
-    return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const { URI } = config;
+      const validationError = validateBuildConfig({ URI });
+      if (validationError) {
+        return reject(new Error(validationError));
+      }
+      this._worker = window.workers[URI];
+      if (typeof (this._worker || {}).postMessage !== 'function') {
+        return reject(new Error(errors.urlNotFound))
+      }
+      this._worker.addEventListener('message', this._handleNewMessage);
+      resolve();
+    });
   }
 
   request(requestData: TransportRequest): Observable<any> {
-    const { headers: { requestId, responsesLimit }, data, entrypoint } = requestData;
-    this._subjects[requestId] = new Subject();
-    this._worker.postMessage({ entrypoint, data, requestId });
-
+    let updates = 0;
     return Observable.create((subscriber) => {
-      this._subjects[requestId].subscribe(
-        data => subscriber.next(data),
-        error => {},
-        () => subscriber.complete()
-      );
+      const validationError = validateRequest(requestData, { type: true });
+      if (validationError) {
+        subscriber.error(new Error(validationError));
+      } else {
+        const requestId = Date.now();
+        const { headers, data, entrypoint } = requestData;
+        const { responsesLimit } = headers || {};
+        this._subscribers[requestId] = new Subject();
+        this._worker.postMessage({ entrypoint, data, requestId });
+        this._subscribers[requestId].subscribe(
+          (data) => {
+            updates++;
+            if (!responsesLimit || updates <= responsesLimit) {
+              subscriber.next(data);
+            }
+          },
+          error => subscriber.error(error),
+          subscriber.complete
+        );
+      }
+
+      return () => { console.log('unsubscribe'); }
     });
   }
 
   _handleNewMessage({ data }) {
-    const subject = this._subjects[data.requestId];
+    const subscriber = this._subscribers[data.requestId];
+    if (!subscriber) {
+      return;
+    }
     if (!data.completed) {
-      subject.next(data.data);
+      subscriber.next(data.data);
     } else {
-      subject.complete();
+      delete this._subscribers[data.requestId];
+      subscriber.complete();
     }
   }
 
   destroy(): Promise<void> {
-    this._worker.removeEventListener('message', this._handleNewMessage);
-    this._worker = null;
-    this._subjects = {};
-    return Promise.resolve();
+    return new Promise((resolve) => {
+      Object.values(this._subscribers)
+        .forEach((subscriber: any) => subscriber.error(new Error(errors.closedConnection)));
+      this._subscribers = {};
+      this._worker = null;
+      resolve();
+    });
   }
 
 }

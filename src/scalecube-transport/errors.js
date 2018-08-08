@@ -2,7 +2,7 @@
 import { allowedRequestTypes } from './const';
 
 export const errors = {
-  wrongUrl: 'Url should start with ws(s?)://',
+  wrongUrl: 'URI has a wrong format',
   wrongType: `Type should be one of these: ${allowedRequestTypes.join(', ')}`,
   wrongEntrypoint: 'Entrypoint should be a string and should begin with "/"',
   wrongResponsesLimit: 'ResponsesLimit should be a number and be greater than zero',
@@ -11,5 +11,6 @@ export const errors = {
   connectionRefused: 'Refused connection to the provided url',
   wrongKeepAlive: 'KeepAlive should be a positive number',
   wrongLifetime: 'Lifetime should be a positive number',
-  wrongWebSocket: 'WebSocket should be a class'
+  wrongWebSocket: 'WebSocket should be a class',
+  closedConnection: 'The connection was closed'
 };
