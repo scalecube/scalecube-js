@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/from';
 import { Transport } from '../../src/scalecube-transport/Transport';
 import { PostMessageProvider } from '../../src/scalecube-transport/provider/PostMessageProvider';
 import { errors } from '../../src/scalecube-transport/errors';
@@ -212,43 +210,42 @@ describe('Providers tests', () => {
     );
   });
 
-  // TODO Fix this test
-  // it('Disconnect - an error appears in multiple streams with the message about closed connection', async (done) => {
-  //   expect.assertions(7);
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
-  //   let updates1 = 0;
-  //   stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseMany(updates1)(text));
-  //       updates1++;
-  //       if (updates1 > 2) {
-  //         transport.removeProvider();
-  //         needToRemoveProvider = false;
-  //       }
-  //     },
-  //     (error) => {
-  //       expect(error).toEqual(new Error(errors.closedConnection));
-  //     }
-  //   );
-  //
-  //   let updates2 = 0;
-  //   transport.request({
-  //     headers: { type: 'requestStream' },
-  //     entrypoint: `/greeting/many`,
-  //     data: text
-  //   })
-  //     .subscribe(
-  //       (data) => {
-  //         expect(data).toEqual(getTextResponseMany(updates2)(text));
-  //         updates2++;
-  //       },
-  //       (error) => {
-  //         expect(error).toEqual(new Error(errors.closedConnection));
-  //         done();
-  //       }
-  //     );
-  // });
+  it('Disconnect - an error appears in multiple streams with the message about closed connection', async (done) => {
+    expect.assertions(7);
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+    let updates1 = 0;
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseMany(updates1)(text));
+        updates1++;
+        if (updates1 > 2) {
+          transport.removeProvider();
+          needToRemoveProvider = false;
+        }
+      },
+      (error) => {
+        expect(error).toEqual(new Error(errors.closedConnection));
+      }
+    );
+
+    let updates2 = 0;
+    transport.request({
+      headers: { type: 'requestStream' },
+      entrypoint: `/greeting/many`,
+      data: text
+    })
+      .subscribe(
+        (data) => {
+          expect(data).toEqual(getTextResponseMany(updates2)(text));
+          updates2++;
+        },
+        (error) => {
+          expect(error).toEqual(new Error(errors.closedConnection));
+          done();
+        }
+      );
+  });
 
   it('Request "entrypoint" validation error', async (done) => {
     expect.assertions(1);
@@ -324,7 +321,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Creating a few streams for different requests is handled correctly', async (done) => {
+  it('Creating a few streams for different requests is handled correctly (when first one is limited and the second is unlimited)', async (done) => {
     const transport = await prepareTransport();
     let updates1 = 0;
     let isStream1Completed = false;
@@ -334,9 +331,10 @@ describe('Providers tests', () => {
           expect(data).toEqual(getTextResponseMany(updates1)(text));
           updates1++;
         },
-        error => console.log('onError 1', error),
+        error => {},
         () => { isStream1Completed = true; }
       );
+
     let updates2 = 0;
     let isStream2Completed = false;
     transport.request({ data: text, entrypoint: '/greeting/many' })
@@ -354,6 +352,42 @@ describe('Providers tests', () => {
       expect(isStream1Completed).toEqual(true);
       expect(updates2 > 10).toEqual(true);
       expect(isStream2Completed).toEqual(false);
+      done();
+    }, 2000);
+
+  });
+
+  it('Creating a few streams for different requests is handled correctly (when first one is unlimited and the second is limited)', async (done) => {
+    const transport = await prepareTransport();
+    let updates1 = 0;
+    let isStream1Completed = false;
+    transport.request({ data: text, entrypoint: '/greeting/many' })
+      .subscribe(
+        (data) => {
+          expect(data).toEqual(getTextResponseMany(updates1)(text));
+          updates1++;
+        },
+        error => {},
+        () => { isStream1Completed = true; }
+      );
+
+    let updates2 = 0;
+    let isStream2Completed = false;
+    transport.request({ headers: { responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
+      .subscribe(
+        (data) => {
+          expect(data).toEqual(getTextResponseMany(updates2)(text));
+          updates2++;
+        },
+        error => {},
+        () => { isStream2Completed = true; }
+      );
+
+    setTimeout(() => {
+      expect(updates1 > 10).toEqual(true);
+      expect(isStream1Completed).toEqual(false);
+      expect(updates2).toEqual(3);
+      expect(isStream2Completed).toEqual(true);
       done();
     }, 2000);
 

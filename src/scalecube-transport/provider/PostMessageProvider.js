@@ -1,5 +1,4 @@
 // @flow
-import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable, Subject } from 'rxjs';
 import { validateRequest, validateBuildConfig } from '../utils';
 import { ProviderInterface } from '../api/ProviderInterface';
@@ -9,7 +8,6 @@ import { errors } from '../errors';
 export class PostMessageProvider implements ProviderInterface {
   _worker: any;
   _activeRequests: any;
-  _handleNewMessage: any;
 
   constructor() {
     this._worker = null;
@@ -36,7 +34,7 @@ export class PostMessageProvider implements ProviderInterface {
 
   request(requestData: TransportRequest): Observable<any> {
     return Observable.create((subscriber) => {
-      const requestId = Date.now();
+      const requestId = Object.keys(this._activeRequests).length + 1 + Date.now();
       const validationError = validateRequest(requestData, { type: true });
       if (validationError) {
         subscriber.error(new Error(validationError));
