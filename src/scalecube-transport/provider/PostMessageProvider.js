@@ -52,6 +52,7 @@ export class PostMessageProvider implements ProviderInterface {
               this._activeRequests[requestId].responsesCount <= this._activeRequests[requestId].responsesLimit) {
               subscriber.next(data);
             } else {
+              subscriber.complete();
               delete this._activeRequests[requestId];
             }
           },
