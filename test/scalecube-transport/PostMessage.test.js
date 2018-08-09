@@ -1,28 +1,33 @@
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/from';
 import { Transport } from '../../src/scalecube-transport/Transport';
 import { PostMessageProvider } from "../../src/scalecube-transport/provider/PostMessageProvider";
 import { errors } from '../../src/scalecube-transport/errors';
-import { getTextResponseSingle, getTextResponseMany, getFailingOneResponse, getFailingManyResponse, setWorkers, executeWorkerContent, URI } from './utils';
+import { setWorkers, httpURI as URI } from './utils';
 
 describe('Tests specifically for PostMessage provider', () => {
-  const text = 'Test message';
-  let transport;
-  let needToRemoveProvider = true;
   setWorkers(URI);
 
-  const prepareTransport = async () => {
-    transport = new Transport();
-    await transport.setProvider(PostMessageProvider, { URI });
-    return transport;
+  const testInvalidWorker = (worker) => {
+    const URIWithInvalidWorker = 'https://localhost:4000';
+    window.workers[URIWithInvalidWorker] = worker;
+    const transport = new Transport();
+    return expect(transport.setProvider(PostMessageProvider, { URI: URIWithInvalidWorker }))
+      .rejects.toEqual(new Error(errors.connectionRefused));
   };
 
-  afterEach(async () => {
-    if (needToRemoveProvider) {
-      await transport.removeProvider();
-    }
-    transport = undefined;
-    needToRemoveProvider = true;
+  it ('If an item for a provided URI is string instead of a Worker, an error is emitted', () => {
+    return testInvalidWorker('Invalid worker');
+  });
+
+  it ('If an item for a provided URI is number instead of a Worker, an error is emitted', () => {
+    return testInvalidWorker(777);
+  });
+
+  it ('If an item for a provided URI is a function instead of a Worker, an error is emitted', () => {
+    return testInvalidWorker(() => 555);
+  });
+
+  it ('If an item for a provided URI does not have a postMessage method, an error is emitted', () => {
+    return testInvalidWorker({ test: 'test' });
   });
 
 });

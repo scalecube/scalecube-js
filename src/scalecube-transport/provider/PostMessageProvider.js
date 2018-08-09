@@ -24,8 +24,11 @@ export class PostMessageProvider implements ProviderInterface {
         return reject(new Error(validationError));
       }
       this._worker = window.workers[URI];
-      if (typeof (this._worker || {}).postMessage !== 'function') {
-        return reject(new Error(errors.urlNotFound))
+      if (!this._worker) {
+        return reject(new Error(errors.urlNotFound));
+      }
+      if (typeof this._worker !== 'object' || typeof this._worker.postMessage !== 'function') {
+        return reject(new Error(errors.connectionRefused));
       }
       this._worker.addEventListener('message', this._handleNewMessage);
       resolve();
