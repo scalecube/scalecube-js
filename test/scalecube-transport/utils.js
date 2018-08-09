@@ -45,7 +45,8 @@ export const executeWorkerContent = function() {
   };
 };
 
-export const URI = 'https://localhost:8080';
+export const httpURI = 'https://localhost:8080';
+export const socketURI = 'ws://localhost:8080';
 
 export const setWorkers = (URI) => {
   window.workers = {};
