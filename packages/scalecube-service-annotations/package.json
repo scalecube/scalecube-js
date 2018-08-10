@@ -1,13 +1,6 @@
 {
-  "name": "@scalecube/scalecube-js",
+  "name": "scalecube-service-annotations",
   "version": "0.0.6",
-  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
-  "keywords": [
-    "scalecube",
-    "scalecube-js",
-    "microservices",
-    "services"
-  ],
   "scripts": {
     "clean": "rimraf lib dist es coverage index.js.flow index.d.ts",
     "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",

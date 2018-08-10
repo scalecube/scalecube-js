@@ -1,0 +1,29 @@
+{
+  "presets": ["es2015", "flow"],
+  "env": {
+    "commonjs": {
+      "plugins": [
+        [
+          "transform-es2015-modules-commonjs",
+          {
+            "loose": true
+          }
+        ],
+        [
+          "module-resolver",
+          {
+            "root": [
+              "./"
+            ],
+            "alias": {
+              "src": "./src"
+            }
+          }
+        ]
+      ]
+    },
+    "jest": {
+      "plugins": ["dynamic-import-node"]
+    }
+  }
+}

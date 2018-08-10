@@ -1,5 +1,5 @@
 // @flow
-import { Router, RoundRobinServiceRouter, Microservices } from "src/scalecube-services/services";
+import { Router, RoundRobinServiceRouter, Microservices } from ".";
 
 export class ProxyContext{
   myapi: any;

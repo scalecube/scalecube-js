@@ -1,6 +1,6 @@
 // @flow
 
-import { ServiceRegistery, Message, Router, ServiceInstance } from 'src/scalecube-services/services';
+import { ServiceRegistery, Message, Router, ServiceInstance } from '.';
 
 export class RoundRobinServiceRouter implements Router {
   registry: ServiceRegistery;

@@ -1,5 +1,5 @@
 // @flow
-import { ServicesConfig } from 'src/scalecube-services/services';
+import { ServicesConfig } from '.';
 
 export class ServiceRegistery {
   services: Object;

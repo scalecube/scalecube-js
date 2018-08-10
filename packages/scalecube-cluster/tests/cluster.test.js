@@ -1,4 +1,4 @@
-import { LogicalCluster as Cluster } from 'src/scalecube-cluster/LogicalCluster/LogicalCluster';
+import { LogicalCluster as Cluster } from '../src/LogicalCluster/LogicalCluster';
 import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/elementAt';
