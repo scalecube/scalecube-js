@@ -1,4 +1,5 @@
 import { Transport } from '../../src/scalecube-transport/Transport';
+import { RSocketProvider } from '../../src/scalecube-transport/provider/RSocketProvider';
 import { PostMessageProvider } from '../../src/scalecube-transport/provider/PostMessageProvider';
 import { errors } from '../../src/scalecube-transport/errors';
 import {
@@ -7,18 +8,20 @@ import {
   getFailingOneResponse,
   getFailingManyResponse,
   setWorkers,
-  httpURI as URI
+  httpURI,
+  socketURI
 } from './utils';
 
-describe('Providers tests', () => {
+setWorkers(httpURI);
+
+describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])(`Transport test`, (Provider, URI, providerName) => {
   const text = 'Test message';
   let transport;
   let needToRemoveProvider = true;
-  setWorkers(URI);
 
   const prepareTransport = async () => {
     transport = new Transport();
-    await transport.setProvider(PostMessageProvider, { URI });
+    await transport.setProvider(Provider, { URI });
     return transport;
   };
 
@@ -30,7 +33,7 @@ describe('Providers tests', () => {
     needToRemoveProvider = true;
   });
 
-  it('Calling request without setting a provider will cause an error about missing provider', async (done) => {
+  it(`${providerName}: Calling request without setting a provider will cause an error about missing provider`, async (done) => {
     expect.assertions(1);
 
     transport = new Transport();
@@ -45,11 +48,11 @@ describe('Providers tests', () => {
     )
   });
 
-  it('Calling request without waiting for build to be completed will cause an error about missing provider', async (done) => {
+  it(`${providerName}: Calling request without waiting for build to be completed will cause an error about missing provider`, async (done) => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(PostMessageProvider, { URI }).then(() => {
+    transport.setProvider(Provider, { URI }).then(() => {
       done();
     });
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
@@ -61,18 +64,18 @@ describe('Providers tests', () => {
     )
   });
 
-  it('Providing an url that does not exist causes an error while setting a provider', async (done) => {
+  it(`${providerName}: Providing an url that does not exist causes an error while setting a provider`, async (done) => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(PostMessageProvider, { URI: 'ws://lo' }).catch((error) => {
+    transport.setProvider(Provider, { URI: 'ws://lo' }).catch((error) => {
       expect(error).toEqual(new Error(errors.urlNotFound));
       needToRemoveProvider = false;
       done();
     });
   });
 
-  it('Use requestResponse type with "one" action - receive one response and the stream is completed', async (done) => {
+  it(`${providerName}: Use requestResponse type with "one" action - receive one response and the stream is completed`, async (done) => {
     expect.assertions(1);
 
     const transport = await prepareTransport();
@@ -86,7 +89,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Use requestStream type with "one" action - receive one response and the stream is completed', async (done) => {
+  it(`${providerName}: Use requestStream type with "one" action - receive one response and the stream is completed`, async (done) => {
     expect.assertions(1);
 
     const transport = await prepareTransport();
@@ -100,7 +103,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Use requestResponse type with "pojo/one" action - receive one response and the stream is completed', async (done) => {
+  it(`${providerName}: Use requestResponse type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
     expect.assertions(1);
 
     const transport = await prepareTransport();
@@ -114,7 +117,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Use requestStream type with "pojo/one" action - receive one response and the stream is completed', async (done) => {
+  it(`${providerName}: Use requestStream type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
     expect.assertions(1);
 
     const transport = await prepareTransport();
@@ -128,7 +131,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed', async (done) => {
+  it(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
     expect.assertions(4);
 
     const transport = await prepareTransport();
@@ -144,7 +147,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses', async (done) => {
+  it(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
     let updates = 0;
@@ -168,7 +171,7 @@ describe('Providers tests', () => {
     }, 4500);
   }, 5000);
 
-  it('Use requestStream type with "many" action without responsesLimit and unsubscribe after the 4 update', async (done) => {
+  it(`${providerName}: Use requestStream type with "many" action without responsesLimit and unsubscribe after the 4 update`, async (done) => {
     expect.assertions(5);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
@@ -189,7 +192,7 @@ describe('Providers tests', () => {
     }, 2000);
   });
 
-  it('Disconnect - an error appears in the stream with the message about closed connection', async (done) => {
+  it(`${providerName}: Disconnect - an error appears in the stream with the message about closed connection`, async (done) => {
     expect.assertions(4);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
@@ -210,7 +213,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Disconnect - an error appears in multiple streams with the message about closed connection', async (done) => {
+  it(`${providerName}: Disconnect - an error appears in multiple streams with the message about closed connection`, async (done) => {
     expect.assertions(7);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
@@ -247,7 +250,7 @@ describe('Providers tests', () => {
       );
   });
 
-  it('Request "entrypoint" validation error', async (done) => {
+  it(`${providerName}: Request "entrypoint" validation error`, async (done) => {
     expect.assertions(1);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestResponse' }, data: text, entrypoint: '' });
@@ -260,7 +263,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Request "responsesLimit" validation error, if responsesLimit is a string', async (done) => {
+  it(`${providerName}: Request "responsesLimit" validation error, if responsesLimit is a string`, async (done) => {
     expect.assertions(1);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: '7' }, data: text, entrypoint: '/greeting/many' });
@@ -273,7 +276,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Request "responsesLimit" validation error, if responsesLimit is less than zero', async (done) => {
+  it(`${providerName}: Request "responsesLimit" validation error, if responsesLimit is less than zero`, async (done) => {
     expect.assertions(1);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: -7 }, data: text, entrypoint: '/greeting/many' });
@@ -286,7 +289,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('failing/many - 2 data without error code and one data with an error code has been received in onNext block of the stream and the stream has been completed', async (done) => {
+  it(`${providerName}: failing/many - 2 data without error code and one data with an error code has been received in onNext block of the stream and the stream has been completed`, async (done) => {
     expect.assertions(3);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: 2147483647 }, data: text, entrypoint: '/greeting/failing/many' });
@@ -306,7 +309,7 @@ describe('Providers tests', () => {
     );
   });
 
-  it('failing/one test - data with an error code has been received in onNext block of the stream and the stream has been completed', async (done) => {
+  it(`${providerName}: failing/one test - data with an error code has been received in onNext block of the stream and the stream has been completed`, async (done) => {
     expect.assertions(1);
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestResponse' }, data: text, entrypoint: '/greeting/failing/one' });
@@ -321,11 +324,11 @@ describe('Providers tests', () => {
     );
   });
 
-  it('Creating a few streams for different requests is handled correctly (when first one is limited and the second is unlimited)', async (done) => {
+  it(`${providerName}: Creating a few streams for different requests is handled correctly (when first one is limited and the second is unlimited)`, async (done) => {
     const transport = await prepareTransport();
     let updates1 = 0;
     let isStream1Completed = false;
-    transport.request({ headers: { responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'RequestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates1)(text));
@@ -337,7 +340,7 @@ describe('Providers tests', () => {
 
     let updates2 = 0;
     let isStream2Completed = false;
-    transport.request({ data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'RequestStream' }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates2)(text));
@@ -357,11 +360,11 @@ describe('Providers tests', () => {
 
   });
 
-  it('Creating a few streams for different requests is handled correctly (when first one is unlimited and the second is limited)', async (done) => {
+  it(`${providerName}: Creating a few streams for different requests is handled correctly (when first one is unlimited and the second is limited)`, async (done) => {
     const transport = await prepareTransport();
     let updates1 = 0;
     let isStream1Completed = false;
-    transport.request({ data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'RequestStream' }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates1)(text));
@@ -373,7 +376,7 @@ describe('Providers tests', () => {
 
     let updates2 = 0;
     let isStream2Completed = false;
-    transport.request({ headers: { responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'RequestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates2)(text));
