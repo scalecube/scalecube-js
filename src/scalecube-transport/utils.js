@@ -3,7 +3,10 @@ import { errors } from './errors';
 import { allowedRequestTypes } from './const';
 import { TransportProviderConfig, TransportRequest } from './api/types';
 
-export const validateRequest = (requestData: TransportRequest, propsToOmitValidation = {}) => {
+export const validateRequest = (requestData: TransportRequest, propsToOmitValidation?: Object) => {
+  if (!propsToOmitValidation) {
+    propsToOmitValidation = {};
+  }
   const { headers = {}, entrypoint } = requestData;
   const { type, responsesLimit } = headers;
   if (!propsToOmitValidation.type && !allowedRequestTypes.includes(type)) {

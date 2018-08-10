@@ -2,12 +2,13 @@
 import { Observable, Subject } from 'rxjs';
 import { validateRequest, validateBuildConfig } from '../utils';
 import { TransportProvider } from '../api/TransportProvider';
-import { TransportProviderConfig, TransportRequest } from '../api/types';
+import { TransportProviderConfig, TransportRequest, PostMessageEventData, ActiveRequest } from '../api/types';
 import { errors } from '../errors';
 
 export class PostMessageProvider implements TransportProvider {
   _worker: any;
-  _activeRequests: any;
+  _activeRequests: { [number]: ActiveRequest };
+  _handleNewMessage: any;
 
   constructor() {
     this._worker = null;
@@ -66,7 +67,8 @@ export class PostMessageProvider implements TransportProvider {
     });
   }
 
-  _handleNewMessage({ data }) {
+  _handleNewMessage(messageEvent: { data: PostMessageEventData }) {
+    const { data } = messageEvent;
     const { subscriber } = this._activeRequests[data.requestId] || {};
     if (!subscriber) {
       return;
@@ -82,7 +84,7 @@ export class PostMessageProvider implements TransportProvider {
   destroy(): Promise<void> {
     return new Promise((resolve) => {
       Object.values(this._activeRequests)
-        .forEach(({ subscriber }) => subscriber.error(new Error(errors.closedConnection)));
+        .forEach((activeRequest: any) => activeRequest.subscriber.error(new Error(errors.closedConnection)));
       this._activeRequests = {};
       this._worker = null;
       resolve();
