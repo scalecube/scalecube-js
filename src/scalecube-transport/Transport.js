@@ -1,9 +1,9 @@
 // @flow
 import { Observable } from 'rxjs';
-import { TransportInterface } from './api/TransportInterface';
+import { Transport as TransportInterface } from './api/Transport';
 import { errors } from './errors';
-import { ProviderInterface } from './api/ProviderInterface';
-import { ProviderConfig, TransportRequest } from './api/types';
+import { TransportProvider } from './api/TransportProvider';
+import { TransportProviderConfig, TransportRequest } from './api/types';
 
 export class Transport implements TransportInterface {
   _provider: any;
@@ -13,9 +13,9 @@ export class Transport implements TransportInterface {
     return this;
   }
 
-  setProvider(Provider: Class<ProviderInterface>, providerConfig: ProviderConfig): Promise<void> {
+  setProvider(Provider: Class<TransportProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
     const provider = new Provider();
-    return provider.build(providerConfig).then(() => { this._provider = provider });
+    return provider.build(TransportProviderConfig).then(() => { this._provider = provider });
   }
 
   removeProvider(): Promise<void> {

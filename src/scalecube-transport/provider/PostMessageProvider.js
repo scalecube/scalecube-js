@@ -1,11 +1,11 @@
 // @flow
 import { Observable, Subject } from 'rxjs';
 import { validateRequest, validateBuildConfig } from '../utils';
-import { ProviderInterface } from '../api/ProviderInterface';
-import { ProviderConfig, TransportRequest } from '../api/types';
+import { TransportProvider } from '../api/TransportProvider';
+import { TransportProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 
-export class PostMessageProvider implements ProviderInterface {
+export class PostMessageProvider implements TransportProvider {
   _worker: any;
   _activeRequests: any;
 
@@ -16,7 +16,7 @@ export class PostMessageProvider implements ProviderInterface {
     return this;
   }
 
-  build(config: ProviderConfig): Promise<void> {
+  build(config: TransportProviderConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       const { URI } = config;
       const validationError = validateBuildConfig({ URI });

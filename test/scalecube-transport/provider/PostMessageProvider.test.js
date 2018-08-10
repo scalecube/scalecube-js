@@ -1,7 +1,7 @@
-import { Transport } from '../../src/scalecube-transport/Transport';
-import { PostMessageProvider } from "../../src/scalecube-transport/provider/PostMessageProvider";
-import { errors } from '../../src/scalecube-transport/errors';
-import { setWorkers, httpURI as URI } from './utils';
+import { Transport } from '../../../src/scalecube-transport/Transport';
+import { PostMessageProvider } from "../../../src/scalecube-transport/provider/PostMessageProvider";
+import { errors } from '../../../src/scalecube-transport/errors';
+import { setWorkers, removeWorkers, httpURI as URI } from '../utils';
 
 describe('Tests specifically for PostMessage provider', () => {
   setWorkers(URI);
@@ -13,6 +13,10 @@ describe('Tests specifically for PostMessage provider', () => {
     return expect(transport.setProvider(PostMessageProvider, { URI: URIWithInvalidWorker }))
       .rejects.toEqual(new Error(errors.connectionRefused));
   };
+
+  afterAll(() => {
+    removeWorkers();
+  });
 
   it ('If an item for a provided URI is string instead of a Worker, an error is emitted', () => {
     return testInvalidWorker('Invalid worker');

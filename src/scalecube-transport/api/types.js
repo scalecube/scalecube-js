@@ -15,7 +15,7 @@ export interface TransportRequest {
   data: any;
 }
 
-export interface ProviderConfig {
+export interface TransportProviderConfig {
   /**
    * The path to a server
    */

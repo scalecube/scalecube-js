@@ -8,13 +8,13 @@ import {
   getFailingOneResponse,
   getFailingManyResponse,
   setWorkers,
+  removeWorkers,
   httpURI,
   socketURI
 } from './utils';
 
-setWorkers(httpURI);
-
-describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])(`Transport test`, (Provider, URI, providerName) => {
+describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])
+(`Transport test`, (Provider, URI, providerName) => {
   const text = 'Test message';
   let transport;
   let needToRemoveProvider = true;
@@ -24,6 +24,14 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     await transport.setProvider(Provider, { URI });
     return transport;
   };
+
+  beforeAll(() => {
+    setWorkers(httpURI);
+  });
+
+  afterAll(() => {
+    removeWorkers();
+  });
 
   afterEach(async () => {
     if (needToRemoveProvider) {
@@ -328,7 +336,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     const transport = await prepareTransport();
     let updates1 = 0;
     let isStream1Completed = false;
-    transport.request({ headers: { type: 'RequestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'requestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates1)(text));
@@ -340,7 +348,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
 
     let updates2 = 0;
     let isStream2Completed = false;
-    transport.request({ headers: { type: 'RequestStream' }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates2)(text));
@@ -364,7 +372,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     const transport = await prepareTransport();
     let updates1 = 0;
     let isStream1Completed = false;
-    transport.request({ headers: { type: 'RequestStream' }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates1)(text));
@@ -376,7 +384,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
 
     let updates2 = 0;
     let isStream2Completed = false;
-    transport.request({ headers: { type: 'RequestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
+    transport.request({ headers: { type: 'requestStream', responsesLimit: 3 }, data: text, entrypoint: '/greeting/many' })
       .subscribe(
         (data) => {
           expect(data).toEqual(getTextResponseMany(updates2)(text));
@@ -393,7 +401,6 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
       expect(isStream2Completed).toEqual(true);
       done();
     }, 2000);
-
   });
 
 });

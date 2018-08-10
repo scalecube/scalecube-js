@@ -4,11 +4,11 @@ import WS from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
-import { ProviderInterface } from '../api/ProviderInterface';
-import { ProviderConfig, TransportRequest } from '../api/types';
+import { TransportProvider } from '../api/TransportProvider';
+import { TransportProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 
-export class RSocketProvider implements ProviderInterface {
+export class RSocketProvider implements TransportProvider {
   _client: any;
   _socket: any;
 
@@ -18,7 +18,7 @@ export class RSocketProvider implements ProviderInterface {
     return this;
   }
 
-  build(config: ProviderConfig): Promise<void> {
+  build(config: TransportProviderConfig): Promise<void> {
     let { URI, keepAlive = 60000, lifetime = 180000, WebSocket = WS } = config;
     const wsCreator = URI => new WebSocket(URI);
     return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 // @flow
 import { errors } from './errors';
 import { allowedRequestTypes } from './const';
-import {ProviderConfig, TransportRequest} from './api/types';
+import { TransportProviderConfig, TransportRequest } from './api/types';
 
 export const validateRequest = (requestData: TransportRequest, propsToOmitValidation = {}) => {
   const { headers = {}, entrypoint } = requestData;
@@ -17,7 +17,7 @@ export const validateRequest = (requestData: TransportRequest, propsToOmitValida
   }
 };
 
-export const validateBuildConfig = (config: ProviderConfig) => {
+export const validateBuildConfig = (config: TransportProviderConfig) => {
   const { URI = '', keepAlive, lifetime, WebSocket } = config;
   if (typeof URI !== 'string' || !URI) {
     return errors.wrongUrl;

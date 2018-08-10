@@ -1,7 +1,7 @@
 import { RSocketProvider } from 'src/scalecube-transport/provider/RSocketProvider';
 import { Transport } from 'src/scalecube-transport/Transport';
 import { errors } from 'src/scalecube-transport/errors';
-import { getTextResponseMany, socketURI as URI } from './utils';
+import { getTextResponseMany, socketURI as URI } from '../utils';
 
 describe('Tests specifically for Rsocket provider', () => {
   let transport;

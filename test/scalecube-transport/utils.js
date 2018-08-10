@@ -53,3 +53,8 @@ export const setWorkers = (URI) => {
   window.workers[URI] = new Worker(executeWorkerContent);
 };
 
+export const removeWorkers = () => {
+  Object.values(window.workers).forEach(worker => worker.terminate());
+  window.workers = undefined;
+};
+
