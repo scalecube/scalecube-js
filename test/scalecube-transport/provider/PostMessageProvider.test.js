@@ -1,5 +1,6 @@
+import Worker from 'tiny-worker'
 import { Transport } from '../../../src/scalecube-transport/Transport';
-import { PostMessageProvider } from "../../../src/scalecube-transport/provider/PostMessageProvider";
+import { PostMessageProvider } from '../../../src/scalecube-transport/provider/PostMessageProvider';
 import { errors } from '../../../src/scalecube-transport/errors';
 import { setWorkers, removeWorkers, httpURI as URI } from '../utils';
 
@@ -18,20 +19,25 @@ describe('Tests specifically for PostMessage provider', () => {
     removeWorkers();
   });
 
-  it ('If an item for a provided URI is string instead of a Worker, an error is emitted', () => {
-    return testInvalidWorker('Invalid worker');
+  it.each(['Invalid worker', 777, () => 555, { test: 'test' }]) ('If an item for a provided URI is not a worker instance an error is emitted', (invalidValue) => {
+    return testInvalidWorker(invalidValue);
   });
 
-  it ('If an item for a provided URI is number instead of a Worker, an error is emitted', () => {
-    return testInvalidWorker(777);
-  });
-
-  it ('If an item for a provided URI is a function instead of a Worker, an error is emitted', () => {
-    return testInvalidWorker(() => 555);
-  });
-
-  it ('If an item for a provided URI does not have a postMessage method, an error is emitted', () => {
-    return testInvalidWorker({ test: 'test' });
-  });
+  // TODO Transport content is not compiled inside of worker
+  // it ('Test', async (done) => {
+  //   const transportWorker = new Worker(async () => {
+  //     const Transport = require('../../../src/scalecube-transport/Transport').Transport;
+  //     const PostMessageProvider = require('../../../src/scalecube-transport/provider/PostMessageProvider').PostMessageProvider;
+  //     const transport = new Transport();
+  //     await transport.setProvider(PostMessageProvider, { URI });
+  //     const stream = transport.request({ headers: { type: 'requestStream' }, data: 'text', entrypoint: '/greeting/many' });
+  //     stream.subscribe((data) => {
+  //       console.log('data', data);
+  //     });
+  //   });
+  //   setTimeout(() => {
+  //     done()
+  //   }, 1500);
+  // });
 
 });

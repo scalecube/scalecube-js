@@ -1,4 +1,4 @@
-import Worker from "tiny-worker";
+import Worker from 'tiny-worker';
 
 export const getTextResponseSingle = text => `Echo:${text}`;
 
@@ -49,8 +49,9 @@ export const httpURI = 'https://localhost:8080';
 export const socketURI = 'ws://localhost:8080';
 
 export const setWorkers = (URI) => {
-  window.workers = {};
-  window.workers[URI] = new Worker(executeWorkerContent);
+  window.workers = {
+    [URI]: new Worker(executeWorkerContent)
+  };
 };
 
 export const removeWorkers = () => {
