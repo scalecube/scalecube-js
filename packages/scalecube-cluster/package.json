@@ -1,8 +1,7 @@
 {
   "name": "scalecube-cluster",
-  "version": "0.0.6",
-  "main": "lib/scalecube-services/services/index.js",
-  "#module": "es/scalecube-services/services/index.js",
+  "version": "1.0.0",
+  "main": "build/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "dependencies": {

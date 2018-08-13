@@ -3,10 +3,14 @@
 import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
 import GreetingService2 from 'examples/GreetingServiceClass/GreetingService2.js';
 import { Microservices, Message } from '../../src/services';
+import { LogicalCluster } from 'scalecube-cluster';
 
 process.on('unhandledRejection', (reason, promise) => console.log(reason, promise));
 
 describe('Greeting suite', () => {
+
+  console.log('LogicalCluster', LogicalCluster);
+
   it('Greeting.hello should greet Idan with hello', () => {
 
     let x = GreetingService;

@@ -1,8 +1,7 @@
 {
   "name": "scalecube-service-annotations",
   "version": "0.0.6",
-  "main": "lib/scalecube-services/services/index.js",
-  "#module": "es/scalecube-services/services/index.js",
+  "main": "build/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC"
 }

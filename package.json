@@ -22,7 +22,7 @@
     "test:cov": "npm test -- --coverage",
     "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
     "build:es": "babel ./src --out-dir es",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs node scripts/build.js",
     "build": "npm run clean && npm run build:es && npm run build:commonjs && npm run flow:gen",
     "flow": "flow",
     "flow:install": "flow-typed install",
@@ -62,6 +62,10 @@
     "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
     "rename-cli": "^5.0.0",
+    "rollup": "^0.64.1",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-commonjs": "^9.1.5",
+    "rollup-plugin-node-resolve": "^3.3.0",
     "rxjs-compat": "^6.1.0",
     "rxjs6": "npm:rxjs@6.1.0"
   },
@@ -74,5 +78,8 @@
       "node_modules",
       "./"
     ]
+  },
+  "dependencies": {
+    "rsocket-core": "^0.0.8"
   }
 }
