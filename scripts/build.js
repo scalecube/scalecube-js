@@ -6,12 +6,12 @@ const micromatch = require('micromatch');
 const mkdirp = require('mkdirp');
 const path = require('path');
 
-const BUILD_DIR = 'build';
+const BUILD_DIR = process.env.OUT_DIR || 'build';
 const SRC_DIR = 'src';
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PACKAGES_DIR = path.resolve(ROOT_DIR, 'packages');
 const JS_FILES_PATTERN = path.resolve(PACKAGES_DIR, '**/*.js');
-const IGNORE_PATTERN = '**/__(mocks|snapshots|tests)__/**';
+const IGNORE_PATTERN = '**/(mocks|snapshots|tests)/**';
 const FLOW_EXTENSION = '.flow';
 
 function getBabelOptions() {

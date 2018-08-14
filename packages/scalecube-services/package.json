@@ -6,6 +6,6 @@
   "license": "ISC",
   "dependencies": {
     "rxjs": "^5.5.5",
-    "scalecube-cluster": "1.0.0"
+    "scalecube-cluster": "0.0.6"
   }
 }
