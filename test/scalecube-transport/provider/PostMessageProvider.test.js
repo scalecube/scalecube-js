@@ -24,20 +24,21 @@ describe('Tests specifically for PostMessage provider', () => {
   });
 
   // TODO Transport content is not compiled inside of worker
-  // it ('Test', async (done) => {
-  //   const transportWorker = new Worker(async () => {
-  //     const Transport = require('../../../src/scalecube-transport/Transport').Transport;
-  //     const PostMessageProvider = require('../../../src/scalecube-transport/provider/PostMessageProvider').PostMessageProvider;
-  //     const transport = new Transport();
-  //     await transport.setProvider(PostMessageProvider, { URI });
-  //     const stream = transport.request({ headers: { type: 'requestStream' }, data: 'text', entrypoint: '/greeting/many' });
-  //     stream.subscribe((data) => {
-  //       console.log('data', data);
-  //     });
-  //   });
-  //   setTimeout(() => {
-  //     done()
-  //   }, 1500);
-  // });
+  it ('Test', async (done) => {
+    const transportWorker = new Worker(async () => {
+      const Transport = require('../../../lib/scalecube-transport').Transport;
+      const PostMessageProvider = require('../../../lib/scalecube-transport').PostMessageProvider;
+      console.log('Transport', Transport);
+      const transport = new Transport();
+      await transport.setProvider(PostMessageProvider, { URI });
+      const stream = transport.request({ headers: { type: 'requestStream' }, data: 'text', entrypoint: '/greeting/many' });
+      stream.subscribe((data) => {
+        console.log('data', data);
+      });
+    });
+    setTimeout(() => {
+      done()
+    }, 1500);
+  });
 
 });
