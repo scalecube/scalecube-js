@@ -4,6 +4,9 @@
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "ISC",
   "files": [
     "lib",
@@ -14,6 +17,6 @@
   ],
   "dependencies": {
     "rxjs": "^5.5.5",
-    "scalecube-cluster": "0.0.6"
+    "@scalecube/scalecube-cluster": "0.0.6"
   }
 }

@@ -6,7 +6,7 @@ import {
   DispatcherContext,
   utils
 } from '.'
-import { LogicalCluster } from 'scalecube-cluster';
+import { LogicalCluster } from '@scalecube/scalecube-cluster';
 
 class Builder {
   servicesConfig: ServicesConfig;
