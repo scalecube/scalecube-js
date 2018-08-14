@@ -9,7 +9,7 @@
     "publish": {
       "npmClient": "yarn",
       "registry": "https://www.npmjs.com/package/@scalecube/scalecube-js",
-      "npm-tag": "beta"
+      "npm-tag": "dev"
     }
   }
 }
