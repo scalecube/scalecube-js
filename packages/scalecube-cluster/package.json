@@ -1,11 +1,9 @@
 {
   "name": "@scalecube/scalecube-cluster",
+  "public": true,
   "version": "0.0.6",
   "main": "build/index.js",
   "#module": "es/index.js",
-  "publishConfig": {
-    "access": "private"
-  },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "dependencies": {

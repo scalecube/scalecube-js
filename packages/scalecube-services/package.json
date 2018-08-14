@@ -1,12 +1,10 @@
 {
   "name": "@scalecube/scalecube-services",
+  "private": true,
   "version": "0.0.6",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
-  "publishConfig": {
-    "access": "public"
-  },
   "license": "ISC",
   "files": [
     "lib",

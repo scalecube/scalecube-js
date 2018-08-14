@@ -1,5 +1,5 @@
 {
-  "name": "@scalecube/scalecube-service-annotations",
+  "name": "@scalecube/scalecube-service-annotations-typescript",
   "version": "0.0.6",
   "main": "build/index.js",
   "#module": "es/index.js",
