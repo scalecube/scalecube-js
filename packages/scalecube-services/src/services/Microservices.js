@@ -6,6 +6,7 @@ import {
   DispatcherContext,
   utils
 } from '.'
+import { LogicalCluster } from 'scalecube-cluster';
 
 class Builder {
   servicesConfig: ServicesConfig;
@@ -35,6 +36,7 @@ export class Microservices {
   serviceRegistery: ServiceRegistery;
 
   constructor(serviceConfig: ServicesConfig) {
+    console.log('Logical Cluster in Microservices constructor', LogicalCluster);
     this.serviceRegistery = new ServiceRegistery(serviceConfig);
     return this;
   }
