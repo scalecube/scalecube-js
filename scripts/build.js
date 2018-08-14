@@ -12,41 +12,6 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const PACKAGES_DIR = path.resolve(ROOT_DIR, 'packages');
 const JS_FILES_PATTERN = path.resolve(PACKAGES_DIR, '**/*.js');
 const IGNORE_PATTERN = '**/(mocks|snapshots|tests)/**';
-const FLOW_EXTENSION = '.flow';
-
-function getBabelOptions() {
-  return {
-    babelrc: false,
-    presets: ["es2015", "flow"],
-    env: {
-      "commonjs": {
-        "plugins": [
-          [
-            "transform-es2015-modules-commonjs",
-            {
-              "loose": true
-            }
-          ],
-          [
-            "module-resolver",
-            {
-              "root": [
-                "./"
-              ],
-              "alias": {
-                "src": "./src"
-              }
-            }
-          ]
-        ]
-      },
-      jest: {
-        "plugins": ["dynamic-import-node"]
-      }
-    },
-    retainLines: true,
-  };
-}
 
 const packages = fs
   .readdirSync(PACKAGES_DIR)
@@ -91,20 +56,9 @@ function buildFile(file, silent) {
   } else {
     let code = babel.transformFileSync(
       file,
-      getBabelOptions({modules: true})
+      { babelrc: true }
     ).code;
     fs.writeFileSync(destPath, code);
-    fs
-      .createReadStream(file)
-      .pipe(fs.createWriteStream(destPath + FLOW_EXTENSION));
-    silent ||
-      process.stdout.write(
-        chalk.green('  \u2022 ') +
-          path.relative(PACKAGES_DIR, file) +
-          chalk.green(' \u21D2 ') +
-          path.relative(PACKAGES_DIR, destPath) +
-          '\n'
-      );
   }
 }
 
