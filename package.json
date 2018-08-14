@@ -32,15 +32,6 @@
     "flow:reset": "flow stop && flow start",
     "flow:check": "npm run flow:reset && flow check"
   },
-  "main": "lib/scalecube-services/services/index.js",
-  "#module": "es/scalecube-services/services/index.js",
-  "files": [
-    "lib",
-    "es",
-    "src",
-    "index.d.ts",
-    "index.js.flow"
-  ],
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "devDependencies": {
@@ -78,8 +69,5 @@
       "node_modules",
       "./"
     ]
-  },
-  "dependencies": {
-    "rsocket-core": "^0.0.8"
   }
 }

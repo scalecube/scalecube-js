@@ -4,5 +4,12 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.1"
+  "version": "0.0.7",
+  "command": {
+    "publish": {
+      "npmClient": "yarn",
+      "registry": "https://www.npmjs.com/package/@scalecube/scalecube-js",
+      "npm-tag": "beta"
+    }
+  }
 }
