@@ -1,6 +1,6 @@
 {
-  "name": "@scalecube/scalecube-service-annotations-typescript",
-  "version": "0.0.6",
+  "name": "@scalecube/scalecube-service-annotations-typescript-test",
+  "version": "0.0.8",
   "main": "build/index.js",
   "#module": "es/index.js",
   "publishConfig": {

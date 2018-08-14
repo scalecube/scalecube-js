@@ -4,11 +4,11 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "command": {
     "publish": {
       "npmClient": "yarn",
-      "registry": "https://www.npmjs.com/package/@scalecube/scalecube-js",
+      "registry": "https://www.npmjs.com/package/slaym-packages",
       "npm-tag": "dev"
     }
   }
