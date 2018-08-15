@@ -1,7 +1,9 @@
 {
-  "name": "@scalecube/scalecube-cluster-test",
-  "private": true,
-  "version": "0.0.13",
+  "name": "@scalecube-test/scalecube-cluster-test",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.14",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",

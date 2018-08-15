@@ -1,7 +1,9 @@
 {
-  "name": "@scalecube/scalecube-services-test",
-  "private": true,
-  "version": "0.0.13",
+  "name": "@scalecube-test/scalecube-services-test",
+  "version": "0.0.14",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
