@@ -1,5 +1,5 @@
 {
-  "name": "@scalecube/scalecube-js-test",
+  "name": "@scalecube/scalecube-js",
   "version": "0.0.6",
   "private": true,
   "workspaces": [
