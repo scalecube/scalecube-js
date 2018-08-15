@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster.git"
   },
-  "version": "0.0.9",
+  "version": "0.0.23",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
