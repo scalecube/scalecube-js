@@ -1,8 +1,7 @@
 {
-  "name": "scalecube-services-test",
-  "private": true,
+  "name": "@scalecube/scalecube-services",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
-  "version": "0.0.33-0",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-services"
