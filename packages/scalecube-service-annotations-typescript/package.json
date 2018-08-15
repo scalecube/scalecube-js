@@ -1,11 +1,9 @@
 {
   "name": "@scalecube/scalecube-service-annotations-typescript-test",
-  "version": "0.0.11",
+  "public": true,
+  "version": "0.0.12",
   "main": "build/index.js",
   "#module": "es/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC"
 }
