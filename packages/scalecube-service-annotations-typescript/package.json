@@ -1,17 +1,12 @@
 {
   "name": "scalecube-service-annotations-typescript-test",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-service-annotations-typescript.git"
   },
-  "version": "0.0.28",
+  "version": "0.0.31",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
-  "license": "ISC",
-  "gitHead": "2947551d054a74770a97e7a7e7220471229e92eb"
+  "license": "ISC"
 }

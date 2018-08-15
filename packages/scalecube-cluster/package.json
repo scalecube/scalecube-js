@@ -1,10 +1,11 @@
 {
   "name": "scalecube-cluster-test",
+  "description": "test description",
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster"
   },
-  "version": "0.0.30",
+  "version": "0.0.31",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
