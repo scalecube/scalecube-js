@@ -2,15 +2,14 @@
   "name": "scalecube-cluster-test",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster.git"
+    "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster"
   },
-  "version": "0.0.29",
+  "version": "0.0.30",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "dependencies": {
     "rxjs": "^5.5.5"
-  },
-  "gitHead": "2947551d054a74770a97e7a7e7220471229e92eb"
+  }
 }
