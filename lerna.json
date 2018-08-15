@@ -4,7 +4,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "command": {
     "publish": {
       "npmClient": "yarn",
