@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster.git"
   },
-  "version": "0.0.17",
+  "version": "0.0.18",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
@@ -16,5 +16,5 @@
   "dependencies": {
     "rxjs": "^5.5.5"
   },
-  "gitHead": "265d39c15104f2bc4010f5b5620c0cbf6e21c7d6"
+  "gitHead": "2947551d054a74770a97e7a7e7220471229e92eb"
 }
