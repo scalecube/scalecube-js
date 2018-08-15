@@ -1,6 +1,6 @@
 {
-  "name": "@scalecube-test/scalecube-services-test",
-  "version": "0.0.18",
+  "name": "scalecube-services-test",
+  "version": "0.0.19",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
