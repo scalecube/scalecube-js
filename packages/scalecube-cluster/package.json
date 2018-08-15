@@ -1,14 +1,10 @@
 {
   "name": "scalecube-cluster-test",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-cluster.git"
   },
-  "version": "0.0.28",
+  "version": "0.0.29",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
