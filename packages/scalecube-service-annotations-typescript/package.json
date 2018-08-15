@@ -2,12 +2,13 @@
   "name": "@scalecube-test/scalecube-service-annotations-typescript-test",
   "public": true,
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
-  "gitHead": "882005bea0777d260d8688b81b0f3ee51df0152a"
+  "gitHead": "11e2dbf996c92987c96222165279c9df18c0870f"
 }

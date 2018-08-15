@@ -1,8 +1,9 @@
 {
   "name": "@scalecube-test/scalecube-services-test",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "main": "build/index.js",
   "#module": "es/index.js",
@@ -17,5 +18,6 @@
   ],
   "dependencies": {
     "rxjs": "^5.5.5"
-  }
+  },
+  "gitHead": "11e2dbf996c92987c96222165279c9df18c0870f"
 }
