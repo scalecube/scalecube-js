@@ -9,10 +9,10 @@
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-service-annotations-typescript.git"
   },
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
-  "gitHead": "11e2dbf996c92987c96222165279c9df18c0870f"
+  "gitHead": "265d39c15104f2bc4010f5b5620c0cbf6e21c7d6"
 }
