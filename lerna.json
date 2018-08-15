@@ -4,12 +4,5 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.12",
-  "command": {
-    "publish": {
-      "npmClient": "npm",
-      "registry": "https://www.npmjs.com/package/slaym-packages",
-      "npm-tag": "dev"
-    }
-  }
+  "version": "0.0.13"
 }
