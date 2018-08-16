@@ -6,3 +6,4 @@ dist/
 flow-typed/
 coverage/
 .npmrc
+yarn-error.log
