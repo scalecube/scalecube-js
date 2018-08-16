@@ -23,22 +23,67 @@ describe('Tests specifically for PostMessage provider', () => {
     return testInvalidWorker(invalidValue);
   });
 
-  // TODO Transport content is not compiled inside of worker
-  it ('Test', async (done) => {
-    const transportWorker = new Worker(async () => {
-      const Transport = require('../../../lib/scalecube-transport').Transport;
-      const PostMessageProvider = require('../../../lib/scalecube-transport').PostMessageProvider;
-      console.log('Transport', Transport);
-      const transport = new Transport();
-      await transport.setProvider(PostMessageProvider, { URI });
-      const stream = transport.request({ headers: { type: 'requestStream' }, data: 'text', entrypoint: '/greeting/many' });
-      stream.subscribe((data) => {
-        console.log('data', data);
-      });
+  it ('Communication between workers', async (done) => {
+    const transports = {};
+
+    const handleRequestFromWorker = requestWorker => async ({ data: { URI, requestData } }) => {
+      let transport;
+      if (!transports[URI]) {
+        transport = new Transport();
+        await transport.setProvider(PostMessageProvider, { URI });
+        transports[URI] = transport;
+      } else {
+        transport = transports[URI];
+      }
+
+      const stream = transport.request(requestData);
+      stream.subscribe(
+        (data) => {
+          requestWorker.postMessage({ data, completed: false });
+        },
+        () => {},
+        () => {
+          requestWorker.postMessage({ completed: true });
+        }
+      );
+
+    };
+
+    window.workers['https://localhost:4040'] = new Worker(() => {
+      setTimeout(() => {
+        self.postMessage({
+          URI: 'https://localhost:8080',
+          requestData: { headers: { type: 'requestStream', responsesLimit: 3 }, data: 'request test from 4040', entrypoint: '/greeting/many' }
+        });
+      }, 500);
+
+      self.onmessage = ({ data }) => {
+        console.log('Received response in Request Worker 4040!', data);
+      }
     });
+
+    window.workers['https://localhost:3030'] = new Worker(() => {
+      setTimeout(() => {
+        self.postMessage({
+          URI: 'https://localhost:8080',
+          requestData: { headers: { type: 'requestStream', responsesLimit: 7 }, data: 'request test from 3030', entrypoint: '/greeting/many' }
+        });
+      }, 500);
+
+      self.onmessage = ({ data }) => {
+        console.log('Received response in Request Worker 3030!', data);
+      }
+    });
+
+    const requestWorker4040 = window.workers['https://localhost:4040'];
+    const requestWorker3030 = window.workers['https://localhost:3030'];
+    requestWorker4040.onmessage = handleRequestFromWorker(requestWorker4040);
+    requestWorker3030.onmessage = handleRequestFromWorker(requestWorker3030);
+
     setTimeout(() => {
-      done()
-    }, 1500);
-  });
+      done();
+      Object.values(transports).forEach(transport => transport.removeProvider());
+    }, 2500);
+  }, 3000);
 
 });
