@@ -1,7 +1,7 @@
 import Worker from 'tiny-worker'
-import { Transport } from '../../../src/scalecube-transport/src/Transport';
-import { PostMessageProvider } from '../../../src/scalecube-transport/src/provider/PostMessageProvider';
-import { errors } from '../../../src/scalecube-transport/src/errors';
+import { Transport } from '../../src/Transport';
+import { PostMessageProvider } from '../../src/provider/PostMessageProvider';
+import { errors } from '../../src/errors';
 import { setWorkers, removeWorkers, httpURI as URI } from '../utils';
 
 describe('Tests specifically for PostMessage provider', () => {

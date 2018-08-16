@@ -1,10 +1,10 @@
 {
-  "name": "@scalecube/scalecube-services",
+  "name": "@scalecube/scalecube-transport",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
   "version": "0.0.6",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-services"
+    "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-transport"
   },
   "main": "build/index.js",
   "#module": "es/index.js",
@@ -13,11 +13,12 @@
   "files": [
     "lib",
     "es",
-    "src",
-    "index.d.ts",
-    "index.js.flow"
+    "src"
   ],
   "dependencies": {
+    "isomorphic-ws": "^4.0.1",
+    "rsocket-core": "^0.0.8",
+    "rsocket-websocket-client": "^0.0.8",
     "rxjs": "^5.5.5"
   }
 }
