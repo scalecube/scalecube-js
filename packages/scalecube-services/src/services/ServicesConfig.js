@@ -1,5 +1,5 @@
 // @flow
-import { Microservices, ServiceDefinition } from 'src/scalecube-services/services';
+import { Microservices, ServiceDefinition } from '.';
 
 class Builder {
   servicesBuilder: ServicesConfig[];

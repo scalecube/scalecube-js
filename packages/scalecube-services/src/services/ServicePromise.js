@@ -1,5 +1,5 @@
 // @flow
-import { ServiceRegistery } from 'src/scalecube-services/services';
+import { ServiceRegistery } from '.';
 
 
 export class ServicePromise<T> extends Promise<T> {

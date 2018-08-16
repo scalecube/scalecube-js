@@ -5,7 +5,7 @@ import {
   ProxyContext,
   DispatcherContext,
   utils
-} from 'src/scalecube-services/services'
+} from '.'
 
 class Builder {
   servicesConfig: ServicesConfig;

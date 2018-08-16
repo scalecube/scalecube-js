@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { Observable as rxjs6Observable } from 'rxjs6/Observable';
 import { createStore } from 'redux';
-import { isObservable } from 'src/scalecube-services/services/utils';
+import { isObservable } from '../../src/services/utils';
 import { Observable as esObservable } from './esObservable';
 
 describe('Check if isObservable method detects different kinds of Observables as Observable', () => {

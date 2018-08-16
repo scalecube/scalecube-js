@@ -1,5 +1,5 @@
 // @flow
-import { ServiceCall, Router, RoundRobinServiceRouter, Microservices } from 'src/scalecube-services/services';
+import { ServiceCall, Router, RoundRobinServiceRouter, Microservices } from '.';
 
 export class DispatcherContext {
   myrouter: any;

@@ -1,7 +1,6 @@
-// @flow
 import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
 import ImportGreetingService from 'examples/GreetingServiceClass/ImportGreetingService.js';
-import { Microservices } from 'src/scalecube-services/services';
+import { Microservices } from '../../src/services';
 
 describe('Service Loaders suite', () => {
   describe('onStart Service Loaders', () => {

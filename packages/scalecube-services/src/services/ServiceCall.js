@@ -1,6 +1,6 @@
 // @flow
 
-import { Router, Message, utils } from 'src/scalecube-services/services';
+import { Router, Message, utils } from '.';
 import { Observable } from 'rxjs/Observable';
 // $FlowFixMe
 import 'rxjs/add/operator/catch';
