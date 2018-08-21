@@ -1,4 +1,6 @@
 import { LogicalCluster as Cluster } from '../src/LogicalCluster/LogicalCluster';
+import { Transport } from '../src/LogicalCluster/Transport';
+import { fork } from 'child_process';
 import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/elementAt';
@@ -130,5 +132,14 @@ describe('Cluster suite', () => {
     clusterA.metadata('Hello');
     expect(clusterA.metadata()).toBe('Hello');
   });
+
+  it('Test', (done) => {
+    const transport = new Transport();
+    transport.addProcess({ id: 'processA', path: './packages/scalecube-cluster/tests/processA.js' });
+
+    setTimeout(() => {
+      done();
+    }, 7000);
+  }, 7500);
 
 });
