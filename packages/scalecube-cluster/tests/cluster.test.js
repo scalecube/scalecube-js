@@ -1,4 +1,5 @@
-import { LogicalCluster as Cluster } from '../src/LogicalCluster/LogicalCluster';
+import { LocalCluster  } from '../src/LogicalCluster/LocalCluster';
+import { RemoteCluster } from '../src/LogicalCluster/RemoteCluster';
 import { Transport } from '../src/LogicalCluster/Transport';
 import { fork } from 'child_process';
 import 'rxjs/add/operator/zip';
@@ -19,9 +20,17 @@ const expectMessage = (cluster, at, messageExpected) =>
 describe('Cluster suite', () => {
   const createClusters = () => {
 
-    const clusterA = new Cluster();
-    const clusterB = new Cluster();
-    const clusterC = new Cluster();
+    const clusterA = new LocalCluster();
+    const clusterB = new LocalCluster();
+
+    const clusterCworker = new LocalCluster();
+
+    const clusterC = new RemoteCluster();
+    clusterC.transport({
+        type: "PostMessage",
+        worker: window,
+        me: window,
+    });
 
     clusterA.metadata('clusterA');
     clusterB.metadata('clusterB');
