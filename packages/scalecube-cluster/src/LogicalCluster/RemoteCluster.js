@@ -11,9 +11,14 @@ class clusterTransport{
 
     _getMsg(correlationId) {
         return new Promise((resolve) => {
-            this.config.me.onmessage((msg)=>{
-                if( msg.correlationId = correlationId ){
-                    resolve(msg.data);
+            this.config.me.onmessage = (({ data: msg })=>{
+                console.log('correlationId', correlationId);
+                console.log('msg.correlationId', msg.correlationId);
+                if( msg.correlationId == correlationId ){
+
+                    console.log('message!', msg);
+
+                    resolve(msg);
                 }
             });
         });
@@ -50,7 +55,7 @@ export class RemoteCluster implements ClusterInterface {
     }
 
     join(cluster: ClusterInterface): void {
-        return this._send('join', cluster);
+        return this._send('join', { id: cluster.id() });
     }
 
     members(): LocalCluster[] {
