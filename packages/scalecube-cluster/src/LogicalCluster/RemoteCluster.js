@@ -25,7 +25,7 @@ class clusterTransport{
             correlationId,
             path,
             args
-        });
+        }, 'http://localhost');
 
         return this._getMsg(correlationId);
     }
@@ -57,8 +57,8 @@ export class RemoteCluster implements ClusterInterface {
         return this._send('members');
     }
 
-    _send(path, arg){
-        return this.myTransport.invoke(path, arg);
+    _send(path, args){
+        return this.myTransport.invoke(path, args);
     }
     transport(transportConfig){
         this.myTransport = new clusterTransport(transportConfig);

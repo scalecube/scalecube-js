@@ -5,6 +5,7 @@ import { fork } from 'child_process';
 import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/elementAt';
+import Worker from 'tiny-worker';
 
 const expectMessage = (cluster, at, messageExpected) =>
     cluster
@@ -20,16 +21,39 @@ const expectMessage = (cluster, at, messageExpected) =>
 describe('Cluster suite', () => {
   const createClusters = () => {
 
-    const clusterA = new LocalCluster();
-    const clusterB = new LocalCluster();
+    const localClusterA = new LocalCluster();
+    const localClusterB = new LocalCluster();
+    const localClusterC = new LocalCluster();
 
-    const clusterCworker = new LocalCluster();
+    const main = new Worker(()=>{
+      self.onmessage = (e) => self.postMessage(e);
+    });
 
+    const registerCB = (cb) => main.addEventListener("message", (e)=>cb(e.data), false);
+
+    localClusterA.eventBus(registerCB);
+    localClusterB.eventBus(registerCB);
+    localClusterC.eventBus(registerCB);
+
+    const clusterA = new RemoteCluster();
+    const clusterB = new RemoteCluster();
     const clusterC = new RemoteCluster();
+
+
+    clusterA.transport({
+      type: "PostMessage",
+      worker: main,
+      me: main,
+    });
+    clusterB.transport({
+      type: "PostMessage",
+      worker: main,
+      me: main,
+    });
     clusterC.transport({
         type: "PostMessage",
-        worker: window,
-        me: window,
+        worker: main,
+        me: main,
     });
 
     clusterA.metadata('clusterA');
@@ -49,7 +73,7 @@ describe('Cluster suite', () => {
     expect(clusterB.members().map(i=>i.metadata())).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
     expect(clusterC.members().map(i=>i.metadata())).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
-  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', () => {
+  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async () => {
     const {clusterA, clusterB, clusterC} = createClusters();
     expect.assertions(8);
 
@@ -69,8 +93,10 @@ describe('Cluster suite', () => {
 
     clusterA.shutdown();
 
-     expect(clusterB.members().map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
-     expect(clusterC.members().map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
+    const bMembers = await clusterB.members();
+    const cMembers = await clusterC.members();
+     expect(bMembers.map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
+     expect(cMembers.map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
   });
   it('When A join B and B join C all add essages are sent', () => {
     const {clusterA, clusterB, clusterC} = createClusters();

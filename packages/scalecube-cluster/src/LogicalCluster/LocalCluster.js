@@ -15,18 +15,21 @@ export class LocalCluster implements ClusterInterface {
       this.clusterId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
       this.membersUpdates$ = new Subject();
       this.clusterMembers = { [this.clusterId]: this};
-      // this.clusterMetadata = metadata;
-        self.onmessage = this._server
     }
     _server(msg){
         console.error(msg);
 
-        if(this[msg.path]) {
+        if(msg && this[msg.path]) {
             postMessage({
                 correlationId: msg.correlationId,
                 data: this[msg.path](msg.args)
             });
         }
+
+    }
+
+    eventBus(registerCB){
+        registerCB(this._server());
     }
 
     id(): string {
