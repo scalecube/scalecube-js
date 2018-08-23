@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Cluster as ClusterInterface} from '../api/Cluster';
 import {MembershipEvent} from '../api/MembershiptEvent';
 import {RemoteCluster} from "./RemoteCluster";
+import type {Type} from "../api/MembershiptEvent";
 
 const createRemoteCluster = (clusterId) => {
   const remoteCluster = new RemoteCluster();
@@ -15,6 +16,8 @@ const createRemoteCluster = (clusterId) => {
   });
   return remoteCluster;
 };
+
+const createRemoteClustersById = clusterIds => clusterIds.map(({ id }) => createRemoteCluster(id));
 
 export class LocalCluster implements ClusterInterface {
   clusterId: string;
@@ -36,8 +39,12 @@ export class LocalCluster implements ClusterInterface {
         if (msg.request.path === 'join') {
           msg.request.args = createRemoteCluster(msg.request.args.id);
         }
+        if (msg.request.path === 'messageToChanel') {
+          // console.log('message msg.clusterId', msg.clusterId);
+        }
         const response = await this[msg.request.path](msg.request.args);
 
+        // if (response && response.message) { console.log('going to post to worker message', response.message); }
         main.postMessage({
           correlationId: msg.correlationId,
           clusterId: msg.clusterId,
@@ -66,9 +73,7 @@ export class LocalCluster implements ClusterInterface {
 
   async join(cluster: ClusterInterface): void {
     const members = await cluster.members();
-    const membersClusters = members.map(({ id }) => createRemoteCluster(id));
-
-    return this._add(membersClusters);
+    return this._add(createRemoteClustersById(members));
   }
 
   async _add(members: RemoteCluster[]): void {
@@ -86,8 +91,19 @@ export class LocalCluster implements ClusterInterface {
     return Promise.all(iterations);
   }
 
-  shutdown(): void {
+  messageToChanel(data) {
+    return Promise.resolve(Object.assign({}, data, { messageToId: this.id() }));
+  }
 
+  shutdown(): void {
+    Object.values(this.clusterMembers).forEach((remoteCluster) => {
+        remoteCluster.messageToChanel({
+          type: 'remove',
+          memberId: this.id(),
+          senderId: this.id(),
+          data: {}
+        });
+    });
   }
 
   members(): LocalCluster[] {
@@ -99,8 +115,4 @@ export class LocalCluster implements ClusterInterface {
     });
     return Promise.all(members);
   }
-
-  listenMembership(): Observable<MembershipEvent> {
-
-  };
 }

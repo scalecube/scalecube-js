@@ -2,19 +2,33 @@
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {Cluster as ClusterInterface} from '../api/Cluster';
+import {MembershipEvent} from "../api/MembershiptEvent";
 
 class clusterTransport {
   config;
 
-  constructor(transportConfig) {
+  constructor(transportConfig, messages$, first) {
     this.config = transportConfig;
+    this.messages$ = messages$;
+    this.first = first;
   }
 
   _getMsg(correlationId) {
     return new Promise((resolve) => {
-      this.config.me.on('message', ({data}) => {
-        if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
-          resolve(data.response);
+      this.config.me.on('message', ({ data }) => {
+        if (!!data.response && data.response.messageToId === this.config.clusterId && data.clusterId === this.config.clusterId) {
+          console.log('emit to subject this.first', this.first);
+          data.response.timestamp = Date.now();
+          this.messages$.next(data.response);
+        } else {
+          if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
+            // if (data.response.message) {
+            //   console.log('going to emit with first', this.first);
+            //   this.messages$.next(data.response);
+            // }
+
+            resolve(data.response);
+          }
         }
       });
     });
@@ -33,7 +47,15 @@ class clusterTransport {
 }
 
 export class RemoteCluster implements ClusterInterface {
-  constructor() {
+  constructor(first) {
+    this.messages$ = new Subject();
+    this.first = first;
+    this.transportId = Date.now();
+
+
+    // this.messages$.subscribe((data) => {
+    //   console.log('this.messages$ in constructor', data);
+    // });
   }
 
   id(): string {
@@ -53,12 +75,26 @@ export class RemoteCluster implements ClusterInterface {
     return this._send('members');
   }
 
+  shutdown() {
+    return this._send('shutdown');
+  }
+
+  messageToChanel(messageRequest) {
+    return this._send('messageToChanel', messageRequest);
+  }
+
+  listenMembership(): Observable<MembershipEvent> {
+    this.id().then(id => console.log('ID IN LISTEN', id));
+    this.id().then(id => console.log('ID IN LISTEN555', id));
+    this.id().then(id => console.log('ID IN LISTEN5557', id));
+    return this.messages$;
+  };
+
   _send(path, args) {
     return this.myTransport.invoke(path, args);
   }
 
   transport(transportConfig) {
-    this.myTransport = new clusterTransport(transportConfig);
+    this.myTransport = new clusterTransport(transportConfig, this.messages$, this.first);
   }
-
 }

@@ -47,9 +47,9 @@ describe('Cluster suite', () => {
     localClusterB.eventBus(registerCB);
     localClusterC.eventBus(registerCB);
 
-    const clusterA = new RemoteCluster();
-    const clusterB = new RemoteCluster();
-    const clusterC = new RemoteCluster();
+    const clusterA = new RemoteCluster(true);
+    // const clusterB = new RemoteCluster(true);
+    // const clusterC = new RemoteCluster(true);
 
     clusterA.transport({
       type: "PostMessage",
@@ -57,37 +57,54 @@ describe('Cluster suite', () => {
       me: mainEventEmitter,
       clusterId: localClusterA.id()
     });
-    clusterB.transport({
-      type: "PostMessage",
-      worker: main,
-      me: mainEventEmitter,
-      clusterId: localClusterB.id()
-    });
-    clusterC.transport({
-      type: "PostMessage",
-      worker: main,
-      me: mainEventEmitter,
-      clusterId: localClusterC.id()
-    });
+    // clusterB.transport({
+    //   type: "PostMessage",
+    //   worker: main,
+    //   me: mainEventEmitter,
+    //   clusterId: localClusterB.id()
+    // });
+    // clusterC.transport({
+    //   type: "PostMessage",
+    //   worker: main,
+    //   me: mainEventEmitter,
+    //   clusterId: localClusterC.id()
+    // });
 
     await clusterA.metadata('clusterA');
-    await clusterB.metadata('clusterB');
-    await clusterC.metadata('clusterC');
+    // await clusterB.metadata('clusterB');
+    // await clusterC.metadata('clusterC');
 
-    return {clusterA, clusterB, clusterC};
+    return {clusterA, clusterB: {}, clusterC:{}};
   };
 
-  it('When clusterA join clusterB and B join C all cluster should be on all clusters', async () => {
+  it('When clusterA join clusterB and B join C all cluster should be on all clusters', async (done) => {
     const {clusterA, clusterB, clusterC} = await createClusters();
-    await clusterA.join(clusterB);
-    await clusterB.join(clusterC);
+    // await clusterA.join(clusterB);
 
-    const clusterAMembers = await clusterA.members();
-    const clusterBMembers = await clusterB.members();
-    const clusterCMembers = await clusterC.members();
-    expect(clusterAMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterA', 'clusterB', 'clusterC' ]);
-    expect(clusterBMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
-    expect(clusterCMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
+    // clusterA.listenMembership().subscribe((data) => {
+    //   console.log('data A from listenMembership', data);
+    // });
+    let updates = 0;
+    clusterA.listenMembership().subscribe((data) => {
+      updates++;
+      console.log('data A from listenMembership', data);
+    });
+
+    clusterA.shutdown();
+
+    setTimeout(() => {
+      console.log('updates', updates);
+      done();
+    }, 2000);
+
+    // await clusterB.join(clusterC);
+
+    // const clusterAMembers = await clusterA.members();
+    // const clusterBMembers = await clusterB.members();
+    // const clusterCMembers = await clusterC.members();
+    // expect(clusterAMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterA', 'clusterB', 'clusterC' ]);
+    // expect(clusterBMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
+    // expect(clusterCMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
 
   it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async () => {
