@@ -3,77 +3,104 @@ import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {Cluster as ClusterInterface} from '../api/Cluster';
 import {MembershipEvent} from '../api/MembershiptEvent';
+import {RemoteCluster} from "./RemoteCluster";
+
+const createRemoteCluster = (clusterId) => {
+  const remoteCluster = new RemoteCluster();
+  remoteCluster.transport({
+    type: "PostMessage",
+    worker: main,
+    me: mainEventEmitter,
+    clusterId
+  });
+  return remoteCluster;
+};
 
 export class LocalCluster implements ClusterInterface {
-    clusterId: string;
-    processId: string;
-    membersUpdates$: Subject<any>;
-    clusterMembers: { [string]: any };
-    clusterMetadata: any;
+  clusterId: string;
+  processId: string;
+  membersUpdates$: Subject<any>;
+  clusterMembers: { [string]: any };
+  clusterMetadata: any;
 
-    constructor() {
-      this.clusterId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
-      this.membersUpdates$ = new Subject();
-      this.clusterMembers = { [this.clusterId]: this};
-    }
-    _server(msg){
-        console.error(msg);
+  constructor() {
+    this.clusterId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
+    this.membersUpdates$ = new Subject();
+    const remoteCluster = createRemoteCluster(this.clusterId);
+    this.clusterMembers = { [this.clusterId]: remoteCluster };
+  }
 
-        if(msg && this[msg.path]) {
-            postMessage({
-                correlationId: msg.correlationId,
-                data: this[msg.path](msg.args)
-            });
+  async _server(msg) {
+    if (msg && msg.request && this[msg.request.path]) {
+      if (msg.clusterId === this.id()) {
+        if (msg.request.path === 'join') {
+          msg.request.args = createRemoteCluster(msg.request.args.id);
         }
+        const response = await this[msg.request.path](msg.request.args);
 
+        main.postMessage({
+          correlationId: msg.correlationId,
+          clusterId: msg.clusterId,
+          response
+        });
+      }
     }
+  }
 
-    eventBus(registerCB){
-        registerCB(this._server());
+  eventBus(registerCB) {
+    registerCB(this._server.bind(this));
+  }
+
+  id(): string {
+    return this.clusterId;
+  }
+
+  metadata(value: any): any {
+    if (value) {
+      this.clusterMetadata = value;
+      return Promise.resolve(true);
+    } else {
+      return Promise.resolve(this.clusterMetadata);
     }
+  }
 
-    id(): string {
-        return this.clusterId;
-    }
+  async join(cluster: ClusterInterface): void {
+    const members = await cluster.members();
+    const membersClusters = members.map(({ id }) => createRemoteCluster(id));
 
-    metadata(value: any): any {
-        if (value) {
-            this.clusterMetadata = value;
-        } else {
-            return this.clusterMetadata;
+    return this._add(membersClusters);
+  }
+
+  async _add(members: RemoteCluster[]): void {
+    const iterations = members.map(
+      async (member) => {
+        const memberId = await member.id();
+        if (!this.clusterMembers[memberId] && this.id() !== memberId) {
+          this.clusterMembers[memberId] = member;
+          await member.join(this);
+          return Promise.resolve(true);
         }
-    }
+        return Promise.resolve(true);
+      }
+    );
+    return Promise.all(iterations);
+  }
 
-    join(cluster: ClusterInterface): void {
-      // TBD
-        if( cluster.members().then ){
-            cluster.members().then((m)=>this._add(m))
-        } else {
-            this._add(cluster.members());
-        }
-        //this.members().forEach(member=>member.id() !== this.id() && cluster.join(member));
-    }
-    _add(members: LocalCluster[]): void {
-        const self = this;
-        members.forEach(
-            (member) => {
-                if (!self.clusterMembers[member.id()] && self.id() !== member.id()) {
-                    self.clusterMembers[member.id()] = member;
-                    member.join(self);
-                }
-            }
-        );
-    }
+  shutdown(): void {
 
-    shutdown(): void {
+  }
 
-    }
+  members(): LocalCluster[] {
+    const clusterMembers = Object.values(this.clusterMembers);
+    const members = clusterMembers.map(async cluster => {
+      const id = await cluster.id();
+      const metadata = await cluster.metadata();
+      return { id, metadata };
+    });
+    return Promise.all(members);
+  }
 
-    members(): LocalCluster[] {
-        return Object.values(this.clusterMembers);
-    }
+  listenMembership(): Observable<MembershipEvent> {
 
-    listenMembership(): Observable<MembershipEvent> {
-
-    };
+  };
 }
