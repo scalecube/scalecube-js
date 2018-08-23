@@ -77,23 +77,19 @@ describe('Cluster suite', () => {
     return {clusterA, clusterB, clusterC};
   };
 
-  it('When clusterA join clusterB and B join C all cluster should be on all clusters', async (done) => {
+  it('When clusterA join clusterB and B join C all cluster should be on all clusters', async () => {
     const {clusterA, clusterB, clusterC} = await createClusters();
     await clusterA.join(clusterB);
-    const membersB = await clusterA.members();
-    console.log('membersB', membersB);
-    // await clusterB.join(clusterC);
+    await clusterB.join(clusterC);
 
-    // const clusterBMembers = await clusterA.members();
-    // console.log('clusterBMembers', clusterBMembers);
-
-    // expect(clusterA.members().map(i=>i.metadata())).toEqual([ 'clusterA', 'clusterB', 'clusterC' ]);
-    // expect(clusterB.members().map(i=>i.metadata())).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
-    // expect(clusterC.members().map(i=>i.metadata())).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
-    setTimeout(() => {
-      done();
-    }, 2000);
+    const clusterAMembers = await clusterA.members();
+    const clusterBMembers = await clusterB.members();
+    const clusterCMembers = await clusterC.members();
+    expect(clusterAMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterA', 'clusterB', 'clusterC' ]);
+    expect(clusterBMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
+    expect(clusterCMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
+
   it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async () => {
     const {clusterA, clusterB, clusterC} = createClusters();
     expect.assertions(8);
