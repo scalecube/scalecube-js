@@ -17,7 +17,6 @@ class clusterTransport {
     return new Promise((resolve) => {
       this.config.me.on('message', ({ data }) => {
         if (!!data.response && data.response.messageToId === this.config.clusterId && data.clusterId === this.config.clusterId) {
-          console.log('emit to subject this.first', this.first);
           data.response.timestamp = Date.now();
           this.messages$.next(data.response);
         } else {
@@ -75,6 +74,10 @@ export class RemoteCluster implements ClusterInterface {
     return this._send('members');
   }
 
+  removeMember(id) {
+    return this._send('_removeMember', id);
+  }
+
   shutdown() {
     return this._send('shutdown');
   }
@@ -84,9 +87,9 @@ export class RemoteCluster implements ClusterInterface {
   }
 
   listenMembership(): Observable<MembershipEvent> {
-    this.id().then(id => console.log('ID IN LISTEN', id));
-    this.id().then(id => console.log('ID IN LISTEN555', id));
-    this.id().then(id => console.log('ID IN LISTEN5557', id));
+    // this.id().then(id => console.log('ID IN LISTEN', id));
+    // this.id().then(id => console.log('ID IN LISTEN555', id));
+    // this.id().then(id => console.log('ID IN LISTEN5557', id));
     return this.messages$;
   };
 
