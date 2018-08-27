@@ -1,11 +1,9 @@
-import {LocalCluster} from '../src/LogicalCluster/LocalCluster';
-import {RemoteCluster} from '../src/LogicalCluster/RemoteCluster';
-import {fork} from 'child_process';
-import 'rxjs/add/operator/zip';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/elementAt';
 import Worker from 'tiny-worker';
 import EventEmitter from 'events';
+
+import { LocalCluster } from '../src/LogicalCluster/LocalCluster';
+import { RemoteCluster } from '../src/LogicalCluster/RemoteCluster';
+import { eventTypes } from '../src/helpers/const';
 
 // TODO messages order isn't important
 // tests can be changed to have message in different order
@@ -28,10 +26,9 @@ const testListenMembership = (cluster, messages) => {
 };
 
 describe('Cluster suite', () => {
-  global.mainEventEmitter = new EventEmitter();
-  mainEventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
   const createClusters = async () => {
-
+    global.mainEventEmitter = new EventEmitter();
+    mainEventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
     global.main = new Worker(() => {
       self.onmessage = (e) => self.postMessage(e.data);
     });
@@ -44,7 +41,7 @@ describe('Cluster suite', () => {
     const localClusterB = new LocalCluster();
     const localClusterC = new LocalCluster();
 
-    const registerCB = cb => mainEventEmitter.on('requestResponse', e => cb(e.data));
+    const registerCB = cb => mainEventEmitter.on(eventTypes.requestResponse, e => cb(e.data));
 
     localClusterA.eventBus(registerCB);
     localClusterB.eventBus(registerCB);
@@ -84,11 +81,8 @@ describe('Cluster suite', () => {
     listeningMembersSubscriptions.forEach(subscription => subscription.unsubscribe());
     listeningMembersSubscriptions.length = 0;
     main.terminate();
-  });
-
-  afterAll(() => {
-    mainEventEmitter.removeAllListeners('requestResponse');
-    mainEventEmitter.removeAllListeners('messageToChanel');
+    mainEventEmitter.removeAllListeners(eventTypes.requestResponse);
+    mainEventEmitter.removeAllListeners(eventTypes.message);
   });
 
   it('When clusterA join clusterB and B join C all cluster should be on all clusters', async () => {
@@ -145,7 +139,6 @@ describe('Cluster suite', () => {
         { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
       ]
     );
-
     testListenMembership(
       clusterB,
       [
@@ -153,7 +146,6 @@ describe('Cluster suite', () => {
         { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
       ]
     );
-
     testListenMembership(
       clusterC,
       [

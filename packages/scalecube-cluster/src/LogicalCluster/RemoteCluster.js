@@ -1,46 +1,9 @@
 // @flow
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Cluster as ClusterInterface} from '../api/Cluster';
-import {MembershipEvent} from "../api/MembershiptEvent";
-
-class clusterTransport {
-  config;
-
-  constructor(transportConfig, messages$) {
-    this.config = transportConfig;
-    this.messages$ = messages$;
-    this.config.me.on('messageToChanel', ({ data }) => {
-      if (data.clusterId === this.config.clusterId) {
-        this.messages$.next(data.message);
-      }
-    });
-  }
-
-  _getMsg(correlationId) {
-    return new Promise((resolve) => {
-      const handleResponse = ({ data }) => {
-        if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
-          this.config.me.removeListener('requestResponse', handleResponse);
-          resolve(data.response);
-        }
-      };
-      this.config.me.on('requestResponse', handleResponse);
-    });
-  }
-
-  invoke(path, args) {
-    const correlationId = Math.random() + Date.now();
-    this.config.worker.postMessage({
-      eventType: 'requestResponse',
-      correlationId,
-      clusterId: this.config.clusterId,
-      request: { path, args }
-    });
-
-    return this._getMsg(correlationId);
-  }
-}
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+import { Cluster as ClusterInterface } from '../api/Cluster';
+import { MembershipEvent } from '../api/MembershiptEvent';
+import { ClusterTransport } from './Transport';
 
 export class RemoteCluster implements ClusterInterface {
   constructor() {
@@ -81,6 +44,6 @@ export class RemoteCluster implements ClusterInterface {
   }
 
   transport(transportConfig) {
-    this.myTransport = new clusterTransport(transportConfig, this.messages$);
+    this.myTransport = new ClusterTransport(transportConfig, this.messages$);
   }
 }

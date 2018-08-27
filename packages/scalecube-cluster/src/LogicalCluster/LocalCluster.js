@@ -5,6 +5,8 @@ import {Cluster as ClusterInterface} from '../api/Cluster';
 import {MembershipEvent} from '../api/MembershiptEvent';
 import {RemoteCluster} from "./RemoteCluster";
 import type {Type} from "../api/MembershiptEvent";
+import { eventTypes, messageTypes } from '../helpers/const';
+import { createId } from '../helpers/utils';
 
 const createRemoteCluster = (clusterId) => {
   const remoteCluster = new RemoteCluster();
@@ -25,7 +27,7 @@ export class LocalCluster implements ClusterInterface {
   clusterMetadata: any;
 
   constructor() {
-    this.clusterId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
+    this.clusterId = createId();
     this.clusterMembers = { [this.clusterId]: createRemoteCluster(this.clusterId) };
     this._server = this._server.bind(this);
   }
@@ -39,7 +41,7 @@ export class LocalCluster implements ClusterInterface {
 
         const response = await this[msg.request.path](msg.request.args);
         main.postMessage({
-          eventType: 'requestResponse',
+          eventType: eventTypes.requestResponse,
           correlationId: msg.correlationId,
           clusterId: msg.clusterId,
           response
@@ -63,7 +65,7 @@ export class LocalCluster implements ClusterInterface {
       return Promise.all(Object.values(this.clusterMembers).map(async (remoteCluster) => {
         const clusterId = await remoteCluster.id();
         this._messageToChanel(clusterId, {
-          type: 'change',
+          type: messageTypes.change,
           memberId: this.id(),
           senderId: this.id(),
           metadata: value
@@ -88,7 +90,7 @@ export class LocalCluster implements ClusterInterface {
           await member.join(this);
 
           this._messageToChanel(memberId, {
-            type: 'add',
+            type: messageTypes.add,
             memberId: this.id(),
             senderId: this.id(),
             metadata
@@ -103,7 +105,7 @@ export class LocalCluster implements ClusterInterface {
 
   _messageToChanel(clusterId, message) {
     main.postMessage({
-      eventType: 'messageToChanel',
+      eventType: eventTypes.message,
       clusterId,
       message
     });
@@ -115,7 +117,7 @@ export class LocalCluster implements ClusterInterface {
 
       const clusterId = await remoteCluster.id();
       this._messageToChanel(clusterId, {
-        type: 'remove',
+        type: messageTypes.remove,
         memberId: this.id(),
         senderId: this.id(),
         metadata: {}

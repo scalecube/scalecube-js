@@ -4,10 +4,11 @@ import { MembershipEvent } from './MembershiptEvent';
 import { ClusterOptions } from "./ClusterOptions";
 
 export interface Cluster {
-    /**
-     * @param options:ClusterOptions
-     */
-  constructor(options:ClusterOptions|void):void;
+
+  constructor():void;
+  /**
+   * @returns unique Id of the cluster
+   */
   id(): string;
     /**
      * Metadata, this probably will change

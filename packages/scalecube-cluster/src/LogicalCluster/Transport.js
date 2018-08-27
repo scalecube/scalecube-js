@@ -1,44 +1,41 @@
 // @flow
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Cluster} from '../api/Cluster';
-import {MembershipEvent} from '../api/MembershiptEvent';
-import { CreateLogicalClusterInternals } from './LogicalClusterInternals';
-import { fork } from 'child_process';
+import { eventTypes } from '../helpers/const';
+import { createId } from '../helpers/utils';
 
-export class Transport {
-    processes: any;
+export class ClusterTransport {
+  config;
 
-     constructor() {
-        this.processes = {};
+  constructor(transportConfig, messages$) {
+    this.config = transportConfig;
+    this.messages$ = messages$;
+    this.config.me.on(eventTypes.message, ({ data }) => {
+      if (data.clusterId === this.config.clusterId) {
+        this.messages$.next(data.message);
+      }
+    });
+  }
 
-        setTimeout(() => {
-          this.processes.processA.send({
-            command: 'join',
-            data: {
-              clusterId: 5,
-              processId: 'processB',
-              members: {
-                [5]: { clusterId: 1, processId: 'processB' },
-                [1]: { clusterId: 1, processId: 'processB' },
-                [2]: { clusterId: 2, processId: 'processB' },
-                [3]: { clusterId: 2, processId: 'processC' }
-              }
-            }
-          });
-        }, 2000);
-    }
-
-    addProcess({ id, path }) {
-      this.processes[id] = fork(path);
-      this.processes[id].on('message', ({ command, data }) => {
-        if (data.command === 'join') {
-          this.processes[data.processId].send(data);
+  _getMsg(correlationId) {
+    return new Promise((resolve) => {
+      const handleResponse = ({ data }) => {
+        if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
+          this.config.me.removeListener(eventTypes.requestResponse, handleResponse);
+          resolve(data.response);
         }
-        if (data.command === 'addMembers') {
-          console.log('WILL ADD MEMBERS TO CLUSTERB', data.data);
-        }
-      });
-    }
+      };
+      this.config.me.on(eventTypes.requestResponse, handleResponse);
+    });
+  }
 
+  invoke(path, args) {
+    const correlationId = createId();
+    this.config.worker.postMessage({
+      eventType: eventTypes.requestResponse,
+      correlationId,
+      clusterId: this.config.clusterId,
+      request: { path, args }
+    });
+
+    return this._getMsg(correlationId);
+  }
 }
