@@ -1,6 +1,5 @@
 import {LocalCluster} from '../src/LogicalCluster/LocalCluster';
 import {RemoteCluster} from '../src/LogicalCluster/RemoteCluster';
-import {Transport} from '../src/LogicalCluster/Transport';
 import {fork} from 'child_process';
 import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/do';
@@ -8,16 +7,25 @@ import 'rxjs/add/operator/elementAt';
 import Worker from 'tiny-worker';
 import EventEmitter from 'events';
 
-const expectMessage = (cluster, at, messageExpected) =>
-  cluster
-    .listenMembership()
-    .elementAt(at)
-    .do(messageSent => expect(messageSent).toEqual(messageExpected))
-    .subscribe();
-
 // TODO messages order isn't important
 // tests can be changed to have message in different order
 // this was easier to implemented
+
+const listeningMembersSubscriptions = [];
+
+const testListenMembership = (cluster, messages) => {
+  let index = 0;
+  const subscription = cluster.listenMembership()
+    .subscribe((message) => {
+      messages.forEach((expectedMessage, messageIndex) => {
+        if (index === messageIndex) {
+          expect(message).toEqual(expectedMessage);
+        }
+      });
+      index++;
+    });
+  listeningMembersSubscriptions.push(subscription);
+};
 
 describe('Cluster suite', () => {
   global.mainEventEmitter = new EventEmitter();
@@ -29,14 +37,14 @@ describe('Cluster suite', () => {
     });
 
     main.addEventListener('message', (event) => {
-      mainEventEmitter.emit('message', event);
+      mainEventEmitter.emit(event.data.eventType, event);
     });
 
     const localClusterA = new LocalCluster();
     const localClusterB = new LocalCluster();
     const localClusterC = new LocalCluster();
 
-    const registerCB = cb => mainEventEmitter.on("message", e => cb(e.data));
+    const registerCB = cb => mainEventEmitter.on('requestResponse', e => cb(e.data));
 
     localClusterA.eventBus(registerCB);
     localClusterB.eventBus(registerCB);
@@ -72,11 +80,15 @@ describe('Cluster suite', () => {
     return { clusterA, clusterB, clusterC };
   };
 
-  const listeningMembersSubscriptions = [];
-
   afterEach(() => {
     listeningMembersSubscriptions.forEach(subscription => subscription.unsubscribe());
     listeningMembersSubscriptions.length = 0;
+    main.terminate();
+  });
+
+  afterAll(() => {
+    mainEventEmitter.removeAllListeners('requestResponse');
+    mainEventEmitter.removeAllListeners('messageToChanel');
   });
 
   it('When clusterA join clusterB and B join C all cluster should be on all clusters', async () => {
@@ -93,7 +105,7 @@ describe('Cluster suite', () => {
     expect(clusterCMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
 
-  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async () => {
+  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async (done) => {
     const { clusterA, clusterB, clusterC } = await createClusters();
     expect.assertions(5);
 
@@ -101,20 +113,10 @@ describe('Cluster suite', () => {
     const clusterAId = await clusterA.id();
     await clusterB.join(clusterC);
 
-    const testListenMembership = (cluster) => {
-      const subscription = cluster.listenMembership()
-        .subscribe((message) => {
-          expect(message).toEqual({
-            type: 'remove',
-            metadata: {},
-            memberId: clusterAId,
-            senderId: clusterAId
-          });
-        });
-      listeningMembersSubscriptions.push(subscription);
-    };
-
-    [clusterA, clusterB, clusterC].forEach(testListenMembership);
+    [clusterA, clusterB, clusterC].forEach(cluster => testListenMembership(
+      cluster,
+      [{ type: 'remove', metadata: {}, memberId: clusterAId, senderId: clusterAId }]
+    ));
 
     await clusterA.shutdown();
 
@@ -122,6 +124,10 @@ describe('Cluster suite', () => {
     const cMembers = await clusterC.members();
     expect(bMembers.map(i => i.metadata)).toEqual(['clusterB', 'clusterC']);
     expect(cMembers.map(i => i.metadata)).toEqual(['clusterC', 'clusterB']);
+
+    setTimeout(() => {
+      done();
+    }, 2000);
   });
 
   it('When A join B and B join C all add messages are sent', async () => {
@@ -132,37 +138,28 @@ describe('Cluster suite', () => {
 
     expect.assertions(3 * 2); // clusters * messages
 
-    const testListenMembership = (cluster, messageForFirstUpdate, messageForSecondUpdate) => {
-      let index = 0;
-      const subscription = cluster.listenMembership()
-        .subscribe((message) => {
-          index++;
-          if (index === 1) {
-            expect(message).toEqual(messageForFirstUpdate);
-          }
-          if (index === 2) {
-            expect(message).toEqual(messageForSecondUpdate);
-          }
-        });
-      listeningMembersSubscriptions.push(subscription);
-    };
-
     testListenMembership(
       clusterA,
-      { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' },
-      { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
+      [
+        { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' },
+        { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
+      ]
     );
 
     testListenMembership(
       clusterB,
-      { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
-      { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
+      [
+        { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
+        { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
+      ]
     );
 
     testListenMembership(
       clusterC,
-      { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
-      { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' }
+      [
+        { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
+        { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' }
+      ]
     );
 
     await clusterA.join(clusterB);
@@ -177,20 +174,10 @@ describe('Cluster suite', () => {
     await clusterA.join(clusterB);
     await clusterB.join(clusterC);
 
-    const testListenMembership = (cluster) => {
-      const subscription = cluster.listenMembership()
-        .subscribe((message) => {
-          expect(message).toEqual({
-            type: 'change',
-            metadata: 'Hello',
-            memberId: clusterAId,
-            senderId: clusterAId
-          });
-        });
-      listeningMembersSubscriptions.push(subscription);
-    };
-
-    [clusterA, clusterB, clusterC].forEach(testListenMembership);
+    [clusterA, clusterB, clusterC].forEach(cluster => testListenMembership(
+      cluster,
+      [{ type: 'change', metadata: 'Hello', memberId: clusterAId, senderId: clusterAId }]
+    ));
 
     await clusterA.metadata('Hello');
     const clusterAMetadata = await clusterA.metadata();

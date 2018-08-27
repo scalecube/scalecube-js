@@ -10,34 +10,33 @@ class clusterTransport {
   constructor(transportConfig, messages$) {
     this.config = transportConfig;
     this.messages$ = messages$;
-    this.sentMessageIds = {};
+    this.config.me.on('messageToChanel', ({ data }) => {
+      if (data.clusterId === this.config.clusterId) {
+        this.messages$.next(data.message);
+      }
+    });
   }
 
   _getMsg(correlationId) {
     return new Promise((resolve) => {
-      this.config.me.on('message', ({ data }) => {
-
-        if (!!data.response && data.clusterId === this.config.clusterId && data.response.messageId && !this.sentMessageIds[data.response.messageId]) {
-          this.sentMessageIds[data.response.messageId] = true;
-          const { type, metadata, senderId, memberId } = data.response;
-          this.messages$.next({ type, metadata, senderId, memberId });
-        }
-
+      const handleResponse = ({ data }) => {
         if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
+          this.config.me.removeListener('requestResponse', handleResponse);
           resolve(data.response);
         }
-
-      });
+      };
+      this.config.me.on('requestResponse', handleResponse);
     });
   }
 
   invoke(path, args) {
     const correlationId = Math.random() + Date.now();
     this.config.worker.postMessage({
+      eventType: 'requestResponse',
       correlationId,
       clusterId: this.config.clusterId,
       request: { path, args }
-    }, 'http://localhost');
+    });
 
     return this._getMsg(correlationId);
   }
@@ -73,14 +72,7 @@ export class RemoteCluster implements ClusterInterface {
     return this._send('shutdown');
   }
 
-  messageToChanel(messageRequest) {
-    return this._send('messageToChanel', messageRequest);
-  }
-
   listenMembership(): Observable<MembershipEvent> {
-    // this.id().then(id => console.log('ID IN LISTEN', id));
-    // this.id().then(id => console.log('ID IN LISTEN555', id));
-    // this.id().then(id => console.log('ID IN LISTEN5557', id));
     return this.messages$;
   };
 
