@@ -3,7 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { Cluster as ClusterInterface } from '../api/Cluster';
 import { MembershipEvent } from '../api/MembershiptEvent';
-import { ClusterTransport } from './Transport';
+import { ClusterTransport } from '../Transport';
 
 export class RemoteCluster implements ClusterInterface {
   constructor() {

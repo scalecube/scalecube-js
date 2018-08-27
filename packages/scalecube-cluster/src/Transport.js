@@ -1,6 +1,6 @@
 // @flow
-import { eventTypes } from '../helpers/const';
-import { createId } from '../helpers/utils';
+import { eventTypes } from './helpers/const';
+import { createId } from './helpers/utils';
 
 export class ClusterTransport {
   config;

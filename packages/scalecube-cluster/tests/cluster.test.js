@@ -1,8 +1,8 @@
 import Worker from 'tiny-worker';
 import EventEmitter from 'events';
 
-import { LocalCluster } from '../src/LogicalCluster/LocalCluster';
-import { RemoteCluster } from '../src/LogicalCluster/RemoteCluster';
+import { LocalCluster } from '../src/Cluster/LocalCluster';
+import { RemoteCluster } from '../src/Cluster/RemoteCluster';
 import { eventTypes } from '../src/helpers/const';
 
 // TODO messages order isn't important
