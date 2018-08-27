@@ -30,6 +30,7 @@ export class LocalCluster implements ClusterInterface {
     this.membersUpdates$ = new Subject();
     const remoteCluster = createRemoteCluster(this.clusterId);
     this.clusterMembers = { [this.clusterId]: remoteCluster };
+    this._server = this._server.bind(this);
   }
 
   async _server(msg) {
@@ -38,16 +39,8 @@ export class LocalCluster implements ClusterInterface {
         if (msg.request.path === 'join') {
           msg.request.args = createRemoteCluster(msg.request.args.id);
         }
-        if (msg.request.path === 'shutdown') {
-          console.log('shutdown');
-        }
+
         const response = await this[msg.request.path](msg.request.args);
-
-        if (msg.request.path === 'messageToChanel') {
-          console.log('response after messageToChanel', response);
-        }
-
-        if (response && response.messageToId) { console.log('going to post to worker message', response.messageToId); }
         main.postMessage({
           correlationId: msg.correlationId,
           clusterId: msg.clusterId,
@@ -58,7 +51,7 @@ export class LocalCluster implements ClusterInterface {
   }
 
   eventBus(registerCB) {
-    registerCB(this._server.bind(this));
+    registerCB(this._server);
   }
 
   id(): string {
@@ -80,18 +73,23 @@ export class LocalCluster implements ClusterInterface {
   }
 
   async _add(members: RemoteCluster[]): void {
-    const iterations = members.map(
-      async (member) => {
+    return Promise.all(members.map(async (member) => {
         const memberId = await member.id();
+        const metadata = await this.metadata();
         if (!this.clusterMembers[memberId] && this.id() !== memberId) {
           this.clusterMembers[memberId] = member;
           await member.join(this);
+          await member.messageToChanel({
+            type: 'add',
+            memberId: this.id(),
+            senderId: this.id(),
+            metadata
+          });
           return Promise.resolve(true);
         }
         return Promise.resolve(true);
       }
-    );
-    return Promise.all(iterations);
+    ));
   }
 
   messageToChanel(data) {
@@ -99,17 +97,15 @@ export class LocalCluster implements ClusterInterface {
   }
 
   shutdown(): void {
-    const iterations = Object.values(this.clusterMembers).map(async(remoteCluster) => {
+    return Promise.all(Object.values(this.clusterMembers).map(async(remoteCluster) => {
       await remoteCluster.removeMember(this.id());
       await remoteCluster.messageToChanel({
         type: 'remove',
         memberId: this.id(),
         senderId: this.id(),
-        data: {}
+        metadata: {}
       });
-    });
-
-    return Promise.all(iterations);
+    }));
   }
 
   _removeMember(id) {
@@ -125,11 +121,10 @@ export class LocalCluster implements ClusterInterface {
 
   members(): LocalCluster[] {
     const clusterMembers = Object.values(this.clusterMembers);
-    const members = clusterMembers.map(async cluster => {
+    return Promise.all(clusterMembers.map(async cluster => {
       const id = await cluster.id();
       const metadata = await cluster.metadata();
       return { id, metadata };
-    });
-    return Promise.all(members);
+    }));
   }
 }

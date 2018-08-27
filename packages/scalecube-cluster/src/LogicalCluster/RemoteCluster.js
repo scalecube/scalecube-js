@@ -7,28 +7,24 @@ import {MembershipEvent} from "../api/MembershiptEvent";
 class clusterTransport {
   config;
 
-  constructor(transportConfig, messages$, first) {
+  constructor(transportConfig, messages$) {
     this.config = transportConfig;
     this.messages$ = messages$;
-    this.first = first;
   }
 
   _getMsg(correlationId) {
     return new Promise((resolve) => {
       this.config.me.on('message', ({ data }) => {
+
         if (!!data.response && data.response.messageToId === this.config.clusterId && data.clusterId === this.config.clusterId) {
           data.response.timestamp = Date.now();
           this.messages$.next(data.response);
-        } else {
-          if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
-            // if (data.response.message) {
-            //   console.log('going to emit with first', this.first);
-            //   this.messages$.next(data.response);
-            // }
-
-            resolve(data.response);
-          }
         }
+
+        if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
+          resolve(data.response);
+        }
+
       });
     });
   }
@@ -46,15 +42,8 @@ class clusterTransport {
 }
 
 export class RemoteCluster implements ClusterInterface {
-  constructor(first) {
+  constructor() {
     this.messages$ = new Subject();
-    this.first = first;
-    this.transportId = Date.now();
-
-
-    // this.messages$.subscribe((data) => {
-    //   console.log('this.messages$ in constructor', data);
-    // });
   }
 
   id(): string {
@@ -98,6 +87,6 @@ export class RemoteCluster implements ClusterInterface {
   }
 
   transport(transportConfig) {
-    this.myTransport = new clusterTransport(transportConfig, this.messages$, this.first);
+    this.myTransport = new clusterTransport(transportConfig, this.messages$);
   }
 }

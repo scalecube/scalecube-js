@@ -42,9 +42,9 @@ describe('Cluster suite', () => {
     localClusterB.eventBus(registerCB);
     localClusterC.eventBus(registerCB);
 
-    const clusterA = new RemoteCluster(true);
-    const clusterB = new RemoteCluster(true);
-    const clusterC = new RemoteCluster(true);
+    const clusterA = new RemoteCluster();
+    const clusterB = new RemoteCluster();
+    const clusterC = new RemoteCluster();
 
     clusterA.transport({
       type: "PostMessage",
@@ -95,12 +95,12 @@ describe('Cluster suite', () => {
     await clusterB.join(clusterC);
 
     // TODO There is the dublication of messages
-    [clusterA, clusterB, clusterC].forEach((cluster, index) =>
+    [clusterA, clusterB, clusterC].forEach((cluster) =>
       cluster
         .listenMembership()
         .do((msg) => {
           expect(msg.type).toEqual('remove');
-          expect(msg.data).toEqual({});
+          expect(msg.metadata).toEqual({});
           expect(msg.memberId).toEqual(clusterAId);
         })
         .subscribe()
@@ -110,93 +110,99 @@ describe('Cluster suite', () => {
 
     const bMembers = await clusterB.members();
     const cMembers = await clusterC.members();
-
-    console.log('bMembers', bMembers);
-    console.log('cMembers', cMembers);
-    // expect(bMembers.map(i => i.metadata)).toEqual(['clusterB', 'clusterC']);
-    // expect(cMembers.map(i => i.metadata)).toEqual(['clusterC', 'clusterB']);
+    expect(bMembers.map(i => i.metadata)).toEqual(['clusterB', 'clusterC']);
+    expect(cMembers.map(i => i.metadata)).toEqual(['clusterC', 'clusterB']);
 
     setTimeout(() => {
       done();
     }, 2000);
   });
 
-  it('When A join B and B join C all add essages are sent', () => {
-    const {clusterA, clusterB, clusterC} = createClusters();
+  it('When A join B and B join C all add messages are sent', async (done) => {
+    const {clusterA, clusterB, clusterC} = await createClusters();
 
-    expect.assertions(3 * 2); // clusters * messages
+    // expect.assertions(3 * 2); // clusters * messages
 
-    expectMessage(clusterA, 0, {
-      metadata: "clusterB",
-      senderId: clusterB.id(),
-      memberId: clusterB.id(),
-      type: 'add'
-    });
-    expectMessage(clusterA, 1, {
-      metadata: "clusterC",
-      senderId: clusterC.id(),
-      memberId: clusterC.id(),
-      type: 'add'
-    });
+    [clusterA, clusterB, clusterC].forEach((cluster) =>
+      cluster
+        .listenMembership()
+        .do((msg) => {
 
-    expectMessage(clusterB, 0, {
-      metadata: "clusterA",
-      senderId: clusterA.id(),
-      memberId: clusterA.id(),
-      type: 'add'
-    });
+          console.log('msg', msg);
 
-    expectMessage(clusterB, 1, {
-      metadata: "clusterC",
-      senderId: clusterC.id(),
-      memberId: clusterC.id(),
-      type: 'add'
-    });
-
-    expectMessage(clusterC, 0, {
-      metadata: "clusterB",
-      senderId: clusterB.id(),
-      memberId: clusterB.id(),
-      type: 'add'
-    });
-
-    expectMessage(clusterC, 1, {
-      metadata: "clusterA",
-      senderId: clusterA.id(),
-      memberId: clusterA.id(),
-      type: 'add'
-    });
-
-    clusterA.join(clusterB);
-    clusterB.join(clusterC);
-
-  });
-  it('Metadata should change and messages should be sent', () => {
-    const {clusterA, clusterB, clusterC} = createClusters();
-    expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
-
-    clusterA.join(clusterB);
-    clusterB.join(clusterC);
-
-    [clusterA, clusterB, clusterC].forEach(cluster =>
-      expectMessage(cluster, 0, {
-        metadata: "Hello",
-        senderId: clusterA.id(),
-        memberId: clusterA.id(),
-        type: 'change'
-      })
+          // expect(msg.type).toEqual('add');
+          // expect(msg.data).toEqual({});
+          // expect(msg.memberId).toEqual(clusterAId);
+        })
+        .subscribe()
     );
-    clusterA.metadata('Hello');
-    expect(clusterA.metadata()).toBe('Hello');
-  });
 
-  it('Test', (done) => {
-    const transport = new Transport();
-    transport.addProcess({id: 'processA', path: './packages/scalecube-cluster/tests/processA.js'});
+    // expectMessage(clusterA, 0, {
+    //   metadata: "clusterB",
+    //   senderId: clusterB.id(),
+    //   memberId: clusterB.id(),
+    //   type: 'add'
+    // });
+    // expectMessage(clusterA, 1, {
+    //   metadata: "clusterC",
+    //   senderId: clusterC.id(),
+    //   memberId: clusterC.id(),
+    //   type: 'add'
+    // });
+    //
+    // expectMessage(clusterB, 0, {
+    //   metadata: "clusterA",
+    //   senderId: clusterA.id(),
+    //   memberId: clusterA.id(),
+    //   type: 'add'
+    // });
+    //
+    // expectMessage(clusterB, 1, {
+    //   metadata: "clusterC",
+    //   senderId: clusterC.id(),
+    //   memberId: clusterC.id(),
+    //   type: 'add'
+    // });
+    //
+    // expectMessage(clusterC, 0, {
+    //   metadata: "clusterB",
+    //   senderId: clusterB.id(),
+    //   memberId: clusterB.id(),
+    //   type: 'add'
+    // });
+    //
+    // expectMessage(clusterC, 1, {
+    //   metadata: "clusterA",
+    //   senderId: clusterA.id(),
+    //   memberId: clusterA.id(),
+    //   type: 'add'
+    // });
+
+    await clusterA.join(clusterB);
+    await clusterB.join(clusterC);
 
     setTimeout(() => {
       done();
-    }, 7000);
-  }, 7500);
+    }, 2000);
+
+  });
+  // it('Metadata should change and messages should be sent', () => {
+  //   const {clusterA, clusterB, clusterC} = createClusters();
+  //   expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
+  //
+  //   clusterA.join(clusterB);
+  //   clusterB.join(clusterC);
+  //
+  //   [clusterA, clusterB, clusterC].forEach(cluster =>
+  //     expectMessage(cluster, 0, {
+  //       metadata: "Hello",
+  //       senderId: clusterA.id(),
+  //       memberId: clusterA.id(),
+  //       type: 'change'
+  //     })
+  //   );
+  //   clusterA.metadata('Hello');
+  //   expect(clusterA.metadata()).toBe('Hello');
+  // });
 
 });
