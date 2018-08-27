@@ -72,6 +72,13 @@ describe('Cluster suite', () => {
     return { clusterA, clusterB, clusterC };
   };
 
+  const listeningMembersSubscriptions = [];
+
+  afterEach(() => {
+    listeningMembersSubscriptions.forEach(subscription => subscription.unsubscribe());
+    listeningMembersSubscriptions.length = 0;
+  });
+
   it('When clusterA join clusterB and B join C all cluster should be on all clusters', async () => {
     expect.assertions(3);
     const { clusterA, clusterB, clusterC } = await createClusters();
@@ -86,25 +93,28 @@ describe('Cluster suite', () => {
     expect(clusterCMembers.map(cluster => cluster.metadata)).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
 
-  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async (done) => {
+  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async () => {
     const { clusterA, clusterB, clusterC } = await createClusters();
-    // expect.assertions(8);
+    expect.assertions(5);
 
     await clusterA.join(clusterB);
     const clusterAId = await clusterA.id();
     await clusterB.join(clusterC);
 
-    // TODO There is the dublication of messages
-    [clusterA, clusterB, clusterC].forEach((cluster) =>
-      cluster
-        .listenMembership()
-        .do((msg) => {
-          expect(msg.type).toEqual('remove');
-          expect(msg.metadata).toEqual({});
-          expect(msg.memberId).toEqual(clusterAId);
-        })
-        .subscribe()
-    );
+    const testListenMembership = (cluster) => {
+      const subscription = cluster.listenMembership()
+        .subscribe((message) => {
+          expect(message).toEqual({
+            type: 'remove',
+            metadata: {},
+            memberId: clusterAId,
+            senderId: clusterAId
+          });
+        });
+      listeningMembersSubscriptions.push(subscription);
+    };
+
+    [clusterA, clusterB, clusterC].forEach(testListenMembership);
 
     await clusterA.shutdown();
 
@@ -112,97 +122,79 @@ describe('Cluster suite', () => {
     const cMembers = await clusterC.members();
     expect(bMembers.map(i => i.metadata)).toEqual(['clusterB', 'clusterC']);
     expect(cMembers.map(i => i.metadata)).toEqual(['clusterC', 'clusterB']);
-
-    setTimeout(() => {
-      done();
-    }, 2000);
   });
 
-  it('When A join B and B join C all add messages are sent', async (done) => {
-    const {clusterA, clusterB, clusterC} = await createClusters();
+  it('When A join B and B join C all add messages are sent', async () => {
+    const { clusterA, clusterB, clusterC } = await createClusters();
+    const clusterAId = await clusterA.id();
+    const clusterBId = await clusterB.id();
+    const clusterCId = await clusterC.id();
 
-    // expect.assertions(3 * 2); // clusters * messages
+    expect.assertions(3 * 2); // clusters * messages
 
-    [clusterA, clusterB, clusterC].forEach((cluster) =>
-      cluster
-        .listenMembership()
-        .do((msg) => {
+    const testListenMembership = (cluster, messageForFirstUpdate, messageForSecondUpdate) => {
+      let index = 0;
+      const subscription = cluster.listenMembership()
+        .subscribe((message) => {
+          index++;
+          if (index === 1) {
+            expect(message).toEqual(messageForFirstUpdate);
+          }
+          if (index === 2) {
+            expect(message).toEqual(messageForSecondUpdate);
+          }
+        });
+      listeningMembersSubscriptions.push(subscription);
+    };
 
-          console.log('msg', msg);
-
-          // expect(msg.type).toEqual('add');
-          // expect(msg.data).toEqual({});
-          // expect(msg.memberId).toEqual(clusterAId);
-        })
-        .subscribe()
+    testListenMembership(
+      clusterA,
+      { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' },
+      { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
     );
 
-    // expectMessage(clusterA, 0, {
-    //   metadata: "clusterB",
-    //   senderId: clusterB.id(),
-    //   memberId: clusterB.id(),
-    //   type: 'add'
-    // });
-    // expectMessage(clusterA, 1, {
-    //   metadata: "clusterC",
-    //   senderId: clusterC.id(),
-    //   memberId: clusterC.id(),
-    //   type: 'add'
-    // });
-    //
-    // expectMessage(clusterB, 0, {
-    //   metadata: "clusterA",
-    //   senderId: clusterA.id(),
-    //   memberId: clusterA.id(),
-    //   type: 'add'
-    // });
-    //
-    // expectMessage(clusterB, 1, {
-    //   metadata: "clusterC",
-    //   senderId: clusterC.id(),
-    //   memberId: clusterC.id(),
-    //   type: 'add'
-    // });
-    //
-    // expectMessage(clusterC, 0, {
-    //   metadata: "clusterB",
-    //   senderId: clusterB.id(),
-    //   memberId: clusterB.id(),
-    //   type: 'add'
-    // });
-    //
-    // expectMessage(clusterC, 1, {
-    //   metadata: "clusterA",
-    //   senderId: clusterA.id(),
-    //   memberId: clusterA.id(),
-    //   type: 'add'
-    // });
+    testListenMembership(
+      clusterB,
+      { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
+      { metadata: 'clusterC', senderId: clusterCId, memberId: clusterCId, type: 'add' }
+    );
+
+    testListenMembership(
+      clusterC,
+      { metadata: 'clusterA', senderId: clusterAId, memberId: clusterAId, type: 'add' },
+      { metadata: 'clusterB', senderId: clusterBId, memberId: clusterBId, type: 'add' }
+    );
+
+    await clusterA.join(clusterB);
+    await clusterB.join(clusterC);
+  });
+
+  it('Metadata should change and messages should be sent', async () => {
+    const {clusterA, clusterB, clusterC} = await createClusters();
+    const clusterAId = await clusterA.id();
+    expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
 
     await clusterA.join(clusterB);
     await clusterB.join(clusterC);
 
-    setTimeout(() => {
-      done();
-    }, 2000);
+    const testListenMembership = (cluster) => {
+      const subscription = cluster.listenMembership()
+        .subscribe((message) => {
+          expect(message).toEqual({
+            type: 'change',
+            metadata: 'Hello',
+            memberId: clusterAId,
+            senderId: clusterAId
+          });
+        });
+      listeningMembersSubscriptions.push(subscription);
+    };
 
+    [clusterA, clusterB, clusterC].forEach(testListenMembership);
+
+    await clusterA.metadata('Hello');
+    const clusterAMetadata = await clusterA.metadata();
+    expect(clusterAMetadata).toBe('Hello');
   });
-  // it('Metadata should change and messages should be sent', () => {
-  //   const {clusterA, clusterB, clusterC} = createClusters();
-  //   expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
-  //
-  //   clusterA.join(clusterB);
-  //   clusterB.join(clusterC);
-  //
-  //   [clusterA, clusterB, clusterC].forEach(cluster =>
-  //     expectMessage(cluster, 0, {
-  //       metadata: "Hello",
-  //       senderId: clusterA.id(),
-  //       memberId: clusterA.id(),
-  //       type: 'change'
-  //     })
-  //   );
-  //   clusterA.metadata('Hello');
-  //   expect(clusterA.metadata()).toBe('Hello');
-  // });
 
 });

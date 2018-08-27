@@ -61,7 +61,14 @@ export class LocalCluster implements ClusterInterface {
   metadata(value: any): any {
     if (value) {
       this.clusterMetadata = value;
-      return Promise.resolve(true);
+      return Promise.all(Object.values(this.clusterMembers).map(async (remoteCluster) => {
+        await remoteCluster.messageToChanel({
+          type: 'change',
+          memberId: this.id(),
+          senderId: this.id(),
+          metadata: value
+        });
+      }));
     } else {
       return Promise.resolve(this.clusterMetadata);
     }
@@ -93,7 +100,9 @@ export class LocalCluster implements ClusterInterface {
   }
 
   messageToChanel(data) {
-    return Promise.resolve(Object.assign({}, data, { messageToId: this.id() }));
+    return Promise.resolve(Object.assign(
+      {}, data, { messageId: String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random()) }
+    ));
   }
 
   shutdown(): void {

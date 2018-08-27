@@ -10,15 +10,17 @@ class clusterTransport {
   constructor(transportConfig, messages$) {
     this.config = transportConfig;
     this.messages$ = messages$;
+    this.sentMessageIds = {};
   }
 
   _getMsg(correlationId) {
     return new Promise((resolve) => {
       this.config.me.on('message', ({ data }) => {
 
-        if (!!data.response && data.response.messageToId === this.config.clusterId && data.clusterId === this.config.clusterId) {
-          data.response.timestamp = Date.now();
-          this.messages$.next(data.response);
+        if (!!data.response && data.clusterId === this.config.clusterId && data.response.messageId && !this.sentMessageIds[data.response.messageId]) {
+          this.sentMessageIds[data.response.messageId] = true;
+          const { type, metadata, senderId, memberId } = data.response;
+          this.messages$.next({ type, metadata, senderId, memberId });
         }
 
         if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
