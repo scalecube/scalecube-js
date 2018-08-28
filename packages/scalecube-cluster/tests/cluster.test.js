@@ -51,30 +51,34 @@ describe('Cluster suite', () => {
     const clusterB = new RemoteCluster();
     const clusterC = new RemoteCluster();
 
+    const clusterAId = await localClusterA.id();
+    const clusterBId = await localClusterB.id();
+    const clusterCId = await localClusterC.id();
+
     clusterA.transport({
       type: "PostMessage",
       worker: main,
       me: mainEventEmitter,
-      clusterId: localClusterA.id()
+      clusterId: clusterAId
     });
     clusterB.transport({
       type: "PostMessage",
       worker: main,
       me: mainEventEmitter,
-      clusterId: localClusterB.id()
+      clusterId: clusterBId
     });
     clusterC.transport({
       type: "PostMessage",
       worker: main,
       me: mainEventEmitter,
-      clusterId: localClusterC.id()
+      clusterId: clusterCId
     });
 
     await clusterA.metadata('clusterA');
     await clusterB.metadata('clusterB');
     await clusterC.metadata('clusterC');
 
-    return { clusterA, clusterB, clusterC };
+    return { clusterA, clusterB, clusterC, clusterAId, clusterBId, clusterCId };
   };
 
   afterEach(() => {
@@ -90,7 +94,6 @@ describe('Cluster suite', () => {
     const { clusterA, clusterB, clusterC } = await createClusters();
     await clusterA.join(clusterB);
     await clusterB.join(clusterC);
-
     const clusterAMembers = await clusterA.members();
     const clusterBMembers = await clusterB.members();
     const clusterCMembers = await clusterC.members();
@@ -100,11 +103,10 @@ describe('Cluster suite', () => {
   });
 
   it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', async (done) => {
-    const { clusterA, clusterB, clusterC } = await createClusters();
+    const { clusterA, clusterB, clusterC, clusterAId } = await createClusters();
     expect.assertions(5);
 
     await clusterA.join(clusterB);
-    const clusterAId = await clusterA.id();
     await clusterB.join(clusterC);
 
     [clusterA, clusterB, clusterC].forEach(cluster => testListenMembership(
@@ -125,10 +127,7 @@ describe('Cluster suite', () => {
   });
 
   it('When A join B and B join C all add messages are sent', async () => {
-    const { clusterA, clusterB, clusterC } = await createClusters();
-    const clusterAId = await clusterA.id();
-    const clusterBId = await clusterB.id();
-    const clusterCId = await clusterC.id();
+    const { clusterA, clusterB, clusterC, clusterAId, clusterBId, clusterCId } = await createClusters();
 
     expect.assertions(3 * 2); // clusters * messages
 
@@ -159,8 +158,7 @@ describe('Cluster suite', () => {
   });
 
   it('Metadata should change and messages should be sent', async () => {
-    const {clusterA, clusterB, clusterC} = await createClusters();
-    const clusterAId = await clusterA.id();
+    const { clusterA, clusterB, clusterC, clusterAId } = await createClusters();
     expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
 
     await clusterA.join(clusterB);

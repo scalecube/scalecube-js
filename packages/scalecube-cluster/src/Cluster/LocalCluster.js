@@ -1,29 +1,15 @@
 // @flow
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Cluster as ClusterInterface} from '../api/Cluster';
-import {MembershipEvent} from '../api/MembershiptEvent';
-import {RemoteCluster} from "./RemoteCluster";
-import type {Type} from "../api/MembershiptEvent";
+import { Cluster as ClusterInterface } from '../api/Cluster';
+import { RemoteCluster } from './RemoteCluster';
 import { eventTypes, messageTypes } from '../helpers/const';
-import { createId } from '../helpers/utils';
+import { createId, createRemoteCluster, createRemoteClustersById, formatSuccessResponse } from '../helpers/utils';
+import { Message } from '../api/types';
+import { MembershipEvent } from '../api/MembershiptEvent';
+import { Member } from '../api/Member';
 
-const createRemoteCluster = (clusterId) => {
-  const remoteCluster = new RemoteCluster();
-  remoteCluster.transport({
-    type: "PostMessage",
-    worker: main,
-    me: mainEventEmitter,
-    clusterId
-  });
-  return remoteCluster;
-};
-
-const createRemoteClustersById = clusterIds => clusterIds.map(({ id }) => createRemoteCluster(id));
-
-export class LocalCluster implements ClusterInterface {
+export class LocalCluster {
   clusterId: string;
-  clusterMembers: { [string]: any };
+  clusterMembers: { [string]: ClusterInterface };
   clusterMetadata: any;
 
   constructor() {
@@ -32,11 +18,12 @@ export class LocalCluster implements ClusterInterface {
     this._server = this._server.bind(this);
   }
 
-  async _server(msg) {
+  async _server(msg: Message) {
     if (msg && msg.request && this[msg.request.path]) {
-      if (msg.clusterId === this.id()) {
+      const currentClusterId = await this.id();
+      if (msg.clusterId === currentClusterId) {
         if (msg.request.path === 'join') {
-          msg.request.args = createRemoteCluster(msg.request.args.id);
+          msg.request.args = createRemoteCluster(msg.request.args);
         }
 
         const response = await this[msg.request.path](msg.request.args);
@@ -50,12 +37,12 @@ export class LocalCluster implements ClusterInterface {
     }
   }
 
-  eventBus(registerCB) {
+  eventBus(registerCB: any) {
     registerCB(this._server);
   }
 
-  id(): string {
-    return this.clusterId;
+  id(): Promise<string> {
+    return Promise.resolve(this.clusterId);
   }
 
   metadata(value: any): any {
@@ -64,46 +51,48 @@ export class LocalCluster implements ClusterInterface {
 
       return Promise.all(Object.values(this.clusterMembers).map(async (remoteCluster) => {
         const clusterId = await remoteCluster.id();
+        const currentClusterId = await this.id();
         this._messageToChanel(clusterId, {
           type: messageTypes.change,
-          memberId: this.id(),
-          senderId: this.id(),
+          memberId: currentClusterId,
+          senderId: currentClusterId,
           metadata: value
         });
-      }));
+      })).then(formatSuccessResponse);
     } else {
       return Promise.resolve(this.clusterMetadata);
     }
   }
 
-  async join(cluster: ClusterInterface): Promise<true>[] {
+  async join(cluster: ClusterInterface): Promise<'success'|'fail'> {
     const members = await cluster.members();
-    return this._add(createRemoteClustersById(members));
+    return this._add(createRemoteClustersById(members)).then(formatSuccessResponse);
   }
 
-  async _add(members: RemoteCluster[]): Promise<true>[] {
+  async _add(members: RemoteCluster[]): Promise<void>[] {
     return Promise.all(members.map(async (member) => {
         const memberId = await member.id();
         const metadata = await this.metadata();
-        if (!this.clusterMembers[memberId] && this.id() !== memberId) {
+        const currentClusterId = await this.id();
+        if (!this.clusterMembers[memberId] && currentClusterId !== memberId) {
           this.clusterMembers[memberId] = member;
           await member.join(this);
 
           this._messageToChanel(memberId, {
             type: messageTypes.add,
-            memberId: this.id(),
-            senderId: this.id(),
+            memberId: currentClusterId,
+            senderId: currentClusterId,
             metadata
           });
 
-          return Promise.resolve(true);
+          return Promise.resolve();
         }
-        return Promise.resolve(true);
+        return Promise.resolve();
       }
     ));
   }
 
-  _messageToChanel(clusterId, message) {
+  _messageToChanel(clusterId: string, message: MembershipEvent) {
     main.postMessage({
       eventType: eventTypes.message,
       clusterId,
@@ -111,21 +100,22 @@ export class LocalCluster implements ClusterInterface {
     });
   }
 
-  shutdown(): Promise[] {
+  shutdown(): Promise<'success'|'fail'> {
     return Promise.all(Object.values(this.clusterMembers).map(async(remoteCluster) => {
-      await remoteCluster.removeMember(this.id());
+      const currentClusterId = await this.id();
+      await remoteCluster._removeMember(currentClusterId);
 
       const clusterId = await remoteCluster.id();
       this._messageToChanel(clusterId, {
         type: messageTypes.remove,
-        memberId: this.id(),
-        senderId: this.id(),
+        memberId: currentClusterId,
+        senderId: currentClusterId,
         metadata: {}
       });
-    }));
+    })).then(formatSuccessResponse);
   }
 
-  _removeMember(id) {
+  _removeMember(id: string) {
     this.clusterMembers = Object.keys(this.clusterMembers).reduce((members, clusterId) => {
       if (clusterId !== id) {
         members[clusterId] = this.clusterMembers[clusterId];
@@ -133,10 +123,10 @@ export class LocalCluster implements ClusterInterface {
       return members;
     }, {});
 
-    return Promise.resolve(true);
+    return Promise.resolve('success');
   }
 
-  members(): Promise[] {
+  members(): Promise<Member[]> {
     const clusterMembers = Object.values(this.clusterMembers);
     return Promise.all(clusterMembers.map(async cluster => {
       const id = await cluster.id();

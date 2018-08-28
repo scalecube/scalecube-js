@@ -4,43 +4,47 @@ import { Observable } from 'rxjs/Observable';
 import { Cluster as ClusterInterface } from '../api/Cluster';
 import { MembershipEvent } from '../api/MembershiptEvent';
 import { ClusterTransport } from '../Transport';
+import { Member } from '../api/Member';
+import { Request } from '../api/types';
 
 export class RemoteCluster implements ClusterInterface {
+  messages$: Subject;
+
   constructor() {
     this.messages$ = new Subject();
   }
 
-  id(): string {
-    return this._send('id');
+  id(): Promise<string> {
+    return this._send({ path: 'id' });
   }
 
   metadata(value: any): any {
-    return this._send('metadata', value);
+    return this._send({ path: 'metadata', args: value });
   }
 
-  async join(cluster: ClusterInterface): void {
+  async join(cluster: ClusterInterface): Promise<'success'|'fail'> {
     const id = await cluster.id();
-    return this._send('join', { id });
+    return this._send({ path: 'join', args: id });
   }
 
-  members() {
-    return this._send('members');
+  members(): Promise<Member[]> {
+    return this._send({ path: 'members' });
   }
 
-  removeMember(id) {
-    return this._send('_removeMember', id);
+  _removeMember(id: string): Promise<'success'> {
+    return this._send({ path: '_removeMember', args: id });
   }
 
-  shutdown() {
-    return this._send('shutdown');
+  shutdown(): Promise<'success'|'fail'> {
+    return this._send({ path: 'shutdown' });
   }
 
   listenMembership(): Observable<MembershipEvent> {
-    return this.messages$;
+    return this.messages$.asObservable();
   };
 
-  _send(path, args) {
-    return this.myTransport.invoke(path, args);
+  _send(request: Request) {
+    return this.myTransport.invoke(request);
   }
 
   transport(transportConfig) {

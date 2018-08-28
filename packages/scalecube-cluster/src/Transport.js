@@ -1,11 +1,15 @@
 // @flow
+import { Subject } from 'rxjs/Subject';
 import { eventTypes } from './helpers/const';
 import { createId } from './helpers/utils';
+import { Request } from './api/types';
+import { TransportConfig } from './api/TransportConfig';
+import { Transport as TransportInterface } from './api/Transport';
 
-export class ClusterTransport {
-  config;
+export class ClusterTransport implements TransportInterface {
+  config: TransportConfig;
 
-  constructor(transportConfig, messages$) {
+  constructor(transportConfig: TransportConfig, messages$: Subject) {
     this.config = transportConfig;
     this.messages$ = messages$;
     this.config.me.on(eventTypes.message, ({ data }) => {
@@ -15,7 +19,7 @@ export class ClusterTransport {
     });
   }
 
-  _getMsg(correlationId) {
+  _getMsg(correlationId: string): Promise<any> {
     return new Promise((resolve) => {
       const handleResponse = ({ data }) => {
         if (data.correlationId === correlationId && data.clusterId === this.config.clusterId && !!data.response) {
@@ -27,13 +31,13 @@ export class ClusterTransport {
     });
   }
 
-  invoke(path, args) {
+  invoke(request: Request): Promise<any> {
     const correlationId = createId();
     this.config.worker.postMessage({
       eventType: eventTypes.requestResponse,
       correlationId,
       clusterId: this.config.clusterId,
-      request: { path, args }
+      request
     });
 
     return this._getMsg(correlationId);
