@@ -23,9 +23,18 @@ const requestResponseHandler = (data, q) => {
 };
 
 const server = new RSocketServer({
-  getRequestHandler: (socket) => {
+  getRequestHandler: (socket, payload) => {
+
+    // socket.on('close', (data) => {
+    //   console.log('data close', data);
+    // });
+    console.log('socket', socket);
+
     return {
       requestResponse({ data, metadata: { q } }) {
+
+        console.log('in server', data, q);
+
         return new Single(subscriber => {
           requestResponseHandler(data, q).then(response => subscriber.onComplete(response));
           subscriber.onSubscribe();
@@ -41,4 +50,6 @@ const server = new RSocketServer({
   })
 });
 
-export const startServer = () => { console.log('server started'); server.start(); }
+export const startServer = () => server.start();
+
+export const stopServer = () => server.stop();

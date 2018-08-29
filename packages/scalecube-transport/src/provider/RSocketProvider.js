@@ -118,6 +118,8 @@ export class RSocketProvider implements TransportProvider {
   destroy(): Promise<void> {
     return new Promise((resolve) => {
       this._socket = null;
+
+      console.log('going to CLOSE');
       this._client.close();
       resolve();
     });
