@@ -13,7 +13,7 @@ const requestResponseHandler = (data, q) => {
           break;
         }
         case '/greeting/pojo/one': {
-          responseData = { test: `Echo:${data}` };
+          responseData = { text: `Echo:${data.text}` };
           break;
         }
       }
@@ -24,17 +24,18 @@ const requestResponseHandler = (data, q) => {
 
 const server = new RSocketServer({
   getRequestHandler: (socket, payload) => {
-
-    // socket.on('close', (data) => {
-    //   console.log('data close', data);
-    // });
-    console.log('socket', socket);
+    // TODO understand if we can use it
+    const connection = socket.connectionStatus();
 
     return {
       requestResponse({ data, metadata: { q } }) {
-
-        console.log('in server', data, q);
-
+        return new Single(subscriber => {
+          requestResponseHandler(data, q).then(response => subscriber.onComplete(response));
+          subscriber.onSubscribe();
+        });
+      },
+      requestStream({ data, metadata: { q } }) {
+        console.log('request stream');
         return new Single(subscriber => {
           requestResponseHandler(data, q).then(response => subscriber.onComplete(response));
           subscriber.onSubscribe();

@@ -35,59 +35,61 @@ describe.each([[RSocketProvider, socketURI, 'RSocket']])
     setWorkers(httpURI);
   });
 
-  // afterAll(() => {
-  //   removeWorkers();
-  // });
+  afterAll(() => {
+    removeWorkers();
+    stopServer();
+  });
 
-  // afterEach(async () => {
-  //   if (needToRemoveProvider) {
-  //     await transport.removeProvider();
-  //   }
-  //   transport = undefined;
-  //   needToRemoveProvider = true;
-  // });
+  afterEach(async () => {
+    if (needToRemoveProvider) {
+      await transport.removeProvider();
+    }
+    transport = undefined;
+    needToRemoveProvider = true;
+  });
 
-  // it(`${providerName}: Calling request without setting a provider will cause an error about missing provider`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   transport = new Transport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
-  //   stream.subscribe(
-  //     () => {},
-  //     (error) => {
-  //       expect(error).toEqual(new Error(errors.noProvider));
-  //       needToRemoveProvider = false;
-  //       done();
-  //     }
-  //   )
-  // });
-  //
-  // it(`${providerName}: Calling request without waiting for build to be completed will cause an error about missing provider`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   transport = new Transport();
-  //   transport.setProvider(Provider, { URI }).then(() => {
-  //     done();
-  //   });
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
-  //   stream.subscribe(
-  //     () => {},
-  //     (error) => {
-  //       expect(error).toEqual(new Error(errors.noProvider));
-  //     }
-  //   )
-  // });
-  //
-  // it(`${providerName}: Providing an url that does not exist causes an error while setting a provider`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   transport = new Transport();
-  //   transport.setProvider(Provider, { URI: 'ws://lo' }).catch((error) => {
-  //     expect(error).toEqual(new Error(errors.urlNotFound));
-  //     needToRemoveProvider = false;
-  //     done();
-  //   });
-  // });
+  it(`${providerName}: Calling request without setting a provider will cause an error about missing provider`, async (done) => {
+    expect.assertions(1);
+
+    transport = new Transport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+    stream.subscribe(
+      () => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.noProvider));
+        needToRemoveProvider = false;
+        done();
+      }
+    )
+  });
+
+  it(`${providerName}: Calling request without waiting for build to be completed will cause an error about missing provider`, async (done) => {
+    expect.assertions(1);
+
+    transport = new Transport();
+    transport.setProvider(Provider, { URI }).then(() => {
+      done();
+    });
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+    stream.subscribe(
+      () => {},
+      (error) => {
+        expect(error).toEqual(new Error(errors.noProvider));
+      }
+    )
+  });
+
+  // TODO investigate the correct message
+  it.skip(`${providerName}: Providing an url that does not exist causes an error while setting a provider`, async (done) => {
+    expect.assertions(1);
+
+    transport = new Transport();
+    transport.setProvider(Provider, { URI: 'ws://lo' }).catch((error) => {
+      expect(error).toEqual(new Error(errors.urlNotFound));
+      needToRemoveProvider = false;
+      done();
+    });
+  });
 
   it(`${providerName}: Use requestResponse type with "one" action - receive one response and the stream is completed`, async (done) => {
     expect.assertions(1);
@@ -98,118 +100,113 @@ describe.each([[RSocketProvider, socketURI, 'RSocket']])
         expect(data).toEqual(getTextResponseSingle(text));
       },
       (error) => console.log('error', error),
-      () => {
-        transport.removeProvider().then(() => {
-          stopServer();
-          done();
-        });
-      }
+      done
     );
   });
 
-  //
-  // it.skip(`${providerName}: Use requestStream type with "one" action - receive one response and the stream is completed`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/one' });
-  //   stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseSingle(text));
-  //     },
-  //     undefined,
-  //     done
-  //   );
-  // });
-  //
-  // it(`${providerName}: Use requestResponse type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestResponse' }, data: { text }, entrypoint: '/greeting/pojo/one' });
-  //   stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual({ text: getTextResponseSingle(text) });
-  //     },
-  //     undefined,
-  //     done
-  //   );
-  // });
-  //
-  // it.skip(`${providerName}: Use requestStream type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
-  //   expect.assertions(1);
-  //
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: { text }, entrypoint: '/greeting/pojo/one' });
-  //   stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual({ text: getTextResponseSingle(text) });
-  //     },
-  //     undefined,
-  //     done
-  //   );
-  // });
-  //
-  // it.skip(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
-  //   expect.assertions(4);
-  //
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: 4 }, data: text, entrypoint: '/greeting/many' });
-  //   let updates = 0;
-  //   stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseMany(updates)(text));
-  //       updates++;
-  //     },
-  //     undefined,
-  //     done
-  //   );
-  // });
-  //
-  // it.skip(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
-  //   let updates = 0;
-  //   let isStreamCompleted = false;
-  //   const subscription = stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseMany(updates)(text));
-  //       updates++;
-  //     },
-  //     undefined,
-  //     () => {
-  //       isStreamCompleted = true;
-  //     }
-  //   );
-  //
-  //   setTimeout(() => {
-  //     expect(updates > 20).toBeTruthy();
-  //     expect(isStreamCompleted).toBeFalsy();
-  //     subscription.unsubscribe();
-  //     done();
-  //   }, 4500);
-  // }, 5000);
-  //
-  // it.skip(`${providerName}: Use requestStream type with "many" action without responsesLimit and unsubscribe after the 4 update`, async (done) => {
-  //   expect.assertions(5);
-  //   const transport = await prepareTransport();
-  //   const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
-  //   let updates = 0;
-  //   const subscription = stream.subscribe(
-  //     (data) => {
-  //       expect(data).toEqual(getTextResponseMany(updates)(text));
-  //       updates++;
-  //       if (updates === 4) {
-  //         subscription.unsubscribe();
-  //       }
-  //     }
-  //   );
-  //
-  //   setTimeout(() => {
-  //     expect(updates).toBe(4);
-  //     done();
-  //   }, 2000);
-  // });
+
+  it.skip(`${providerName}: Use requestStream type with "one" action - receive one response and the stream is completed`, async (done) => {
+    expect.assertions(1);
+
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/one' });
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseSingle(text));
+      },
+      undefined,
+      done
+    );
+  });
+
+  it(`${providerName}: Use requestResponse type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
+    expect.assertions(1);
+
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestResponse' }, data: { text }, entrypoint: '/greeting/pojo/one' });
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual({ text: getTextResponseSingle(text) });
+      },
+      undefined,
+      done
+    );
+  });
+
+  it.skip(`${providerName}: Use requestStream type with "pojo/one" action - receive one response and the stream is completed`, async (done) => {
+    expect.assertions(1);
+
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: { text }, entrypoint: '/greeting/pojo/one' });
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual({ text: getTextResponseSingle(text) });
+      },
+      undefined,
+      done
+    );
+  });
+
+  it.skip(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
+    expect.assertions(4);
+
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: 4 }, data: text, entrypoint: '/greeting/many' });
+    let updates = 0;
+    stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseMany(updates)(text));
+        updates++;
+      },
+      undefined,
+      done
+    );
+  });
+
+  it.skip(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+    let updates = 0;
+    let isStreamCompleted = false;
+    const subscription = stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseMany(updates)(text));
+        updates++;
+      },
+      undefined,
+      () => {
+        isStreamCompleted = true;
+      }
+    );
+
+    setTimeout(() => {
+      expect(updates > 20).toBeTruthy();
+      expect(isStreamCompleted).toBeFalsy();
+      subscription.unsubscribe();
+      done();
+    }, 4500);
+  }, 5000);
+
+  it.skip(`${providerName}: Use requestStream type with "many" action without responsesLimit and unsubscribe after the 4 update`, async (done) => {
+    expect.assertions(5);
+    const transport = await prepareTransport();
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+    let updates = 0;
+    const subscription = stream.subscribe(
+      (data) => {
+        expect(data).toEqual(getTextResponseMany(updates)(text));
+        updates++;
+        if (updates === 4) {
+          subscription.unsubscribe();
+        }
+      }
+    );
+
+    setTimeout(() => {
+      expect(updates).toBe(4);
+      done();
+    }, 2000);
+  });
 
   // it(`${providerName}: Disconnect - an error appears in the stream with the message about closed connection`, async (done) => {
   //   expect.assertions(4);
@@ -432,7 +429,8 @@ describe.each([[RSocketProvider, socketURI, 'RSocket']])
 //         expect(data).toEqual(getTextResponseSingle(text));
 //       },
 //       (error) => console.log('error', error),
-//       () => {
+//       async () => {
+//         await transport.removeProvider();
 //         stopServer();
 //         done();
 //       }

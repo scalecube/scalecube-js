@@ -44,7 +44,7 @@ export class RSocketProvider implements TransportProvider {
 
       this._connect()
         .then(resolve)
-        .catch(error => reject(extractConnectionError(error)))
+        .catch(error => { console.log('error after connect', error); reject(extractConnectionError(error)) })
     });
   }
 
@@ -119,7 +119,6 @@ export class RSocketProvider implements TransportProvider {
     return new Promise((resolve) => {
       this._socket = null;
 
-      console.log('going to CLOSE');
       this._client.close();
       resolve();
     });
