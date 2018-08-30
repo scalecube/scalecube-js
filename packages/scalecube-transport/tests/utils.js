@@ -1,13 +1,5 @@
 import Worker from 'tiny-worker';
 
-export const getTextResponseSingle = text => `Echo:${text}`;
-
-export const getTextResponseMany = index => text => `Greeting (${index}) to: ${text}`;
-
-export const getFailingOneResponse = text => ({ errorCode: 500, errorMessage: text });
-
-export const getFailingManyResponse = text => ({ errorCode: 500, errorMessage: getTextResponseSingle(text) });
-
 export const executeWorkerContent = function() {
   const Observable = require('rxjs').Observable;
   const getTextResponseSingle = text => `Echo:${text}`;

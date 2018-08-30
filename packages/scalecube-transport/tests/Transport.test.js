@@ -3,23 +3,23 @@ import { RSocketProvider } from '../src/provider/RSocketProvider';
 import { PostMessageProvider } from '../src/provider/PostMessageProvider';
 import { errors } from '../src/errors';
 import {
-  getTextResponseSingle,
-  getTextResponseMany,
-  getFailingOneResponse,
-  getFailingManyResponse,
   setWorkers,
   removeWorkers,
   httpURI,
   socketURI
 } from './utils';
+import {
+  getTextResponseSingle,
+  getTextResponseMany,
+  getFailingOneResponse,
+  getFailingManyResponse
+} from '../src/utils';
 import { startServer, stopServer } from '../src/server/server';
 
-// , [PostMessageProvider, httpURI, 'PostMessage']
+startServer();
 
-describe.each([[RSocketProvider, socketURI, 'RSocket']])
+describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])
 (`Transport test`, (Provider, URI, providerName) => {
-
-
   const text = 'Test message';
   let transport;
   let needToRemoveProvider = true;
@@ -31,7 +31,6 @@ describe.each([[RSocketProvider, socketURI, 'RSocket']])
   };
 
   beforeAll(() => {
-    startServer();
     setWorkers(httpURI);
   });
 
@@ -412,6 +411,19 @@ describe.each([[RSocketProvider, socketURI, 'RSocket']])
   });
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // describe('Test', () => {
 //   it('testing own server', async (done) => {

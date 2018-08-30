@@ -44,7 +44,7 @@ export class RSocketProvider implements TransportProvider {
 
       this._connect()
         .then(resolve)
-        .catch(error => { console.log('error after connect', error); reject(extractConnectionError(error)) })
+        .catch(error => reject(extractConnectionError(error)))
     });
   }
 

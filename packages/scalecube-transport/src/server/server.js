@@ -1,20 +1,21 @@
-import { Observable } from 'rxjs/Observable'
 import { RSocketServer } from 'rsocket-core';
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 import { Single, Flowable } from 'rsocket-flowable';
 import { JsonSerializers } from 'rsocket-core';
 import {
-  getFailingManyResponse, getFailingOneResponse, getTextResponseMany,
+  getFailingManyResponse,
+  getFailingOneResponse,
+  getTextResponseMany,
   getTextResponseSingle
-} from "../../tests/utils";
+} from '../../src/utils';
 
 const requestResponseHandler = (data, q) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       let responseData;
       switch(q) {
         case '/greeting/one': {
-          responseData = `Echo:${data}`;
+          responseData = getTextResponseSingle(data);
           break;
         }
         case '/greeting/failing/one': {
@@ -22,7 +23,7 @@ const requestResponseHandler = (data, q) => {
           break;
         }
         case '/greeting/pojo/one': {
-          responseData = { text: `Echo:${data.text}` };
+          responseData = { text: getTextResponseSingle(data.text) };
           break;
         }
       }
@@ -32,10 +33,7 @@ const requestResponseHandler = (data, q) => {
 };
 
 const server = new RSocketServer({
-  getRequestHandler: (socket, payload) => {
-    // TODO understand if we can use it
-    const connection = socket.connectionStatus();
-
+  getRequestHandler: (socket) => {
     return {
       requestResponse({ data, metadata: { q } }) {
         return new Single(subscriber => {
@@ -44,16 +42,11 @@ const server = new RSocketServer({
         });
       },
       requestStream({ data, metadata: { q } }) {
-        let observableSubscription;
         return new Flowable(subscriber => {
           let index = 0;
           subscriber.onSubscribe({
-            cancel: () => {
-              observableSubscription && observableSubscription.unsubscribe();
-              console.log('cancel the Flowable on server');
-            },
+            cancel: () => {},
             request: n => {
-              // console.log('request n', n);
               if (q.includes('/one')) {
                 requestResponseHandler(data, q).then(response => {
                   subscriber.onNext(response);
