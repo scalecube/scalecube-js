@@ -23,7 +23,7 @@ describe('Tests specifically for PostMessage provider', () => {
     return testInvalidWorker(invalidValue);
   });
 
-  it ('Communication between workers', async (done) => {
+  it.skip('Communication between workers', async (done) => {
     const transports = {};
 
     const handleRequestFromWorker = requestWorker => async ({ data: { URI, requestData } }) => {
@@ -58,7 +58,7 @@ describe('Tests specifically for PostMessage provider', () => {
       }, 500);
 
       self.onmessage = ({ data }) => {
-        console.log('Received response in Request Worker 4040!', data);
+        // console.log('Received response in Request Worker 4040!', data);
       }
     });
 
@@ -71,7 +71,7 @@ describe('Tests specifically for PostMessage provider', () => {
       }, 500);
 
       self.onmessage = ({ data }) => {
-        console.log('Received response in Request Worker 3030!', data);
+        // console.log('Received response in Request Worker 3030!', data);
       }
     });
 

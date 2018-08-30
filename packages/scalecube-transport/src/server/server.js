@@ -44,8 +44,9 @@ const server = new RSocketServer({
       requestStream({ data, metadata: { q } }) {
         return new Flowable(subscriber => {
           let index = 0;
+          let isStreamCanceled = false;
           subscriber.onSubscribe({
-            cancel: () => {},
+            cancel: () => { isStreamCanceled = true },
             request: n => {
               if (q.includes('/one')) {
                 requestResponseHandler(data, q).then(response => {
@@ -55,6 +56,9 @@ const server = new RSocketServer({
               } else {
                 while(n--) {
                   setTimeout(() => {
+                    if (isStreamCanceled) {
+                      return false;
+                    }
                     if (q === '/greeting/failing/many') {
                       if (index < 2) {
                         subscriber.onNext({ data: getTextResponseSingle(data) });
