@@ -1,7 +1,12 @@
+import { Observable } from 'rxjs/Observable'
 import { RSocketServer } from 'rsocket-core';
 import RSocketWebSocketServer from 'rsocket-websocket-server';
-import { Single } from 'rsocket-flowable';
+import { Single, Flowable } from 'rsocket-flowable';
 import { JsonSerializers } from 'rsocket-core';
+import {
+  getFailingManyResponse, getFailingOneResponse, getTextResponseMany,
+  getTextResponseSingle
+} from "../../tests/utils";
 
 const requestResponseHandler = (data, q) => {
   return new Promise((resolve, reject) => {
@@ -10,6 +15,10 @@ const requestResponseHandler = (data, q) => {
       switch(q) {
         case '/greeting/one': {
           responseData = `Echo:${data}`;
+          break;
+        }
+        case '/greeting/failing/one': {
+          responseData = getFailingOneResponse(data);
           break;
         }
         case '/greeting/pojo/one': {
@@ -35,10 +44,40 @@ const server = new RSocketServer({
         });
       },
       requestStream({ data, metadata: { q } }) {
-        console.log('request stream');
-        return new Single(subscriber => {
-          requestResponseHandler(data, q).then(response => subscriber.onComplete(response));
-          subscriber.onSubscribe();
+        let observableSubscription;
+        return new Flowable(subscriber => {
+          let index = 0;
+          subscriber.onSubscribe({
+            cancel: () => {
+              observableSubscription && observableSubscription.unsubscribe();
+              console.log('cancel the Flowable on server');
+            },
+            request: n => {
+              // console.log('request n', n);
+              if (q.includes('/one')) {
+                requestResponseHandler(data, q).then(response => {
+                  subscriber.onNext(response);
+                  subscriber.onComplete();
+                });
+              } else {
+                while(n--) {
+                  setTimeout(() => {
+                    if (q === '/greeting/failing/many') {
+                      if (index < 2) {
+                        subscriber.onNext({ data: getTextResponseSingle(data) });
+                        index++;
+                      } else {
+                        subscriber.onNext({ data: getFailingManyResponse(data) });
+                        subscriber.onComplete();
+                      }
+                    } else {
+                      subscriber.onNext({ data: getTextResponseMany(index++)(data) });
+                    }
+                  }, 100);
+                }
+              }
+            }
+          });
         });
       }
     };
