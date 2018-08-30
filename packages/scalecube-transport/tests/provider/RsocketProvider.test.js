@@ -1,7 +1,11 @@
 import { RSocketProvider } from '../../src/provider/RSocketProvider';
 import { Transport } from '../../src/Transport';
 import { errors } from '../../src/errors';
-import { getTextResponseMany, socketURI as URI } from '../utils';
+import { getTextResponseMany } from '../../src/utils';
+import { socketURI as URI } from '../utils';
+import { startServer, stopServer } from '../../src/server/server';
+
+startServer();
 
 describe('Tests specifically for Rsocket provider', () => {
   let transport;
@@ -14,6 +18,10 @@ describe('Tests specifically for Rsocket provider', () => {
     return transport;
   };
 
+  afterAll(() => {
+    stopServer();
+  });
+
   afterEach(async () => {
     if (needToRemoveProvider) {
       await transport.removeProvider();
@@ -22,7 +30,7 @@ describe('Tests specifically for Rsocket provider', () => {
     needToRemoveProvider = true;
   });
 
-  it('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
+  it.skip('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
     expect.assertions(1);
 
     transport = new Transport();

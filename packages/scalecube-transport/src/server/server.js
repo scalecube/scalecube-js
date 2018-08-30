@@ -18,6 +18,10 @@ const requestResponseHandler = (data, q) => {
           responseData = getTextResponseSingle(data);
           break;
         }
+        case '/greeting/many': {
+          responseData = getTextResponseMany(0)(data);
+          break;
+        }
         case '/greeting/failing/one': {
           responseData = getFailingOneResponse(data);
           break;
