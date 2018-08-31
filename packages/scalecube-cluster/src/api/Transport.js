@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs6';
 import { TransportConfig } from './TransportConfig';
 import { Request } from './types';
 

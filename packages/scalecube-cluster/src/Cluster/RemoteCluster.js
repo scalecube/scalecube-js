@@ -1,14 +1,15 @@
 // @flow
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import { Subject, Observable } from 'rxjs6';
 import { Cluster as ClusterInterface } from '../api/Cluster';
 import { MembershipEvent } from '../api/MembershiptEvent';
 import { ClusterTransport } from '../Transport';
 import { Member } from '../api/Member';
 import { Request } from '../api/types';
+import { TransportConfig } from '../api/TransportConfig';
 
 export class RemoteCluster implements ClusterInterface {
   messages$: Subject;
+  transport: ClusterTransport;
 
   constructor() {
     this.messages$ = new Subject();
@@ -22,7 +23,7 @@ export class RemoteCluster implements ClusterInterface {
     return this._send({ path: 'metadata', args: value });
   }
 
-  async join(cluster: ClusterInterface): Promise<'success'|'fail'> {
+  async join(cluster: any): Promise<'success'|'fail'> {
     const id = await cluster.id();
     return this._send({ path: 'join', args: id });
   }
@@ -44,10 +45,10 @@ export class RemoteCluster implements ClusterInterface {
   };
 
   _send(request: Request) {
-    return this.myTransport.invoke(request);
+    return this.transport.invoke(request);
   }
 
-  transport(transportConfig) {
-    this.myTransport = new ClusterTransport(transportConfig, this.messages$);
+  transport(transportConfig: TransportConfig) {
+    this.transport = new ClusterTransport(transportConfig, this.messages$);
   }
 }

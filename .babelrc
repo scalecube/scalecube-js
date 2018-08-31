@@ -1,5 +1,6 @@
 {
   "presets": ["es2015", "flow"],
+  "plugins": ["transform-class-properties"],
   "env": {
     "commonjs": {
       "plugins": [

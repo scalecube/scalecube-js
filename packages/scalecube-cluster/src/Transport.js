@@ -1,5 +1,5 @@
 // @flow
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs6';
 import { eventTypes } from './helpers/const';
 import { createId } from './helpers/utils';
 import { Request } from './api/types';
@@ -8,6 +8,7 @@ import { Transport as TransportInterface } from './api/Transport';
 
 export class ClusterTransport implements TransportInterface {
   config: TransportConfig;
+  messages$: Subject;
 
   constructor(transportConfig: TransportConfig, messages$: Subject) {
     this.config = transportConfig;
