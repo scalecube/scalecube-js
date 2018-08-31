@@ -1,10 +1,10 @@
 // @flow
 import { Subject, Observable } from 'rxjs6';
-import { Cluster as ClusterInterface } from '../api/Cluster';
+import { RemoteCluster as ClusterInterface } from '../api/RemoteCluster';
 import { MembershipEvent } from '../api/MembershiptEvent';
 import { ClusterTransport } from '../Transport';
 import { Member } from '../api/Member';
-import { Request } from '../api/types';
+import { Request, Status } from '../api/types';
 import { TransportConfig } from '../api/TransportConfig';
 
 export class RemoteCluster implements ClusterInterface {
@@ -19,11 +19,11 @@ export class RemoteCluster implements ClusterInterface {
     return this._send({ path: 'id' });
   }
 
-  metadata(value: any): any {
+  metadata(value: any): Promise<any> {
     return this._send({ path: 'metadata', args: value });
   }
 
-  async join(cluster: any): Promise<'success'|'fail'> {
+  async join(cluster: any): Promise<Status> {
     const id = await cluster.id();
     return this._send({ path: 'join', args: id });
   }
@@ -32,11 +32,11 @@ export class RemoteCluster implements ClusterInterface {
     return this._send({ path: 'members' });
   }
 
-  _removeMember(id: string): Promise<'success'> {
-    return this._send({ path: '_removeMember', args: id });
+  removeMember(id: string): Promise<Status> {
+    return this._send({ path: 'removeMember', args: id });
   }
 
-  shutdown(): Promise<'success'|'fail'> {
+  shutdown(): Promise<Status> {
     return this._send({ path: 'shutdown' });
   }
 

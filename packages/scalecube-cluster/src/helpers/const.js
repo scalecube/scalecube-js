@@ -8,3 +8,8 @@ export const messageTypes = {
   remove: 'remove',
   change: 'change'
 };
+
+export const statuses = {
+  success: 'success',
+  fail: 'fail'
+};

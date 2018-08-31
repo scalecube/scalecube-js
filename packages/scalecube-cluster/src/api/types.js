@@ -1,4 +1,6 @@
-import { eventTypes } from '../helpers/const';
+import { eventTypes, statuses } from '../helpers/const';
+
+export type Status = statuses.success | statuses.fail;
 
 export interface Request {
   path: string,
@@ -12,3 +14,4 @@ export interface Message {
   request?: Request,
   response?: any
 }
+

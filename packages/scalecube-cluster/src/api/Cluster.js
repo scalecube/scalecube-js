@@ -1,7 +1,7 @@
 // @flow
 import { Observable } from 'rxjs6';
-import { MembershipEvent } from './MembershiptEvent';
 import { Member } from './Member';
+import { Status } from './types';
 
 export interface Cluster {
 
@@ -10,35 +10,40 @@ export interface Cluster {
    * @returns unique Id of the cluster
    */
   id(): Promise<string>;
+
     /**
      * Metadata, this probably will change
      * Right now the metadata is design only to hold custom metadata
      * I am sure the cluster will need metadata of it's own
      * When we will get to the transport we can design first version of it
-     * @param value
+     * @param value (if metadata should be changed)
+     * @returns Promise, that resolves with a current metadata of the cluster
      */
-  metadata(value:any): any;
+  metadata(value:any): Promise<any>;
 
     /**
-     * Join other cluster, in case 1 node of a cluster join 1 node of another cluster it will cause them to merge
-     * @param cluster
+     * Join other cluster, in case 1 node of a cluster joins 1 node of another cluster it will cause them to merge
+     * @param cluster - RemoteCluster instance
+     * @returns Promise, that resolves with a status
      */
-  join(cluster:Cluster): Promise<'success'|'fail'>;
+  join(cluster:Cluster): Promise<Status>;
 
     /**
      * Send a message to the cluster the node is leaving the cluster and destroy the instance
+     * @returns Promise, that resolves with a status
      */
-  shutdown(): Promise<'success'|'fail'>;
+  shutdown(): Promise<Status>;
 
     /**
-     * list of cluster members
-     * @return array of Cluster nodes
+     * List of cluster members
+     * @returns Promise, that resolves with an array of members
      */
   members(): Promise<Member[]>;
 
-    /**
-     * Listen to all membership events
-     * @return Observable of MembershipEvent
-     */
-  listenMembership(): Observable<MembershipEvent>;
+  /**
+   * Removes the member from a member list of the cluster
+   * @param id - Id of a cluster that should be removed
+   * @returns Promise, that resolves with a status
+   */
+  removeMember(id: string): Promise<Status>;
 }
