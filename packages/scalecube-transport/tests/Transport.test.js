@@ -78,13 +78,11 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     )
   });
 
-  // TODO investigate the correct message
   it(`${providerName}: Providing an url that does not exist causes an error while setting a provider`, async (done) => {
     expect.assertions(1);
-
     transport = new Transport();
     transport.setProvider(Provider, { URI: 'ws://lo' }).catch((error) => {
-      expect(error).toEqual(new Error('RSocketClient: Connection closed.'));
+      expect(error).toEqual(new Error(errors.noConnection));
       needToRemoveProvider = false;
       done();
     });

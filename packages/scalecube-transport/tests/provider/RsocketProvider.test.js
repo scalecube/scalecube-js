@@ -5,8 +5,6 @@ import { getTextResponseMany } from '../../src/utils';
 import { socketURI as URI } from '../utils';
 import { startServer, stopServer } from '../../src/server/server';
 
-startServer();
-
 describe('Tests specifically for Rsocket provider', () => {
   let transport;
   let needToRemoveProvider = true;
@@ -17,6 +15,10 @@ describe('Tests specifically for Rsocket provider', () => {
     await transport.setProvider(RSocketProvider, { URI });
     return transport;
   };
+
+  beforeAll(() => {
+    startServer();
+  });
 
   afterAll(() => {
     stopServer();
@@ -30,12 +32,12 @@ describe('Tests specifically for Rsocket provider', () => {
     needToRemoveProvider = true;
   });
 
-  it.skip('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
+  it('Providing an url with inactive websocket server causes an error while setting a provider', async (done) => {
     expect.assertions(1);
 
     transport = new Transport();
     transport.setProvider(RSocketProvider, { URI: 'ws://localhost:9999' }).catch((error) => {
-      expect(error).toEqual(new Error(errors.connectionRefused));
+      expect(error).toEqual(new Error(errors.noConnection));
       needToRemoveProvider = false;
       done();
     });
@@ -96,7 +98,9 @@ describe('Tests specifically for Rsocket provider', () => {
       (data) => {},
       (error) => {
         expect(error).toEqual(new Error(errors.wrongType));
-        done();
+        setTimeout(() => {
+          done();
+        }, 100);
       }
     );
   });

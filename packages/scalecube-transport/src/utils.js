@@ -41,6 +41,8 @@ export const extractConnectionError = (error: Error) => {
     return new Error(errors.urlNotFound);
   } else if (error.message.includes('ECONNREFUSED')) {
     return new Error(errors.connectionRefused);
+  } else if (error.message === 'RSocketClient: Connection closed.') {
+    return new Error(errors.noConnection);
   }
   return new Error(error.message);
 };

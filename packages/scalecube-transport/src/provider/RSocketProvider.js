@@ -60,8 +60,6 @@ export class RSocketProvider implements TransportProvider {
       if (validationError) {
         subscriber.error(new Error(validationError));
       } else {
-        console.log('going to send request');
-
         let socketSubscriber;
         let updates = 0;
         this._socket[type]({ data, metadata: { q: entrypoint }})

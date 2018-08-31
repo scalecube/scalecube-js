@@ -12,5 +12,6 @@ export const errors = {
   wrongKeepAlive: 'KeepAlive should be a positive number',
   wrongLifetime: 'Lifetime should be a positive number',
   wrongWebSocket: 'WebSocket should be a class',
-  closedConnection: 'The connection was closed'
+  closedConnection: 'The connection was closed',
+  noConnection: 'There is no connection'
 };

@@ -26,7 +26,7 @@ export class PostMessageProvider implements TransportProvider {
       }
       this._worker = window.workers[URI];
       if (!this._worker) {
-        return reject(new Error('RSocketClient: Connection closed.'));
+        return reject(new Error(errors.noConnection));
       }
       if (typeof this._worker !== 'object' || typeof this._worker.postMessage !== 'function') {
         return reject(new Error(errors.connectionRefused));
