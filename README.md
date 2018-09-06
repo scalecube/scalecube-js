@@ -25,9 +25,9 @@ class GreetingService {
 
   @ServiceMethod('Observable')
   notifications(): Observable<Greeting> {
-  
+
   }
-  
+
   @ServiceMethod('Promise')
   hello(): Promise<Greeting> {
     return new Promise((resolve, reject) => {
@@ -46,12 +46,12 @@ let microservices = Microservices.builder()
   .services(new GreetingService())
   .build();
 
-// create a proxy to the service based on a given service interface. 
+// create a proxy to the service based on a given service interface.
 const greetingService = microservices.proxy()
   .api(GreetingService)
-  .create();  
-  
-// invoke the service using the proxy. 
+  .create();
+
+// invoke the service using the proxy.
 // the proxy will locate and route and balance the request to the given matching instances.
 greetingService.hello('joe');
 ```
@@ -65,7 +65,7 @@ const greetingService = Microservices
   .build()
   .proxy()
   .api(GreetingService)
-  .create();  
+  .create();
 greetingService.hello();
 
 const greetingService = Microservices
@@ -77,7 +77,7 @@ const greetingService = Microservices
   .create();
 greetingService.repeatToStream().subscribe(...);
 
-/// direct 
+/// direct
 const microservices = Microservices.builder()
   .services(new GreetingService())
   .build();
@@ -146,17 +146,17 @@ const greetingService = Microservices
 For more details how to use it see the tests
 
 ## Run/Debug
-Install `yarn/npm install`  
-Build `npm build`  
-Run test `npm test`  
+Install `yarn/npm install`
+Build `npm build`
+Run test `npm test`
 
 To run/debug jest tests:
-* jest options: --runInBand --no-cache --env=jsdom 
+* jest options: --runInBand --no-cache --env=jsdom --testURL=http://localhost
 * env variables: BABEL_ENV=commonjs
 * you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: https://facebook.github.io/jest/docs/en/troubleshooting.html
 ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
-## Version 
+## Version
 * http://semver.org/ format
 
 **MAJOR** version when you make incompatible API changes,
