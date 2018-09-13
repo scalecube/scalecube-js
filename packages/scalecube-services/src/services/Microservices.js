@@ -27,12 +27,7 @@ class Builder {
   }
 
   build(): Microservices {
-    const microserviceInstance = new Microservices(this.servicesConfig);
-    window.workers.workerURI.onmessage = (event) => {
-      console.log('event in ServiceCall', event);
-    };
-
-    return microserviceInstance;
+    return new Microservices(this.servicesConfig);
   }
 }
 export class Microservices {
