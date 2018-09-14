@@ -19,7 +19,7 @@ export class PostMessageProvider implements TransportProvider {
 
   build(config: TransportProviderConfig): Promise<void> {
     return new Promise((resolve, reject) => {
-      const { URI, eventEmitter } = config;
+      const { URI } = config;
       const validationError = validateBuildConfig({ URI });
       if (validationError) {
         return reject(new Error(validationError));
@@ -31,7 +31,7 @@ export class PostMessageProvider implements TransportProvider {
       if (typeof this._worker !== 'object' || typeof this._worker.postMessage !== 'function') {
         return reject(new Error(errors.connectionRefused));
       }
-      eventEmitter.on('serviceResponse', this._handleNewMessage);
+      serviceEventEmitter.on('serviceResponse', this._handleNewMessage);
       resolve();
     });
   }
@@ -68,9 +68,6 @@ export class PostMessageProvider implements TransportProvider {
   }
 
   _handleNewMessage(messageEvent: { data: PostMessageEventData }) {
-
-    console.log('message event in _handleNewMessage', messageEvent);
-
     const { data } = messageEvent;
     const { subscriber } = this._activeRequests[data.requestId] || {};
     if (!subscriber) {

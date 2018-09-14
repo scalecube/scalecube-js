@@ -40,7 +40,6 @@ export class ProxyContext{
     return obj;
   }
   create(){
-    const serviceEventEmitter =  new EventEmitter();
     const microserviceInstance = this.createProxy(this.myapi, this.router);
     serviceEventEmitter.on('serviceRequest', async (event) => {
       const [empty, serviceName, methodName] = event.entrypoint.split('/');
@@ -48,14 +47,14 @@ export class ProxyContext{
         const futureValue = microserviceInstance[methodName](...event.data);
         if (typeof futureValue.then === 'function') {
           const result = await futureValue;
-          serviceEventEmitter.emit('serviceResponse', {
+          window.workers.workerURI.postMessage({
             data: {
               requestId: event.requestId,
               data: result,
               completed: false
             }
           });
-          serviceEventEmitter.emit('serviceResponse', {
+          window.workers.workerURI.postMessage({
             data: {
               requestId: event.requestId,
               completed: true
@@ -64,7 +63,7 @@ export class ProxyContext{
         } else if (typeof futureValue.subscribe === 'function') {
           futureValue.subscribe(
             data => {
-              serviceEventEmitter.emit('serviceResponse', {
+              window.workers.workerURI.postMessage({
                 data: {
                   requestId: event.requestId,
                   data,
@@ -74,7 +73,7 @@ export class ProxyContext{
             },
             error => console.log('error', error),
             () => {
-              serviceEventEmitter.emit('serviceResponse', {
+              window.workers.workerURI.postMessage({
                 data: {
                   requestId: event.requestId,
                   completed: true

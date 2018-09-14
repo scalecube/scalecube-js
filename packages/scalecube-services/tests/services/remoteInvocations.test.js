@@ -1,15 +1,21 @@
 import TinyWorker from 'tiny-worker';
 import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
+import GreetingService2 from 'examples/GreetingServiceClass/GreetingService2.js';
 import { Microservices } from '../../src/services';
 import { Transport } from '../../src/transport/Transport';
-import { PostMessageProvider } from "../../src/transport/provider/PostMessageProvider";
+import { PostMessageProvider } from '../../src/transport/provider/PostMessageProvider';
+import EventEmitter from 'events';
 
 describe('Listen for remote invocations test suite', () => {
 
-  let eventEmmiter = null;
+  global.serviceEventEmitter = new EventEmitter();
   afterEach(() => {
-    eventEmmiter.removeAllListeners(['serviceRequest', 'serviceResponse']);
+    serviceEventEmitter.removeAllListeners(['serviceRequest', 'serviceResponse']);
     window.workers.workerURI.terminate();
+  });
+
+  afterAll(() => {
+    delete global.serviceEventEmitter;
   });
 
   it('When received `Greeting.hello(Idan)` should return "Hello Idan"', async (done) => {
@@ -22,21 +28,27 @@ describe('Listen for remote invocations test suite', () => {
       })
     };
 
-    expect.assertions(2);
-    const { serviceEventEmitter } = Microservices
+    expect.assertions(4);
+    const mc = Microservices
       .builder()
       .services(new GreetingService())
-      .build()
-      .proxy()
+      .services(new GreetingService2())
+      .build();
+
+    mc.proxy()
       .api(GreetingService)
       .create();
-    eventEmmiter = serviceEventEmitter;
+
+    mc.proxy()
+      .api(GreetingService2)
+      .create();
 
     const transport = new Transport();
-    await transport.setProvider(PostMessageProvider, { URI, eventEmitter: serviceEventEmitter });
+    await transport.setProvider(PostMessageProvider, { URI });
 
     window.workers.workerURI.onmessage = ({ data }) => {
-      serviceEventEmitter.emit('serviceRequest', data);
+      const eventName = data.entrypoint ? 'serviceRequest' : 'serviceResponse';
+      serviceEventEmitter.emit(eventName, data);
     };
 
     const stream = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/greeting/hello' });
@@ -47,9 +59,23 @@ describe('Listen for remote invocations test suite', () => {
       () => console.log('error', error),
       () => {
         expect(true).toBeTruthy();
-        done();
       }
     );
+
+    const stream2 = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/greeting2/hello' });
+    stream2.subscribe(
+      (data) => {
+        expect(data).toEqual('hey Idan');
+      },
+      () => console.log('error', error),
+      () => {
+        expect(true).toBeTruthy();
+      }
+    );
+
+    setTimeout(() => {
+      done();
+    }, 1000);
   });
 
   it('When received `Greeting.repeatToStream("hello", "Hi")` should return "Hello", "Hi"', async (done) => {
@@ -69,13 +95,13 @@ describe('Listen for remote invocations test suite', () => {
       .proxy()
       .api(GreetingService)
       .create();
-    eventEmmiter = serviceEventEmitter;
 
     const transport = new Transport();
-    await transport.setProvider(PostMessageProvider, { URI, eventEmitter: serviceEventEmitter });
+    await transport.setProvider(PostMessageProvider, { URI });
 
     window.workers.workerURI.onmessage = ({ data }) => {
-      serviceEventEmitter.emit('serviceRequest', data);
+      const eventName = data.entrypoint ? 'serviceRequest' : 'serviceResponse';
+      serviceEventEmitter.emit(eventName, data);
     };
 
     const stream = transport.request({ headers: { type: 'requestStream' }, data: ['Hello', 'Hi'], entrypoint: '/greeting/repeatToStream' });
