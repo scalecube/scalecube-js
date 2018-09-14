@@ -61,8 +61,7 @@ describe('Listen for remote invocations test suite', () => {
         };
       })
     };
-
-    // expect.assertions(2);
+    expect.assertions(2);
     const { serviceEventEmitter } = Microservices
       .builder()
       .services(new GreetingService())
@@ -83,32 +82,24 @@ describe('Listen for remote invocations test suite', () => {
     let updates = 0;
     stream.subscribe(
       (data) => {
-        console.log('data', data);
         updates++;
         switch (updates) {
           case 1: {
-            console.log('data', data);
-            expect(true).toEqual(true);
-            // expect(data).toEqual('Hello');
+            expect(data).toEqual('Hello');
             break;
           }
           case 2: {
-            console.log('data', data);
-            expect(true).toEqual(true);
-
-            // expect(data).toEqual('Hi');
+            expect(data).toEqual('Hi');
+            done();
             break;
           }
           default: {
-            // expect(true).toBeFalsy();
+            // Should not happen
+            expect(true).toBeFalsy();
           }
         }
       }
     );
-
-    setTimeout(() => {
-      done();
-    }, 2000)
 
   });
 
