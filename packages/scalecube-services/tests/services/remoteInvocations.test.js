@@ -22,7 +22,7 @@ describe('Listen for remote invocations test suite', () => {
       })
     };
 
-    expect.assertions(1);
+    expect.assertions(2);
     const { serviceEventEmitter } = Microservices
       .builder()
       .services(new GreetingService())
@@ -39,7 +39,7 @@ describe('Listen for remote invocations test suite', () => {
       serviceEventEmitter.emit('serviceRequest', data);
     };
 
-    const stream = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/hello' });
+    const stream = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/greeting/hello' });
     stream.subscribe(
       (data) => {
         expect(data).toEqual('Hello Idan');
@@ -78,7 +78,7 @@ describe('Listen for remote invocations test suite', () => {
       serviceEventEmitter.emit('serviceRequest', data);
     };
 
-    const stream = transport.request({ headers: { type: 'requestStream' }, data: ['Hello', 'Hi'], entrypoint: '/repeatToStream' });
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: ['Hello', 'Hi'], entrypoint: '/greeting/repeatToStream' });
     let updates = 0;
     stream.subscribe(
       (data) => {

@@ -43,48 +43,48 @@ export class ProxyContext{
     const serviceEventEmitter =  new EventEmitter();
     const microserviceInstance = this.createProxy(this.myapi, this.router);
     serviceEventEmitter.on('serviceRequest', async (event) => {
-      console.log('serviceRequest in build', event);
-
-      const futureValue = microserviceInstance[event.entrypoint.substring(1)](...event.data);
-      if (typeof futureValue.then === 'function') {
-        const result = await futureValue;
-        serviceEventEmitter.emit('serviceResponse', {
-          data: {
-            requestId: event.requestId,
-            data: result,
-            completed: false
-          }
-        });
-        serviceEventEmitter.emit('serviceResponse', {
-          data: {
-            requestId: event.requestId,
-            completed: true
-          }
-        });
-      } else if (typeof futureValue.subscribe === 'function') {
-        futureValue.subscribe(
-          data => {
-            serviceEventEmitter.emit('serviceResponse', {
-              data: {
-                requestId: event.requestId,
-                data,
-                completed: false
-              }
-            });
-          },
-          error => console.log('error', error),
-          () => {
-            serviceEventEmitter.emit('serviceResponse', {
-              data: {
-                requestId: event.requestId,
-                completed: true
-              }
-            });
-          }
-        )
+      const [empty, serviceName, methodName] = event.entrypoint.split('/');
+      if (serviceName === microserviceInstance.meta.name) {
+        const futureValue = microserviceInstance[methodName](...event.data);
+        if (typeof futureValue.then === 'function') {
+          const result = await futureValue;
+          serviceEventEmitter.emit('serviceResponse', {
+            data: {
+              requestId: event.requestId,
+              data: result,
+              completed: false
+            }
+          });
+          serviceEventEmitter.emit('serviceResponse', {
+            data: {
+              requestId: event.requestId,
+              completed: true
+            }
+          });
+        } else if (typeof futureValue.subscribe === 'function') {
+          futureValue.subscribe(
+            data => {
+              serviceEventEmitter.emit('serviceResponse', {
+                data: {
+                  requestId: event.requestId,
+                  data,
+                  completed: false
+                }
+              });
+            },
+            error => console.log('error', error),
+            () => {
+              serviceEventEmitter.emit('serviceResponse', {
+                data: {
+                  requestId: event.requestId,
+                  completed: true
+                }
+              });
+            }
+          )
+        }
       }
     });
-    // console.log('microserviceInstance', microserviceInstance);
 
     return { serviceEventEmitter, microserviceInstance };
   }

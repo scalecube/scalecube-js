@@ -29,6 +29,7 @@ class GreetingService implements api {
 Object.defineProperty(GreetingService, 'meta', {
   value: {
     type: 'class',
+    name: 'greeting',
     methods: {
       hello: {
         type: 'Promise'
