@@ -7,27 +7,32 @@ import { PostMessageProvider } from '../../src/transport/provider/PostMessagePro
 import EventEmitter from 'events';
 
 describe('Listen for remote invocations test suite', () => {
-
+  const subscriptions = [];
   global.serviceEventEmitter = new EventEmitter();
+  const URI = 'workerURI';
+  window.workers = {
+    [URI]: new TinyWorker(() => {
+      onmessage = (ev) => {
+        postMessage(ev.data);
+      };
+    })
+  };
+  window.workers.workerURI.onmessage = ({ data }) => {
+    const eventName = data.entrypoint ? 'serviceRequest' : 'serviceResponse';
+    serviceEventEmitter.emit(eventName, data);
+  };
+
   afterEach(() => {
     serviceEventEmitter.removeAllListeners(['serviceRequest', 'serviceResponse']);
-    window.workers.workerURI.terminate();
+    subscriptions.map(stream => stream.unsubscribe());
+    subscriptions.length = 0;
   });
 
   afterAll(() => {
-    delete global.serviceEventEmitter;
+    window.workers.workerURI.terminate();
   });
 
   it('When received `Greeting.hello(Idan)` should return "Hello Idan"', async (done) => {
-    const URI = 'workerURI';
-    window.workers = {
-      [URI]: new TinyWorker(() => {
-        onmessage = (ev) => {
-          postMessage(ev.data);
-        };
-      })
-    };
-
     expect.assertions(4);
     const mc = Microservices
       .builder()
@@ -46,13 +51,8 @@ describe('Listen for remote invocations test suite', () => {
     const transport = new Transport();
     await transport.setProvider(PostMessageProvider, { URI });
 
-    window.workers.workerURI.onmessage = ({ data }) => {
-      const eventName = data.entrypoint ? 'serviceRequest' : 'serviceResponse';
-      serviceEventEmitter.emit(eventName, data);
-    };
-
     const stream = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/greeting/hello' });
-    stream.subscribe(
+    const subscription = stream.subscribe(
       (data) => {
         expect(data).toEqual('Hello Idan');
       },
@@ -63,7 +63,7 @@ describe('Listen for remote invocations test suite', () => {
     );
 
     const stream2 = transport.request({ headers: { type: 'requestResponse' }, data: ['Idan'], entrypoint: '/greeting2/hello' });
-    stream2.subscribe(
+    const subscription2 = stream2.subscribe(
       (data) => {
         expect(data).toEqual('hey Idan');
       },
@@ -72,6 +72,7 @@ describe('Listen for remote invocations test suite', () => {
         expect(true).toBeTruthy();
       }
     );
+    subscriptions.push(subscription, subscription2);
 
     setTimeout(() => {
       done();
@@ -79,16 +80,8 @@ describe('Listen for remote invocations test suite', () => {
   });
 
   it('When received `Greeting.repeatToStream("hello", "Hi")` should return "Hello", "Hi"', async (done) => {
-    const URI = 'workerURI';
-    window.workers = {
-      [URI]: new TinyWorker(() => {
-        onmessage = (ev) => {
-          postMessage(ev.data);
-        };
-      })
-    };
     expect.assertions(2);
-    const { serviceEventEmitter } = Microservices
+    Microservices
       .builder()
       .services(new GreetingService())
       .build()
@@ -99,14 +92,9 @@ describe('Listen for remote invocations test suite', () => {
     const transport = new Transport();
     await transport.setProvider(PostMessageProvider, { URI });
 
-    window.workers.workerURI.onmessage = ({ data }) => {
-      const eventName = data.entrypoint ? 'serviceRequest' : 'serviceResponse';
-      serviceEventEmitter.emit(eventName, data);
-    };
-
     const stream = transport.request({ headers: { type: 'requestStream' }, data: ['Hello', 'Hi'], entrypoint: '/greeting/repeatToStream' });
     let updates = 0;
-    stream.subscribe(
+    const subscription = stream.subscribe(
       (data) => {
         updates++;
         switch (updates) {
@@ -126,7 +114,31 @@ describe('Listen for remote invocations test suite', () => {
         }
       }
     );
+    subscriptions.push(subscription);
+  });
 
+  it('If a method does not exist in the service, an error is being emitted to the stream', async (done) => {
+    expect.assertions(1);
+    Microservices
+      .builder()
+      .services(new GreetingService())
+      .build()
+      .proxy()
+      .api(GreetingService)
+      .create();
+
+    const transport = new Transport();
+    await transport.setProvider(PostMessageProvider, { URI });
+
+    const stream = transport.request({ headers: { type: 'requestStream' }, data: ['Hello', 'Hi'], entrypoint: '/greeting/wrongMethod' });
+    const subscription = stream.subscribe(
+      () => expect(true).toBeFalsy(),
+      error => {
+        expect(error).toEqual('These is no method wrongMethod in greeting service');
+        done();
+      }
+    );
+    subscriptions.push(subscription);
   });
 
 });

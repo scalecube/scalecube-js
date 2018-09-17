@@ -41,51 +41,61 @@ export class ProxyContext{
   }
   create(){
     const microserviceInstance = this.createProxy(this.myapi, this.router);
+
     serviceEventEmitter.on('serviceRequest', async (event) => {
       const [empty, serviceName, methodName] = event.entrypoint.split('/');
       if (serviceName === microserviceInstance.meta.name) {
-        const futureValue = microserviceInstance[methodName](...event.data);
-        if (typeof futureValue.then === 'function') {
-          const result = await futureValue;
+        if (typeof microserviceInstance[methodName] !== 'function') {
           window.workers.workerURI.postMessage({
             data: {
               requestId: event.requestId,
-              data: result,
-              completed: false
+              error: `These is no method ${methodName} in ${serviceName} service`
             }
           });
-          window.workers.workerURI.postMessage({
-            data: {
-              requestId: event.requestId,
-              completed: true
-            }
-          });
-        } else if (typeof futureValue.subscribe === 'function') {
-          futureValue.subscribe(
-            data => {
-              window.workers.workerURI.postMessage({
-                data: {
-                  requestId: event.requestId,
-                  data,
-                  completed: false
-                }
-              });
-            },
-            error => console.log('error', error),
-            () => {
-              window.workers.workerURI.postMessage({
-                data: {
-                  requestId: event.requestId,
-                  completed: true
-                }
-              });
-            }
-          )
+        } else {
+          const futureValue = microserviceInstance[methodName](...event.data);
+          if (typeof futureValue.then === 'function') {
+            const result = await futureValue;
+            window.workers.workerURI.postMessage({
+              data: {
+                requestId: event.requestId,
+                data: result,
+                completed: false
+              }
+            });
+            window.workers.workerURI.postMessage({
+              data: {
+                requestId: event.requestId,
+                completed: true
+              }
+            });
+          } else if (typeof futureValue.subscribe === 'function') {
+            futureValue.subscribe(
+              data => {
+                window.workers.workerURI.postMessage({
+                  data: {
+                    requestId: event.requestId,
+                    data,
+                    completed: false
+                  }
+                });
+              },
+              error => console.log('error', error),
+              () => {
+                window.workers.workerURI.postMessage({
+                  data: {
+                    requestId: event.requestId,
+                    completed: true
+                  }
+                });
+              }
+            )
+          }
         }
       }
     });
 
-    return { serviceEventEmitter, microserviceInstance };
+    return microserviceInstance;
   }
   api(api: any) {
     this.myapi = api;

@@ -73,11 +73,15 @@ export class PostMessageProvider implements TransportProvider {
     if (!subscriber) {
       return;
     }
-    if (!data.completed) {
-      subscriber.next(data.data);
+    if (data.error) {
+      subscriber.error(data.error);
     } else {
-      delete this._activeRequests[data.requestId];
-      subscriber.complete();
+      if (!data.completed) {
+        subscriber.next(data.data);
+      } else {
+        delete this._activeRequests[data.requestId];
+        subscriber.complete();
+      }
     }
   }
 
