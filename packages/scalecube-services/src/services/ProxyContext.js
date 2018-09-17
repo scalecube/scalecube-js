@@ -1,6 +1,5 @@
 // @flow
 import { Router, RoundRobinServiceRouter, Microservices } from ".";
-import EventEmitter from 'events';
 
 export class ProxyContext{
   myapi: any;
@@ -42,7 +41,7 @@ export class ProxyContext{
   create(){
     const microserviceInstance = this.createProxy(this.myapi, this.router);
 
-    serviceEventEmitter.on('serviceRequest', async (event) => {
+    global.serviceEventEmitter && serviceEventEmitter.on('serviceRequest', async (event) => {
       const [empty, serviceName, methodName] = event.entrypoint.split('/');
       if (serviceName === microserviceInstance.meta.name) {
         if (typeof microserviceInstance[methodName] !== 'function') {
