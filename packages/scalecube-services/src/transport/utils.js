@@ -35,22 +35,3 @@ export const validateBuildConfig = (config: TransportProviderConfig) => {
     return errors.wrongWebSocket;
   }
 };
-
-export const extractConnectionError = (error: Error) => {
-  if (error.message.includes('ENOTFOUND')) {
-    return new Error(errors.urlNotFound);
-  } else if (error.message.includes('ECONNREFUSED')) {
-    return new Error(errors.connectionRefused);
-  } else if (error.message === 'RSocketClient: Connection closed.') {
-    return new Error(errors.noConnection);
-  }
-  return new Error(error.message);
-};
-
-export const getTextResponseSingle = text => `Echo:${text}`;
-
-export const getTextResponseMany = index => text => `Greeting (${index}) to: ${text}`;
-
-export const getFailingOneResponse = text => ({ errorCode: 500, errorMessage: text });
-
-export const getFailingManyResponse = text => ({ errorCode: 500, errorMessage: getTextResponseSingle(text) });

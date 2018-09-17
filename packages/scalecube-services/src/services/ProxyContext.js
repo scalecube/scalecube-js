@@ -41,7 +41,7 @@ export class ProxyContext{
   create(){
     const microserviceInstance = this.createProxy(this.myapi, this.router);
 
-    global.serviceEventEmitter && serviceEventEmitter.on('serviceRequest', async (event) => {
+    global.serviceEventEmitter && global.serviceEventEmitter.on('serviceRequest', async (event) => {
       const [empty, serviceName, methodName] = event.entrypoint.split('/');
       if (serviceName === microserviceInstance.meta.name) {
         if (typeof microserviceInstance[methodName] !== 'function') {

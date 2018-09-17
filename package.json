@@ -34,6 +34,11 @@
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
+  "dependencies": {
+    "rxjs": "^5.5.5",
+    "rxjs-compat": "^6.1.0",
+    "rxjs6": "npm:rxjs@6.1.0"
+  },
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
@@ -53,8 +58,7 @@
     "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
     "rename-cli": "^5.0.0",
-    "rxjs-compat": "^6.1.0",
-    "rxjs6": "npm:rxjs@6.1.0"
+    "tiny-worker": "^2.1.2"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",

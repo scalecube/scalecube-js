@@ -31,7 +31,7 @@ export class PostMessageProvider implements TransportProvider {
       if (typeof this._worker !== 'object' || typeof this._worker.postMessage !== 'function') {
         return reject(new Error(errors.connectionRefused));
       }
-      serviceEventEmitter.on('serviceResponse', this._handleNewMessage);
+      global.serviceEventEmitter && global.serviceEventEmitter.on('serviceResponse', this._handleNewMessage);
       resolve();
     });
   }
