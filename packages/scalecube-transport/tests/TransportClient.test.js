@@ -19,7 +19,7 @@ import { startServer, stopServer } from '../src/server/server';
 startServer();
 
 describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])
-(`Transport test`, (Provider, URI, providerName) => {
+(`Transport client test suite`, (Provider, URI, providerName) => {
   const text = 'Test message';
   let transport;
   let needToRemoveProvider = true;
