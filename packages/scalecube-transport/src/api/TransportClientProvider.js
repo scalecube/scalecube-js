@@ -2,8 +2,8 @@
 import { TransportRequest, TransportProviderConfig } from './types';
 import { Observable } from 'rxjs';
 
-export interface TransportProvider {
-  constructor(): TransportProvider;
+export interface TransportClientProvider {
+  constructor(): TransportClientProvider;
   /**
    * Method is used to prepare all the necessary connections to a server using the provided configuration
    *
