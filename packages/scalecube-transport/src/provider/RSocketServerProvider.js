@@ -39,13 +39,17 @@ export class RSocketServerProvider implements TransportServerProvider {
               }
             });
           },
-          requestStream({ data, metadata: { q: entrypoint } }) {
+          requestStream({ data, metadata: { q: entrypoint, responsesLimit } }) {
+            console.log('responsesLimit from request', responsesLimit);
             return new Flowable(subscriber => {
               let index = 0;
               let isStreamCanceled = false;
               subscriber.onSubscribe({
                 cancel: () => { isStreamCanceled = true },
                 request: n => {
+
+                  console.log('responsesLimit n', n);
+
                   if (Object.keys(self._listeners).includes(entrypoint)) {
                     const request = { data, entrypoint, headers: { type: 'requestStream', responsesLimit: n } };
                     const subscription = self._listeners[entrypoint](request).subscribe(
@@ -53,6 +57,7 @@ export class RSocketServerProvider implements TransportServerProvider {
                         index++;
                         subscriber.onNext({ data: response });
                         if (index === n) {
+                          console.log('index === n subscription', subscription);
                           subscription.unsubscribe();
                           subscriber.onComplete();
                         }
@@ -91,30 +96,3 @@ export class RSocketServerProvider implements TransportServerProvider {
   }
 
 }
-
-// const requestResponseHandler = (data, q) => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       let responseData;
-//       switch(q) {
-//         case '/greeting/one': {
-//           responseData = getTextResponseSingle(data);
-//           break;
-//         }
-//         case '/greeting/many': {
-//           responseData = getTextResponseMany(0)(data);
-//           break;
-//         }
-//         case '/greeting/failing/one': {
-//           responseData = getFailingOneResponse(data);
-//           break;
-//         }
-//         case '/greeting/pojo/one': {
-//           responseData = { text: getTextResponseSingle(data.text) };
-//           break;
-//         }
-//       }
-//       resolve({ data: responseData })
-//     }, 100);
-//   });
-// };
