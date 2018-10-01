@@ -36,9 +36,18 @@ export class Transport implements TransportInterface {
       this._clientProvider.destroy()
         .then(() => {
           this._clientProvider = null;
-          resolve();
+          !this._serverProvider && resolve();
         })
         .catch(reject);
+
+      if (this._serverProvider) {
+        this._serverProvider.destroy()
+          .then(() => {
+            this._serverProvider = null;
+            resolve();
+          })
+          .catch(reject);
+      }
     });
   }
 

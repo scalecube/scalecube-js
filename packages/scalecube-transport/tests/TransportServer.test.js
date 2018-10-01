@@ -31,7 +31,7 @@ describe('Transport server test suite', () => {
   });
 
   it('Listen for "greeting/many" with responsesLimit = 3 - sends 3 responses and the stream is completed', async (done) => {
-    // expect.assertions(4);
+    expect.assertions(4);
     const transport = new Transport();
     await transport.setProvider(RSocketServerProvider, {});
     await transport.setProvider(RSocketProvider, { URI: socketURI });
@@ -45,15 +45,16 @@ describe('Transport server test suite', () => {
     let updates = 0;
     stream.subscribe(
       (data) => {
-        console.log('data', data);
         expect(data).toEqual(getTextResponseMany(updates)(text));
         updates++;
-      });
-
-    setTimeout(() => {
-      // expect(updates).toEqual(3);
-      done();
-    }, 1000);
+      },
+      undefined,
+      async () => {
+        expect(updates).toEqual(3);
+        await transport.removeProvider();
+        done();
+      }
+    );
   });
 
 });
