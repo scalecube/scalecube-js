@@ -4,11 +4,11 @@ import WS from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
-import { TransportProvider } from '../api/TransportProvider';
+import { TransportClientProvider } from '../api/TransportClientProvider';
 import { TransportProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 
-export class RSocketProvider implements TransportProvider {
+export class RSocketProvider implements TransportClientProvider {
   _client: any;
   _socket: any;
 

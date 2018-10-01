@@ -2,23 +2,33 @@
 import { Observable } from 'rxjs';
 import { Transport as TransportInterface } from './api/Transport';
 import { errors } from './errors';
-import { TransportProvider } from './api/TransportProvider';
+import { TransportClientProvider } from './api/TransportClientProvider';
 import { TransportProviderConfig, TransportRequest } from './api/types';
 
 export class Transport implements TransportInterface {
-  _provider: any;
+  _clientProvider: any;
+  _serverProvider: any;
 
   constructor() {
-    this._provider = null;
+    this._clientProvider = null;
+    this._serverProvider = null;
     return this;
   }
 
-  setProvider(Provider: Class<TransportProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
+  setProvider(Provider: Class<TransportClientProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
     const provider = new Provider();
-    return provider.build(TransportProviderConfig).then(() => { this._provider = provider });
+    return provider.build(TransportProviderConfig).then(() => {
+      if (typeof provider.request === 'function') {
+        this._clientProvider = provider;
+      }
+      if (typeof provider.listen === 'function') {
+        this._serverProvider = provider;
+      }
+    });
   }
 
   removeProvider(): Promise<void> {
+    // TODO should we remove both providers?
     return new Promise((resolve, reject) => {
       if (!this._provider) {
         return reject(new Error(errors.noProvider));
@@ -33,10 +43,15 @@ export class Transport implements TransportInterface {
   }
 
   request(transportRequest: TransportRequest): Observable<any> {
-    if (!this._provider) {
+    if (!this._clientProvider) {
       return Observable.throw(new Error(errors.noProvider));
     }
-    return this._provider.request(transportRequest);
+    return this._clientProvider.request(transportRequest);
+  }
+
+  listen(path, callback) {
+    this._serverProvider.listen(path, callback);
+    return this;
   }
 
 }

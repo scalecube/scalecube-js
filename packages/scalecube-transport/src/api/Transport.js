@@ -1,6 +1,6 @@
 // @flow
 import { TransportRequest, TransportProviderConfig } from './types';
-import { TransportClientProvider } from './TransportProvider';
+import { TransportClientProvider } from './TransportClientProvider';
 import { Observable } from 'rxjs';
 
 export interface Transport {

@@ -1,9 +1,8 @@
 // @flow
 import { TransportRequest, TransportProviderConfig } from './types';
-import { TransportClientProvider } from './TransportProvider';
 import { Observable } from 'rxjs';
 
-export interface Transport {
+export interface TransportServerProvider {
   constructor(): Transport;
     /**
    * Method is used to set to a specific provider to the transport instance and build it with the provided config
