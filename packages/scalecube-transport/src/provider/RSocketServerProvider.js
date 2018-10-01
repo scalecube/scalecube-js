@@ -39,73 +39,31 @@ export class RSocketServerProvider implements TransportServerProvider {
               }
             });
           },
-          requestStream({ data, metadata: { q } }) {
-            console.log('test');
+          requestStream({ data, metadata: { q: entrypoint } }) {
             return new Flowable(subscriber => {
               let index = 0;
               let isStreamCanceled = false;
               subscriber.onSubscribe({
                 cancel: () => { isStreamCanceled = true },
                 request: n => {
-                  if (q.includes('/one')) {
-                    requestResponseHandler(data, q).then(response => {
-                      subscriber.onNext(response);
-                      subscriber.onComplete();
-                    });
-                  } else {
-                    while(n--) {
-                      setTimeout(() => {
-                        if (isStreamCanceled) {
-                          return false;
+                  if (Object.keys(self._listeners).includes(entrypoint)) {
+                    const request = { data, entrypoint, headers: { type: 'requestStream', responsesLimit: n } };
+                    const subscription = self._listeners[entrypoint](request).subscribe(
+                      response => {
+                        index++;
+                        subscriber.onNext({ data: response });
+                        if (index === n) {
+                          subscription.unsubscribe();
+                          subscriber.onComplete();
                         }
-                        if (q === '/greeting/failing/many') {
-                          if (index < 2) {
-                            subscriber.onNext({ data: getTextResponseSingle(data) });
-                            index++;
-                          } else {
-                            subscriber.onNext({ data: getFailingManyResponse(data) });
-                            subscriber.onComplete();
-                          }
-                        } else {
-                          subscriber.onNext({ data: getTextResponseMany(index++)(data) });
-                        }
-                      }, 100);
-                    }
+                      },
+                      error => subscriber.onError(error),
+                      () => subscriber.onComplete()
+                    );
                   }
                 }
               });
             });
-            // return new Flowable(subscriber => {
-            //   let index = 0;
-            //   let isStreamCanceled = false;
-            //   console.log('in Flowable');
-            //   subscriber.onSubscribe({
-            //     cancel: () => { isStreamCanceled = true },
-            //     request: n => {
-            //       console.log('n', n);
-            //
-            //       // if (Object.keys(self._listeners).includes(entrypoint)) {
-            //
-            //       subscriber.onNext({ data: 'test' });
-            //
-            //         // const request = { data, entrypoint, headers: { type: 'requestStream', responsesLimit: n } };
-            //         // const subscription = self._listeners[entrypoint](request).subscribe(
-            //         //   response => {
-            //         //     console.log('response', response);
-            //         //     // index++;
-            //         //     subscriber.onNext({ data: response });
-            //         //     // if (index === n) {
-            //         //     //   subscription.unsubscribe();
-            //         //     //   subscriber.onComplete();
-            //         //     // }
-            //         //   },
-            //         //   // error => subscriber.onError(error),
-            //         //   // () => subscriber.onComplete()
-            //         // );
-            //       // }
-            //     }
-            //   });
-            // });
           }
         };
       },
