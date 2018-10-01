@@ -144,7 +144,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     );
   });
 
-  it(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
+  it.only(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
     expect.assertions(4);
 
     const transport = await prepareTransport();

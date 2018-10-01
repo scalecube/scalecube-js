@@ -1,11 +1,11 @@
 // @flow
 import { Observable, Subject } from 'rxjs';
 import { validateRequest, validateBuildConfig } from '../utils';
-import { TransportProvider } from '../api/TransportProvider';
+import { TransportClientProvider } from '../api/TransportClientProvider';
 import { TransportProviderConfig, TransportRequest, PostMessageEventData, ActiveRequest } from '../api/types';
 import { errors } from '../errors';
 
-export class PostMessageProvider implements TransportProvider {
+export class PostMessageProvider implements TransportClientProvider {
   _worker: any;
   _activeRequests: { [number]: ActiveRequest };
   _handleNewMessage: any;

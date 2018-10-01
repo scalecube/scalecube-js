@@ -30,12 +30,12 @@ export class Transport implements TransportInterface {
   removeProvider(): Promise<void> {
     // TODO should we remove both providers?
     return new Promise((resolve, reject) => {
-      if (!this._provider) {
+      if (!this._clientProvider) {
         return reject(new Error(errors.noProvider));
       }
-      this._provider.destroy()
+      this._clientProvider.destroy()
         .then(() => {
-          this._provider = null;
+          this._clientProvider = null;
           resolve();
         })
         .catch(reject);

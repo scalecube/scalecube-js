@@ -12,7 +12,7 @@ export interface Transport {
    * @param TransportProviderConfig - the configuration, that is used to build the provider
    * @returns a promise that is resolved with void when the provider is built and ready to be used. The promise can be rejected due to validation errors of provided config or inability to connect to a provided URI
    */
-  setProvider(Provider: TransportClientProvider|TransportServerProvider): Promise<void>;
+  setProvider(Provider: Class<TransportClientProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void>;
   /**
    * Method is used to send a request to a server using the provided previously provider.
    *
