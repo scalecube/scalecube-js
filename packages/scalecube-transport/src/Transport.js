@@ -65,7 +65,7 @@ export class Transport implements TransportInterface {
   }
 
   listen(path, callback) {
-    if (!this._clientProvider) {
+    if (!this._serverProvider) {
       throw new Error(errors.noProvider);
     }
     this._serverProvider.listen(path, callback);
