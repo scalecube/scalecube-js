@@ -47,14 +47,15 @@ export class RSocketServerProvider implements TransportServerProvider {
               let updates = 0;
               let hasEmittedOnce = false;
               let $proxy = new ReplaySubject();
+              const handleIsStreamCanceledCase = () => {
+                subscription && subscription.unsubscribe();
+                return false;
+              };
               subscriber.onSubscribe({
-                cancel: () => { isStreamCanceled = true },
+                cancel: () => { isStreamCanceled = true; },
                 request: n => {
-                  console.log('request n', n);
                   if (isStreamCanceled || !Object.keys(self._listeners).includes(entrypoint)) {
-                    console.log('isStreamCanceled');
-                    subscription && subscription.unsubscribe();
-                    return false;
+                    return handleIsStreamCanceledCase();
                   }
 
                   if (hasNoLimit && updates > 0) {
@@ -63,6 +64,9 @@ export class RSocketServerProvider implements TransportServerProvider {
                     const request = { data, entrypoint, headers: { type: 'requestStream' } };
                     subscription = self._listeners[entrypoint](request).subscribe(
                       response => {
+                        if (isStreamCanceled) {
+                          return handleIsStreamCanceledCase();
+                        }
                         if (hasNoLimit) {
                           $proxy.next(response);
                           if (!hasEmittedOnce) {

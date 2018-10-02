@@ -56,11 +56,12 @@ describe('Transport server test suite', () => {
         updates++;
       },
       undefined,
-      async () => {
+      () => {
         expect(updates).toEqual(3);
-        done();
       }
     );
+
+    setTimeout(done, 1000);
   });
 
   it('Listen for "greeting/many" without responsesLimit sends infinite amount of responses and the stream is not completed', async (done) => {
