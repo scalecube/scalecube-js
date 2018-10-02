@@ -52,6 +52,7 @@ const server = new RSocketServer({
           subscriber.onSubscribe({
             cancel: () => { isStreamCanceled = true },
             request: n => {
+              console.log('request again', n);
               if (q.includes('/one')) {
                 requestResponseHandler(data, q).then(response => {
                   subscriber.onNext(response);

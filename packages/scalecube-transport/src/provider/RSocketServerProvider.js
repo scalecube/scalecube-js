@@ -39,27 +39,27 @@ export class RSocketServerProvider implements TransportServerProvider {
               }
             });
           },
-          requestStream({ data, metadata: { q: entrypoint, responsesLimit } }) {
-            console.log('responsesLimit from request', responsesLimit);
+          requestStream({ data, metadata: { q: entrypoint } }) {
             return new Flowable(subscriber => {
-              let index = 0;
               let isStreamCanceled = false;
+              let subscription;
               subscriber.onSubscribe({
                 cancel: () => { isStreamCanceled = true },
                 request: n => {
-
-                  console.log('responsesLimit n', n);
+                  console.log('request', n);
+                  if (isStreamCanceled) {
+                    console.log('isStreamCanceled');
+                    subscription && subscription.unsubscribe();
+                    return false;
+                  }
 
                   if (Object.keys(self._listeners).includes(entrypoint)) {
-                    const request = { data, entrypoint, headers: { type: 'requestStream', responsesLimit: n } };
-                    const subscription = self._listeners[entrypoint](request).subscribe(
+                    const request = { data, entrypoint, headers: { type: 'requestStream' } };
+                    subscription = self._listeners[entrypoint](request).subscribe(
                       response => {
-                        index++;
                         subscriber.onNext({ data: response });
-                        if (index === n) {
-                          console.log('index === n subscription', subscription);
+                        if (n === 1) {
                           subscription.unsubscribe();
-                          subscriber.onComplete();
                         }
                       },
                       error => subscriber.onError(error),

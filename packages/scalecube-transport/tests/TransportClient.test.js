@@ -160,7 +160,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     );
   });
 
-  it(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
+  it.only(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
     let updates = 0;
