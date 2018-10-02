@@ -64,28 +64,27 @@ describe('Transport server test suite', () => {
   });
 
   it('Listen for "greeting/many" without responsesLimit sends infinite amount of responses and the stream is not completed', async (done) => {
-    // expect.assertions(4);
     await prepareTransport();
 
-    let updatesForCallback = 0;
-    transport.listen('/greeting/many', (request) => {
-      return Observable
-        .interval(100)
-        .map((index) => getTextResponseMany(updatesForCallback)(request.data))
-        .do(() => updatesForCallback++);
-    });
+    transport
+      .listen('/greeting/many', (request) => {
+        return Observable
+          .interval(100)
+          .map((index) => getTextResponseMany(index)(request.data));
+      });
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
+
     let updates = 0;
     const subscription = stream.subscribe(
       (data) => {
-        // expect(data).toEqual(getTextResponseMany(updates)(text));
+        expect(data).toEqual(getTextResponseMany(updates)(text));
         updates++;
-        console.log('data', data);
       },
-      undefined,
+      undefined
     );
 
-    setTimeout(() => {
+    setTimeout(async () => {
+      expect(updates > 15);
       subscription.unsubscribe();
       done();
     }, 2000);

@@ -2,7 +2,7 @@
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import WS from 'isomorphic-ws';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import {
   validateRequest, extractConnectionError, validateBuildConfig, getTextResponseMany,
   getFailingOneResponse, getFailingManyResponse, getTextResponseSingle
@@ -39,33 +39,46 @@ export class RSocketServerProvider implements TransportServerProvider {
               }
             });
           },
-          requestStream({ data, metadata: { q: entrypoint } }) {
+          requestStream({ data, metadata: { q: entrypoint, responsesLimit } }) {
             return new Flowable(subscriber => {
+              const hasNoLimit = !responsesLimit;
               let isStreamCanceled = false;
               let subscription;
+              let updates = 0;
+              let hasEmittedOnce = false;
+              let $proxy = new ReplaySubject();
               subscriber.onSubscribe({
                 cancel: () => { isStreamCanceled = true },
                 request: n => {
-                  console.log('request', n);
-                  if (isStreamCanceled) {
+                  console.log('request n', n);
+                  if (isStreamCanceled || !Object.keys(self._listeners).includes(entrypoint)) {
                     console.log('isStreamCanceled');
                     subscription && subscription.unsubscribe();
                     return false;
                   }
 
-                  if (Object.keys(self._listeners).includes(entrypoint)) {
+                  if (hasNoLimit && updates > 0) {
+                    $proxy.elementAt(updates).subscribe((response) => subscriber.onNext({ data: response }));
+                  } else {
                     const request = { data, entrypoint, headers: { type: 'requestStream' } };
                     subscription = self._listeners[entrypoint](request).subscribe(
                       response => {
-                        subscriber.onNext({ data: response });
-                        if (n === 1) {
-                          subscription.unsubscribe();
+                        if (hasNoLimit) {
+                          $proxy.next(response);
+                          if (!hasEmittedOnce) {
+                            subscriber.onNext({ data: response });
+                          }
+                          hasEmittedOnce = true;
+                        } else {
+                          subscriber.onNext({ data: response });
                         }
                       },
                       error => subscriber.onError(error),
                       () => subscriber.onComplete()
                     );
                   }
+
+                  updates++;
                 }
               });
             });

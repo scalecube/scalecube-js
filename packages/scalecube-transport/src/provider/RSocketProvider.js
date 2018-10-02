@@ -62,7 +62,7 @@ export class RSocketProvider implements TransportClientProvider {
       } else {
         let socketSubscriber;
         let updates = 0;
-        this._socket[type]({ data, metadata: { q: entrypoint }})
+        this._socket[type]({ data, metadata: { q: entrypoint, responsesLimit }})
           .subscribe({
             onNext: (response) => {
               subscriber.next(response.data);
