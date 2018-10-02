@@ -13,5 +13,6 @@ export const errors = {
   wrongLifetime: 'Lifetime should be a positive number',
   wrongWebSocket: 'WebSocket should be a class',
   closedConnection: 'The connection was closed',
-  noConnection: 'There is no connection'
+  noConnection: 'There is no connection',
+  cantStartServer: 'Can not start server with a provided configuration'
 };

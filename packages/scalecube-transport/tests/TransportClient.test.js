@@ -1,5 +1,5 @@
 import { Transport } from '../src/Transport';
-import { RSocketProvider } from '../src/provider/RSocketProvider';
+import { RSocketClientProvider } from '../src/provider/RSocketClientProvider';
 import { PostMessageProvider } from '../src/provider/PostMessageProvider';
 import { errors } from '../src/errors';
 import {
@@ -18,7 +18,7 @@ import { startServer, stopServer } from '../src/server/server';
 
 startServer();
 
-describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])
+describe.each([[RSocketClientProvider, socketURI, 'RSocket'], [PostMessageProvider, httpURI, 'PostMessage']])
 (`Transport client test suite`, (Provider, URI, providerName) => {
   const text = 'Test message';
   let transport;
@@ -144,7 +144,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     );
   });
 
-  it.only(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
+  it(`${providerName}: Use requestStream type with "many" action with responsesLimit = 4 - receive 4 responses and the stream is completed`, async (done) => {
     expect.assertions(4);
 
     const transport = await prepareTransport();
@@ -160,7 +160,7 @@ describe.each([[RSocketProvider, socketURI, 'RSocket'], [PostMessageProvider, ht
     );
   });
 
-  it.only(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
+  it(`${providerName}: Use requestStream type with "many" action without responsesLimit - receive infinite amount of responses`, async (done) => {
     const transport = await prepareTransport();
     const stream = transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/greeting/many' });
     let updates = 0;

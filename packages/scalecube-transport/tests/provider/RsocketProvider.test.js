@@ -1,4 +1,4 @@
-import { RSocketProvider } from '../../src/provider/RSocketProvider';
+import { RSocketClientProvider } from '../../src/provider/RSocketClientProvider';
 import { Transport } from '../../src/Transport';
 import { errors } from '../../src/errors';
 import { getTextResponseMany } from '../../src/utils';
@@ -12,7 +12,7 @@ describe('Tests specifically for Rsocket provider', () => {
 
   const prepareTransport = async () => {
     transport = new Transport();
-    await transport.setProvider(RSocketProvider, { URI });
+    await transport.setProvider(RSocketClientProvider, { URI });
     return transport;
   };
 
@@ -36,7 +36,7 @@ describe('Tests specifically for Rsocket provider', () => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(RSocketProvider, { URI: 'ws://localhost:9999' }).catch((error) => {
+    transport.setProvider(RSocketClientProvider, { URI: 'ws://localhost:9999' }).catch((error) => {
       expect(error).toEqual(new Error(errors.noConnection));
       needToRemoveProvider = false;
       done();
@@ -47,7 +47,7 @@ describe('Tests specifically for Rsocket provider', () => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(RSocketProvider, { URI, keepAlive: 'test' }).catch((error) => {
+    transport.setProvider(RSocketClientProvider, { URI, keepAlive: 'test' }).catch((error) => {
       expect(error).toEqual(new Error(errors.wrongKeepAlive));
       needToRemoveProvider = false;
       done();
@@ -58,7 +58,7 @@ describe('Tests specifically for Rsocket provider', () => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(RSocketProvider, { URI, lifetime: 'test' }).catch((error) => {
+    transport.setProvider(RSocketClientProvider, { URI, lifetime: 'test' }).catch((error) => {
       expect(error).toEqual(new Error(errors.wrongLifetime));
       needToRemoveProvider = false;
       done();
@@ -69,7 +69,7 @@ describe('Tests specifically for Rsocket provider', () => {
     expect.assertions(1);
 
     transport = new Transport();
-    transport.setProvider(RSocketProvider, { URI, WebSocket: 'test' }).catch((error) => {
+    transport.setProvider(RSocketClientProvider, { URI, WebSocket: 'test' }).catch((error) => {
       expect(error).toEqual(new Error(errors.wrongWebSocket));
       needToRemoveProvider = false;
       done();

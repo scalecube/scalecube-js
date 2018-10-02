@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Transport as TransportInterface } from './api/Transport';
 import { errors } from './errors';
 import { TransportClientProvider } from './api/TransportClientProvider';
+import { TransportServerProvider } from './api/TransportServerProvider';
 import { TransportProviderConfig, TransportRequest } from './api/types';
 
 export class Transport implements TransportInterface {
@@ -15,7 +16,7 @@ export class Transport implements TransportInterface {
     return this;
   }
 
-  setProvider(Provider: Class<TransportClientProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
+  setProvider(Provider: Class<TransportClientProvider | TransportServerProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
     const provider = new Provider();
     return provider.build(TransportProviderConfig).then(() => {
       if (typeof provider.request === 'function') {
@@ -28,25 +29,30 @@ export class Transport implements TransportInterface {
   }
 
   removeProvider(): Promise<void> {
-    // TODO should we remove both providers?
     return new Promise((resolve, reject) => {
-      if (!this._clientProvider) {
-        return reject(new Error(errors.noProvider));
-      }
-      this._clientProvider.destroy()
-        .then(() => {
-          this._clientProvider = null;
-          !this._serverProvider && resolve();
-        })
-        .catch(reject);
-
-      if (this._serverProvider) {
-        this._serverProvider.destroy()
+      const destroyProvider = (providerName) => {
+        this[providerName].destroy()
           .then(() => {
-            this._serverProvider = null;
+            this[providerName] = null;
             resolve();
           })
           .catch(reject);
+      };
+      if (!this._clientProvider && !this._serverProvider) {
+        return reject(new Error(errors.noProvider));
+      }
+      if (this._clientProvider && this._serverProvider) {
+        return Promise.all([this._clientProvider.destroy(), this._serverProvider.destroy()])
+          .then(() => {
+            this._clientProvider = null;
+            this._serverProvider = null;
+            resolve();
+          })
+          .catch(reject)
+      } else if (this._clientProvider) {
+        destroyProvider('_clientProvider');
+      } else if (this._serverProvider) {
+        destroyProvider('_serverProvider');
       }
     });
   }
@@ -59,6 +65,9 @@ export class Transport implements TransportInterface {
   }
 
   listen(path, callback) {
+    if (!this._clientProvider) {
+      throw new Error(errors.noProvider);
+    }
     this._serverProvider.listen(path, callback);
     return this;
   }

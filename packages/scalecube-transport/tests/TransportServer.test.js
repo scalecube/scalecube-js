@@ -3,12 +3,11 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {Transport} from "../src/Transport";
-import {RSocketProvider} from "../src/provider/RSocketProvider";
-import {RSocketServerProvider} from "../src/provider/RSocketServerProvider";
-import {socketURI} from "./utils";
-import {getTextResponseSingle, getTextResponseMany} from "../src/utils";
-
+import { Transport } from '../src/Transport';
+import { RSocketClientProvider } from '../src/provider/RSocketClientProvider';
+import { RSocketServerProvider } from '../src/provider/RSocketServerProvider';
+import { socketURI } from './utils';
+import { getTextResponseSingle, getTextResponseMany } from '../src/utils';
 
 describe('Transport server test suite', () => {
 
@@ -17,7 +16,7 @@ describe('Transport server test suite', () => {
   const prepareTransport = async () => {
     transport = new Transport();
     await transport.setProvider(RSocketServerProvider, {});
-    await transport.setProvider(RSocketProvider, { URI: socketURI });
+    await transport.setProvider(RSocketClientProvider, { URI: socketURI });
     return transport;
   };
 

@@ -8,7 +8,7 @@ import { TransportClientProvider } from '../api/TransportClientProvider';
 import { TransportProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 
-export class RSocketProvider implements TransportClientProvider {
+export class RSocketClientProvider implements TransportClientProvider {
   _client: any;
   _socket: any;
 
