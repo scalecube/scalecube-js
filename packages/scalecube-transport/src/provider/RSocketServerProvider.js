@@ -35,7 +35,9 @@ export class RSocketServerProvider implements TransportServerProvider {
               subscriber.onSubscribe();
               if (Object.keys(self._listeners).includes(entrypoint)) {
                 const request = { data, entrypoint, headers: { type: 'requestResponse' } };
-                self._listeners[entrypoint](request).subscribe(response => subscriber.onComplete({ data: response }));
+                self._listeners[entrypoint](request)
+                  .elementAt(0)
+                  .subscribe(response => subscriber.onComplete({ data: response }));
               }
             });
           },
