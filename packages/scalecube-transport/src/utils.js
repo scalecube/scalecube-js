@@ -1,7 +1,7 @@
 // @flow
 import { errors } from './errors';
 import { allowedRequestTypes } from './const';
-import { TransportProviderConfig, TransportRequest } from './api/types';
+import { TransportClientProviderConfig, TransportRequest } from './api/types';
 
 export const validateRequest = (requestData: TransportRequest, propsToOmitValidation?: Object) => {
   if (!propsToOmitValidation) {
@@ -20,7 +20,7 @@ export const validateRequest = (requestData: TransportRequest, propsToOmitValida
   }
 };
 
-export const validateBuildConfig = (config: TransportProviderConfig) => {
+export const validateBuildConfig = (config: TransportClientProviderConfig) => {
   const { URI = '', keepAlive, lifetime, WebSocket } = config;
   if (typeof URI !== 'string' || !URI) {
     return errors.wrongUrl;
@@ -47,10 +47,10 @@ export const extractConnectionError = (error: Error) => {
   return new Error(error.message);
 };
 
-export const getTextResponseSingle = text => `Echo:${text}`;
+export const getTextResponseSingle = (text: string) => `Echo:${text}`;
 
-export const getTextResponseMany = index => text => `Greeting (${index}) to: ${text}`;
+export const getTextResponseMany = (index: number) => (text: string) => `Greeting (${index}) to: ${text}`;
 
-export const getFailingOneResponse = text => ({ errorCode: 500, errorMessage: text });
+export const getFailingOneResponse = (text: string) => ({ errorCode: 500, errorMessage: text });
 
-export const getFailingManyResponse = text => ({ errorCode: 500, errorMessage: getTextResponseSingle(text) });
+export const getFailingManyResponse = (text: string) => ({ errorCode: 500, errorMessage: getTextResponseSingle(text) });

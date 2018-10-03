@@ -6,7 +6,7 @@ import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable, ReplaySubject } from 'rxjs';
 import 'rxjs/add/operator/elementAt';
 import { TransportServerProvider } from '../api/TransportServerProvider';
-import { TransportProviderConfig, TransportRequest } from '../api/types';
+import { TransportServerProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 import { utils } from '@scalecube/scalecube-services';
 
@@ -20,12 +20,12 @@ export class RSocketServerProvider implements TransportServerProvider {
     return this;
   }
 
-  build(config: TransportProviderConfig): Promise<void> {
+  build(config: TransportServerProviderConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       const serverConfig = {
-        host: '0.0.0.0',
-        port: 8080,
-        ...(config || {})
+        host: config.host || '0.0.0.0',
+        port: config.port || 8080,
+        protocol: 'ws'
       };
       const self = this;
       try {
@@ -111,10 +111,7 @@ export class RSocketServerProvider implements TransportServerProvider {
             };
           },
           serializers: JsonSerializers,
-          transport: new RSocketWebSocketServer({
-            ...serverConfig,
-            protocol: 'ws'
-          })
+          transport: new RSocketWebSocketServer(serverConfig)
         });
         this._server.start();
       } catch(error) {
@@ -125,7 +122,7 @@ export class RSocketServerProvider implements TransportServerProvider {
 
   }
 
-  listen(path, callback) {
+  listen(path: string, callback: (transportRequest: TransportRequest) => Observable<any>): void {
     this._listeners[path] = callback;
   }
 

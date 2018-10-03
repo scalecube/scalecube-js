@@ -5,7 +5,7 @@ import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { validateRequest, extractConnectionError, validateBuildConfig } from '../utils';
 import { TransportClientProvider } from '../api/TransportClientProvider';
-import { TransportProviderConfig, TransportRequest } from '../api/types';
+import { TransportClientProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
 
 export class RSocketClientProvider implements TransportClientProvider {
@@ -18,7 +18,7 @@ export class RSocketClientProvider implements TransportClientProvider {
     return this;
   }
 
-  build(config: TransportProviderConfig): Promise<void> {
+  build(config: TransportClientProviderConfig): Promise<void> {
     let { URI, keepAlive = 60000, lifetime = 180000, WebSocket = WS } = config;
     const wsCreator = URI => new WebSocket(URI);
     return new Promise((resolve, reject) => {

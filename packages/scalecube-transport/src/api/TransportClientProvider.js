@@ -1,5 +1,5 @@
 // @flow
-import { TransportRequest, TransportProviderConfig } from './types';
+import { TransportRequest, TransportClientProviderConfig } from './types';
 import { Observable } from 'rxjs';
 
 export interface TransportClientProvider {
@@ -10,7 +10,7 @@ export interface TransportClientProvider {
    * @param TransportProviderConfig - the configuration, that is used to build the provider
    * @returns a promise that is resolved with void when all the required connections are established. The promise can be rejected dut to validation errors of the config or due to errors during connection
    */
-  build(TransportProviderConfig: TransportProviderConfig): Promise<void>;
+  build(TransportProviderConfig: TransportClientProviderConfig): Promise<void>;
   /**
    * Method is used to send a request to a server using the provided previously provider.
    *

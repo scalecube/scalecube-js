@@ -30,14 +30,6 @@ export class Transport implements TransportInterface {
 
   removeProvider(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const destroyProvider = (providerName) => {
-        this[providerName].destroy()
-          .then(() => {
-            this[providerName] = null;
-            resolve();
-          })
-          .catch(reject);
-      };
       if (!this._clientProvider && !this._serverProvider) {
         return reject(new Error(errors.noProvider));
       }
@@ -50,9 +42,19 @@ export class Transport implements TransportInterface {
           })
           .catch(reject)
       } else if (this._clientProvider) {
-        destroyProvider('_clientProvider');
+        this._clientProvider.destroy()
+          .then(() => {
+            this._clientProvider = null;
+            resolve();
+          })
+          .catch(reject);
       } else if (this._serverProvider) {
-        destroyProvider('_serverProvider');
+        this._serverProvider.destroy()
+          .then(() => {
+            this._serverProvider = null;
+            resolve();
+          })
+          .catch(reject);
       }
     });
   }

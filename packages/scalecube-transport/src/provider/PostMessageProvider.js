@@ -2,7 +2,7 @@
 import { Observable, Subject } from 'rxjs';
 import { validateRequest, validateBuildConfig } from '../utils';
 import { TransportClientProvider } from '../api/TransportClientProvider';
-import { TransportProviderConfig, TransportRequest, PostMessageEventData, ActiveRequest } from '../api/types';
+import { TransportClientProviderConfig, TransportRequest, PostMessageEventData, ActiveRequest } from '../api/types';
 import { errors } from '../errors';
 
 export class PostMessageProvider implements TransportClientProvider {
@@ -17,7 +17,7 @@ export class PostMessageProvider implements TransportClientProvider {
     return this;
   }
 
-  build(config: TransportProviderConfig): Promise<void> {
+  build(config: TransportClientProviderConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       const { URI } = config;
       const validationError = validateBuildConfig({ URI });
