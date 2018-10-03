@@ -1,7 +1,7 @@
 // @flow
-import { TransportRequest, TransportProviderConfig } from './types';
-import { TransportClientProvider } from './TransportClientProvider';
 import { Observable } from 'rxjs';
+import { TransportRequest, TransportClientProviderConfig, TransportServerProviderConfig } from './types';
+import { TransportClientProvider } from './TransportClientProvider';
 
 export interface Transport {
   constructor(): Transport;
@@ -9,10 +9,10 @@ export interface Transport {
    * Method is used to set to a specific provider to the transport instance and build it with the provided config
    *
    * @param Provider -  the class, that is used to create an instance of provider.
-   * @param TransportProviderConfig - the configuration, that is used to build the provider
+   * @param transportProviderConfig - the configuration, that is used to build the provider
    * @returns a promise that is resolved with void when the provider is built and ready to be used. The promise can be rejected due to validation errors of provided config or inability to connect to a provided URI
    */
-  setProvider(Provider: Class<TransportClientProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void>;
+  setProvider(Provider: Class<TransportClientProvider>, transportProviderConfig: TransportClientProviderConfig | TransportServerProviderConfig): Promise<void>;
   /**
    * Method is used to send a request to a server using the provided previously provider.
    *
@@ -25,13 +25,13 @@ export interface Transport {
    *
    * @param path to listen
    * @param (transportRequest: TransportRequest) => Observable<any> callback when path hit
-   * @returns instance of this Transport e.g. transport.listen('home', (req)=>res...).listen(...)
+   * @returns a promise that is resolved with void when a callback is added or is rejected when no serverProvider is available in Transport or when a second arg is not a function
    */
-  listen(path: string, (transportRequest: TransportRequest) => Observable<any>): Transport;
+  listen(path: string, (transportRequest: TransportRequest) => Observable<any>): Promise<void>;
   /**
-   * Method is used to remove a provider from a transport and close all the active connections.
+   * Method is used to remove providers from a transport and close all the active connections.
    *
-   * @returns a promise that resolves with void, when the provider is removed and all the connections are closed. The promise can be rejected, if no provider is being set on transport
+   * @returns a promise that resolves with void, when providers are removed and all the connections are closed. The promise can be rejected, if no provider is being set on transport
    */
   removeProvider(): Promise<void>;
 }

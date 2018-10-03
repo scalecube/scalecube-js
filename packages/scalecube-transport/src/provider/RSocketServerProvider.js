@@ -8,6 +8,7 @@ import 'rxjs/add/operator/elementAt';
 import { TransportServerProvider } from '../api/TransportServerProvider';
 import { TransportProviderConfig, TransportRequest } from '../api/types';
 import { errors } from '../errors';
+import { utils } from '@scalecube/scalecube-services';
 
 export class RSocketServerProvider implements TransportServerProvider {
   _server: any;
@@ -35,8 +36,16 @@ export class RSocketServerProvider implements TransportServerProvider {
                 return new Single(subscriber => {
                   subscriber.onSubscribe();
                   if (Object.keys(self._listeners).includes(entrypoint)) {
+                    const callback = self._listeners[entrypoint];
+                    if (typeof callback !== 'function') {
+                      throw new Error(errors.wrongCallbackForListen);
+                    }
                     const request = { data, entrypoint, headers: { type: 'requestResponse' } };
-                    self._listeners[entrypoint](request)
+                    const observable = callback(request);
+                    if (!utils.isObservable(observable)) {
+                      throw new Error(errors.wrongCallbackForListen);
+                    }
+                    observable
                       .elementAt(0)
                       .subscribe(response => subscriber.onComplete({ data: response }));
                   }
@@ -61,11 +70,20 @@ export class RSocketServerProvider implements TransportServerProvider {
                         return handleIsStreamCanceledCase();
                       }
 
+                      const callback = self._listeners[entrypoint];
+                      if (typeof callback !== 'function') {
+                        throw new Error(errors.wrongCallbackForListen);
+                      }
+                      const request = { data, entrypoint, headers: { type: 'requestStream' } };
+                      const observable = self._listeners[entrypoint](request);
+                      if (!utils.isObservable(observable)) {
+                        throw new Error(errors.wrongCallbackForListen);
+                      }
+
                       if (hasNoLimit && updates > 0) {
                         $proxy.elementAt(updates).subscribe((response) => subscriber.onNext({ data: response }));
                       } else {
-                        const request = { data, entrypoint, headers: { type: 'requestStream' } };
-                        subscription = self._listeners[entrypoint](request).subscribe(
+                        subscription = observable.subscribe(
                           response => {
                             if (isStreamCanceled) {
                               return handleIsStreamCanceledCase();
@@ -109,7 +127,6 @@ export class RSocketServerProvider implements TransportServerProvider {
 
   listen(path, callback) {
     this._listeners[path] = callback;
-    return this;
   }
 
   destroy(): Promise<void> {

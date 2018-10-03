@@ -14,7 +14,7 @@ export interface TransportRequest {
   data: any;
 }
 
-export interface TransportProviderConfig {
+export interface TransportClientProviderConfig {
   /**
    * The path to a server
    */
@@ -31,6 +31,10 @@ export interface TransportProviderConfig {
    * Custom WebSocket class that will be used in the process of building a provider to create a webSocket instance with the provided URI
    */
   WebSocket?: any;
+}
+
+export interface TransportServerProviderConfig {
+
 }
 
 export interface PostMessageEventData {

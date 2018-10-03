@@ -4,7 +4,7 @@ import { Transport as TransportInterface } from './api/Transport';
 import { errors } from './errors';
 import { TransportClientProvider } from './api/TransportClientProvider';
 import { TransportServerProvider } from './api/TransportServerProvider';
-import { TransportProviderConfig, TransportRequest } from './api/types';
+import { TransportClientProviderConfig, TransportServerProviderConfig, TransportRequest } from './api/types';
 
 export class Transport implements TransportInterface {
   _clientProvider: any;
@@ -16,9 +16,9 @@ export class Transport implements TransportInterface {
     return this;
   }
 
-  setProvider(Provider: Class<TransportClientProvider | TransportServerProvider>, TransportProviderConfig: TransportProviderConfig): Promise<void> {
+  setProvider(Provider: Class<TransportClientProvider | TransportServerProvider>, transportProviderConfig: TransportClientProviderConfig | TransportServerProviderConfig): Promise<void> {
     const provider = new Provider();
-    return provider.build(TransportProviderConfig).then(() => {
+    return provider.build(transportProviderConfig).then(() => {
       if (typeof provider.request === 'function') {
         this._clientProvider = provider;
       }
@@ -64,12 +64,17 @@ export class Transport implements TransportInterface {
     return this._clientProvider.request(transportRequest);
   }
 
-  listen(path, callback) {
-    if (!this._serverProvider) {
-      throw new Error(errors.noProvider);
-    }
-    this._serverProvider.listen(path, callback);
-    return this;
+  listen(path: string, callback: (transportRequest: TransportRequest) => Observable<any>): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this._serverProvider) {
+        return reject(new Error(errors.noProvider));
+      }
+      if (typeof callback !== 'function') {
+        return reject(new Error(errors.wrongCallbackForListen));
+      }
+      this._serverProvider.listen(path, callback);
+      resolve();
+    });
   }
 
 }

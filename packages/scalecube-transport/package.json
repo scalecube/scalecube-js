@@ -21,6 +21,7 @@
     "rsocket-flowable": "^0.0.9",
     "rsocket-websocket-client": "^0.0.8",
     "rsocket-websocket-server": "^0.0.9",
-    "rxjs": "^5.5.5"
+    "rxjs": "^5.5.5",
+    "@scalecube/scalecube-services": "^0.0.6"
   }
 }

@@ -33,7 +33,7 @@ describe('Transport server test suite', () => {
     expect.assertions(1);
     transport = new Transport();
     try {
-      transport.listen('/test', () => Observable.of('test'));
+      await transport.listen('/test', () => Observable.of('test'));
     } catch (error) {
       expect(error).toEqual(new Error(errors.noProvider));
       shouldRemoveProvider = false;
@@ -41,12 +41,51 @@ describe('Transport server test suite', () => {
     }
   });
 
+  it('If callback for listen us not a function, request will throw an error', async (done) => {
+    expect.assertions(1);
+    await prepareTransport();
+    try {
+      await transport.listen('/test', 'wrong callback');
+    } catch (error) {
+      expect(error).toEqual(new Error(errors.wrongCallbackForListen));
+      done();
+    }
+  });
+
+  it('If callback for listen does not return an Observable, request will throw an error (requestResponse)', async (done) => {
+    expect.assertions(1);
+    await prepareTransport();
+    await transport.listen('/test', () => 'wrong response');
+    transport.request({ headers: { type: 'requestResponse' }, data: text, entrypoint: '/test' })
+      .subscribe(
+        () => {},
+        error => {
+          expect(error.message.includes(errors.wrongCallbackForListen)).toBeTruthy();
+          done();
+        }
+      )
+  });
+
+  it('If callback for listen does not return an Observable, request will throw an error (requestStream)', async (done) => {
+    expect.assertions(1);
+    await prepareTransport();
+    await transport.listen('/test', () => 'wrong response');
+    transport.request({ headers: { type: 'requestStream' }, data: text, entrypoint: '/test' })
+      .subscribe(
+        () => {},
+        error => {
+          expect(error.message.includes(errors.wrongCallbackForListen)).toBeTruthy();
+          done();
+        }
+      )
+  });
+
   it('Listen for "greeting/one" if callback emits one value - sends one response and the stream is completed', async (done) => {
     expect.assertions(1);
     const result = getTextResponseSingle(text);
     await prepareTransport();
 
-    transport.listen('/greeting/one', request => Observable.of(getTextResponseSingle(request.data)));
+    await transport.listen('/greeting/one', request => Observable.of(getTextResponseSingle(request.data)));
     const stream = transport.request({ headers: { type: 'requestResponse' }, data: text, entrypoint: '/greeting/one' });
     stream.subscribe(
       data => expect(data).toEqual(result),
@@ -59,7 +98,7 @@ describe('Transport server test suite', () => {
     expect.assertions(3);
     await prepareTransport();
 
-    transport.listen('/greeting/one', request => Observable
+    await transport.listen('/greeting/one', request => Observable
       .timer(100)
       .map((index) => getTextResponseMany(index)(request.data))
     );
@@ -85,7 +124,7 @@ describe('Transport server test suite', () => {
     expect.assertions(4);
     await prepareTransport();
 
-    transport.listen('/greeting/many', (request) => {
+    await transport.listen('/greeting/many', (request) => {
       return Observable
         .interval(100)
         .map((index) => getTextResponseMany(index)(request.data));
@@ -109,8 +148,7 @@ describe('Transport server test suite', () => {
   it('Listen for "greeting/many" without responsesLimit sends infinite amount of responses and the stream is not completed', async (done) => {
     await prepareTransport();
 
-    transport
-      .listen('/greeting/many', (request) => {
+    await transport.listen('/greeting/many', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseMany(index)(request.data));
@@ -137,13 +175,12 @@ describe('Transport server test suite', () => {
     const greetingText = text;
     const greetingText2 = `${text}2`;
 
-    transport
-      .listen('/greeting/many', (request) => {
+    await transport.listen('/greeting/many', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseMany(index)(request.data));
-      })
-      .listen('/greeting2/many', (request) => {
+      });
+    await transport.listen('/greeting2/many', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseMany(index)(request.data));
@@ -192,13 +229,12 @@ describe('Transport server test suite', () => {
     const result = getTextResponseSingle(greetingText);
     const result2 = getTextResponseSingle(greetingText2);
 
-    transport
-      .listen('/greeting/one', (request) => {
+    await transport.listen('/greeting/one', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseSingle(request.data));
-      })
-      .listen('/greeting2/one', (request) => {
+      });
+    await transport.listen('/greeting2/one', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseSingle(request.data));
@@ -245,13 +281,12 @@ describe('Transport server test suite', () => {
     const greetingText = text;
     const greetingText2 = `${text}2`;
 
-    transport
-      .listen('/greeting/many', (request) => {
+    await transport.listen('/greeting/many', (request) => {
         return Observable
           .interval(100)
           .map((index) => getTextResponseMany(index)(request.data));
-      })
-      .listen('/greeting2/one', (request) => Observable.of(getTextResponseSingle(request.data)));
+      });
+    await transport.listen('/greeting2/one', (request) => Observable.of(getTextResponseSingle(request.data)));
     const stream = transport.request({ headers: { type: 'requestStream', responsesLimit: 5 }, data: greetingText, entrypoint: '/greeting/many' });
     const stream2 = transport.request({ headers: { type: 'requestResponse' }, data: greetingText2, entrypoint: '/greeting2/one' });
 

@@ -14,5 +14,6 @@ export const errors = {
   wrongWebSocket: 'WebSocket should be a class',
   closedConnection: 'The connection was closed',
   noConnection: 'There is no connection',
-  cantStartServer: 'Can not start server with a provided configuration'
+  cantStartServer: 'Can not start server with a provided configuration',
+  wrongCallbackForListen: 'Callback for "listen" is not correct - function should return an Observable',
 };

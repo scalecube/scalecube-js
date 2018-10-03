@@ -6,8 +6,8 @@
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-services"
   },
-  "main": "build/index.js",
-  "#module": "es/index.js",
+  "main": "build/services/index.js",
+  "#module": "es/services/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "files": [
