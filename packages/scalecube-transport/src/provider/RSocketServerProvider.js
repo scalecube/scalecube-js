@@ -4,6 +4,7 @@ import RSocketWebSocketServer from 'rsocket-websocket-server';
 import { Single, Flowable } from 'rsocket-flowable';
 import { JsonSerializers, RSocketClient } from 'rsocket-core';
 import { Observable, ReplaySubject } from 'rxjs';
+// $FlowFixMe
 import 'rxjs/add/operator/elementAt';
 import { TransportServerProvider } from '../api/TransportServerProvider';
 import { TransportServerProviderConfig, TransportRequest } from '../api/types';
