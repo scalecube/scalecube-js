@@ -16,6 +16,7 @@ export class Transport implements TransportInterface {
     return this;
   }
 
+  // TODO Can we split it to setClientProvider and setServerProvider ?
   setProvider(Provider: Class<TransportClientProvider | TransportServerProvider>, transportProviderConfig: TransportClientProviderConfig | TransportServerProviderConfig): Promise<void> {
     const provider = new Provider();
     return provider.build(transportProviderConfig).then(() => {

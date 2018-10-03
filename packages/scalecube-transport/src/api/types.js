@@ -34,7 +34,16 @@ export interface TransportClientProviderConfig {
 }
 
 export interface TransportServerProviderConfig {
-
+  /**
+   * The host of the server
+   * @default "0.0.0.0"
+   */
+  host?: string,
+  /**
+   * The port of the server
+   * @default 8080
+   */
+  port?: number,
 }
 
 export interface PostMessageEventData {
