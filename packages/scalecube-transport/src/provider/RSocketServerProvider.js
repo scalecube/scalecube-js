@@ -93,8 +93,8 @@ export class RSocketServerProvider implements TransportServerProvider {
                               $proxy.next(response);
                               if (!hasEmittedOnce) {
                                 subscriber.onNext({ data: response });
+                                hasEmittedOnce = true;
                               }
-                              hasEmittedOnce = true;
                             } else {
                               subscriber.onNext({ data: response });
                             }
