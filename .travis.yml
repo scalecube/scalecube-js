@@ -1,38 +1,37 @@
 sudo: false
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 language: node_js
 node_js:
-  - "6"
-
+- '6'
 before_install:
-  - if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date +%s`; fi
-
+- if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date
+  +%s`; fi
 install:
-  - yarn install
-  - npm run test
-
+- yarn install
+- npm run test
 script:
-  - npm run build
-
+- npm run build
 before_deploy:
- - ls
+- ls
 deploy:
- - provider: npm
-   skip_cleanup: true
-   tag: next
-   api_key:
-     secure: "iwImFZ44v9+xqBRV19+ncu0dhI9LCfNVYvsOKVwIjOIJrEbHm91e5HPL5Pw8yacIVtBVMsHqX5Nz3vciPSKv9qgzTt6C1MS0Hh69D73yoI7SywznmdWyjeLIJ7KrkK+zai3tt7yw2rWGwH1eKfgRuhJuwOICYBUy2iErrNl4+CSGHVyItztHx/BuOAAScS9R9oKxCQIegv7dt5njVMv5Lwgoya5nsYqSuGeNCOAmTJALCYWF9TI1ewrdUbM73jipWGFSToKrfaHyjQKp2+D2EvbpxVYP8hto/RtyIZOE/OxA4iwj9DjKQDx/6G3edUeI5pdUkudcBAlFpPsxQGlg0JS3l5xxzfPzXJgOOLMIbgFdQEDeZu9nvSn5JfIS3wqx6e5ZiimdMcTGB8yHA4H7PCA3pVQVxQ6/inaMucz9POLu4EL5H656Qxc5q72Nme+wKaFokUJXSrKMZ9z4nklvw/YM30lW//5n28F61mpu+xiSZSn4JdO8CL9uo67ymkMh6bmExcKgZz774TZqk3qM7v7gOekcsAJaJ4ZZMWc24IDV+53X1W0TJoFVpS8wwmTSA0gxQbUSTUlKwIhH4S8gxMReeJGqnq4P547c+F4FQswyejgrU6WbIuXBls3st3dvpnHWoIkP75YXvkLAxk2R0KCziLS8cLgu8Mj1hA3yjkA=" 
-   on:
-     repo: scalecube/scalecube-js
-     branch: develop
- - provider: npm
-   skip_cleanup: true
-   tag: latest
-   api_key:
-     secure: "iwImFZ44v9+xqBRV19+ncu0dhI9LCfNVYvsOKVwIjOIJrEbHm91e5HPL5Pw8yacIVtBVMsHqX5Nz3vciPSKv9qgzTt6C1MS0Hh69D73yoI7SywznmdWyjeLIJ7KrkK+zai3tt7yw2rWGwH1eKfgRuhJuwOICYBUy2iErrNl4+CSGHVyItztHx/BuOAAScS9R9oKxCQIegv7dt5njVMv5Lwgoya5nsYqSuGeNCOAmTJALCYWF9TI1ewrdUbM73jipWGFSToKrfaHyjQKp2+D2EvbpxVYP8hto/RtyIZOE/OxA4iwj9DjKQDx/6G3edUeI5pdUkudcBAlFpPsxQGlg0JS3l5xxzfPzXJgOOLMIbgFdQEDeZu9nvSn5JfIS3wqx6e5ZiimdMcTGB8yHA4H7PCA3pVQVxQ6/inaMucz9POLu4EL5H656Qxc5q72Nme+wKaFokUJXSrKMZ9z4nklvw/YM30lW//5n28F61mpu+xiSZSn4JdO8CL9uo67ymkMh6bmExcKgZz774TZqk3qM7v7gOekcsAJaJ4ZZMWc24IDV+53X1W0TJoFVpS8wwmTSA0gxQbUSTUlKwIhH4S8gxMReeJGqnq4P547c+F4FQswyejgrU6WbIuXBls3st3dvpnHWoIkP75YXvkLAxk2R0KCziLS8cLgu8Mj1hA3yjkA="
-   on:
-     repo: scalecube/scalecube-js
-     branch: master
+  matrix:
+  - provider: npm
+    skip_cleanup: true
+    tag: next
+    api_key:
+      secure: iwImFZ44v9+xqBRV19+ncu0dhI9LCfNVYvsOKVwIjOIJrEbHm91e5HPL5Pw8yacIVtBVMsHqX5Nz3vciPSKv9qgzTt6C1MS0Hh69D73yoI7SywznmdWyjeLIJ7KrkK+zai3tt7yw2rWGwH1eKfgRuhJuwOICYBUy2iErrNl4+CSGHVyItztHx/BuOAAScS9R9oKxCQIegv7dt5njVMv5Lwgoya5nsYqSuGeNCOAmTJALCYWF9TI1ewrdUbM73jipWGFSToKrfaHyjQKp2+D2EvbpxVYP8hto/RtyIZOE/OxA4iwj9DjKQDx/6G3edUeI5pdUkudcBAlFpPsxQGlg0JS3l5xxzfPzXJgOOLMIbgFdQEDeZu9nvSn5JfIS3wqx6e5ZiimdMcTGB8yHA4H7PCA3pVQVxQ6/inaMucz9POLu4EL5H656Qxc5q72Nme+wKaFokUJXSrKMZ9z4nklvw/YM30lW//5n28F61mpu+xiSZSn4JdO8CL9uo67ymkMh6bmExcKgZz774TZqk3qM7v7gOekcsAJaJ4ZZMWc24IDV+53X1W0TJoFVpS8wwmTSA0gxQbUSTUlKwIhH4S8gxMReeJGqnq4P547c+F4FQswyejgrU6WbIuXBls3st3dvpnHWoIkP75YXvkLAxk2R0KCziLS8cLgu8Mj1hA3yjkA=
+    on:
+      repo: scalecube/scalecube-js
+      branch: develop
+  - provider: npm
+    skip_cleanup: true
+    tag: latest
+    api_key:
+      secure: iwImFZ44v9+xqBRV19+ncu0dhI9LCfNVYvsOKVwIjOIJrEbHm91e5HPL5Pw8yacIVtBVMsHqX5Nz3vciPSKv9qgzTt6C1MS0Hh69D73yoI7SywznmdWyjeLIJ7KrkK+zai3tt7yw2rWGwH1eKfgRuhJuwOICYBUy2iErrNl4+CSGHVyItztHx/BuOAAScS9R9oKxCQIegv7dt5njVMv5Lwgoya5nsYqSuGeNCOAmTJALCYWF9TI1ewrdUbM73jipWGFSToKrfaHyjQKp2+D2EvbpxVYP8hto/RtyIZOE/OxA4iwj9DjKQDx/6G3edUeI5pdUkudcBAlFpPsxQGlg0JS3l5xxzfPzXJgOOLMIbgFdQEDeZu9nvSn5JfIS3wqx6e5ZiimdMcTGB8yHA4H7PCA3pVQVxQ6/inaMucz9POLu4EL5H656Qxc5q72Nme+wKaFokUJXSrKMZ9z4nklvw/YM30lW//5n28F61mpu+xiSZSn4JdO8CL9uo67ymkMh6bmExcKgZz774TZqk3qM7v7gOekcsAJaJ4ZZMWc24IDV+53X1W0TJoFVpS8wwmTSA0gxQbUSTUlKwIhH4S8gxMReeJGqnq4P547c+F4FQswyejgrU6WbIuXBls3st3dvpnHWoIkP75YXvkLAxk2R0KCziLS8cLgu8Mj1hA3yjkA=
+    on:
+      repo: scalecube/scalecube-js
+      branch: master
+  api_key:
+    secure: mQUm4Ved95XoQ7vXHcXAQlHYXQ7U6EzHMm0nKUp+pf5CM1xq03r0WU5BviF+VEbyYdjmjEfIvhEUhXRBMXlzW9dBy7RxoXnGZYsNwXS/DP1pGBxUetyk3PJNZ5eWgUvpb0/yLt5TqVqOyz/wnkoXaKo2yeadyBcjsU8boY5xAQkvOT4kPDUWbaWJdCqHv76gawFwFE9LDwMRoY9yi9lndCGK/V2kUsaITO16Qlh2bVyPkJnM2Nx9crHNAH0XQsIDLQdajEc1wDimZcMvmXGd/MnMxbhrAF07/4kNtxDnHdD8KG2EXWuSReLBHccVge1hcPiPklc/d56gKavGmHwr32xl5tPzv1fxIDiKPRIzsODmgQL2OmnCORawerkiLre7aDSJp1D2o7baNJQBuSBA2xwZSxHwEgV5QsdJvV1DMNXVl0QkKfu9fcsziIqRtPPoYoG1oES19isf03Ks+8Wq4KTGnwB2zEBzAFqQLkvy+c1yhTPEhJnVLjCd3aQ4ysCePZ6Uy27lB3d45CyD3jZR66/yrZeApy/htx4R0R9V2Bklsftzkm246JtuNltRRIBvefP5iJrKZeOYR2bLD3Ohw8bI6aLkyekSB1/7J7HeeNWONtK8FP0JUJpTI9hOIJICE1rykl8F75x17kSTglqTVxlEC2jTH6MsoWoNA7oMqSQ=
