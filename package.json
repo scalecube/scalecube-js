@@ -1,6 +1,10 @@
 {
   "name": "@scalecube/scalecube-js",
   "version": "0.0.6",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
   "keywords": [
     "scalecube",
@@ -17,25 +21,17 @@
     "test:watch": "npm test -- --watch",
     "test:cov": "npm test -- --coverage",
     "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
-    "build:es": "babel ./src --out-dir es",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build:es": "cross-env OUT_DIR=es node scripts/build.js",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs OUT_DIR=build node scripts/build.js",
     "build": "npm run clean && npm run build:es && npm run build:commonjs && npm run flow:gen",
     "flow": "flow",
     "flow:install": "flow-typed install",
-    "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir . && npm run flow:gen:move && npm run flowToTs ",
-    "flow:gen:move": "rname \"./libdef.js.flow\" \"./index.js.flow\"",
-    "flowToTs": "node build/flowToTs index.js.flow index.d.ts",
-    "flow:reset": "flow stop && flow start"
+    "flow:gen": "flow gen-flow-files ./packages/scalecube-services/src/services/libdef.js --out-dir ./packages/scalecube-services/ && npm run flow:gen:move && npm run flowToTs ",
+    "flow:gen:move": "rname \"./packages/scalecube-services/libdef.js.flow\" \"./packages/scalecube-services/index.js.flow\"",
+    "flowToTs": "node build/flowToTs ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
+    "flow:reset": "flow stop && flow start",
+    "flow:check": "npm run flow:reset && flow check"
   },
-  "main": "lib/scalecube-services/services/index.js",
-  "#module": "es/scalecube-services/services/index.js",
-  "files": [
-    "lib",
-    "es",
-    "src",
-    "index.d.ts",
-    "index.js.flow"
-  ],
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
   "devDependencies": {
@@ -53,8 +49,12 @@
     "flow-bin": "^0.59.0",
     "flow-typed": "^2.2.3",
     "jest": "^21.2.1",
+    "lerna": "^3.0.1",
+    "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
-    "rename-cli": "^5.0.0"
+    "rename-cli": "^5.0.0",
+    "rxjs-compat": "^6.1.0",
+    "rxjs6": "npm:rxjs@6.1.0"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
@@ -65,8 +65,5 @@
       "node_modules",
       "./"
     ]
-  },
-  "dependencies": {
-    "rxjs": "^5.5.5"
   }
 }
