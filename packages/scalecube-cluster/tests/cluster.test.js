@@ -28,7 +28,7 @@ describe('Cluster suite', () => {
     return {clusterA, clusterB, clusterC};
   };
 
-  it('When clusterA join clusterB and B join C all cluster should be on all clusters', () => {
+  it.skip('When clusterA join clusterB and B join C all cluster should be on all clusters', () => {
     const {clusterA, clusterB, clusterC} = createClusters();
 
     clusterA.join(clusterB);
@@ -38,7 +38,7 @@ describe('Cluster suite', () => {
     expect(clusterB.members().map(i=>i.metadata())).toEqual([ 'clusterB', 'clusterA', 'clusterC' ]);
     expect(clusterC.members().map(i=>i.metadata())).toEqual([ 'clusterC', 'clusterB', 'clusterA' ]);
   });
-  it('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', () => {
+  it.skip('When clusterA shutdown clusterB and C should not have clusterA and remove message should be send', () => {
     const {clusterA, clusterB, clusterC} = createClusters();
     expect.assertions(8);
 
@@ -61,7 +61,7 @@ describe('Cluster suite', () => {
      expect(clusterB.members().map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
      expect(clusterC.members().map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
   });
-  it('When A join B and B join C all add essages are sent', () => {
+  it.skip('When A join B and B join C all add essages are sent', () => {
     const {clusterA, clusterB, clusterC} = createClusters();
 
     expect.assertions(3 * 2); // clusters * messages
@@ -111,7 +111,7 @@ describe('Cluster suite', () => {
     clusterB.join(clusterC);
 
   });
-  it('Metadata should change and messages should be sent', () => {
+  it.skip('Metadata should change and messages should be sent', () => {
     const {clusterA, clusterB, clusterC} = createClusters();
     expect.assertions(4); // 1 message X 3 clusters + clusterA.metadata()
 
