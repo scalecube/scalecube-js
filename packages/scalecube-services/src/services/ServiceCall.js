@@ -1,7 +1,8 @@
 // @flow
 
 import { Router, Message, utils } from '.';
-import { Observable } from 'rxjs/Observable';
+// $FlowFixMe
+import { Observable } from 'rxjs';
 // $FlowFixMe
 import 'rxjs/add/operator/catch';
 import { isObservable } from './utils';

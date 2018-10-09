@@ -1,6 +1,6 @@
 // @flow
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+// $FlowFixMe
+import {Observable, Subject} from 'rxjs';
 import {Cluster} from '../api/Cluster';
 import {MembershipEvent} from '../api/MembershiptEvent';
 import { CreateLogicalClusterInternals } from './LogicalClusterInternals';
