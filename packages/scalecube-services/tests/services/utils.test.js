@@ -1,4 +1,5 @@
-import { Observable } from 'rxjs/Observable';
+// $FlowFixMe
+import {Observable} from 'rxjs';
 import { Observable as rxjs6Observable } from 'rxjs6/Observable';
 import { createStore } from 'redux';
 import { isObservable } from '../../src/services/utils';
