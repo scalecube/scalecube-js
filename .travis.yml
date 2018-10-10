@@ -4,7 +4,7 @@ cache:
   - node_modules
 language: node_js
 node_js:
-- '6'
+- '8'
 before_install:
 - if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date
   +%s`; fi
