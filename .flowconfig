@@ -12,5 +12,4 @@ api/.*
 [libs]
 ./flow-typed
 [options]
-module.name_mapper='src' -> '<PROJECT_ROOT>/src'
 include_warnings=true
