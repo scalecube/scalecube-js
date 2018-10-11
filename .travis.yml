@@ -11,7 +11,8 @@ before_install:
 install:
 - yarn install
 - lerna bootstrap
-- npm run test
+- yarn run flow:install
+- yarn run test
 script:
 - npm run build
 before_deploy:

@@ -13,7 +13,7 @@
     "services"
   ],
   "scripts": {
-    "clean": "rimraf lib dist es coverage index.js.flow index.d.ts",
+    "clean": "rimraf lib dist es coverage ./packages/scalecube-services/src/services/index.js.flow ./packages/scalecube-services/src/services/index.d.ts",
     "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
     "test": "cross-env BABEL_ENV=jest jest --runInBand --no-cache --env=jsdom",
     "test:snapshot": "cross-env BABEL_ENV=jest jest --maxWorkers=4 -u",
