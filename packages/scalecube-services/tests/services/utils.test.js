@@ -1,8 +1,12 @@
 import { Observable } from 'rxjs/Observable';
-import { Observable as rxjs6Observable } from 'rxjs6/Observable';
+import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/if';
+import 'rxjs/add/observable/of';
+import { from, iif, of } from 'rxjs6';
 import { createStore } from 'redux';
 import { isObservable } from '../../src/services/utils';
 import { Observable as esObservable } from './esObservable';
+
 
 describe('Check if isObservable method detects different kinds of Observables as Observable', () => {
   it('isObservable should return true for RxJS v.5 observables', () => {
@@ -19,12 +23,12 @@ describe('Check if isObservable method detects different kinds of Observables as
   });
 
   it('isObservable should return true for RxJS v.6 observables', () => {
-    const obsFrom = rxjs6Observable.from([1, 2, 3]);
+    const obsFrom = from([1, 2, 3]);
 
-    const obsConditional = rxjs6Observable.if(
-      () => true,
-      rxjs6Observable.of(1, 2, 3),
-      rxjs6Observable.from([4, 5, 6]),
+    const obsConditional = iif(
+        () => true,
+        of(1, 2, 3),
+        from([4, 5, 6]),
     );
     expect(isObservable(obsFrom)).toBeTruthy();
     expect(isObservable(obsConditional)).toBeTruthy();

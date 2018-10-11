@@ -19,5 +19,9 @@
   ],
   "dependencies": {
     "rxjs": "^5.5.5"
+  },
+  "devDependencies": {
+    "rxjs-compat": "^6.1.0",
+    "rxjs6": "npm:rxjs@6.1.0"
   }
 }
