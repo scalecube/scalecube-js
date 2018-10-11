@@ -1,6 +1,5 @@
 // @flow
-// $FlowFixMe
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { MembershipEvent } from './MembershiptEvent';
 import { ClusterOptions } from "./ClusterOptions";
 
