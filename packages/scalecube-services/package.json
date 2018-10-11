@@ -1,7 +1,7 @@
 {
   "name": "@scalecube/scalecube-services",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
-  "version": "0.0.6",
+  "version": "0.0.7-alpha.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-services"
@@ -19,7 +19,5 @@
   ],
   "dependencies": {
     "rxjs": "^5.5.5"
-  },
-  "devDependencies": {
   }
 }
