@@ -7,7 +7,6 @@ import { createStore } from 'redux';
 import { isObservable } from '../../src/services/utils';
 import { Observable as esObservable } from './esObservable';
 
-
 describe('Check if isObservable method detects different kinds of Observables as Observable', () => {
   it('isObservable should return true for RxJS v.5 observables', () => {
     const obsFrom = Observable.from([1, 2, 3]);

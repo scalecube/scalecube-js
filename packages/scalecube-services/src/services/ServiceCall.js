@@ -2,6 +2,7 @@
 
 import { Router, Message, utils } from '.';
 import { Observable } from 'rxjs/Observable';
+// $FlowFixMe
 import 'rxjs/add/operator/catch';
 import { isObservable } from './utils';
 
