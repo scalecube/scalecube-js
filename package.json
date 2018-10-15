@@ -30,7 +30,10 @@
     "flow:gen:move": "rname \"./packages/scalecube-services/libdef.js.flow\" \"./packages/scalecube-services/index.js.flow\"",
     "flowToTs": "node build/flowToTs ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
     "flow:reset": "flow stop && flow start",
-    "flow:check": "npm run flow:reset && flow check"
+    "flow:check": "npm run flow:reset && flow check",
+    "prepublish": "lerna publish prepatch --dry-run",
+    "publish": "lerna publish patch --dry-run",
+    "canary": "lerna publish --canary --preid snapshot --dry-run"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
