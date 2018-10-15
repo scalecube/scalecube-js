@@ -17,17 +17,17 @@ install:
 script:
 - npm run build
 - npm run canary
-deploy:
-  matrix:
-  - provider: script
-    skip_cleanup: true
-    script: npm run prepublish
-    on:
-      repo: scalecube/scalecube-js
-      branch: develop
-  - provider: script
-    skip_cleanup: true
-    script: npm run publish
-    on:
-      repo: scalecube/scalecube-js
-      branch: master
+#deploy:
+#  matrix:
+#  - provider: script
+#    skip_cleanup: true
+#    script: npm run prepublish
+#    on:
+#      repo: scalecube/scalecube-js
+#      branch: develop
+#  - provider: script
+#    skip_cleanup: true
+#    script: npm run publish
+#    on:
+#      repo: scalecube/scalecube-js
+#      branch: master
