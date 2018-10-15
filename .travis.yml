@@ -1,33 +1,4 @@
 sudo: false
-cache:
-  directories:
-  - node_modules
 language: node_js
 node_js:
 - '8'
-before_install:
-#- if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date+%s`; fi
-- echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-- npm whoami
-install:
-#- yarn install
-#- lerna bootstrap
-#- yarn run flow:install
-
-script:
-- npm run build
-#- npm run canary
-#deploy:
-#  matrix:
-#  - provider: script
-#    skip_cleanup: true
-#    script: npm run prepublish
-#    on:
-#      repo: scalecube/scalecube-js
-#      branch: develop
-#  - provider: script
-#    skip_cleanup: true
-#    script: npm run publish
-#    on:
-#      repo: scalecube/scalecube-js
-#      branch: master
