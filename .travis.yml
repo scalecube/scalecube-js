@@ -16,7 +16,7 @@ install:
 
 script:
 - npm run build
-- npm run canary
+#- npm run canary
 #deploy:
 #  matrix:
 #  - provider: script
