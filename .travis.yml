@@ -7,33 +7,30 @@ language: node_js
 node_js:
 - '8'
 before_install:
-- cat .travis.yml
-#- if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date+%s`; fi
 - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-- npm whoami
 install:
 - yarn install
-- npm run bootstrap
+- yarn run bootstrap
 - yarn run flow:install
 
 before_script:
   - echo "before script"
 
 script:
-- npm run build
-- npm run deploy:canary
+- yarn run build
+- yarn run deploy:canary
 
 deploy:
   matrix:
   - provider: script
     skip_cleanup: true
-    script: npm run deploy:prepublish
+    script: yarn run deploy:prepublish
     on:
       repo: scalecube/scalecube-js
       branch: develop
   - provider: script
     skip_cleanup: true
-    script: npm run deploy:publish
+    script: yarn run deploy:publish
     on:
       repo: scalecube/scalecube-js
       branch: master
