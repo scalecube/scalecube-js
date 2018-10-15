@@ -21,19 +21,19 @@ before_script:
 
 script:
 - npm run build
-- npm run canary
+- npm run deploy:canary
 
 deploy:
   matrix:
   - provider: script
     skip_cleanup: true
-    script: npm run prepublish
+    script: npm run deploy:prepublish
     on:
       repo: scalecube/scalecube-js
       branch: develop
   - provider: script
     skip_cleanup: true
-    script: npm run publish
+    script: npm run deploy:publish
     on:
       repo: scalecube/scalecube-js
       branch: master
