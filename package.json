@@ -36,7 +36,7 @@
     "flow:check": "npm run flow:reset && flow check",
     "deploy:prepublish": "lerna publish prepatch --yes",
     "deploy:publish": "lerna publish patch --yes",
-    "deploy:canary": "lerna publish --canary --preid snapshot --yes --npm-client npm",
+    "deploy:canary": "lerna publish --canary --preid snapshot --yes",
     "bootstrap": "lerna bootstrap"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
