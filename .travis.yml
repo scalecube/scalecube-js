@@ -10,9 +10,9 @@ before_install:
 - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
 - npm whoami
 install:
-- yarn install
+#- yarn install
 #- lerna bootstrap
-- yarn run flow:install
+#- yarn run flow:install
 
 script:
 - npm run build
