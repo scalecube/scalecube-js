@@ -2,6 +2,9 @@
   "name": "@scalecube/scalecube-js",
   "version": "0.0.6",
   "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "workspaces": [
     "packages/*"
   ],
