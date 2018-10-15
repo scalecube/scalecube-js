@@ -34,7 +34,7 @@
     "deploy:prepublish": "lerna publish prepatch --dry-run --yes",
     "deploy:publish": "lerna publish patch --dry-run --yes",
     "deploy:canary": "lerna publish --canary --preid snapshot --dry-run --yes",
-    "bootstrap": "lerna bootstrap --hoist"
+    "bootstrap": "lerna bootstrap"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
