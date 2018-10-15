@@ -8,6 +8,7 @@ node_js:
 before_install:
 #- if [[ $TRAVIS_BRANCH == "develop" ]]; then npm version $(node -e "let v = `npm version`;console.log(v['@scalecube/scalecube-js']);")-`date+%s`; fi
 - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+- npm whoami
 install:
 - yarn install
 - lerna bootstrap
