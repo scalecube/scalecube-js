@@ -11,7 +11,7 @@ before_install:
 - npm whoami
 install:
 - yarn install
-- lerna bootstrap
+#- lerna bootstrap
 - yarn run flow:install
 
 script:
