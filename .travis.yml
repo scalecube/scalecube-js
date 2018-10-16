@@ -32,3 +32,6 @@ deploy:
     on:
       repo: scalecube/scalecube-js
       branch: master
+
+after_deploy:
+  - git status
