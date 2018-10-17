@@ -19,7 +19,6 @@ script:
 - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then yarn run deploy:canary; fi'
 
 deploy:
-  matrix:
   - provider: script
     skip_cleanup: true
     script: yarn run deploy:prepublish
