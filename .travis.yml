@@ -21,10 +21,11 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: yarn run deploy:prepublish
+    script: git checkout develop && yarn run deploy:prepublish
     on:
       repo: scalecube/scalecube-js
       branch: develop
+      condition: '! $TRAVIS_COMMIT_MESSAGE =~ \[skip\ publish\]'
   - provider: script
     skip_cleanup: true
     script: yarn run deploy:publish
