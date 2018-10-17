@@ -1,7 +1,10 @@
 {
   "name": "@scalecube/scalecube-js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -13,7 +16,7 @@
     "services"
   ],
   "scripts": {
-    "clean": "rimraf lib dist es coverage index.js.flow index.d.ts",
+    "clean": "rimraf lib dist es coverage ./packages/scalecube-services/src/services/index.js.flow ./packages/scalecube-services/src/services/index.d.ts",
     "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
     "test": "cross-env BABEL_ENV=jest jest --runInBand --no-cache --env=jsdom",
     "test:snapshot": "cross-env BABEL_ENV=jest jest --maxWorkers=4 -u",
@@ -30,7 +33,11 @@
     "flow:gen:move": "rname \"./packages/scalecube-services/libdef.js.flow\" \"./packages/scalecube-services/index.js.flow\"",
     "flowToTs": "node build/flowToTs ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
     "flow:reset": "flow stop && flow start",
-    "flow:check": "npm run flow:reset && flow check"
+    "flow:check": "npm run flow:reset && flow check",
+    "deploy:prepublish": "lerna publish prepatch --yes",
+    "deploy:publish": "lerna publish patch --yes",
+    "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
+    "bootstrap": "lerna bootstrap"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "ISC",
@@ -53,6 +60,7 @@
     "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
     "rename-cli": "^5.0.0",
+    "rxjs": "^5.5.5",
     "rxjs-compat": "^6.1.0",
     "rxjs6": "npm:rxjs@6.1.0"
   },

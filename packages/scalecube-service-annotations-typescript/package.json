@@ -1,11 +1,15 @@
 {
   "name": "@scalecube/scalecube-service-annotations-typescript",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
   "repository": {
     "type": "git",
     "url": "https://github.com/scalecube/scalecube-js/packages/scalecube-service-annotations-typescript.git"
   },
-  "version": "0.0.6",
+  "version": "0.0.10-alpha.0",
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",

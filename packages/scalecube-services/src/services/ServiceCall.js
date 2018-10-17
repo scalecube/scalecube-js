@@ -19,7 +19,7 @@ const createServiceObserver = (message, service, observer) => {
     return () => {
     };
   }
-}
+};
 
 export class ServiceCall {
   router: Router;
@@ -56,7 +56,6 @@ export class ServiceCall {
       if (!inst) {
         observer.error(new Error(`Service not found error: ${message.serviceName}.${message.method}`));
       } else if (utils.isLoader(inst)) {
-        let unsubscribe;
         const promise = new Promise(resolve=>{
           inst.service.promise.then((service) => {
             resolve(createServiceObserver(message, service, observer));
