@@ -21,8 +21,7 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    github-token: $GITHUB_TOKEN
-    script: git checkout develop && yarn run deploy:prepublish
+    script: git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git && git checkout develop && yarn run deploy:prepublish
     on:
       repo: scalecube/scalecube-js
       branch: develop
