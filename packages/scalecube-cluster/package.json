@@ -13,7 +13,7 @@
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "rxjs": "^5.5.5"
   }

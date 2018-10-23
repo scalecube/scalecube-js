@@ -34,13 +34,13 @@
     "flowToTs": "node build/flowToTs ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
     "flow:reset": "flow stop && flow start",
     "flow:check": "npm run flow:reset && flow check",
-    "deploy:prepublish": "lerna publish prepatch --yes -m '[skip publish]'",
-    "deploy:publish": "lerna publish patch --yes",
+    "deploy:prepublish": "lerna publish prepatch --yes -m '[skip ci]'",
+    "deploy:publish": "lerna publish patch --yes -m '[skip ci]'",
     "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
     "bootstrap": "lerna bootstrap"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",

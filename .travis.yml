@@ -26,10 +26,9 @@ deploy:
     on:
       repo: scalecube/scalecube-js
       branch: develop
-      condition: '! $TRAVIS_COMMIT_MESSAGE =~ \[skip\ publish\]'
   - provider: script
     skip_cleanup: true
-    script: yarn run deploy:publish
+    script: git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git && git checkout master && yarn run deploy:publish
     on:
       repo: scalecube/scalecube-js
       branch: master
