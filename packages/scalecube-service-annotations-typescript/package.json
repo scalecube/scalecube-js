@@ -13,5 +13,5 @@
   "main": "build/index.js",
   "#module": "es/index.js",
   "author": "Idan Levin (https://github.com/IdanILT)",
-  "license": "MIT",
+  "license": "MIT"
 }
