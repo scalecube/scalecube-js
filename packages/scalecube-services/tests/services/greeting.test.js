@@ -6,8 +6,6 @@ process.on('unhandledRejection', (reason, promise) => console.log(reason, promis
 
 describe('Greeting suite', () => {
     it('Greeting.hello should greet Idan with hello', () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -20,8 +18,6 @@ describe('Greeting suite', () => {
         return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
     });
     it('Proxy creation should fail when meta missing', () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .build()
@@ -33,8 +29,6 @@ describe('Greeting suite', () => {
         return expect(greetingService).toEqual(Error("API must have meta property"));
     });
     it('Proxy creation should fail when meta is without service name', () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .build()
@@ -46,8 +40,6 @@ describe('Greeting suite', () => {
         return expect(greetingService).toEqual(Error("service name (api.meta.serviceName) is not defined"));
     });
     it('Proxy creation should fail when meta is without service methods', () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .build()
@@ -63,8 +55,6 @@ describe('Greeting suite', () => {
         return expect(greetingService).toEqual(Error("meta.methods is not defined"));
     });
     it('Method on proxy should return undefined if it not in definition', () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .build()
@@ -82,8 +72,6 @@ describe('Greeting suite', () => {
     });
     // check that we can set service in 2 separate calls to .services
     it('Greeting should return Hello Idan and Greeting 2 should return hey Idan', () => {
-
-        let x = GreetingService;
         const mcb = Microservices.builder();
 
         mcb.services(new GreetingService());
@@ -116,7 +104,6 @@ describe('Greeting suite', () => {
         // expect(greetingService2Proxy.hello('Idan')).resolves.toEqual("hey Idan");
     });
     it('Greeting should fail without args', () => {
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -130,7 +117,6 @@ describe('Greeting suite', () => {
 
     });
     it('Greeting.repeatToStream should return observable of greetings ', () => {
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -161,7 +147,6 @@ describe('Greeting suite', () => {
 
     });
     it('Greeting.repeatToStream should fail without arg ', () => {
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -177,7 +162,6 @@ describe('Greeting suite', () => {
         });
     });
     it('Greeting.repeatToStream should trigger unsubscribe ', () => {
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())

@@ -3,8 +3,6 @@ import {Microservices} from "../../src/services";
 
 describe("Service proxy middleware suite", () => {
     it("MW should add idan", () => {
-
-        let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .mw((message) => {
