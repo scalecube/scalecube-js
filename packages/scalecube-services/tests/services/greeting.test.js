@@ -1,6 +1,6 @@
-import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
-import GreetingService2 from 'examples/GreetingServiceClass/GreetingService2.js';
-import {Microservices, Message} from '../../src/services';
+import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
+import GreetingService2 from "examples/GreetingServiceClass/GreetingService2.js";
+import {Microservices, Message} from "../../src/services";
 
 process.on('unhandledRejection', (reason, promise) => console.log(reason, promise));
 

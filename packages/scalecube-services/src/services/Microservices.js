@@ -7,6 +7,30 @@ import {
   utils
 } from '.'
 
+export class Microservices {
+    static Builder: Builder;
+    mw: any;
+    serviceRegistery: ServiceRegistery;
+
+    constructor(msBuilder: Builder) {
+        this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
+        this.mw = msBuilder.myMW;
+        return this;
+    }
+
+    static builder() {
+        return new Builder();
+    };
+
+    proxy() {
+        return new ProxyContext(this);
+    }
+
+    dispatcher() {
+        return new DispatcherContext(this);
+    }
+}
+
 class Builder {
   servicesConfig: ServicesConfig;
   myMW: any;
@@ -30,36 +54,10 @@ class Builder {
 
   mw(mw:any){
     this.myMW = mw;
-    return this
+    return this;
   }
 
   build(): Microservices {
     return new Microservices(this);
   }
 }
-export class Microservices {
-  static Builder: Builder;
-  mw: any;
-  serviceRegistery: ServiceRegistery;
-
-  constructor(msBuilder: Builder) {
-    this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
-    this.mw = msBuilder.myMW;
-    return this;
-  }
-
-  static builder() {
-    return new Builder();
-  };
-
-  proxy() {
-    return new ProxyContext(this);
-  }
-
-  dispatcher() {
-    return new DispatcherContext(this);
-  }
-}
-
-
-// Microservices.Builder = new Builder();

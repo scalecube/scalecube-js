@@ -48,9 +48,9 @@ export class ProxyContext{
                    meta
                );
 
-               if( meta.methods[prop].type === 'Promise' ) {
+               if( meta.methods[prop].type === "Promise" ) {
                    return dispatcher.invoke(message);
-               } else if ( meta.methods[prop].type === 'Observable' ) {
+               } else if ( meta.methods[prop].type === "Observable" ) {
                    return dispatcher.listen(message);
                } else {
                    return Error(`service method unknown type error: ${meta.serviceName}.${prop}`);

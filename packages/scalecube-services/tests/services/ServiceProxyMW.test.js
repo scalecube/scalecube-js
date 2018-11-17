@@ -1,14 +1,14 @@
-import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
-import {Microservices} from '../../src/services';
+import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
+import {Microservices} from "../../src/services";
 
-describe('Service proxy middleware suite', () => {
-    it('MW should add idan', () => {
+describe("Service proxy middleware suite", () => {
+    it("MW should add idan", () => {
 
         let x = GreetingService;
         const greetingService = Microservices
             .builder()
             .mw((message) => {
-                message.data.push('Idan');
+                message.data.push("Idan");
                 return message;
             })
             .services(new GreetingService(), new GreetingService())
@@ -20,7 +20,7 @@ describe('Service proxy middleware suite', () => {
         expect.assertions(1);
         return expect(greetingService.hello()).resolves.toEqual("Hello Idan");
     });
-    it('MW should get service definition and microservices', (done) => {
+    it("MW should get service definition and microservices", (done) => {
         expect.assertions(2);
 
         const mc = Microservices
