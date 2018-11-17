@@ -9,9 +9,11 @@ import {
 
 class Builder {
   servicesConfig: ServicesConfig;
+  myMW: any;
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
+    this.myMW = (msg) => msg;
   }
 
   services(...services: any[]) {
@@ -26,16 +28,23 @@ class Builder {
     return this;
   }
 
+  mw(mw:any){
+    this.myMW = mw;
+    return this
+  }
+
   build(): Microservices {
-    return new Microservices(this.servicesConfig);
+    return new Microservices(this);
   }
 }
 export class Microservices {
   static Builder: Builder;
+  mw: any;
   serviceRegistery: ServiceRegistery;
 
-  constructor(serviceConfig: ServicesConfig) {
-    this.serviceRegistery = new ServiceRegistery(serviceConfig);
+  constructor(msBuilder: Builder) {
+    this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
+    this.mw = msBuilder.myMW;
     return this;
   }
 

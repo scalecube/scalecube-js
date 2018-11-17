@@ -5,7 +5,7 @@ import type {Message} from ".";
 export class ProxyContext{
   myapi: any;
   router: typeof Router;
-  myMW: (msg:Message, mc: Microservices, def: Object) => Message;
+  // myMW: (msg:Message, mc: Microservices, def: Object) => Message;
   microservices: Microservices;
   constructor(microservices: Microservices) {
     this.microservices = microservices;
@@ -22,7 +22,7 @@ export class ProxyContext{
   createProxy(api: any, router: typeof Router){
     const dispatcher = this.microservices.dispatcher().router(router).create();
     const meta = api.meta;
-    const mw = this.myMw || (m => m) ;
+    const mw = this.microservices.mw;
 
     if( !meta ) {
         return Error("API must have meta property");
@@ -61,11 +61,7 @@ export class ProxyContext{
       }
     });
   }
-  mw(mw:any){
-      this.myMw = mw;
-      return this;
 
-  }
   create(){
     return this.createProxy(this.myapi, this.router);
   }

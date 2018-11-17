@@ -7,13 +7,13 @@ describe('Service proxy middleware suite', () => {
         let x = GreetingService;
         const greetingService = Microservices
             .builder()
-            .services(new GreetingService(), new GreetingService())
-            .build()
-            .proxy()
             .mw((message) => {
                 message.data.push('Idan');
                 return message;
             })
+            .services(new GreetingService(), new GreetingService())
+            .build()
+            .proxy()
             .api(GreetingService)
             .create();
 
@@ -25,15 +25,15 @@ describe('Service proxy middleware suite', () => {
 
         const mc = Microservices
             .builder()
-            .services(new GreetingService(), new GreetingService())
-            .build();
-        const greetingService = mc.proxy()
             .mw((message, thisMc, def) => {
                 expect(thisMc).toEqual(mc);
                 expect(def).toEqual(GreetingService.meta);
                 done();
                 return message;
             })
+            .services(new GreetingService(), new GreetingService())
+            .build();
+        const greetingService = mc.proxy()
             .api(GreetingService)
             .create();
 
