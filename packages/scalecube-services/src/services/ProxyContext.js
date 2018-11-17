@@ -1,9 +1,11 @@
 // @flow
-import { Router, RoundRobinServiceRouter, Microservices } from ".";
+import {Router, RoundRobinServiceRouter, Microservices, ServiceDefinition} from ".";
+import type {Message} from ".";
 
 export class ProxyContext{
   myapi: any;
   router: typeof Router;
+  myMW: (msg:Message, mc: Microservices, def: Object) => Message;
   microservices: Microservices;
   constructor(microservices: Microservices) {
     this.microservices = microservices;
@@ -20,6 +22,7 @@ export class ProxyContext{
   createProxy(api: any, router: typeof Router){
     const dispatcher = this.microservices.dispatcher().router(router).create();
     const meta = api.meta;
+    const mw = this.myMw || (m => m) ;
 
     if( !meta ) {
         return Error("API must have meta property");
@@ -36,11 +39,15 @@ export class ProxyContext{
       get: (target, prop) => {
         if( meta.methods[prop] ) {
            return (...args) => {
-               const message = {
-                   serviceName: meta.serviceName,
-                   method: prop,
-                   data: args
-               };
+               const message = mw({
+                       serviceName: meta.serviceName,
+                       method: prop,
+                       data: args
+                   },
+                   this.microservices,
+                   meta
+               );
+
                if( meta.methods[prop].type === 'Promise' ) {
                    return dispatcher.invoke(message);
                } else if ( meta.methods[prop].type === 'Observable' ) {
@@ -53,6 +60,11 @@ export class ProxyContext{
         return undefined;
       }
     });
+  }
+  mw(mw:any){
+      this.myMw = mw;
+      return this;
+
   }
   create(){
     return this.createProxy(this.myapi, this.router);
