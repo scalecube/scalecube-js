@@ -19,21 +19,34 @@ export class ProxyContext{
      */
   createProxy(api: any, router: typeof Router){
     const dispatcher = this.microservices.dispatcher().router(router).create();
+    const meta = api.meta;
+
+    if( !meta ) {
+        return Error("API must have meta property");
+    }
+
+    meta.serviceName = meta.serviceName || meta.name || api.name;
+    if( !meta.serviceName ) {
+        return Error("service name (api.meta.serviceName) is not defined");
+    }
+    if( !meta.methods ) {
+        return Error("meta.methods is not defined");
+    }
     return new Proxy({}, {
       get: (target, prop) => {
-        if( api.meta.methods[prop] ) {
+        if( meta.methods[prop] ) {
            return (...args) => {
                const message = {
-                   serviceName: api.name,
+                   serviceName: meta.serviceName,
                    method: prop,
                    data: args
                };
-               if( api.meta.methods[prop].type === 'Promise' ) {
+               if( meta.methods[prop].type === 'Promise' ) {
                    return dispatcher.invoke(message);
-               } else if ( api.meta.methods[prop].type === 'Observable' ) {
+               } else if ( meta.methods[prop].type === 'Observable' ) {
                    return dispatcher.listen(message);
                } else {
-                   return Error(`service method unknown type error: ${api.name}.${prop}`);
+                   return Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
                }
            };
         }
