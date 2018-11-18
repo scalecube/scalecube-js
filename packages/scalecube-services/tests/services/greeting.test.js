@@ -2,10 +2,10 @@ import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
 import GreetingService2 from "examples/GreetingServiceClass/GreetingService2.js";
 import {Microservices, Message} from "../../src/services";
 
-process.on('unhandledRejection', (reason, promise) => console.log(reason, promise));
+process.on("unhandledRejection", (reason, promise) => console.log(reason, promise));
 
-describe('Greeting suite', () => {
-    it('Greeting.hello should greet Idan with hello', () => {
+describe("Greeting suite", () => {
+    it("Greeting.hello should greet Idan with hello", () => {
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -15,9 +15,9 @@ describe('Greeting suite', () => {
             .create();
 
         expect.assertions(1);
-        return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
-    it('Proxy creation should fail when meta missing', () => {
+    it("Proxy creation should fail when meta missing", () => {
         const greetingService = Microservices
             .builder()
             .build()
@@ -28,7 +28,7 @@ describe('Greeting suite', () => {
         expect.assertions(1);
         return expect(greetingService).toEqual(Error("API must have meta property"));
     });
-    it('Proxy creation should fail when meta is without service name', () => {
+    it("Proxy creation should fail when meta is without service name", () => {
         const greetingService = Microservices
             .builder()
             .build()
@@ -39,7 +39,7 @@ describe('Greeting suite', () => {
         expect.assertions(1);
         return expect(greetingService).toEqual(Error("service name (api.meta.serviceName) is not defined"));
     });
-    it('Proxy creation should fail when meta is without service methods', () => {
+    it("Proxy creation should fail when meta is without service methods", () => {
         const greetingService = Microservices
             .builder()
             .build()
@@ -54,7 +54,7 @@ describe('Greeting suite', () => {
         expect.assertions(1);
         return expect(greetingService).toEqual(Error("meta.methods is not defined"));
     });
-    it('Method on proxy should return undefined if it not in definition', () => {
+    it("Method on proxy should return undefined if it not in definition", () => {
         const greetingService = Microservices
             .builder()
             .build()
@@ -71,7 +71,7 @@ describe('Greeting suite', () => {
         return expect(greetingService.foo).toBeUndefined();
     });
     // check that we can set service in 2 separate calls to .services
-    it('Greeting should return Hello Idan and Greeting 2 should return hey Idan', () => {
+    it("Greeting should return Hello Idan and Greeting 2 should return hey Idan", () => {
         const mcb = Microservices.builder();
 
         mcb.services(new GreetingService());
@@ -91,19 +91,19 @@ describe('Greeting suite', () => {
             .create();
 
         expect.assertions(2);
-        return greetingServiceProxy.hello('Idan')
+        return greetingServiceProxy.hello("Idan")
             .then(v => expect(v).toEqual("Hello Idan"))
             .catch(e => console.error(e))
             .then(v =>
-                greetingService2Proxy.hello('Idan')
+                greetingService2Proxy.hello("Idan")
                     .then(v => expect(v).toEqual("hey Idan"))
                     .catch(e => console.error(e)));
 
 
-        // expect(greetingServiceProxy.hello('Idan')).resolves.toEqual("Hello Idan");
-        // expect(greetingService2Proxy.hello('Idan')).resolves.toEqual("hey Idan");
+        // expect(greetingServiceProxy.hello("Idan")).resolves.toEqual("Hello Idan");
+        // expect(greetingService2Proxy.hello("Idan")).resolves.toEqual("hey Idan");
     });
-    it('Greeting should fail without args', () => {
+    it("Greeting should fail without args", () => {
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -116,7 +116,7 @@ describe('Greeting suite', () => {
         return expect(greetingService.hello()).rejects.toEqual(new Error("please provide user to greet"));
 
     });
-    it('Greeting.repeatToStream should return observable of greetings ', () => {
+    it("Greeting.repeatToStream should return observable of greetings ", () => {
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -127,16 +127,16 @@ describe('Greeting suite', () => {
 
         expect.assertions(3);
         let i = 0;
-        greetingService.repeatToStream('Hello', 'Hey', 'Yo').subscribe((item) => {
+        greetingService.repeatToStream("Hello", "Hey", "Yo").subscribe((item) => {
             switch (i) {
                 case 0:
-                    expect(item).toBe('Hello');
+                    expect(item).toBe("Hello");
                     break;
                 case 1:
-                    expect(item).toBe('Hey');
+                    expect(item).toBe("Hey");
                     break;
                 case 2:
-                    expect(item).toBe('Yo');
+                    expect(item).toBe("Yo");
                     break;
                 default:
                     expect(0).toBe(1);
@@ -146,7 +146,7 @@ describe('Greeting suite', () => {
         });
 
     });
-    it('Greeting.repeatToStream should fail without arg ', () => {
+    it("Greeting.repeatToStream should fail without arg ", () => {
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -158,10 +158,10 @@ describe('Greeting suite', () => {
 
         expect.assertions(1);
         greetingService.repeatToStream().subscribe(res => expect(0).toBe(1), err => {
-            expect(err).toEqual(new Error('please provide Array of greetings'));
+            expect(err).toEqual(new Error("please provide Array of greetings"));
         });
     });
-    it('Greeting.repeatToStream should trigger unsubscribe ', () => {
+    it("Greeting.repeatToStream should trigger unsubscribe ", () => {
         const greetingService = Microservices
             .builder()
             .services(new GreetingService(), new GreetingService())
@@ -172,10 +172,10 @@ describe('Greeting suite', () => {
             .create();
 
         expect.assertions(1);
-        greetingService.repeatToStream('hey', 'hello').subscribe().unsubscribe();
-        expect(window['repeatToStreamUnsubscribe']).toBe(true);
+        greetingService.repeatToStream("hey", "hello").subscribe().unsubscribe();
+        expect(window["repeatToStreamUnsubscribe"]).toBe(true);
     });
-    it('Dispatcher should greet Idan with hello', () => {
+    it("Dispatcher should greet Idan with hello", () => {
 
         const microservices = Microservices.builder()
             .services(new GreetingService())
@@ -184,16 +184,16 @@ describe('Greeting suite', () => {
         const dispatcher = microservices.dispatcher().create();
 
         const message: Message = {
-            serviceName: 'GreetingService',
-            method: 'hello',
-            data: ['Idan']
+            serviceName: "GreetingService",
+            method: "hello",
+            data: ["Idan"]
         };
 
         expect.assertions(1);
         return expect(dispatcher.invoke(message)).resolves.toEqual("Hello Idan");
     });
 
-    it('Dispatcher should fail if message data is not Array', () => {
+    it("Dispatcher should fail if message data is not Array", () => {
 
         const microservices = Microservices.builder()
             .services(new GreetingService())
@@ -202,9 +202,9 @@ describe('Greeting suite', () => {
         const dispatcher = microservices.dispatcher().create();
 
         const message: Message = {
-            serviceName: 'GreetingService',
-            method: 'hello',
-            data: {user: 'Idan'}
+            serviceName: "GreetingService",
+            method: "hello",
+            data: {user: "Idan"}
         };
 
 
@@ -212,15 +212,15 @@ describe('Greeting suite', () => {
         return expect(dispatcher.invoke(message)).rejects.toEqual(new Error("Message format error: data must be Array"));
     });
 
-    it('Dispatcher should fail with service not found error', () => {
+    it("Dispatcher should fail with service not found error", () => {
 
         const microservices = Microservices.builder().build();
         const dispatcher = microservices.dispatcher().create();
 
         const message = {
-            serviceName: 'GreetingService',
-            method: 'hello',
-            data: ['Idan']
+            serviceName: "GreetingService",
+            method: "hello",
+            data: ["Idan"]
         };
 
         expect.assertions(1);
@@ -228,7 +228,7 @@ describe('Greeting suite', () => {
 
     });
 
-    it('Dispatcher listen should return observable ', () => {
+    it("Dispatcher listen should return observable ", () => {
         const microservices = Microservices.builder()
             .services(new GreetingService())
             .build();
@@ -236,9 +236,9 @@ describe('Greeting suite', () => {
         const dispatcher = microservices.dispatcher().create();
 
         const message: Message = {
-            serviceName: 'GreetingService',
-            method: 'repeatToStream',
-            data: ['Hello', 'Hey', 'Yo']
+            serviceName: "GreetingService",
+            method: "repeatToStream",
+            data: ["Hello", "Hey", "Yo"]
         };
 
         expect.assertions(3);
@@ -246,13 +246,13 @@ describe('Greeting suite', () => {
         dispatcher.listen(message).subscribe((item) => {
             switch (i) {
                 case 0:
-                    expect(item).toBe('Hello');
+                    expect(item).toBe("Hello");
                     break;
                 case 1:
-                    expect(item).toBe('Hey');
+                    expect(item).toBe("Hey");
                     break;
                 case 2:
-                    expect(item).toBe('Yo');
+                    expect(item).toBe("Yo");
                     break;
                 default:
                     expect(0).toBe(1);
