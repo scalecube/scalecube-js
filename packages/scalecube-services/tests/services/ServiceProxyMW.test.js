@@ -1,13 +1,16 @@
 import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
 import {Microservices} from "../../src/services";
+import { Observable } from "rxjs";
 
 describe("Service proxy middleware suite", () => {
     it("MW should add idan", () => {
         const greetingService = Microservices
             .builder()
-            .mw((message) => {
-                message.data.push("Idan");
-                return message;
+            .mw((req$) => {
+                return req$.map( req => {
+                    req.message.data.push("Idan");
+                    return req;
+                });
             })
             .services(new GreetingService(), new GreetingService())
             .build()
@@ -15,23 +18,28 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
+
         expect.assertions(1);
         return expect(greetingService.hello()).resolves.toEqual("Hello Idan");
     });
     it("MW should get service definition and microservices", (done) => {
-        expect.assertions(2);
+        expect.assertions(5);
 
-        const mc = Microservices
+        const ms = Microservices
             .builder()
-            .mw((message, thisMc, def) => {
-                expect(thisMc).toEqual(mc);
-                expect(def).toEqual(GreetingService.meta);
-                done();
-                return message;
+            .mw((message) => {
+                return message.map((msg=>{
+                    expect(msg.thisMs).toEqual(ms);
+                    expect(msg.serviceDefinition).toEqual(GreetingService.meta);
+                    expect(msg.message.data).toEqual([]);
+                    expect(msg.message.method).toEqual("hello");
+                    expect(msg.message.serviceName).toEqual("GreetingService");
+                    done();
+                }));
             })
             .services(new GreetingService(), new GreetingService())
             .build();
-        const greetingService = mc.proxy()
+        const greetingService = ms.proxy()
             .api(GreetingService)
             .create();
 
