@@ -7,11 +7,37 @@ import {
   utils
 } from '.'
 
+export class Microservices {
+    static Builder: Builder;
+    preRequest: any;
+    serviceRegistery: ServiceRegistery;
+
+    constructor(msBuilder: Builder) {
+        this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
+        this.preRequest = msBuilder.myPreRequest;
+        return this;
+    }
+
+    static builder() {
+        return new Builder();
+    };
+
+    proxy() {
+        return new ProxyContext(this);
+    }
+
+    dispatcher() {
+        return new DispatcherContext(this);
+    }
+}
+
 class Builder {
   servicesConfig: ServicesConfig;
+  myPreRequest: any;
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
+    this.myPreRequest = (msg) => msg;
   }
 
   services(...services: any[]) {
@@ -26,31 +52,12 @@ class Builder {
     return this;
   }
 
-  build(): Microservices {
-    return new Microservices(this.servicesConfig);
-  }
-}
-export class Microservices {
-  static Builder: Builder;
-  serviceRegistery: ServiceRegistery;
-
-  constructor(serviceConfig: ServicesConfig) {
-    this.serviceRegistery = new ServiceRegistery(serviceConfig);
+  preRequest(mw:any){
+    this.myPreRequest = mw;
     return this;
   }
 
-  static builder() {
-    return new Builder();
-  };
-
-  proxy() {
-    return new ProxyContext(this);
-  }
-
-  dispatcher() {
-    return new DispatcherContext(this);
+  build(): Microservices {
+    return new Microservices(this);
   }
 }
-
-
-// Microservices.Builder = new Builder();

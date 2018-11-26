@@ -1,73 +1,81 @@
 // @flow
 
-import { Router, Message, utils } from '.';
-import { Observable } from 'rxjs/Observable';
-// $FlowFixMe
-import 'rxjs/add/operator/catch';
-import { isObservable } from './utils';
+import {Router, Message, utils, Microservices} from ".";
+import {Observable, pipe} from "rxjs/Observable";
+import "rxjs/add/operator/catch";
+import {isObservable} from "./utils";
 
-const createServiceObserver = (message, service, observer) => {
-  const obs = service[ message.method ](...message.data);
-  if (isObservable(obs)) {
-    const sub = obs.subscribe(
-      val => observer.next(val),
-      error => observer.error(error)
-    );
-    return () => sub.unsubscribe();
-  } else {
-    observer.error(new Error(`Service method not observable error: ${message.serviceName}.${message.method}`));
-    return () => {
-    };
-  }
-};
+import "rxjs/add/operator/switchMap";
+import "rxjs/operator/toPromise";
+import "rxjs/add/observable/fromPromise";
 
 export class ServiceCall {
-  router: Router;
+    router: Router;
+    microservices: Microservices;
 
-  constructor(router: Router, timeout: number = 5000) {
-    this.router = router;
-  }
+    constructor(router: Router, ms: Microservices) {
+        this.router = router;
+        this.microservices = ms;
+    }
 
-  invoke(message: Message): Promise<Message> {
-    return new Promise((resolve, reject) => {
-      if (!Array.isArray(message.data)) {
-        return reject(new Error(`Message format error: data must be Array`));
-      }
+    call(message: Message, type: "Observable" | "Promise") {
+        const chain$ = Observable
+            .from([message])
+            .map((message) => {
+                if (Array.isArray(message.data)) {
+                    return message;
+                }
+                throw Error("Message format error: data must be Array");
+            })
+            .map(message => ({
+                message,
+                inst: this.router.route(message)
+            }))
+            .map((source) => {
+                if (source.inst && source.inst.service) {
+                    return source;
+                }
+                throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
+            })
+            .map(source => ({
+                inst: source.inst,
+                message: source.message,
+                thisMs: this.microservices,
+                meta: source.inst.service.meta || source.inst.service.constructor.meta || {}
+            }))
+            .pipe(source$ => this.microservices.preRequest(source$))
+            .map(obj => obj.inst)
+            .switchMap(inst => utils.isLoader(inst) ?
+                Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
+                Observable.from([inst.service])
+            )
+            .map((service) => {
+                if (service[message.method]) {
+                    return service;
+                }
+                throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
+            })
+            .switchMap((service) => {
+                const serviceMethod = service[message.method](...message.data);
+                if ("Promise") {
+                    return Observable.from(serviceMethod);
+                } else {
+                    if (isObservable(serviceMethod)) {
+                        return serviceMethod;
+                    } else {
+                        throw Error(`Service method not observable error: ${message.serviceName}.${message.method}`);
+                    }
+                }
+            });
 
-      const inst = this.router.route(message);
+        return type === "Promise" ? chain$.toPromise() : chain$;
+    }
 
-      if (inst && inst.service && utils.isLoader(inst)) {
-        return inst.service.promise.then((myservice) => {
-          return resolve(myservice[ message.method ](...message.data));
-        });
-      } else if (inst) {
-        return resolve(inst.service[ message.method ](...message.data));
-      }
-      reject(new Error(`Service not found error: ${message.serviceName}.${message.method}`));
-    });
-  }
+    invoke(message: Message): Promise<Message> {
+        return this.call(message, "Promise");
+    }
 
-  listen(message: Message): Observable<Message> {
-    return Observable.create((observer) => {
-      if (!Array.isArray(message.data)) {
-        observer.error(new Error(`Message format error: data must be Array`));
-      }
-      const inst = this.router.route(message);
-      if (!inst) {
-        observer.error(new Error(`Service not found error: ${message.serviceName}.${message.method}`));
-      } else if (utils.isLoader(inst)) {
-        const promise = new Promise(resolve=>{
-          inst.service.promise.then((service) => {
-            resolve(createServiceObserver(message, service, observer));
-          }).catch(e=>observer.error(e));
-
-        });
-        return () => {
-          promise.then(unsubscribe => unsubscribe());
-        };
-      } else {
-        return createServiceObserver(message, inst.service, observer);
-      }
-    });
-  }
+    listen(message: Message): Observable<Message> {
+        return this.call(message, "Observable");
+    }
 }
