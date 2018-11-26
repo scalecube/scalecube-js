@@ -1,10 +1,10 @@
 // @flow
-import {Observable, pipe} from 'rxjs/Rx';
+import {Observable, pipe} from "rxjs/Rx";
 
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/operator/toPromise';
-import 'rxjs/add/observable/fromPromise';
-import {Router, RoundRobinServiceRouter, Microservices, ServiceDefinition} from ".";
+import "rxjs/add/operator/switchMap";
+import "rxjs/operator/toPromise";
+import "rxjs/add/observable/fromPromise";
+import {Router, RoundRobinServiceRouter, Microservices} from ".";
 import type {Message} from ".";
 
 const getHandler = ({dispatcher, meta, microservices}) =>
@@ -14,7 +14,7 @@ const getHandler = ({dispatcher, meta, microservices}) =>
         }
         const type = meta.methods[prop].type;
         return (...args) => {
-            const message = {
+            const message: Message = {
                 serviceName: meta.serviceName,
                 method: prop,
                 data: args
@@ -30,7 +30,7 @@ const getHandler = ({dispatcher, meta, microservices}) =>
                     serviceDefinition: meta,
                     thisMs: microservices
                 }])
-                .switchMap(req => type === "Promise" ?
+                .switchMap((req) => type === "Promise" ?
                     Observable.from(dispatcher.invoke(req.message)) :
                     dispatcher.listen(req.message)
                 );
