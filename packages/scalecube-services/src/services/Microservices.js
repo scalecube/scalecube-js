@@ -9,12 +9,12 @@ import {
 
 export class Microservices {
     static Builder: Builder;
-    mw: any;
+    preRequest: any;
     serviceRegistery: ServiceRegistery;
 
     constructor(msBuilder: Builder) {
         this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
-        this.mw = msBuilder.myMW;
+        this.preRequest = msBuilder.myPreRequest;
         return this;
     }
 
@@ -33,11 +33,11 @@ export class Microservices {
 
 class Builder {
   servicesConfig: ServicesConfig;
-  myMW: any;
+  myPreRequest: any;
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
-    this.myMW = (msg) => msg;
+    this.myPreRequest = (msg) => msg;
   }
 
   services(...services: any[]) {
@@ -52,8 +52,8 @@ class Builder {
     return this;
   }
 
-  mw(mw:any){
-    this.myMW = mw;
+  preRequest(mw:any){
+    this.myPreRequest = mw;
     return this;
   }
 

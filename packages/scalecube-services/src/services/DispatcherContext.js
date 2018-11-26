@@ -16,6 +16,6 @@ export class DispatcherContext {
     return this;
   }
   create(): ServiceCall {
-    return new ServiceCall(new this.myrouter(this.microservices.serviceRegistery), this.timeout);
+    return new ServiceCall(new this.myrouter(this.microservices.serviceRegistery), this.microservices);
   }
 }

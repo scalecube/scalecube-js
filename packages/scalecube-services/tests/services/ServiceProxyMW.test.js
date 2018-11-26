@@ -6,7 +6,7 @@ describe("Service proxy middleware suite", () => {
     it("MW should add idan", () => {
         const greetingService = Microservices
             .builder()
-            .mw((req$) => {
+            .preRequest((req$) => {
                 return req$.map( req => {
                     req.message.data.push("Idan");
                     return req;
@@ -22,19 +22,19 @@ describe("Service proxy middleware suite", () => {
         expect.assertions(1);
         return expect(greetingService.hello()).resolves.toEqual("Hello Idan");
     });
-    it("MW should get service definition and microservices", (done) => {
-        expect.assertions(5);
+    it("MW should get service definition and microservices", () => {
+        expect.assertions(6);
 
         const ms = Microservices
             .builder()
-            .mw((message) => {
+            .preRequest((message) => {
                 return message.map((msg=>{
                     expect(msg.thisMs).toEqual(ms);
-                    expect(msg.serviceDefinition).toEqual(GreetingService.meta);
-                    expect(msg.message.data).toEqual([]);
+                    expect(msg.meta).toEqual(GreetingService.meta);
+                    expect(msg.message.data).toEqual(["Idan"]);
                     expect(msg.message.method).toEqual("hello");
                     expect(msg.message.serviceName).toEqual("GreetingService");
-                    done();
+                    return msg;
                 }));
             })
             .services(new GreetingService(), new GreetingService())
@@ -43,6 +43,6 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
-        return greetingService.hello();
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
 });

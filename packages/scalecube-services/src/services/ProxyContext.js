@@ -7,7 +7,7 @@ import 'rxjs/add/observable/fromPromise';
 import {Router, RoundRobinServiceRouter, Microservices, ServiceDefinition} from ".";
 import type {Message} from ".";
 
-const getHandler = ({dispatcher, meta, mw, microservices}) =>
+const getHandler = ({dispatcher, meta, microservices}) =>
     (target, prop) => {
         if (meta.methods[prop] === undefined) {
             return undefined;
@@ -30,7 +30,6 @@ const getHandler = ({dispatcher, meta, mw, microservices}) =>
                     serviceDefinition: meta,
                     thisMs: microservices
                 }])
-                .pipe(source$ => mw(source$))
                 .switchMap(req => type === "Promise" ?
                     Observable.from(dispatcher.invoke(req.message)) :
                     dispatcher.listen(req.message)
@@ -60,9 +59,7 @@ export class ProxyContext {
     createProxy(api: any, router: typeof Router) {
         const dispatcher = this.microservices.dispatcher().router(router).create();
         const meta = api.meta;
-        const mw = this.microservices.mw;
         const microservices = this.microservices;
-
 
         if (!meta) {
             return Error("API must have meta property");
@@ -76,7 +73,7 @@ export class ProxyContext {
             return Error("meta.methods is not defined");
         }
         return new Proxy({}, {
-            get: getHandler({dispatcher, meta, mw, microservices})
+            get: getHandler({dispatcher, meta, microservices})
         });
     }
 
