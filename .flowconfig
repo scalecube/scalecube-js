@@ -11,5 +11,6 @@ api/.*
 [include]
 [libs]
 ./flow-typed
+./rxjs_vx.x.x.js
 [options]
 include_warnings=true
