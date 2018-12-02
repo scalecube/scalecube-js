@@ -1,9 +1,10 @@
 // @flow
-import {Observable, pipe} from "rxjs/Rx";
-
+import {Observable} from "rxjs/Observable";
+import {pipe} from "rxjs/util/pipe";
 import "rxjs/add/operator/switchMap";
 import "rxjs/operator/toPromise";
 import "rxjs/add/observable/fromPromise";
+import "rxjs/add/observable/from";
 import {Router, RoundRobinServiceRouter, Microservices} from ".";
 import type {Message} from ".";
 
