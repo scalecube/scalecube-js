@@ -9,7 +9,7 @@ export const getServiceName = (o: Object) => {
 };
 export const isLoader = (inst: Object | null) => {
   return inst && inst.service && inst.service.meta && inst.service.meta.type === 'Loader';
-}
+};
 export const makeLoader = (loadFunction: Promise<any>, Class: any) => {
   return {
     promise: loadFunction,

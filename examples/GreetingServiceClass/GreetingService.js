@@ -17,7 +17,7 @@ class GreetingService implements api {
   }
   repeatToStream(...greetings: string[]) {
     return Observable.create((observer) => {
-      if( greetings === undefined || !Array.isArray(greetings) || greetings.length === 0 ) {
+      if ( !greetings || !greetings.length || !Array.isArray(greetings)) {
         observer.error(new Error('please provide Array of greetings'));
         return ()=>{};
       }

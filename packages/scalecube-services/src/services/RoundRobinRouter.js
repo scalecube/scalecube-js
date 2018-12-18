@@ -10,8 +10,9 @@ export class RoundRobinServiceRouter implements Router {
     this.counter = new Map();
   }
   route(request:Message): ServiceInstance | null {
-    const instances = this.registry.serviceLookup(request.serviceName)
-      .filter(inst => inst.serviceDefinition.methods[request.method] !== "undefined" );
+    const instances = this.registry
+        .serviceLookup(request.serviceName)
+        .filter(inst => inst.serviceDefinition.methods[request.method] !== "undefined" );
 
     if( instances.length > 1 ) {
       let index = ((this.counter.get(request.serviceName) || 0) + 1) % instances.length;

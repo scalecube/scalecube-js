@@ -1,6 +1,6 @@
-import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
-import {Microservices} from "../../src/services";
 import { Observable } from "rxjs";
+import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
+import { Microservices } from "../../src/services";
 
 describe("Service proxy middleware suite", () => {
     it("MW should add idan", () => {

@@ -1,5 +1,4 @@
 // @flow
-//import * as ServiceA from './ServiceA.js';
 import GreetingService from './GreetingService.js';
 import { Microservices } from 'src/scalecube-services';
 

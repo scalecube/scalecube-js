@@ -139,6 +139,7 @@ describe("Greeting suite", () => {
                     expect(item).toBe("Yo");
                     break;
                 default:
+                    //Todo ===> expect(0).toBe(1) ===> ???
                     expect(0).toBe(1);
                     break;
             }
@@ -157,7 +158,10 @@ describe("Greeting suite", () => {
             .create();
 
         expect.assertions(1);
-        greetingService.repeatToStream().subscribe(res => expect(0).toBe(1), err => {
+
+        greetingService.repeatToStream()
+        //Todo ===> expect(0).toBe(1) ===> ???
+            .subscribe(res => expect(0).toBe(1), err => {
             expect(err).toEqual(new Error("please provide Array of greetings"));
         });
     });
