@@ -1,5 +1,5 @@
-import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
-import {Microservices} from "../../src/services";
+import GreetingService from "../../../../examples/GreetingServiceClass/GreetingService.js";
+import { Microservices } from "../../src/services";
 import { Observable } from "rxjs";
 
 describe("Service proxy middleware suite", () => {
@@ -7,7 +7,7 @@ describe("Service proxy middleware suite", () => {
         const greetingService = Microservices
             .builder()
             .preRequest((req$) => {
-                return req$.map( req => {
+                return req$.map(req => {
                     req.message.data.push("Idan");
                     return req;
                 });
@@ -28,7 +28,7 @@ describe("Service proxy middleware suite", () => {
         const ms = Microservices
             .builder()
             .preRequest((message) => {
-                return message.map((msg=>{
+                return message.map((msg => {
                     expect(msg.thisMs).toEqual(ms);
                     expect(msg.meta).toEqual(GreetingService.meta);
                     expect(msg.message.data).toEqual(["Idan"]);
@@ -36,6 +36,28 @@ describe("Service proxy middleware suite", () => {
                     expect(msg.message.serviceName).toEqual("GreetingService");
                     return msg;
                 }));
+            })
+            .services(new GreetingService(), new GreetingService())
+            .build();
+        const greetingService = ms.proxy()
+            .api(GreetingService)
+            .create();
+
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
+    });
+
+    it("MW should trigger postRequest after request is done", () => {
+        expect.assertions(3);
+        let postRequestTriggered = false;
+        const ms = Microservices
+            .builder()
+            .postRequest(({ service, message }) => {
+                postRequestTriggered = true;
+                expect(service[message.method]('Igor')).resolves.toEqual('Hello Igor');
+            })
+            .preRequest((message) => {
+                expect(postRequestTriggered).toBe(false);
+                return message.map((msg => msg));
             })
             .services(new GreetingService(), new GreetingService())
             .build();

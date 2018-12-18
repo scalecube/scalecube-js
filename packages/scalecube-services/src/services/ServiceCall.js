@@ -1,15 +1,14 @@
 // @flow
 
-import {Router, Message, utils, Microservices} from ".";
-import {Observable} from "rxjs/Observable";
-import {pipe} from "rxjs/util/pipe";
-import "rxjs/add/operator/catch";
+import { Router, Message, utils, Microservices } from ".";
+import { Observable } from "rxjs/Observable";
+import { pipe } from "rxjs/util/pipe";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/do";
 import "rxjs/add/operator/toPromise";
-import "rxjs/add/observable/fromPromise";
 import "rxjs/add/observable/from";
-import {isObservable} from "./utils";
+import { isObservable } from "./utils";
 
 export class ServiceCall {
     router: Router;
@@ -29,21 +28,21 @@ export class ServiceCall {
                 }
                 throw Error("Message format error: data must be Array");
             })
-            .map(message => ({
-                message,
-                inst: this.router.route(message)
-            }))
-            .map((source) => {
-                if (source.inst && source.inst.service) {
-                    return source;
+            .map(message => {
+                const inst = this.router.route && this.router.route(message);
+                if (inst && inst.service) {
+                    return ({
+                        message,
+                        inst,
+                    })
                 }
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
             })
-            .map(source => ({
-                inst: source.inst,
-                message: source.message,
+            .map(({ inst, message }) => ({
+                inst,
+                message,
                 thisMs: this.microservices,
-                meta: source.inst.service.meta || source.inst.service.constructor.meta || {}
+                meta: inst.service.meta || inst.service.constructor.meta || {}
             }))
             .pipe(source$ => this.microservices.preRequest(source$))
             .map(obj => obj.inst)
@@ -51,6 +50,9 @@ export class ServiceCall {
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
+            .do((service) => {
+                this.microservices.postRequest({ service, message })
+            })
             .map((service) => {
                 if (service[message.method]) {
                     return service;
@@ -69,7 +71,6 @@ export class ServiceCall {
                     }
                 }
             });
-
         return type === "Promise" ? chain$.toPromise() : chain$;
     }
 
