@@ -56,4 +56,14 @@ export const isObservable = (obs:any) => {
     const _observable = symbolObservablePonyfill(root);
 
     return Boolean(obs && obs[_observable] && obs === obs[_observable]())
-};
+}
+
+export const isPromise = (obj: any) => (
+    !isObservable(obj)
+    && (
+        obj instanceof Promise
+        || obj.then === 'function'
+        || `${obj}` === "[object Promise]"
+        || Object.prototype.toString.call(obj) === "[object Promise]"
+    )
+);

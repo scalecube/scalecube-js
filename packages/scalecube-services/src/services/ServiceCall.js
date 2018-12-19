@@ -8,7 +8,11 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
 import "rxjs/add/operator/toPromise";
 import "rxjs/add/observable/from";
-import { isObservable } from "./utils";
+import { isObservable, isPromise } from "./utils";
+
+// Private helper methods
+const getInst = router => message => router.route && router.route(message);
+const getMeta = service => service.meta || service.constructor.meta || {};
 
 export class ServiceCall {
     router: Router;
@@ -19,39 +23,43 @@ export class ServiceCall {
         this.microservices = ms;
     }
 
-    call(message: Message, type: "Observable" | "Promise") {
+    initialize(message: Message, type: "Observable" | "Promise") {
+        const getInstanceOfMessage = getInst(this.router);
+        if (!message) {
+            throw Error("Error: data was not provided");
+        }
         const chain$ = Observable
             .from([message])
             .map((message) => {
-                if (Array.isArray(message.data)) {
-                    return message;
+                if (!Array.isArray(message.data)) {
+                    throw Error("Message format error: data must be Array");
                 }
-                throw Error("Message format error: data must be Array");
-            })
-            .map(message => {
-                const inst = this.router.route && this.router.route(message);
+                const inst = getInstanceOfMessage(message);
                 if (inst && inst.service) {
                     return ({
                         message,
                         inst,
+                        thisMs: this.microservices,
+                        meta: getMeta(inst.service),
                     })
                 }
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
             })
-            .map(({ inst, message }) => ({
-                inst,
-                message,
-                thisMs: this.microservices,
-                meta: inst.service.meta || inst.service.constructor.meta || {}
-            }))
             .pipe(source$ => this.microservices.preRequest(source$))
-            .map(obj => obj.inst)
+            .map(({ inst }) => inst)
             .switchMap(inst => utils.isLoader(inst) ?
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
-            .do((service) => {
-                this.microservices.postRequest({ service, message })
+            .do((response) => {
+                const inst = getInstanceOfMessage(message);
+                this.microservices.postResponse({
+                    inst,
+                    request: message,
+                    response,
+                    thisMs: this.microservices,
+                    meta: getMeta(inst.service),
+                })
             })
             .map((service) => {
                 if (service[message.method]) {
@@ -61,7 +69,7 @@ export class ServiceCall {
             })
             .switchMap((service) => {
                 const serviceMethod = service[message.method](...message.data);
-                if ("Promise") {
+                if (isPromise(serviceMethod)) {
                     return Observable.from(serviceMethod);
                 } else {
                     if (isObservable(serviceMethod)) {
@@ -75,10 +83,10 @@ export class ServiceCall {
     }
 
     invoke(message: Message): Promise<Message> {
-        return this.call(message, "Promise");
+        return this.initialize(message, "Promise");
     }
 
     listen(message: Message): Observable<Message> {
-        return this.call(message, "Observable");
+        return this.initialize(message, "Observable");
     }
 }

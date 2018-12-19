@@ -3,65 +3,99 @@ import { Microservices } from "../../src/services";
 import { Observable } from "rxjs";
 
 describe("Service proxy middleware suite", () => {
-    it("MW should add idan", () => {
-        const greetingService = Microservices
+    it("preRequest should add idan", () => {
+        expect.assertions(1);
+
+        const ms = Microservices
             .builder()
             .preRequest((req$) => {
-                return req$.map(req => {
-                    req.message.data.push("Idan");
-                    return req;
-                });
+                return req$
+                    .map(req => {
+                        req.message.data.push("Idan");
+                        return req;
+                    });
             })
             .services(new GreetingService(), new GreetingService())
-            .build()
+            .build();
+
+        const greetingService = ms
             .proxy()
             .api(GreetingService)
             .create();
 
-
-        expect.assertions(1);
         return expect(greetingService.hello()).resolves.toEqual("Hello Idan");
     });
-    it("MW should get service definition and microservices", () => {
+
+    it("preRequest should get service definition and microservices", () => {
         expect.assertions(6);
 
         const ms = Microservices
             .builder()
-            .preRequest((message) => {
-                return message.map((msg => {
-                    expect(msg.thisMs).toEqual(ms);
-                    expect(msg.meta).toEqual(GreetingService.meta);
-                    expect(msg.message.data).toEqual(["Idan"]);
-                    expect(msg.message.method).toEqual("hello");
-                    expect(msg.message.serviceName).toEqual("GreetingService");
-                    return msg;
-                }));
+            .preRequest((req$) => {
+                return req$
+                    .map((msg) => {
+                        expect(msg.thisMs).toEqual(ms);
+                        expect(msg.meta).toEqual(GreetingService.meta);
+                        expect(msg.message.data).toEqual(["Idan"]);
+                        expect(msg.message.method).toEqual("hello");
+                        expect(msg.message.serviceName).toEqual("GreetingService");
+                        return msg;
+                    });
             })
             .services(new GreetingService(), new GreetingService())
             .build();
-        const greetingService = ms.proxy()
+
+        const greetingService = ms
+            .proxy()
             .api(GreetingService)
             .create();
 
         return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
+    it("postResponse should return data", () => {
+        expect.assertions(6);
 
-    it("MW should trigger postRequest after request is done", () => {
-        expect.assertions(3);
-        let postRequestTriggered = false;
         const ms = Microservices
             .builder()
-            .postRequest(({ service, message }) => {
-                postRequestTriggered = true;
-                expect(service[message.method]('Igor')).resolves.toEqual('Hello Igor');
+            .postResponse((data) => {
+                expect(data.inst).toBeDefined();
+                expect(data.request.serviceName).toEqual("GreetingService");
+                expect(data.response).toBeDefined();
+                expect(data.thisMs).toEqual(ms);
+                expect(data.meta).toEqual(GreetingService.meta);
             })
-            .preRequest((message) => {
-                expect(postRequestTriggered).toBe(false);
-                return message.map((msg => msg));
+            .preRequest((req$) => {
+                return req$.map((msg => msg));
             })
             .services(new GreetingService(), new GreetingService())
             .build();
-        const greetingService = ms.proxy()
+
+        const greetingService = ms
+            .proxy()
+            .api(GreetingService)
+            .create();
+
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
+    });
+    it("postResponse should be trigger after request is done", () => {
+        expect.assertions(2);
+
+        let postResponseTriggered = false;
+
+        const ms = Microservices
+            .builder()
+            .postResponse(() => {
+                postResponseTriggered = true;
+            })
+            .preRequest((req$) => {
+                expect(postResponseTriggered).toBe(false);
+                return req$.map((msg => msg));
+            })
+            .services(new GreetingService(), new GreetingService())
+            .build();
+
+        const greetingService = ms
+            .proxy()
             .api(GreetingService)
             .create();
 

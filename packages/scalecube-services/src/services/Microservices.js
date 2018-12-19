@@ -10,13 +10,13 @@ import {
 export class Microservices {
     static Builder: Builder;
     preRequest: any;
-    postRequest: any;
+    postResponse: any;
     serviceRegistery: ServiceRegistery;
 
     constructor(msBuilder: Builder) {
         this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
-        this.preRequest = msBuilder.myPreRequest;
-        this.postRequest = msBuilder.myPostRequest;
+        this.preRequest = msBuilder.newPreRequest;
+        this.postResponse = msBuilder.newPostResponse;
         return this;
     }
 
@@ -35,13 +35,13 @@ export class Microservices {
 
 class Builder {
   servicesConfig: ServicesConfig;
-  myPreRequest: any;
-  myPostRequest: any;
+  newPreRequest: any;
+  newPostResponse: any;
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
-    this.myPreRequest = msg => msg;
-    this.myPostRequest = msg => msg;
+    this.newPreRequest = msg => msg;
+    this.newPostResponse = msg => msg;
   }
 
   services(...services: any[]) {
@@ -58,12 +58,12 @@ class Builder {
   }
 
   preRequest(mw:any){
-    this.myPreRequest = mw;
+    this.newPreRequest = mw;
     return this;
   }
 
-  postRequest(mw:any){
-    this.myPostRequest = mw;
+  postResponse(mw:any){
+    this.newPostResponse = mw;
     return this;
   }
 
