@@ -1,6 +1,5 @@
 import GreetingService from "../../../../examples/GreetingServiceClass/GreetingService.js";
 import { Microservices } from "../../src/services";
-import { Observable } from "rxjs";
 
 describe("Service proxy middleware suite", () => {
     it("preRequest should add idan", () => {
