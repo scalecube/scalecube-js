@@ -1,40 +1,40 @@
 // @flow
-import { Observable } from 'rxjs/Observable';
 
-interface api {
-  static meta: any;
+import { Observable } from "rxjs/Observable";
+
+declare interface api {
+  meta: {}
 }
 class GreetingService implements api {
-  static meta: any;
-  hello(name: string) {
-    return new Promise((resolve, reject)=>{
-      if( name === undefined ) {
-        reject(new Error('please provide user to greet'));
+  hello(name: string): Promise {
+    return new Promise((resolve: () => string, reject: () => void)=>{
+      if( !name ) {
+        reject(new Error("please provide user to greet"));
       } else {
         resolve(`Hello ${name}`);
       }
     });
   }
-  repeatToStream(...greetings: string[]) {
-    return Observable.create((observer) => {
-      if( greetings === undefined || !Array.isArray(greetings) || greetings.length === 0 ) {
-        observer.error(new Error('please provide Array of greetings'));
+  repeatToStream(...greetings: string[]): () => {} | void {
+    return Observable.create((observer: Observable) => {
+      if( !greetings || !greetings.length || !Array.isArray(greetings) ) {
+        observer.error(new Error("please provide Array of greetings"));
         return ()=>{};
       }
-      greetings.map((i)=>observer.next(i));
-      return ()=>{window['repeatToStreamUnsubscribe']=true};
+      greetings.map((i: {}): Observable => observer.next(i));
+      return ()=> { window["repeatToStreamUnsubscribe"] = true; };
     });
   }
 }
-Object.defineProperty(GreetingService, 'meta', {
+Object.defineProperty(GreetingService, "meta", {
   value: {
-    type: 'class',
+    type: "class",
     methods: {
       hello: {
-        type: 'Promise'
+        type: "Promise"
       },
       repeatToStream: {
-        type: 'Observable'
+        type: "Observable"
       },
     }
   }

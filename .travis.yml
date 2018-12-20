@@ -15,8 +15,9 @@ install:
 - yarn run flow:install
 
 script:
+- yanr run lint
 - yarn run build
-- npm run test
+- yarn run test
 - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then yarn run deploy:canary; fi'
 
 deploy:

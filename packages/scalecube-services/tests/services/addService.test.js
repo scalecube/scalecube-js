@@ -1,8 +1,8 @@
-import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
-import {Microservices, ServicesConfig} from '../../src/services';
+import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
+import {Microservices, ServicesConfig} from "../../src/services";
 
-describe('Add service after creating', () => {
-    it('Greeting.hello should greet Idan with hello', () => {
+describe("Add service after creating", () => {
+    it("Greeting.hello should greet Idan with hello", () => {
         let x = new GreetingService();
         const mc = Microservices
             .builder()
@@ -18,9 +18,9 @@ describe('Add service after creating', () => {
             .create();
 
         expect.assertions(1);
-        return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
-    it('Greeting.hello 2 should greet Idan with hello', () => {
+    it("Greeting.hello 2 should greet Idan with hello", () => {
         let x = new GreetingService();
         const mc = Microservices
             .builder()
@@ -40,6 +40,6 @@ describe('Add service after creating', () => {
             .create();
 
         expect.assertions(1);
-        return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
 });
