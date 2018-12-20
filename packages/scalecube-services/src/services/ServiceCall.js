@@ -41,7 +41,7 @@ export class ServiceCall {
                         inst,
                         thisMs: this.microservices,
                         meta: getMeta(inst),
-                    })
+                    });
                 }
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
             })

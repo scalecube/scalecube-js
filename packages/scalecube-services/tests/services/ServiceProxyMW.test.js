@@ -88,7 +88,7 @@ describe("Service proxy middleware suite", () => {
             })
             .preRequest((req$) => {
                 expect(postResponseTriggered).toBe(false);
-                return req$.map((msg => msg));
+                return req$.map((msg) => msg);
             })
             .services(new GreetingService(), new GreetingService())
             .build();
