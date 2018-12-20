@@ -14,7 +14,16 @@
     "sourceType": "module"
   },
   "rules": {
+    "class-methods-use-this": "error",
+    "complexity": ["error", 5],
+    "default-case": "error",
+    "dot-notation": ["error", { "allowKeywords": false }],
+    "dot-location": ["error", "property"],
     "no-dupe-args": "error",
+    "eqeqeq": "error",
+    "no-empty-function": ["error", { "allow": ["arrowFunctions"] }],
+    "no-eval": "error",
+    "no-global-assign": ["error", {"exceptions": ["Object"]}],
     "no-dupe-keys": "error",
     "import/first": [ "warn", "DISABLE-absolute-first" ],
     "no-duplicate-imports": "error",
