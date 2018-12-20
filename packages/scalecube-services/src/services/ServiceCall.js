@@ -11,11 +11,8 @@ import "rxjs/add/observable/from";
 import { isObservable, isPromise } from "./utils";
 
 // Private helper methods
-const getInst = router => message => router.route && router.route(message);
-const getMeta = inst => {
-    if (!inst) return {};
-    return inst.service.meta || inst.service.constructor.meta || {}
-};
+const getInst = (router) => (message) => router.route && router.route(message);
+const getMeta = (inst) => !inst ? {} : inst.service.meta || inst.service.constructor.meta || {};
 
 export class ServiceCall {
     router: Router;
@@ -62,7 +59,7 @@ export class ServiceCall {
                     response,
                     thisMs: this.microservices,
                     meta: getMeta(inst),
-                })
+                });
             })
             .map((service) => {
                 if (service[message.method]) {

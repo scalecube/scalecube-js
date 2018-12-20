@@ -40,8 +40,8 @@ class Builder {
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
-    this.newPreRequest = msg => msg;
-    this.newPostResponse = msg => msg;
+    this.newPreRequest = (msg) => msg;
+    this.newPostResponse = (msg) => msg;
   }
 
   services(...services: any[]) {

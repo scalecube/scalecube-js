@@ -9,7 +9,7 @@ describe("Service proxy middleware suite", () => {
             .builder()
             .preRequest((req$) => {
                 return req$
-                    .map(req => {
+                    .map((req) => {
                         req.message.data.push("Idan");
                         return req;
                     });
@@ -64,7 +64,7 @@ describe("Service proxy middleware suite", () => {
                 expect(data.meta).toEqual(GreetingService.meta);
             })
             .preRequest((req$) => {
-                return req$.map((msg => msg));
+                return req$.map(((msg) => msg));
             })
             .services(new GreetingService(), new GreetingService())
             .build();
