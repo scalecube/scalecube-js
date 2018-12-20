@@ -37,7 +37,8 @@
     "deploy:prepublish": "lerna publish prerelease --yes -m '[skip ci]'",
     "deploy:publish": "lerna publish patch --yes -m '[skip ci]'",
     "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "lerna bootstrap",
+    "lint": "yarn run eslint"
   },
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "MIT",
