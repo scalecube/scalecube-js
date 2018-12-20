@@ -56,12 +56,13 @@ describe("Service proxy middleware suite", () => {
 
         const ms = Microservices
             .builder()
-            .postResponse((data) => {
+            .postResponse((response, data) => {
+                expect(response).toBeDefined();
                 expect(data.inst).toBeDefined();
                 expect(data.request.serviceName).toEqual("GreetingService");
-                expect(data.response).toBeDefined();
                 expect(data.thisMs).toEqual(ms);
                 expect(data.meta).toEqual(GreetingService.meta);
+                return response;
             })
             .preRequest((req$) => {
                 return req$.map(((msg) => msg));
@@ -83,8 +84,9 @@ describe("Service proxy middleware suite", () => {
 
         const ms = Microservices
             .builder()
-            .postResponse(() => {
+            .postResponse((response) => {
                 postResponseTriggered = true;
+                return response;
             })
             .preRequest((req$) => {
                 expect(postResponseTriggered).toBe(false);

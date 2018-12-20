@@ -23,7 +23,7 @@ export class ServiceCall {
         this.microservices = ms;
     }
 
-    initialize(message: Message, type: "Observable" | "Promise") {
+    serviceCall(message: Message, type: "Observable" | "Promise") {
         const getInstanceOfMessage = getInst(this.router);
         if (!message) {
             throw Error("Error: data was not provided");
@@ -51,15 +51,15 @@ export class ServiceCall {
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
-            .do((response) => {
+            .pipe((response) => {
                 const inst = getInstanceOfMessage(message);
-                this.microservices.postResponse({
+                const data = {
                     inst,
                     request: message,
-                    response,
                     thisMs: this.microservices,
                     meta: getMeta(inst),
-                });
+                };
+                return this.microservices.postResponse(response, data)
             })
             .map((service) => {
                 if (service[message.method]) {
@@ -83,10 +83,10 @@ export class ServiceCall {
     }
 
     invoke(message: Message): Promise<Message> {
-        return this.initialize(message, "Promise");
+        return this.serviceCall(message, "Promise");
     }
 
     listen(message: Message): Observable<Message> {
-        return this.initialize(message, "Observable");
+        return this.serviceCall(message, "Observable");
     }
 }
