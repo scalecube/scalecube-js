@@ -12,7 +12,10 @@ import { isObservable, isPromise } from "./utils";
 
 // Private helper methods
 const getInst = router => message => router.route && router.route(message);
-const getMeta = service => service.meta || service.constructor.meta || {};
+const getMeta = inst => {
+    if (!inst) return {};
+    return inst.service.meta || inst.service.constructor.meta || {}
+};
 
 export class ServiceCall {
     router: Router;
@@ -40,7 +43,7 @@ export class ServiceCall {
                         message,
                         inst,
                         thisMs: this.microservices,
-                        meta: getMeta(inst.service),
+                        meta: getMeta(inst),
                     })
                 }
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
@@ -58,7 +61,7 @@ export class ServiceCall {
                     request: message,
                     response,
                     thisMs: this.microservices,
-                    meta: getMeta(inst.service),
+                    meta: getMeta(inst),
                 })
             })
             .map((service) => {
