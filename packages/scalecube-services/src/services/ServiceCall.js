@@ -59,7 +59,7 @@ export class ServiceCall {
                     thisMs: this.microservices,
                     meta: getMeta(inst),
                 };
-                return this.microservices.postResponse(response, data)
+                return this.microservices.postResponse(response, data);
             })
             .map((service) => {
                 if (service[message.method]) {
