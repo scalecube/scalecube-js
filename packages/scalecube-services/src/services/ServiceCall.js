@@ -5,7 +5,6 @@ import { Observable } from "rxjs/Observable";
 import { pipe } from "rxjs/util/pipe";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/map";
-import "rxjs/add/operator/do";
 import "rxjs/add/operator/toPromise";
 import "rxjs/add/observable/from";
 import { isObservable, isPromise } from "./utils";
@@ -46,8 +45,7 @@ export class ServiceCall {
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
             })
             .pipe(source$ => this.microservices.preRequest(source$))
-            .map(({ inst }) => inst)
-            .switchMap(inst => utils.isLoader(inst) ?
+            .switchMap(({ inst }) => utils.isLoader(inst) ?
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
