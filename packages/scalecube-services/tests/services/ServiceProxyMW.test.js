@@ -54,13 +54,12 @@ describe("Service proxy middleware suite", () => {
     });
 
     it("postResponse should change message", () => {
-        expect.assertions(7);
+        expect.assertions(6);
 
         const ms = Microservices
             .builder()
             .postResponse((response, data) => {
-                expect(data.request.data).toEqual(["Idan"]);
-                data.request.data[0] += ", it\'s Igor";
+                data.request.data.push("Igor");
                 expect(isObservable(response)).toBeTruthy();
                 expect(data.inst).toBeDefined();
                 expect(data.request.serviceName).toEqual("GreetingService");
@@ -79,7 +78,7 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
-        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan, it's Igor");
+        return expect(greetingService.hello()).resolves.toEqual("Hello Igor");
     });
 
     it("postResponse should be trigger after request is done", () => {
