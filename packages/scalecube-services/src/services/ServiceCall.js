@@ -49,7 +49,7 @@ export class ServiceCall {
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
-            .pipe((response) => {
+            .pipe((response$) => {
                 const inst = getInstanceOfMessage(message);
                 const data = {
                     inst,
@@ -57,7 +57,7 @@ export class ServiceCall {
                     thisMs: this.microservices,
                     meta: getMeta(inst),
                 };
-                return this.microservices.postResponse(response, data);
+                return this.microservices.postResponse(response$, data);
             })
             .map((service) => {
                 if (service[message.method]) {

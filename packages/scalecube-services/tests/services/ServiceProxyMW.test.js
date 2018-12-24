@@ -1,5 +1,6 @@
 import GreetingService from "../../../../examples/GreetingServiceClass/GreetingService.js";
 import { Microservices } from "../../src/services";
+import { isObservable } from "../../src/services/utils";
 
 describe("Service proxy middleware suite", () => {
     it("preRequest should add idan", () => {
@@ -51,13 +52,16 @@ describe("Service proxy middleware suite", () => {
 
         return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
-    it("postResponse should return data", () => {
-        expect.assertions(6);
+
+    it("postResponse should change message", () => {
+        expect.assertions(7);
 
         const ms = Microservices
             .builder()
             .postResponse((response, data) => {
-                expect(response).toBeDefined();
+                expect(data.request.data).toEqual(["Idan"]);
+                data.request.data[0] += ', it\'s Igor';
+                expect(isObservable(response)).toBeTruthy();
                 expect(data.inst).toBeDefined();
                 expect(data.request.serviceName).toEqual("GreetingService");
                 expect(data.thisMs).toEqual(ms);
@@ -75,8 +79,9 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
-        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
+        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan, it's Igor");
     });
+
     it("postResponse should be trigger after request is done", () => {
         expect.assertions(2);
 
