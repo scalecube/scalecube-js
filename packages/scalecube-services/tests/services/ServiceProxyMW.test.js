@@ -60,7 +60,7 @@ describe("Service proxy middleware suite", () => {
             .builder()
             .postResponse((response, data) => {
                 expect(data.request.data).toEqual(["Idan"]);
-                data.request.data[0] += ', it\'s Igor';
+                data.request.data[0] += ", it\'s Igor";
                 expect(isObservable(response)).toBeTruthy();
                 expect(data.inst).toBeDefined();
                 expect(data.request.serviceName).toEqual("GreetingService");
