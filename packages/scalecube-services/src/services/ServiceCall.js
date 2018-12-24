@@ -49,16 +49,6 @@ export class ServiceCall {
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
             )
-            .pipe((response$) => {
-                const inst = getInstanceOfMessage(message);
-                const data = {
-                    inst,
-                    request: message,
-                    thisMs: this.microservices,
-                    meta: getMeta(inst),
-                };
-                return this.microservices.postResponse(response$, data);
-            })
             .map((service) => {
                 if (service[message.method]) {
                     return service;
@@ -76,6 +66,16 @@ export class ServiceCall {
                         throw Error(`Service method not observable error: ${message.serviceName}.${message.method}`);
                     }
                 }
+            })
+            .pipe((response$) => {
+                const inst = getInstanceOfMessage(message);
+                const data = {
+                    inst,
+                    request: message,
+                    thisMs: this.microservices,
+                    meta: getMeta(inst),
+                };
+                return this.microservices.postResponse(response$, data);
             });
         return type === "Promise" ? chain$.toPromise() : chain$;
     }

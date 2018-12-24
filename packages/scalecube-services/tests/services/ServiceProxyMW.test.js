@@ -53,22 +53,17 @@ describe("Service proxy middleware suite", () => {
         return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
 
-    it("postResponse should change message", () => {
-        expect.assertions(6);
+    it("postResponse should modify response", () => {
+        expect.assertions(5);
 
         const ms = Microservices
             .builder()
-            .postResponse((response, data) => {
-                data.request.data.push("Igor");
-                expect(isObservable(response)).toBeTruthy();
+            .postResponse((response$, data) => {
                 expect(data.inst).toBeDefined();
                 expect(data.request.serviceName).toEqual("GreetingService");
                 expect(data.thisMs).toEqual(ms);
                 expect(data.meta).toEqual(GreetingService.meta);
-                return response;
-            })
-            .preRequest((req$) => {
-                return req$.map(((msg) => msg));
+                return response$.map((string) => `${string}! How are you?`);
             })
             .services(new GreetingService(), new GreetingService())
             .build();
@@ -78,32 +73,6 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
-        return expect(greetingService.hello()).resolves.toEqual("Hello Igor");
-    });
-
-    it("postResponse should be trigger after request is done", () => {
-        expect.assertions(2);
-
-        let postResponseTriggered = false;
-
-        const ms = Microservices
-            .builder()
-            .postResponse((response) => {
-                postResponseTriggered = true;
-                return response;
-            })
-            .preRequest((req$) => {
-                expect(postResponseTriggered).toBe(false);
-                return req$.map((msg) => msg);
-            })
-            .services(new GreetingService(), new GreetingService())
-            .build();
-
-        const greetingService = ms
-            .proxy()
-            .api(GreetingService)
-            .create();
-
-        return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
+        return expect(greetingService.hello('Igor')).resolves.toEqual("Hello Igor! How are you?");
     });
 });
