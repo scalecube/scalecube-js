@@ -73,6 +73,6 @@ describe("Service proxy middleware suite", () => {
             .api(GreetingService)
             .create();
 
-        return expect(greetingService.hello('Igor')).resolves.toEqual("Hello Igor! How are you?");
+        return expect(greetingService.hello("Igor")).resolves.toEqual("Hello Igor! How are you?");
     });
 });
