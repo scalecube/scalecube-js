@@ -38,8 +38,14 @@
     "deploy:publish": "lerna publish patch --yes -m '[skip ci]'",
     "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
     "bootstrap": "lerna bootstrap",
-    "lint": "eslint ./packages"
+    "lint": "eslint ./packages",
+    "foo": "echo \"Error: I SHOULD FAIL LOLOLOLOLOL \" && exit 1",
+    "bar":"echo \"fooo\" && exit 0"
   },
+  "pre-commit": [
+    "foo",
+    "bar"
+  ],
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "MIT",
   "devDependencies": {

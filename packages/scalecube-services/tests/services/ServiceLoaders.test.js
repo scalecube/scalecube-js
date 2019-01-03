@@ -12,8 +12,8 @@ describe("Service Loaders suite", () => {
           {
             loader: () => new Promise((resolve, reject) =>
               ImportGreetingService.then((GreetingService) => {
-                resolve(new GreetingService["default"]());
-              })["catch"](e => reject(e))
+                resolve(new GreetingService.default());
+              }).catch(e => reject(e))
             ),
             serviceClass: GreetingService
           })

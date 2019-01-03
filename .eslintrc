@@ -24,7 +24,6 @@
     "class-methods-use-this": "error",
     "complexity": ["error", 9],
     "default-case": "error",
-    "dot-notation": ["error", { "allowKeywords": false }],
     "dot-location": ["error", "property"],
     "no-dupe-args": "error",
     "eqeqeq": "error",
