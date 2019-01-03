@@ -1,15 +1,15 @@
 // @flow
 
-import {Router, Message, utils, Microservices} from ".";
-import {Observable} from "rxjs/Observable";
-import {pipe} from "rxjs/util/pipe";
+import { Router, Message, utils, Microservices } from ".";
+import { Observable } from "rxjs/Observable";
+import { pipe } from "rxjs/util/pipe";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/toPromise";
 import "rxjs/add/observable/fromPromise";
 import "rxjs/add/observable/from";
-import {isObservable} from "./utils";
+import { isObservable } from "./utils";
 
 export class ServiceCall {
     router: Router;

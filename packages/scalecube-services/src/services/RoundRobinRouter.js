@@ -1,6 +1,6 @@
 // @flow
 
-import { ServiceRegistery, Message, Router, ServiceInstance } from '.';
+import { ServiceRegistery, Message, Router, ServiceInstance } from ".";
 
 export class RoundRobinServiceRouter implements Router {
   registry: ServiceRegistery;
@@ -9,7 +9,7 @@ export class RoundRobinServiceRouter implements Router {
     this.registry = registry;
     this.counter = new Map();
   }
-  route(request:Message): ServiceInstance | null {
+  route(request: Message): ServiceInstance | null {
     const instances = this.registry.serviceLookup(request.serviceName)
       .filter(inst => inst.serviceDefinition.methods[request.method] !== "undefined" );
 

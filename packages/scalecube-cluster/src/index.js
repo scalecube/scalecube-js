@@ -1,3 +1,3 @@
-import { LogicalCluster } from './LogicalCluster';
+import { LogicalCluster } from "./LogicalCluster";
 
 export { LogicalCluster };

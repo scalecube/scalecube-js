@@ -1,5 +1,5 @@
 import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
-import {Microservices, ServicesConfig} from "../../src/services";
+import { Microservices, ServicesConfig } from "../../src/services";
 
 describe("Add service after creating", () => {
     it("Greeting.hello should greet Idan with hello", () => {

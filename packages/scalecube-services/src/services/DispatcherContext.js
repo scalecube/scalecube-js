@@ -1,17 +1,17 @@
 // @flow
-import { ServiceCall, Router, RoundRobinServiceRouter, Microservices } from '.';
+import { ServiceCall, Router, RoundRobinServiceRouter, Microservices } from ".";
 
 export class DispatcherContext {
   myrouter: any;
   timeout: number;
-  microservices:Microservices;
+  microservices: Microservices;
 
-  constructor(microservices:Microservices, router: typeof Router = RoundRobinServiceRouter, timeout:number = 5000){
+  constructor(microservices: Microservices, router: typeof Router = RoundRobinServiceRouter, timeout: number = 5000){
     this.microservices = microservices;
     this.myrouter = router;
     this.timeout = timeout;
   }
-  router(router:typeof Router): DispatcherContext {
+  router(router: typeof Router): DispatcherContext {
     this.myrouter = router;
     return this;
   }

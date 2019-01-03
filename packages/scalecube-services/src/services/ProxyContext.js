@@ -1,14 +1,13 @@
 // @flow
-import {Observable} from "rxjs/Observable";
-import {pipe} from "rxjs/util/pipe";
+import { Observable } from "rxjs/Observable";
+import { pipe } from "rxjs/util/pipe";
 import "rxjs/add/operator/switchMap";
 import "rxjs/operator/toPromise";
 import "rxjs/add/observable/fromPromise";
 import "rxjs/add/observable/from";
-import {Router, RoundRobinServiceRouter, Microservices} from ".";
-import type {Message} from ".";
+import { Router, RoundRobinServiceRouter, Microservices, Message } from ".";
 
-const getHandler = ({dispatcher, meta, microservices}) =>
+const getHandler = ({ dispatcher, meta, microservices }) =>
     (target, prop) => {
         if (meta.methods[prop] === undefined) {
             return undefined;
@@ -74,7 +73,7 @@ export class ProxyContext {
             return Error("meta.methods is not defined");
         }
         return new Proxy({}, {
-            get: getHandler({dispatcher, meta, microservices})
+            get: getHandler({ dispatcher, meta, microservices })
         });
     }
 

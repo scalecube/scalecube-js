@@ -1,10 +1,10 @@
-import GreetingService from 'examples/GreetingServiceClass/GreetingService.js';
-import ImportGreetingService from 'examples/GreetingServiceClass/ImportGreetingService.js';
-import { Microservices } from '../../src/services';
+import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
+import ImportGreetingService from "examples/GreetingServiceClass/ImportGreetingService.js";
+import { Microservices } from "../../src/services";
 
-describe('Service Loaders suite', () => {
-  describe('onStart Service Loaders', () => {
-    it('Greeting.hello should greet Idan with hello', () => {
+describe("Service Loaders suite", () => {
+  describe("onStart Service Loaders", () => {
+    it("Greeting.hello should greet Idan with hello", () => {
 
       const greetingService = Microservices
         .builder()
@@ -12,8 +12,8 @@ describe('Service Loaders suite', () => {
           {
             loader: () => new Promise((resolve, reject) =>
               ImportGreetingService.then((GreetingService) => {
-                resolve(new GreetingService.default());
-              }).catch(e => reject(e))
+                resolve(new GreetingService["default"]());
+              })["catch"](e => reject(e))
             ),
             serviceClass: GreetingService
           })
@@ -23,17 +23,17 @@ describe('Service Loaders suite', () => {
         .create();
 
       expect.assertions(1);
-      return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
+      return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
-    it('Greeting should be loaded without calling it', () => {
+    it("Greeting should be loaded without calling it", () => {
 
-      const mockFn = jest.fn((GreetingService) => new GreetingService.default());
+      const mockFn = jest.fn((GreetingService) => new GreetingService["default"]());
       const greetingService = Microservices
         .builder()
         .serviceLoaders(
           {
             loader: () => new Promise((resolve, reject) =>
-              ImportGreetingService.then((GreetingService) => resolve(mockFn(GreetingService))).catch(e => reject(e))
+              ImportGreetingService.then((GreetingService) => resolve(mockFn(GreetingService)))["catch"](e => reject(e))
             ),
             serviceClass: GreetingService
           })
@@ -46,8 +46,8 @@ describe('Service Loaders suite', () => {
       return ImportGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(1));
     });
   });
-  describe('onDemand Service Loaders', () => {
-    it('Greeting.hello should greet Idan with hello', () => {
+  describe("onDemand Service Loaders", () => {
+    it("Greeting.hello should greet Idan with hello", () => {
       const greetingService = Microservices
         .builder()
         .serviceLoaders(
@@ -55,7 +55,7 @@ describe('Service Loaders suite', () => {
             loader: () => ({
               then: (func) => {
                 ImportGreetingService
-                  .then((GreetingService) => func(new GreetingService.default()))
+                  .then((GreetingService) => func(new GreetingService["default"]()));
               }
             }),
             serviceClass: GreetingService
@@ -66,10 +66,10 @@ describe('Service Loaders suite', () => {
         .create();
 
       expect.assertions(1);
-      return expect(greetingService.hello('Idan')).resolves.toEqual("Hello Idan");
+      return expect(greetingService.hello("Idan")).resolves.toEqual("Hello Idan");
     });
-    it('Greeting should be loaded after calling it', (done) => {
-      const mockFn = jest.fn((GreetingService) => new GreetingService.default());
+    it("Greeting should be loaded after calling it", (done) => {
+      const mockFn = jest.fn((GreetingService) => new GreetingService["default"]());
       const greetingService = Microservices
         .builder()
         .serviceLoaders(
@@ -77,7 +77,7 @@ describe('Service Loaders suite', () => {
             loader: () => ({
               then: (func) => {
                 ImportGreetingService
-                  .then((GreetingService) => func(mockFn(GreetingService)))
+                  .then((GreetingService) => func(mockFn(GreetingService)));
               }
             }),
             serviceClass: GreetingService
@@ -90,13 +90,13 @@ describe('Service Loaders suite', () => {
       expect.assertions(2);
       setTimeout(()=>{
         expect(mockFn.mock.calls.length).toBe(0);
-        greetingService.hello('Idan').then(()=>{
+        greetingService.hello("Idan").then(()=>{
           expect(mockFn.mock.calls.length).toBe(1);
           done();
         });
       },1000);
     });
-    it('Greeting.repeatToStream should return observable of greetings ', () => {
+    it("Greeting.repeatToStream should return observable of greetings ", () => {
       const greetingService = Microservices
         .builder()
         .serviceLoaders(
@@ -104,7 +104,7 @@ describe('Service Loaders suite', () => {
             loader: () => ({
               then: (func) => {
                 ImportGreetingService
-                  .then((GreetingService) => func(new GreetingService.default()))
+                  .then((GreetingService) => func(new GreetingService["default"]()));
               }
             }),
             serviceClass: GreetingService
@@ -116,16 +116,16 @@ describe('Service Loaders suite', () => {
 
       expect.assertions(3);
       let i = 0;
-      greetingService.repeatToStream('Hello', 'Hey', 'Yo').subscribe((item) => {
+      greetingService.repeatToStream("Hello", "Hey", "Yo").subscribe((item) => {
         switch (i) {
           case 0:
-            expect(item).toBe('Hello');
+            expect(item).toBe("Hello");
             break;
           case 1:
-            expect(item).toBe('Hey');
+            expect(item).toBe("Hey");
             break;
           case 2:
-            expect(item).toBe('Yo');
+            expect(item).toBe("Yo");
             break;
           default:
             expect(0).toBe(1);

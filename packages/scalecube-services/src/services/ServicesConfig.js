@@ -1,5 +1,5 @@
 // @flow
-import { Microservices, ServiceDefinition } from '.';
+import { Microservices, ServiceDefinition } from ".";
 
 class Builder {
   servicesBuilder: ServicesConfig[];
@@ -16,16 +16,16 @@ class Builder {
     return this.microservicesBuilder.services(
       new ServicesConfig(this.servicesBuilder));
   }
-  services(...services:any[]) {
+  services(...services: any[]) {
     services[0].map((o)=>{
-      if( typeof o === 'function') {
+      if( typeof o === "function") {
         console.error(new Error(`${o.name} is a class not instance`));
       }
       this.add(new ServicesConfig(o));
     });
     return this;
   }
-  add(serviceBuilder:ServicesConfig) {
+  add(serviceBuilder: ServicesConfig) {
     this.servicesBuilder.push(serviceBuilder);
     return this;
   }
@@ -49,7 +49,7 @@ export class ServicesConfig{
       this.servicesConfig = service;
       return this;
     }
-    if( builder && builder.constructor && builder.constructor.name !== 'Builder' ) {
+    if( builder && builder.constructor && builder.constructor.name !== "Builder" ) {
       this.mcBuilder = builder;
     }
     this.service = service;

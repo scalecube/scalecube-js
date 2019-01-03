@@ -1,6 +1,5 @@
-import {MembershipEvent} from "../api/MembershiptEvent";
-import {Cluster} from "../api/Cluster";
-import type {Type} from "../api/MembershiptEvent";
+import { MembershipEvent, Type } from "../api/MembershiptEvent";
+import { Cluster } from "../api/Cluster";
 
 export const CreateLogicalClusterInternals = (internal) => class LogicalClusterInternals{
     cluster: any;
@@ -30,7 +29,7 @@ export const CreateLogicalClusterInternals = (internal) => class LogicalClusterI
                 if (!this.cluster.myMembers[member.id()]) {
                     this.cluster.myMembers[member.id()] = member;
                     internal(member).add([self]);
-                    internal(this.cluster).send(member, 'add', data);
+                    internal(this.cluster).send(member, "add", data);
                 }
             }
         );
@@ -38,6 +37,6 @@ export const CreateLogicalClusterInternals = (internal) => class LogicalClusterI
 
     remove(member: Cluster): void {
         delete this.cluster.myMembers[member.id()];
-        this.send(member, 'remove', {});
+        this.send(member, "remove", {});
     }
 };

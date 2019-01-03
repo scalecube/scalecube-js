@@ -9,5 +9,5 @@ export interface ClusterOptions{
     /**
      * Physical address of cluster
      */
-    addresses: URI[];
+    addresses: URI[]
 }

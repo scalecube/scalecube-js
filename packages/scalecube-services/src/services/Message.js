@@ -1,7 +1,7 @@
 // @flow
 
 export interface Message {
-  serviceName: string;
-  method: string;
-  data: any[];
+  serviceName: string,
+  method: string,
+  data: any[]
 }

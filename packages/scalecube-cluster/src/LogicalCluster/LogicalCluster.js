@@ -1,13 +1,13 @@
 // @flow
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
-import {Cluster} from '../api/Cluster';
-import {MembershipEvent} from '../api/MembershiptEvent';
-import { CreateLogicalClusterInternals } from './LogicalClusterInternals';
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
+import { Cluster } from "../api/Cluster";
+import { MembershipEvent } from "../api/MembershiptEvent";
+import { CreateLogicalClusterInternals } from "./LogicalClusterInternals";
 
 const internals: WeakMap<Cluster, any> = new WeakMap();
-const internal = (obj):any => new Proxy(internals.get(obj), {
-    apply: function(target:any, thisArg, args) {
+const internal = (obj): any => new Proxy(internals.get(obj), {
+    apply: function(target: any, thisArg, args) {
                 return target && target(...args);
     }
 });
@@ -25,9 +25,9 @@ export class LogicalCluster implements Cluster {
     constructor() {
         this.myId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
         this.members$ = new Subject();
-        this.myMembers = {[this.myId]: this};
+        this.myMembers = { [this.myId]: this };
         internals.set(this, new LogicalClusterInternals(this));
-        internal(this).send(this, 'add', {});
+        internal(this).send(this, "add", {});
     }
 
     id(): string {
@@ -38,7 +38,7 @@ export class LogicalCluster implements Cluster {
         if (value) {
             this.myMetadata = value;
             this.members().forEach((member) => {
-                internal(this).send(member, 'change', value);
+                internal(this).send(member, "change", value);
             });
         } else {
             return this.myMetadata;

@@ -26,7 +26,7 @@ function getMethod(obj, key) {
 
     let value = obj[key];
 
-    if (value == null)
+    if (!value)
         return undefined;
 
     if (typeof value !== "function")
@@ -72,7 +72,7 @@ function closeSubscription(subscription) {
 }
 
 function cleanupFromSubscription(subscription) {
-    return _=> { subscription.unsubscribe() };
+    return _=> { subscription.unsubscribe(); };
 }
 
 function Subscription(observer, subscriber) {
@@ -105,7 +105,7 @@ function Subscription(observer, subscriber) {
         let cleanup = subscriber.call(undefined, observer);
 
         // The return value must be undefined, null, a subscription object, or a function
-        if (cleanup != null) {
+        if (!!cleanup) {
             if (typeof cleanup.unsubscribe === "function")
                 cleanup = cleanupFromSubscription(cleanup);
             else if (typeof cleanup !== "function")
@@ -129,8 +129,8 @@ function Subscription(observer, subscriber) {
 }
 
 Subscription.prototype = nonEnum({
-    get closed() { return subscriptionClosed(this) },
-    unsubscribe() { closeSubscription(this) },
+    get closed() { return subscriptionClosed(this); },
+    unsubscribe() { closeSubscription(this); },
 });
 
 function SubscriptionObserver(subscription) {
@@ -261,7 +261,7 @@ export class Observable {
         return new Subscription(observer, this._subscriber);
     }
 
-    [Symbol.observable]() { return this }
+    [Symbol.observable]() { return this; }
 
     // == Derived ==
 
@@ -269,7 +269,7 @@ export class Observable {
 
         let C = typeof this === "function" ? this : Observable;
 
-        if (x == null)
+        if (!x)
             throw new TypeError(x + " is not an object");
 
         let method = getMethod(x, Symbol.observable);

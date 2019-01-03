@@ -1,5 +1,5 @@
 // @flow
-import { utils, ServicePromise } from '.'
+import { utils, ServicePromise } from ".";
 type Methods = {[string]: (any)=>any};
 export class ServiceDefinition {
   serviceInterface: any;
@@ -17,8 +17,8 @@ export class ServiceDefinition {
     this.serviceName = serviceName; // TODO check what to do with it if module
     this.methods = methods;
   }
-  static getMethod(meta:any, service:any, key:string) {
-    if( meta.type === 'Promise' ) {
+  static getMethod(meta: any, service: any, key: string) {
+    if( meta.type === "Promise" ) {
       return service;
     } else {
       return service[key];

@@ -1,5 +1,5 @@
 // @flow
-import { ServicesConfig } from '.';
+import { ServicesConfig } from ".";
 
 export class ServiceRegistery {
   services: Object;

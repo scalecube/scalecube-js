@@ -8,17 +8,17 @@ export interface MembershipEvent {
     /**
      * Type of event
      */
-  type: Type;
+  type: Type,
     /**
      * the sender id
      */
-  senderId?: string;
+  senderId?: string,
     /**
      * the member id this event related to
      */
-  memberId: string;
+  memberId: string,
     /**
      * metadata of the member, the metadata is not per message/event is per cluster instance
      */
-  metadata: any;
+  metadata: any
 }

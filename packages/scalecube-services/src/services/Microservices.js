@@ -5,7 +5,7 @@ import {
   ProxyContext,
   DispatcherContext,
   utils
-} from '.'
+} from ".";
 
 export class Microservices {
     static Builder: Builder;
@@ -52,7 +52,7 @@ class Builder {
     return this;
   }
 
-  preRequest(mw:any){
+  preRequest(mw: any){
     this.myPreRequest = mw;
     return this;
   }

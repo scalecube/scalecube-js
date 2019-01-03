@@ -1,6 +1,6 @@
 import GreetingService from "examples/GreetingServiceClass/GreetingService.js";
 import GreetingService2 from "examples/GreetingServiceClass/GreetingService2.js";
-import {Microservices, Message} from "../../src/services";
+import { Microservices, Message } from "../../src/services";
 
 process.on("unhandledRejection", (reason, promise) => console.log(reason, promise));
 
@@ -33,7 +33,7 @@ describe("Greeting suite", () => {
             .builder()
             .build()
             .proxy()
-            .api({meta: {}})
+            .api({ meta: {} })
             .create();
 
         expect.assertions(1);
@@ -78,7 +78,7 @@ describe("Greeting suite", () => {
         mcb.services(new GreetingService2());
 
         const mc = mcb
-            .build()
+            .build();
 
         const greetingServiceProxy = mc
             .proxy()
@@ -93,11 +93,11 @@ describe("Greeting suite", () => {
         expect.assertions(2);
         return greetingServiceProxy.hello("Idan")
             .then(v => expect(v).toEqual("Hello Idan"))
-            .catch(e => console.error(e))
+            ["catch"](e => console.error(e))
             .then(v =>
                 greetingService2Proxy.hello("Idan")
                     .then(v => expect(v).toEqual("hey Idan"))
-                    .catch(e => console.error(e)));
+                    ["catch"](e => console.error(e)));
 
 
         // expect(greetingServiceProxy.hello("Idan")).resolves.toEqual("Hello Idan");
@@ -173,7 +173,7 @@ describe("Greeting suite", () => {
 
         expect.assertions(1);
         greetingService.repeatToStream("hey", "hello").subscribe().unsubscribe();
-        expect(window["repeatToStreamUnsubscribe"]).toBe(true);
+        expect(window.repeatToStreamUnsubscribe).toBe(true);
     });
     it("Dispatcher should greet Idan with hello", () => {
 
@@ -204,7 +204,7 @@ describe("Greeting suite", () => {
         const message: Message = {
             serviceName: "GreetingService",
             method: "hello",
-            data: {user: "Idan"}
+            data: { user: "Idan" }
         };
 
 
