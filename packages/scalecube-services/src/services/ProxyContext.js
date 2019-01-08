@@ -1,6 +1,5 @@
 // @flow
 import { Observable } from "rxjs/Observable";
-import { pipe } from "rxjs/util/pipe";
 import "rxjs/add/operator/switchMap";
 import "rxjs/operator/toPromise";
 import "rxjs/add/observable/fromPromise";
@@ -8,36 +7,36 @@ import "rxjs/add/observable/from";
 import { Router, RoundRobinServiceRouter, Microservices, Message } from ".";
 
 const getHandler = ({ dispatcher, meta, microservices }) =>
-    (target, prop) => {
-        if (meta.methods[prop] === undefined) {
-            return undefined;
-        }
-        const type = meta.methods[prop].type;
-        return (...args) => {
-            const message: Message = {
-                serviceName: meta.serviceName,
-                method: prop,
-                data: args
-            };
-            if (meta.methods[prop].type !== "Promise" &&
+  (target, prop) => {
+    if (meta.methods[prop] === undefined) {
+      return undefined;
+    }
+    const { type } = meta.methods[prop];
+    return (...args) => {
+      const message: Message = {
+        serviceName: meta.serviceName,
+        method: prop,
+        data: args
+      };
+      if (meta.methods[prop].type !== "Promise" &&
                 meta.methods[prop].type !== "Observable") {
-                return Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
-            }
+        return Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
+      }
 
-            const chain$ = Observable
-                .from([{
-                    message,
-                    serviceDefinition: meta,
-                    thisMs: microservices
-                }])
-                .switchMap((req) => type === "Promise" ?
-                    Observable.from(dispatcher.invoke(req.message)) :
-                    dispatcher.listen(req.message)
-                );
+      const chain$ = Observable
+        .from([{
+          message,
+          serviceDefinition: meta,
+          thisMs: microservices
+        }])
+        .switchMap(req => type === "Promise" ?
+          Observable.from(dispatcher.invoke(req.message)) :
+          dispatcher.listen(req.message)
+        );
 
-            return type === "Promise" ? chain$.toPromise() : chain$;
-        };
+      return type === "Promise" ? chain$.toPromise() : chain$;
     };
+  };
 
 export class ProxyContext {
     myapi: any;
@@ -45,8 +44,8 @@ export class ProxyContext {
     microservices: Microservices;
 
     constructor(microservices: Microservices) {
-        this.microservices = microservices;
-        this.router = RoundRobinServiceRouter;
+      this.microservices = microservices;
+      this.router = RoundRobinServiceRouter;
     }
 
     /**
@@ -57,32 +56,32 @@ export class ProxyContext {
      * @return {api}
      */
     createProxy(api: any, router: typeof Router) {
-        const dispatcher = this.microservices.dispatcher().router(router).create();
-        const meta = api.meta;
-        const microservices = this.microservices;
+      const dispatcher = this.microservices.dispatcher().router(router).create();
+      const { meta } = api;
+      const { microservices } = this;
 
-        if (!meta) {
-            return Error("API must have meta property");
-        }
+      if (!meta) {
+        return Error("API must have meta property");
+      }
 
-        meta.serviceName = meta.serviceName || meta.name || api.name;
-        if (!meta.serviceName) {
-            return Error("service name (api.meta.serviceName) is not defined");
-        }
-        if (!meta.methods) {
-            return Error("meta.methods is not defined");
-        }
-        return new Proxy({}, {
-            get: getHandler({ dispatcher, meta, microservices })
-        });
+      meta.serviceName = meta.serviceName || meta.name || api.name;
+      if (!meta.serviceName) {
+        return Error("service name (api.meta.serviceName) is not defined");
+      }
+      if (!meta.methods) {
+        return Error("meta.methods is not defined");
+      }
+      return new Proxy({}, {
+        get: getHandler({ dispatcher, meta, microservices })
+      });
     }
 
     create() {
-        return this.createProxy(this.myapi, this.router);
+      return this.createProxy(this.myapi, this.router);
     }
 
     api(api: any) {
-        this.myapi = api;
-        return this;
+      this.myapi = api;
+      return this;
     }
 }

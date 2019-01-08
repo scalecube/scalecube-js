@@ -14,14 +14,14 @@ export class RoundRobinServiceRouter implements Router {
       .filter(inst => inst.serviceDefinition.methods[request.method] !== "undefined" );
 
     if( instances.length > 1 ) {
-      let index = ((this.counter.get(request.serviceName) || 0) + 1) % instances.length;
+      const index = ((this.counter.get(request.serviceName) || 0) + 1) % instances.length;
       this.counter.set(request.serviceName, index);
       return instances[index];
     } else if ( instances.length === 1 ) {
       return instances[0];
-    } else {
-      return null;
-    }
+    } 
+    return null;
+    
 
   }
 }

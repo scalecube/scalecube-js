@@ -25,9 +25,9 @@ describe("Check if isObservable method detects different kinds of Observables as
     const obsFrom = from([1, 2, 3]);
 
     const obsConditional = iif(
-        () => true,
-        of(1, 2, 3),
-        from([4, 5, 6]),
+      () => true,
+      of(1, 2, 3),
+      from([4, 5, 6]),
     );
     expect(isObservable(obsFrom)).toBeTruthy();
     expect(isObservable(obsConditional)).toBeTruthy();
@@ -49,12 +49,12 @@ describe("Check if isObservable method detects different kinds of Observables as
 
     const reducer = (state = initialState.value, action) => {
       switch (action.type) {
-        case 1:
-          return 1;
-        case 2:
-          return 2;
-        default:
-          return state;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      default:
+        return state;
       }
     };
 

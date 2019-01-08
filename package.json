@@ -38,13 +38,10 @@
     "deploy:publish": "lerna publish patch --yes -m '[skip ci]'",
     "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
     "bootstrap": "lerna bootstrap",
-    "lint": "eslint ./packages",
-    "foo": "echo \"Error: I SHOULD FAIL LOLOLOLOLOL \" && exit 1",
-    "bar":"echo \"fooo\" && exit 0"
+    "lint": "eslint ./packages"
   },
   "pre-commit": [
-    "foo",
-    "bar"
+    "lint"
   ],
   "author": "Idan Levin (https://github.com/IdanILT)",
   "license": "MIT",
@@ -61,14 +58,15 @@
     "babel-preset-flow": "^6.23.0",
     "cross-env": "^5.1.1",
     "eslint": "^5.10.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-jest": "^22.1.2",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
     "flow": "^0.2.3",
     "flow-bin": "^0.59.0",
     "flow-typed": "^2.2.3",
     "jest": "^21.2.1",
-    "eslint-plugin-jest": "^22.1.2",
     "lerna": "^3.0.1",
+    "pre-commit": "^1.2.2",
     "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
     "rename-cli": "^5.0.0",

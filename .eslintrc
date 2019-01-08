@@ -20,21 +20,80 @@
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
     "jest/valid-expect": "error",
+    "indent": ["error", 2, { "ArrayExpression": 1, "ObjectExpression": 1 }],
+    "arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
+    "no-const-assign": "error",
+    "camelcase": ["error", {"properties": "never", "ignoreDestructuring": true}],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
     "object-curly-spacing": ["error", "always"],
     "class-methods-use-this": "error",
+    "no-new-wrappers": "error",
+    "no-param-reassign": "error",
+    "prefer-template": "error",
+    "no-script-url": "error",
+    "no-self-assign": ["error", {"props": true}],
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
+    "no-use-before-define": ["error", { "functions": false, "classes": false }],
+    "no-unused-expressions": ["error", { "allowTaggedTemplates": true, "allowShortCircuit": true, "allowTernary": true }],
+    "no-useless-concat": "error",
+    "no-useless-escape": "error",
+    "no-useless-return": "error",
+    "prefer-promise-reject-errors": ["error", {"allowEmptyReject": true}],
+    "no-redeclare": ["error", { "builtinGlobals": true }],
+    "require-await": "error",
+    "wrap-iife": ["error", "any"],
     "complexity": ["error", 9],
     "default-case": "error",
     "dot-location": ["error", "property"],
     "no-dupe-args": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-unreachable": "error",
+    "no-else-return": "error",
+    "no-empty-pattern": "error",
     "eqeqeq": "error",
     "no-empty-function": ["error", { "allow": ["arrowFunctions"] }],
+    "no-implied-eval": "error",
     "no-eval": "error",
+    "no-lone-blocks": "error",
+    "no-loop-func": "error",
+    "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
+    "prefer-const": ["error", {
+      "destructuring": "any",
+      "ignoreReadBeforeAssign": false
+    }],
+    "prefer-destructuring": ["error", {
+      "array": true,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }],
     "no-global-assign": ["error", {"exceptions": ["Object"]}],
-    "no-dupe-keys": "error",
     "import/first": [ "off", "DISABLE-absolute-first" ],
-    "no-duplicate-imports": "error",
+    "no-useless-constructor": "error",
+    "no-var": "error",
+    "object-shorthand": ["error", "always", { "ignoreConstructors": true }],
+    "no-duplicate-imports": ["error",  { "includeExports": true }],
     "no-undef": "error",
     "semi": ["error", "always"],
-    "quotes": ["error", "double"]
+    "quotes": ["error", "double"],
+    "no-cond-assign": "error",
+    "no-constant-condition": "error",
+    "no-mixed-operators": [
+      "error",
+      {
+        "groups": [
+          ["+", "-", "*", "/", "%", "**"],
+          ["&", "|", "^", "~", "<<", ">>", ">>>"],
+          ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+          ["&&", "||"],
+          ["in", "instanceof"]
+        ],
+        "allowSamePrecedence": true
+      }
+    ]
   }
 }

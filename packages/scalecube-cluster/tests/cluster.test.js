@@ -4,11 +4,11 @@ import "rxjs/add/operator/do";
 import "rxjs/add/operator/elementAt";
 
 const expectMessage = (cluster, at, messageExpected) =>
-    cluster
-        .listenMembership()
-        .elementAt(at)
-        ["do"](messageSent=>expect(messageSent).toEqual(messageExpected))
-        .subscribe();
+  cluster
+    .listenMembership()
+    .elementAt(at)
+    ["do"](messageSent=>expect(messageSent).toEqual(messageExpected))
+    .subscribe();
 
 // TODO messages order isn't important
 // tests can be changed to have message in different order
@@ -46,20 +46,20 @@ describe("Cluster suite", () => {
     clusterA.join(clusterB);
     clusterB.join(clusterC);
 
-      [clusterA,clusterB,clusterC].forEach(cluster =>
-          cluster
-              .listenMembership()
-              ["do"]((msg) => {
-                  expect(msg.metadata).toEqual({});
-                  expect(msg.type).toBe("remove");
-              })
-              .subscribe()
-      );
+    [clusterA,clusterB,clusterC].forEach(cluster =>
+      cluster
+        .listenMembership()
+        ["do"]((msg) => {
+          expect(msg.metadata).toEqual({});
+          expect(msg.type).toBe("remove");
+        })
+        .subscribe()
+    );
 
     clusterA.shutdown();
 
-     expect(clusterB.members().map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
-     expect(clusterC.members().map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
+    expect(clusterB.members().map(i=>i.metadata())).toEqual([ clusterB, clusterC ].map(i=>i.metadata()));
+    expect(clusterC.members().map(i=>i.metadata())).toEqual([ clusterC, clusterB ].map(i=>i.metadata()));
   });
   it("When A join B and B join C all add essages are sent", () => {
     const { clusterA, clusterB, clusterC } = createClusters();
@@ -67,16 +67,16 @@ describe("Cluster suite", () => {
     expect.assertions(3 * 2); // clusters * messages
 
     expectMessage(clusterA, 0, {
-        metadata: "clusterB",
-        senderId: clusterB.id(),
-        memberId: clusterB.id(),
-        type: "add"
+      metadata: "clusterB",
+      senderId: clusterB.id(),
+      memberId: clusterB.id(),
+      type: "add"
     });
     expectMessage(clusterA, 1, {
-        metadata: "clusterC",
-        senderId: clusterC.id(),
-        memberId: clusterC.id(),
-        type: "add"
+      metadata: "clusterC",
+      senderId: clusterC.id(),
+      memberId: clusterC.id(),
+      type: "add"
     });
 
     expectMessage(clusterB, 0, {
@@ -119,14 +119,14 @@ describe("Cluster suite", () => {
     clusterB.join(clusterC);
 
     [clusterA,clusterB,clusterC].forEach(cluster =>
-        expectMessage(cluster, 0, {
-            metadata: "Hello",
-            senderId: clusterA.id(),
-            memberId: clusterA.id(),
-            type: "change"
-        })
+      expectMessage(cluster, 0, {
+        metadata: "Hello",
+        senderId: clusterA.id(),
+        memberId: clusterA.id(),
+        type: "change"
+      })
 
-  );
+    );
     clusterA.metadata("Hello");
     expect(clusterA.metadata()).toBe("Hello");
   });

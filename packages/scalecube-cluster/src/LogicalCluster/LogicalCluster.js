@@ -7,9 +7,9 @@ import { CreateLogicalClusterInternals } from "./LogicalClusterInternals";
 
 const internals: WeakMap<Cluster, any> = new WeakMap();
 const internal = (obj): any => new Proxy(internals.get(obj), {
-    apply: function(target: any, thisArg, args) {
-                return target && target(...args);
-    }
+  apply(target: any, thisArg, args) {
+    return target && target(...args);
+  }
 });
 
 const LogicalClusterInternals = new CreateLogicalClusterInternals(internal);
@@ -23,51 +23,51 @@ export class LogicalCluster implements Cluster {
     myMetadata: any;
 
     constructor() {
-        this.myId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
-        this.members$ = new Subject();
-        this.myMembers = { [this.myId]: this };
-        internals.set(this, new LogicalClusterInternals(this));
-        internal(this).send(this, "add", {});
+      this.myId = String(Date.now()) + String(Math.random()) + String(Math.random()) + String(Math.random());
+      this.members$ = new Subject();
+      this.myMembers = { [this.myId]: this };
+      internals.set(this, new LogicalClusterInternals(this));
+      internal(this).send(this, "add", {});
     }
 
     id(): string {
-        return this.myId;
+      return this.myId;
     }
 
     metadata(value: any): any {
-        if (value) {
-            this.myMetadata = value;
-            this.members().forEach((member) => {
-                internal(this).send(member, "change", value);
-            });
-        } else {
-            return this.myMetadata;
-        }
+      if (value) {
+        this.myMetadata = value;
+        this.members().forEach((member) => {
+          internal(this).send(member, "change", value);
+        });
+      } else {
+        return this.myMetadata;
+      }
     }
 
     join(cluster: Cluster): void {
 
-        internal(this).add(cluster.members());
-        internal(cluster).add(this.members());
+      internal(this).add(cluster.members());
+      internal(cluster).add(this.members());
     }
 
     shutdown(): void {
-        this.members().forEach(
-            (member) => {
-                internal(member).remove(this);
-            }
-        );
-        delete this.myMembers;
-        this.members$.complete();
-        delete this.members$;
+      this.members().forEach(
+        (member) => {
+          internal(member).remove(this);
+        }
+      );
+      delete this.myMembers;
+      this.members$.complete();
+      delete this.members$;
     }
 
     members(): Cluster[] {
-        // $FlowFixMe
-        return Object.values(this.myMembers);
+      // $FlowFixMe
+      return Object.values(this.myMembers);
     }
 
     listenMembership(): Observable<MembershipEvent> {
-        return this.members$.asObservable();
+      return this.members$.asObservable();
     };
 }

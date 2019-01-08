@@ -5,8 +5,8 @@
 
 function polyfillSymbol(name) {
 
-    if (!Symbol[name])
-        Object.defineProperty(Symbol, name, { value: Symbol(name) });
+  if (!Symbol[name])
+    Object.defineProperty(Symbol, name, { value: Symbol(name) });
 }
 
 polyfillSymbol("observable");
@@ -15,313 +15,316 @@ polyfillSymbol("observable");
 
 function nonEnum(obj) {
 
-    Object.getOwnPropertyNames(obj).forEach(k => {
-        Object.defineProperty(obj, k, { enumerable: false });
-    });
+  Object.getOwnPropertyNames(obj).forEach((k) => {
+    Object.defineProperty(obj, k, { enumerable: false });
+  });
 
-    return obj;
+  return obj;
 }
 
 function getMethod(obj, key) {
 
-    let value = obj[key];
+  const value = obj[key];
 
-    if (!value)
-        return undefined;
+  if (!value)
+    return undefined;
 
-    if (typeof value !== "function")
-        throw new TypeError(value + " is not a function");
+  if (typeof value !== "function")
+    throw new TypeError(`${value } is not a function`);
 
-    return value;
+  return value;
 }
 
 function cleanupSubscription(subscription) {
 
-    // Assert:  observer._observer is undefined
+  // Assert:  observer._observer is undefined
 
-    let cleanup = subscription._cleanup;
+  const cleanup = subscription._cleanup;
 
-    if (!cleanup)
-        return;
+  if (!cleanup)
+    return;
 
-    // Drop the reference to the cleanup function so that we won't call it
-    // more than once
-    subscription._cleanup = undefined;
+  // Drop the reference to the cleanup function so that we won't call it
+  // more than once
+  subscription._cleanup = undefined;
 
-    // Call the cleanup function
-    try {
-        cleanup();
-    }
-    catch(e) {
-        // HostReportErrors(e);
-    }
+  // Call the cleanup function
+  try {
+    cleanup();
+  }
+  catch(e) {
+    // HostReportErrors(e);
+  }
 }
 
 function subscriptionClosed(subscription) {
 
-    return subscription._observer === undefined;
+  return subscription._observer === undefined;
 }
 
 function closeSubscription(subscription) {
 
-    if (subscriptionClosed(subscription))
-        return;
+  if (subscriptionClosed(subscription))
+    return;
 
-    subscription._observer = undefined;
-    cleanupSubscription(subscription);
+  subscription._observer = undefined;
+  cleanupSubscription(subscription);
 }
 
 function cleanupFromSubscription(subscription) {
-    return _=> { subscription.unsubscribe(); };
+  return ()=> { subscription.unsubscribe(); };
 }
 
 function Subscription(observer, subscriber) {
-    // Assert: subscriber is callable
-    // The observer must be an object
-    this._cleanup = undefined;
-    this._observer = observer;
+  // Assert: subscriber is callable
+  // The observer must be an object
+  this._cleanup = undefined;
+  this._observer = observer;
 
-    // If the observer has a start method, call it with the subscription object
-    try {
-        let start = getMethod(observer, "start");
+  // If the observer has a start method, call it with the subscription object
+  try {
+    const start = getMethod(observer, "start");
 
-        if (start) {
-            start.call(observer, this);
-        }
+    if (start) {
+      start.call(observer, this);
     }
-    catch(e) {
-        // HostReportErrors(e);
-    }
+  }
+  catch(e) {
+    // HostReportErrors(e);
+  }
 
-    // If the observer has unsubscribed from the start method, exit
-    if (subscriptionClosed(this))
-        return;
+  // If the observer has unsubscribed from the start method, exit
+  if (subscriptionClosed(this))
+    return;
 
-    observer = new SubscriptionObserver(this);
+  // eslint-disable-next-line no-param-reassign
+  observer = new SubscriptionObserver(this);
 
-    try {
+  try {
 
-        // Call the subscriber function
-        let cleanup = subscriber.call(undefined, observer);
+    // Call the subscriber function
+    let cleanup = subscriber.call(undefined, observer);
 
-        // The return value must be undefined, null, a subscription object, or a function
-        if (!!cleanup) {
-            if (typeof cleanup.unsubscribe === "function")
-                cleanup = cleanupFromSubscription(cleanup);
-            else if (typeof cleanup !== "function")
-                throw new TypeError(cleanup + " is not a function");
+    // The return value must be undefined, null, a subscription object, or a function
+    if (!!cleanup) {
+      if (typeof cleanup.unsubscribe === "function")
+        cleanup = cleanupFromSubscription(cleanup);
+      else if (typeof cleanup !== "function")
+        throw new TypeError(`${cleanup } is not a function`);
 
-            this._cleanup = cleanup;
-        }
-
-    } catch (e) {
-
-        // If an error occurs during startup, then send the error
-        // to the observer.
-        observer.error(e);
-        return;
+      this._cleanup = cleanup;
     }
 
-    // If the stream is already finished, then perform cleanup
-    if (subscriptionClosed(this)) {
-        cleanupSubscription(this);
-    }
+  } catch (e) {
+
+    // If an error occurs during startup, then send the error
+    // to the observer.
+    observer.error(e);
+    return;
+  }
+
+  // If the stream is already finished, then perform cleanup
+  if (subscriptionClosed(this)) {
+    cleanupSubscription(this);
+  }
 }
 
 Subscription.prototype = nonEnum({
-    get closed() { return subscriptionClosed(this); },
-    unsubscribe() { closeSubscription(this); },
+  get closed() { return subscriptionClosed(this); },
+  unsubscribe() { closeSubscription(this); },
 });
 
 function SubscriptionObserver(subscription) {
-    this._subscription = subscription;
+  this._subscription = subscription;
 }
 
 SubscriptionObserver.prototype = nonEnum({
 
-    get closed() {
+  get closed() {
 
-        return subscriptionClosed(this._subscription);
-    },
+    return subscriptionClosed(this._subscription);
+  },
 
-    next(value) {
+  next(value) {
 
-        let subscription = this._subscription;
+    const subscription = this._subscription;
 
-        // If the stream if closed, then return undefined
-        if (subscriptionClosed(subscription))
-            return undefined;
+    // If the stream if closed, then return undefined
+    if (subscriptionClosed(subscription))
+      return undefined;
 
-        let observer = subscription._observer;
+    const observer = subscription._observer;
 
-        try {
-            let m = getMethod(observer, "next");
+    try {
+      const m = getMethod(observer, "next");
 
-            // If the observer doesn't support "next", then return undefined
-            if (!m)
-                return undefined;
-
-            // Send the next value to the sink
-            m.call(observer, value);
-        }
-        catch(e) {
-            // HostReportErrors(e);
-        }
+      // If the observer doesn't support "next", then return undefined
+      if (!m)
         return undefined;
-    },
 
-    error(value) {
+      // Send the next value to the sink
+      m.call(observer, value);
+    }
+    catch(e) {
+      // HostReportErrors(e);
+    }
+    return undefined;
+  },
 
-        let subscription = this._subscription;
+  error(value) {
 
-        // If the stream is closed, throw the error to the caller
-        if (subscriptionClosed(subscription)) {
-            return undefined;
-        }
+    const subscription = this._subscription;
 
-        let observer = subscription._observer;
-        subscription._observer = undefined;
+    // If the stream is closed, throw the error to the caller
+    if (subscriptionClosed(subscription)) {
+      return undefined;
+    }
 
-        try {
+    const observer = subscription._observer;
+    subscription._observer = undefined;
 
-            let m = getMethod(observer, "error");
+    try {
 
-            // If the sink does not support "complete", then return undefined
-            if (m) {
-                m.call(observer, value);
-            }
-            else {
-                // HostReportErrors(e);
-            }
-        } catch (e) {
-            // HostReportErrors(e);
-        }
+      const m = getMethod(observer, "error");
 
-        cleanupSubscription(subscription);
+      // If the sink does not support "complete", then return undefined
+      if (m) {
+        m.call(observer, value);
+      }
+      else {
+        // HostReportErrors(e);
+      }
+    } catch (e) {
+      // HostReportErrors(e);
+    }
 
-        return undefined;
-    },
+    cleanupSubscription(subscription);
 
-    complete() {
+    return undefined;
+  },
 
-        let subscription = this._subscription;
+  complete() {
 
-        // If the stream is closed, then return undefined
-        if (subscriptionClosed(subscription))
-            return undefined;
+    const subscription = this._subscription;
 
-        let observer = subscription._observer;
-        subscription._observer = undefined;
+    // If the stream is closed, then return undefined
+    if (subscriptionClosed(subscription))
+      return undefined;
 
-        try {
+    const observer = subscription._observer;
+    subscription._observer = undefined;
 
-            let m = getMethod(observer, "complete");
+    try {
 
-            // If the sink does not support "complete", then return undefined
-            if (m) {
-                m.call(observer);
-            }
-        } catch (e) {
-            // HostReportErrors(e);
-        }
+      const m = getMethod(observer, "complete");
 
-        cleanupSubscription(subscription);
+      // If the sink does not support "complete", then return undefined
+      if (m) {
+        m.call(observer);
+      }
+    } catch (e) {
+      // HostReportErrors(e);
+    }
 
-        return undefined;
-    },
+    cleanupSubscription(subscription);
+
+    return undefined;
+  },
 
 });
 
 export class Observable {
 
-    // == Fundamental ==
+  // == Fundamental ==
 
-    constructor(subscriber) {
+  constructor(subscriber) {
 
-        // The stream subscriber must be a function
-        if (typeof subscriber !== "function")
-            throw new
-            TypeError("Observable initializer must be a function");
+    // The stream subscriber must be a function
+    if (typeof subscriber !== "function")
+      throw new
+      TypeError("Observable initializer must be a function");
 
-        this._subscriber = subscriber;
+    this._subscriber = subscriber;
+  }
+
+  subscribe(observer, ...args) {
+    if (typeof observer === "function") {
+      // eslint-disable-next-line no-param-reassign
+      observer = {
+        next: observer,
+        error: args[0],
+        complete: args[1]
+      };
+    }
+    else if (typeof observer !== "object") {
+      // eslint-disable-next-line no-param-reassign
+      observer = {};
     }
 
-    subscribe(observer, ...args) {
-        if (typeof observer === "function") {
-            observer = {
-                next: observer,
-                error: args[0],
-                complete: args[1]
-            };
-        }
-        else if (typeof observer !== "object") {
-            observer = {};
-        }
+    return new Subscription(observer, this._subscriber);
+  }
 
-        return new Subscription(observer, this._subscriber);
+  [Symbol.observable]() { return this; }
+
+  // == Derived ==
+
+  static from(x) {
+
+    const C = typeof this === "function" ? this : Observable;
+
+    if (!x)
+      throw new TypeError(`${x } is not an object`);
+
+    let method = getMethod(x, Symbol.observable);
+
+    if (method) {
+
+      const observable = method.call(x);
+
+      if (Object(observable) !== observable)
+        throw new TypeError(`${observable } is not an object`);
+
+      if (observable.constructor === C)
+        return observable;
+
+      return new C(observer => observable.subscribe(observer));
     }
 
-    [Symbol.observable]() { return this; }
+    method = getMethod(x, Symbol.iterator);
 
-    // == Derived ==
+    if (!method)
+      throw new TypeError(`${x } is not observable`);
 
-    static from(x) {
+    return new C((observer) => {
 
-        let C = typeof this === "function" ? this : Observable;
+      for (const item of method.call(x)) {
 
-        if (!x)
-            throw new TypeError(x + " is not an object");
+        observer.next(item);
 
-        let method = getMethod(x, Symbol.observable);
+        if (observer.closed)
+          return;
+      }
 
-        if (method) {
+      observer.complete();
+    });
+  }
 
-            let observable = method.call(x);
+  static of(...items) {
 
-            if (Object(observable) !== observable)
-                throw new TypeError(observable + " is not an object");
+    const C = typeof this === "function" ? this : Observable;
 
-            if (observable.constructor === C)
-                return observable;
+    return new C((observer) => {
 
-            return new C(observer => observable.subscribe(observer));
-        }
+      for (let i = 0; i < items.length; ++i) {
 
-        method = getMethod(x, Symbol.iterator);
+        observer.next(items[i]);
 
-        if (!method)
-            throw new TypeError(x + " is not observable");
+        if (observer.closed)
+          return;
+      }
 
-        return new C(observer => {
-
-            for (let item of method.call(x)) {
-
-                observer.next(item);
-
-                if (observer.closed)
-                    return;
-            }
-
-            observer.complete();
-        });
-    }
-
-    static of(...items) {
-
-        let C = typeof this === "function" ? this : Observable;
-
-        return new C(observer => {
-
-            for (let i = 0; i < items.length; ++i) {
-
-                observer.next(items[i]);
-
-                if (observer.closed)
-                    return;
-            }
-
-            observer.complete();
-        });
-    }
+      observer.complete();
+    });
+  }
 
 }

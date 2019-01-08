@@ -2,6 +2,7 @@
 import { Microservices, ServiceDefinition } from ".";
 
 class Builder {
+  // eslint-disable-next-line no-use-before-define
   servicesBuilder: ServicesConfig[];
   microservicesBuilder: typeof Microservices.Builder;
 

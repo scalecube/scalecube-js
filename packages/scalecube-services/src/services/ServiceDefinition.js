@@ -1,5 +1,5 @@
 // @flow
-import { utils, ServicePromise } from ".";
+import { utils } from ".";
 type Methods = {[string]: (any)=>any};
 export class ServiceDefinition {
   serviceInterface: any;
@@ -20,16 +20,16 @@ export class ServiceDefinition {
   static getMethod(meta: any, service: any, key: string) {
     if( meta.type === "Promise" ) {
       return service;
-    } else {
-      return service[key];
     }
+    return service[key];
+
   }
   static from(service: Object) {
     const methods = {};
 
     const meta = service.constructor.meta || service.meta;
     Object.keys(meta.methods).map((key)=>{
-        methods[ key ] = ServiceDefinition.getMethod(meta, service, key);
+      methods[ key ] = ServiceDefinition.getMethod(meta, service, key);
     });
     return new ServiceDefinition(service, utils.getServiceName(service), methods);
   }
