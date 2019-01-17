@@ -10,7 +10,7 @@ class GreetingService2 implements api {
 
   hello( name: string ) {
     return new Promise(( resolve, reject ) => {
-      if ( name === undefined ) {
+      if ( !name ) {
         reject(new Error('please provide user to greet'));
       } else {
         resolve(`hey ${ name }`);
@@ -20,7 +20,7 @@ class GreetingService2 implements api {
 
   repeatToStream( ...greetings: string[] ) {
     return Observable.create(( observer ) => {
-      if ( greetings === undefined || !Array.isArray(greetings) || greetings.length === 0 ) {
+      if ( greetings.length === 0 ) {
         observer.error(new Error('please provide Array of greetings'));
         return () => {
         };

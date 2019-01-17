@@ -58,7 +58,7 @@ describe('Test Service validation requirements', () => {
 
   });
 
-  it('Service with invalid meta data (methods without asyncModel) is invalid ', () => {
+  it.only('Service with invalid meta data (methods without asyncModel) is invalid ', () => {
 
     const invalidService = {
       meta: {
