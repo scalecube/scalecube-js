@@ -1,11 +1,12 @@
 import { isObject } from './utils';
+import {PROMISE, OBSERVABLE} from './constants';
 
-export const isValidService = ( service ) => {
+export const isValidService = service => {
   const meta = service.constructor.meta || service.meta;
-  return meta ? isContainServiceName(meta.serviceName) && isValidMethods(meta.methods) : false;
+  return meta ? isValidServiceName(meta.serviceName) && isValidMethods(meta.methods) : false;
 };
 
-export const isContainServiceName = ( serviceName ) => {
+export const isValidServiceName = serviceName => {
   if ( typeof serviceName !== 'string' ) {
     console.error(new Error('Service missing serviceName:string'));
     return false;
@@ -13,25 +14,16 @@ export const isContainServiceName = ( serviceName ) => {
   return true;
 };
 
-export const isValidMethods = ( methods ) => {
-
-  if ( !methods ) {
-    console.error(new Error('Service missing methods:object'));
-    return false;
-  }
+export const isValidMethods = methods => {
   if ( !isObject(methods) ) {
     console.error(new Error('Service missing methods:object'));
     return false;
   }
-
-  return Object.keys(methods).every(method => {
-    const methodProp = methods[method];
-    return isValidMethod({ methodProp, method });
-  });
+  return Object.keys(methods).every(method => isValidMethod({ methodProp: methods[method], method }));
 };
 
-export const isValidMethod = ( { methodProp, method } ) => {
-  if ( !methodProp.type || (methodProp.type !== 'Promise' && methodProp.type !== 'Observable' )) {
+export const isValidMethod = ({ methodProp, method }) => {
+  if ( !methodProp.type || (methodProp.type !== PROMISE && methodProp.type !== OBSERVABLE) ) {
     console.error(new Error(`method ${ method } doesn't contain valid  type (asyncModel)`));
     return false;
   }

@@ -1,4 +1,5 @@
 import { Microservices } from '../../src/services';
+import {PROMISE} from '../../src/services/helpers/constants';
 import GreetingService from '../../../../examples/GreetingServiceClass/GreetingService';
 
 describe('Test Service validation requirements', () => {
@@ -86,7 +87,7 @@ describe('Test Service validation requirements', () => {
         serviceName: 'objectLiteral',
         methods: {
           hello: {
-            type: 'Promise'
+            type: PROMISE
           }
         }
       },
