@@ -58,9 +58,4 @@ export const isObservable = (obs:any) => {
     return Boolean(obs && obs[_observable] && obs === obs[_observable]())
 }
 
-export const isPromise = (obj: any) => (
-    obj instanceof Promise
-    || obj.then === "function"
-    || `${obj}` === "[object Promise]"
-    || Object.prototype.toString.call(obj) === "[object Promise]"
-);
+export const isPromise = (obj: any) => obj.then === "function" || `${obj}` === "[object Promise]";
