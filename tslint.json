@@ -1,0 +1,17 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rules": {
+    "quotemark": [true, "single"],
+    "interface-name": false,
+    "no-empty-interface": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "no-string-literal": false,
+    "no-shadowed-variable": false,
+    "no-unused-expression": [true, "allow-fast-null-checks", "allow-new"],
+    "no-empty": [true, "allow-empty-functions"],
+    "forin": false,
+    "prefer-for-of": false
+  },
+  "jsRules": true
+}
