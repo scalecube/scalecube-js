@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "lib": ["dom", "es2015", "es2017.object", "es5", "es6"],
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*"]
+}

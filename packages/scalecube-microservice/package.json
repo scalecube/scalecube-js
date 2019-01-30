@@ -1,0 +1,15 @@
+{
+  "name": "@scalecube/scalecube-microservice",
+  "version": "1.0.0",
+  "private": false,
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint -c tslint.json ./src/**/*.ts"
+  },
+  "devDependencies": {
+    "tslint": "^5.12.1",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.2.4"
+  }
+}
