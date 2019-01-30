@@ -45,7 +45,7 @@ export class ServiceCall {
                 thisMs: this.microservices,
                 meta: source.inst.service.meta || source.inst.service.constructor.meta || {}
             }))
-            .pipe(source$ => this.microservices.preRequest(source$))
+            .pipe(source$ => Observable.from(this.microservices.preRequest(source$)))
             .map(obj => obj.inst)
             .switchMap(inst => utils.isLoader(inst) ?
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
