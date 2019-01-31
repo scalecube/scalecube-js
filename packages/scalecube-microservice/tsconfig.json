@@ -12,5 +12,5 @@
     "esModuleInterop": true,
     "experimentalDecorators": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/**/*"]
 }
