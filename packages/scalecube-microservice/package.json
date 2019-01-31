@@ -10,7 +10,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "lint": "tslint -c ../../tslint.json './src/**/*.(ts|tsx|js)'"
+    "lint": "tslint -p tsconfig.json"
   },
   "jest": {
     "transform": {

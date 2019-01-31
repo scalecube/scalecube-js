@@ -6,12 +6,8 @@
     "no-empty-interface": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
-    "no-string-literal": false,
-    "no-shadowed-variable": false,
     "no-unused-expression": [true, "allow-fast-null-checks", "allow-new"],
-    "no-empty": [true, "allow-empty-functions"],
-    "forin": false,
-    "prefer-for-of": false
+    "no-empty": [true, "allow-empty-functions"]
   },
   "jsRules": true
 }
