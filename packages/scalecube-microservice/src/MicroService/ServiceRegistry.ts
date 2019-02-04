@@ -1,12 +1,14 @@
 import { ServiceEndPoint } from '../api/Service';
-import { generateIdentifier } from '../helpers/utils';
+import { generateIdentifier, isValidRawService } from '../helpers/utils';
 import { getServiceName } from '../helpers/utils';
 
 export const lookUp = ({ serviceRegistry, methodName }) => serviceRegistry[methodName];
 
 export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
-  const services = servicesFromRawService(rawService);
-  services.forEach((service) => addServiceToRegistry({ serviceRegistry, service }));
+  if (isValidRawService(rawService)) {
+    const services = servicesFromRawService(rawService);
+    services.forEach((service) => addServiceToRegistry({ serviceRegistry, service }));
+  }
 
   return { ...serviceRegistry };
 };

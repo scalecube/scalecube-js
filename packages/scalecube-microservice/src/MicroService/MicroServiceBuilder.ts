@@ -9,7 +9,7 @@ const addServices = ({ services, serviceRegistry }) => {
   );
 };
 
-const addServicesAsync = ({ loadServicesAsync, serviceRegistry }) => {
+const addServicesAsync = ({ services, serviceRegistry }) => {
   // TODO implement addServicesAsync
   return { ...serviceRegistry };
 };
