@@ -22,6 +22,7 @@ export default class MicroServiceBuilder {
   }
 
   loadServiceAsync(...asyncServices: AsyncServiceLoader[]): MicroServiceBuilder {
+    // TODO implement loadServiceAsync
     return this;
   }
 
@@ -39,10 +40,12 @@ export default class MicroServiceBuilder {
 
   asProxy() {
     return Object.freeze({
-      contract: () => {
+      contract: ({ serviceContract }) => {
         const serviceRegistry = { ...this.serviceRegistry };
         const preRequest = this.preRequest$;
         const postResponse = this.postResponse$;
+
+        //return new ProxyContext({serviceRegistry, preRequest, postResponse, serviceContract});
       },
     });
   }
