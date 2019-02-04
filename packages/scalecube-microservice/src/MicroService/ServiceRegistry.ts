@@ -50,7 +50,7 @@ const servicesFromRawService = ({ rawService }): object[] => {
           serviceName: getServiceName(rawService),
           [methodName]: rawService.meta.methods[methodName],
         },
-        [methodName]: rawService[methodName],
+        [methodName]: rawService[methodName].bind(rawService),
       };
 
       services.push(service);
