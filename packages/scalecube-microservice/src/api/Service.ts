@@ -32,3 +32,10 @@ export interface AsyncServiceLoader {
   loader: () => Promise<any>;
   serviceClass: any;
 }
+
+export interface MicroServiceConfig {
+  services: [];
+  loadServicesAsync: AsyncServiceLoader[];
+  preRequest$: any;
+  postResponse$: any;
+}

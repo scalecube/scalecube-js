@@ -10,7 +10,7 @@ export default class MicroServiceBuilder {
     this.serviceRegistry = {};
   }
 
-  services(...services: []): MicroServiceBuilder {
+  services(services: []): MicroServiceBuilder {
     this.serviceRegistry = services.map((rawService) =>
       updateServiceRegistry({
         rawService,
@@ -21,7 +21,7 @@ export default class MicroServiceBuilder {
     return this;
   }
 
-  loadServiceAsync(...asyncServices: AsyncServiceLoader[]): MicroServiceBuilder {
+  loadServiceAsync(asyncServices: AsyncServiceLoader[]): MicroServiceBuilder {
     // TODO implement loadServiceAsync
     return this;
   }
@@ -36,17 +36,5 @@ export default class MicroServiceBuilder {
     this.postResponseCallBack = postResponse$;
 
     return this;
-  }
-
-  asProxy() {
-    return Object.freeze({
-      contract: ({ serviceContract }) => {
-        const serviceRegistry = { ...this.serviceRegistry };
-        const preRequest = this.preRequest$;
-        const postResponse = this.postResponse$;
-
-        //return new ProxyContext({serviceRegistry, preRequest, postResponse, serviceContract});
-      },
-    });
   }
 }
