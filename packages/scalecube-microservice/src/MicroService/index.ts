@@ -1,28 +1,34 @@
-import MicroServiceBuilder from './MicroServiceBuilder';
-import { MicroServiceConfig } from '../api/Service';
+import { MicroServiceConfig, MicroServiceResponse } from '../api/Service';
+import { addServices, addServicesAsync } from './MicroServiceBuilder';
 
 const MicroService = Object.freeze({
-  create: ({ services, loadServicesAsync, preRequest$, postResponse$ }: MicroServiceConfig) => {
-    const microServiceBuilder = new MicroServiceBuilder();
+  create: ({ services, loadServicesAsync, preRequest$, postResponse$ }: MicroServiceConfig): MicroServiceResponse => {
+    let serviceRegistry = {};
 
-    services && Array.isArray(services) && microServiceBuilder.services(services);
+    serviceRegistry =
+      services && Array.isArray(services)
+        ? addServices({
+            services,
+            serviceRegistry,
+          })
+        : serviceRegistry;
 
-    loadServicesAsync && Array.isArray(loadServicesAsync) && microServiceBuilder.loadServiceAsync(loadServicesAsync);
+    serviceRegistry =
+      loadServicesAsync && Array.isArray(loadServicesAsync)
+        ? addServicesAsync({
+            loadServicesAsync,
+            serviceRegistry,
+          })
+        : serviceRegistry;
 
-    preRequest$ && microServiceBuilder.preRequest$(preRequest$);
-
-    postResponse$ && microServiceBuilder.postResponse$(postResponse$);
-
-    return microServiceNextStep;
-  },
-});
-
-const microServiceNextStep = Object.freeze({
-  asProxy({ serviceContract }) {
-    //return new ProxyContext({serviceRegistry, preRequest, postResponse, serviceContract});
-  },
-  asDispatcher() {
-    //TODO need to implement
+    return Object.freeze({
+      asProxy({ serviceContract }) {
+        //return new ProxyContext({serviceRegistry, preRequest, postResponse, serviceContract});
+      },
+      asDispatcher() {
+        //TODO need to implement
+      },
+    });
   },
 });
 

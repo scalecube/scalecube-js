@@ -39,3 +39,8 @@ export interface MicroServiceConfig {
   preRequest$: any;
   postResponse$: any;
 }
+
+export interface MicroServiceResponse {
+  asProxy: any;
+  asDispatcher: any;
+}
