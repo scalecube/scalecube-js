@@ -16,6 +16,7 @@ export const createProxy = ({ serviceRegistry, preRequest$, postResponse$, servi
 
 const validateMeta = ({ meta, dispatcher }) => (target, prop) => {
   if (!meta.methods[prop]) {
+    console.error(new Error(`service method ${prop} missing in the metadata`));
     return null;
   }
   const type = meta.methods[prop].type;

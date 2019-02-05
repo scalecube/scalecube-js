@@ -15,7 +15,7 @@ const MicroService = Object.freeze({
         return createProxy({ serviceRegistry, preRequest$, postResponse$, serviceContract, router });
       },
       asDispatcher({ router }) {
-        //TODO need to implement
+        // TODO need to implement
       },
     });
   },
