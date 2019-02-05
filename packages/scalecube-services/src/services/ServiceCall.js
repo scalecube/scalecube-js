@@ -44,7 +44,7 @@ export class ServiceCall {
                 }
                 throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
             })
-            .pipe(source$ => this.microservices.preRequest(source$))
+            .pipe(source$ => Observable.from(this.microservices.preRequest(source$)))
             .switchMap(({ inst }) => utils.isLoader(inst) ?
                 Observable.from(new Promise(r => inst.service.promise.then(res => r(res)))) :
                 Observable.from([inst.service])
