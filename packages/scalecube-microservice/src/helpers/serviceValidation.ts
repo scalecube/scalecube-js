@@ -1,4 +1,5 @@
-import { getServiceMeta, isObject } from './utils';
+import { isObject } from './utils';
+import { getServiceMeta } from './serviceData';
 
 export const isValidRawService = (service) => {
   const meta = getServiceMeta(service);

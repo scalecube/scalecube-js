@@ -1,6 +1,6 @@
 import { addServices, addServicesAsync } from './MicroServiceBuilder';
 import { greetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
-import { getServiceNamespace } from '../helpers/utils';
+import { getServiceNamespace } from '../helpers/serviceData';
 
 describe('MicroServiceBuilder', () => {
   it('addServices - immutability', () => {

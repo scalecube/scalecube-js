@@ -1,5 +1,6 @@
 import { ServiceEndPoint } from '../api/Service';
-import { generateIdentifier, getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/utils';
+import { generateIdentifier } from '../helpers/utils';
+import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/serviceData';
 import { isValidRawService } from '../helpers/serviceValidation';
 
 export const lookUp = ({ serviceRegistry, namespace }) => serviceRegistry[namespace];

@@ -6,7 +6,7 @@ import {
   lookUp,
   serviceEndPoint,
 } from './ServiceRegistry';
-import { getMethodName, getServiceName, getServiceNamespace } from '../helpers/utils';
+import { getMethodName, getServiceName, getServiceNamespace } from '../helpers/serviceData';
 
 describe('ServiceRegistry', () => {
   it('check serviceRegistry immutability', () => {
