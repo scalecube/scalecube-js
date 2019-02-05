@@ -6,8 +6,7 @@ export const lookUp = ({ serviceRegistry, methodName }) => serviceRegistry[metho
 
 export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
   if (isValidRawService(rawService)) {
-    const services = servicesFromRawService(rawService);
-    services.forEach((service) => addServiceToRegistry({ serviceRegistry, service }));
+    servicesFromRawService(rawService).forEach((service) => addServiceToRegistry({ serviceRegistry, service }));
   }
 
   return { ...serviceRegistry };
@@ -15,16 +14,11 @@ export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
 
 const addServiceToRegistry = ({ serviceRegistry, service }) => {
   const nameSpace = `${getServiceName(service)} ${service.methodName}`;
-  if (serviceRegistry[nameSpace]) {
-    serviceRegistry[nameSpace] = {
-      ...serviceRegistry[nameSpace],
-      ...serviceEndPoint(service),
-    };
-  } else {
-    serviceRegistry[nameSpace] = {
-      ...serviceEndPoint(service),
-    };
-  }
+
+  serviceRegistry[nameSpace] = {
+    ...(serviceRegistry[nameSpace] || {}),
+    ...serviceEndPoint(service),
+  };
 
   return { ...serviceRegistry };
 };
@@ -37,6 +31,7 @@ const serviceEndPoint = (service): ServiceEndPoint => ({
     contentTypes: [],
     tags: {},
     serviceRegistrations: {},
+    service,
   },
 });
 
@@ -46,24 +41,20 @@ const servicesFromRawService = ({ rawService }): object[] => {
   if (rawService.meta && rawService.meta.methods) {
     Object.keys(rawService.meta.methods).forEach((methodName) => {
       // raw meta - service with multiple methods
-      const service = {
+      services.push({
         identifier: `${generateIdentifier()}`,
         meta: {
           serviceName: getServiceName(rawService),
           [methodName]: rawService.meta.methods[methodName],
         },
         [methodName]: rawService[methodName].bind(rawService),
-      };
-
-      services.push(service);
+      });
     });
   } else {
-    const service = {
+    services.push({
       ...rawService,
       identifier: `${generateIdentifier()}`,
-    };
-
-    services.push(service);
+    });
   }
 
   return services;

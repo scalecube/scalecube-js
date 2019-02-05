@@ -15,7 +15,7 @@ export const createProxy = ({ serviceRegistry, preRequest$, postResponse$, servi
 };
 
 const validateMeta = ({ meta, dispatcher }) => (target, prop) => {
-  if (typeof meta.methods[prop] === 'undefined') {
+  if (!meta.methods[prop]) {
     return null;
   }
   const type = meta.methods[prop].type;

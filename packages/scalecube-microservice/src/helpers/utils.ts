@@ -1,4 +1,4 @@
-export const generateIdentifier = () => Date.now();
+export const generateIdentifier = () => `_${(Math.random() * Date.now()).toString(36).substr(2, 9)}`;
 
 export const getServiceName = (service) => getServiceMeta(service).serviceName;
 

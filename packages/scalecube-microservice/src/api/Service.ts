@@ -25,6 +25,7 @@ export interface ServiceEndPoint {
     contentTypes: string[];
     tags: object;
     serviceRegistrations: object;
+    service: object;
   };
 }
 
