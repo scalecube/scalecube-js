@@ -1,12 +1,15 @@
 import { updateServiceRegistry } from './ServiceRegistry';
 
 const addServices = ({ services, serviceRegistry }) => {
-  return services.map((rawService) =>
-    updateServiceRegistry({
-      rawService,
-      serviceRegistry,
-    })
+  services.forEach(
+    (rawService) =>
+      (serviceRegistry = updateServiceRegistry({
+        rawService,
+        serviceRegistry,
+      }))
   );
+
+  return serviceRegistry;
 };
 
 const addServicesAsync = ({ services, serviceRegistry }) => {
