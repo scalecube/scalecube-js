@@ -1,5 +1,5 @@
 // @flow
-import { Message, ServiceInstance, ServiceRegistery } from '.';
+import { Message, ServiceInstance } from '.';
 
 export interface Router {
   route(message:Message): ServiceInstance | null;

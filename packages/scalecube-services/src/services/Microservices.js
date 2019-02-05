@@ -10,11 +10,13 @@ import {
 export class Microservices {
     static Builder: Builder;
     preRequest: any;
+    postResponse: any;
     serviceRegistery: ServiceRegistery;
 
     constructor(msBuilder: Builder) {
         this.serviceRegistery = new ServiceRegistery(msBuilder.servicesConfig);
-        this.preRequest = msBuilder.myPreRequest;
+        this.preRequest = msBuilder.PreRequest;
+        this.postResponse = msBuilder.PostResponse;
         return this;
     }
 
@@ -33,27 +35,35 @@ export class Microservices {
 
 class Builder {
   servicesConfig: ServicesConfig;
-  myPreRequest: any;
+  PreRequest: any;
+  PostResponse: any;
 
   constructor() {
     this.servicesConfig = new ServicesConfig([]);
-    this.myPreRequest = (msg) => msg;
+    this.PreRequest = (msg) => msg;
+    this.PostResponse = (msg) => msg;
   }
 
   services(...services: any[]) {
-    this.servicesConfig = ServicesConfig.builder(this)
-      .services(services)
-      .create();
+    this.servicesConfig = ServicesConfig
+        .builder(this)
+        .services(services)
+        .create();
     return this;
   }
 
   serviceLoaders(...services: { loader: () => Promise<any>, serviceClass: any }[]) {
-    services.map((s) => this.services(utils.makeLoader(s.loader(), s.serviceClass)));
+    services.map((service) => this.services(utils.makeLoader(service.loader(), service.serviceClass)));
     return this;
   }
 
   preRequest(mw:any){
-    this.myPreRequest = mw;
+    this.PreRequest = mw;
+    return this;
+  }
+
+  postResponse(mw:any){
+    this.PostResponse = mw;
     return this;
   }
 
