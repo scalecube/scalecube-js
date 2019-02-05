@@ -1,29 +1,31 @@
 import { ServiceEndPoint } from '../api/Service';
-import { generateIdentifier, isValidRawService } from '../helpers/utils';
-import { getServiceName } from '../helpers/utils';
+import { generateIdentifier, getServiceMeta, isValidRawService } from '../helpers/utils';
+import { getServiceName, getServiceNamespace } from '../helpers/utils';
 
-export const lookUp = ({ serviceRegistry, methodName }) => serviceRegistry[methodName];
+export const lookUp = ({ serviceRegistry, namespace }) => serviceRegistry[namespace];
 
 export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
+  const immutableServiceRegistry = { ...serviceRegistry };
   if (isValidRawService(rawService)) {
-    servicesFromRawService(rawService).forEach((service) => addServiceToRegistry({ serviceRegistry, service }));
+    servicesFromRawService({ rawService }).forEach((service) =>
+      addServiceToRegistry({ serviceRegistry: immutableServiceRegistry, service })
+    );
   }
 
-  return { ...serviceRegistry };
+  return immutableServiceRegistry;
 };
 
-const addServiceToRegistry = ({ serviceRegistry, service }) => {
-  const nameSpace = `${getServiceName(service)} ${service.methodName}`;
-
+export const addServiceToRegistry = ({ serviceRegistry, service }) => {
+  const nameSpace = getServiceNamespace(service);
   serviceRegistry[nameSpace] = {
     ...(serviceRegistry[nameSpace] || {}),
-    ...serviceEndPoint(service),
+    ...serviceEndPoint({ service }),
   };
 
-  return { ...serviceRegistry };
+  return serviceRegistry;
 };
 
-const serviceEndPoint = (service): ServiceEndPoint => ({
+export const serviceEndPoint = ({ service }): ServiceEndPoint => ({
   [service.identifier]: {
     id: '',
     host: '',
@@ -35,27 +37,24 @@ const serviceEndPoint = (service): ServiceEndPoint => ({
   },
 });
 
-const servicesFromRawService = ({ rawService }): object[] => {
+export const servicesFromRawService = ({ rawService }): object[] => {
   const services: object[] = [];
+  const meta = getServiceMeta(rawService);
 
-  if (rawService.meta && rawService.meta.methods) {
-    Object.keys(rawService.meta.methods).forEach((methodName) => {
+  meta &&
+    meta.methods &&
+    Object.keys(meta.methods).forEach((methodName) => {
       // raw meta - service with multiple methods
       services.push({
         identifier: `${generateIdentifier()}`,
         meta: {
           serviceName: getServiceName(rawService),
-          [methodName]: rawService.meta.methods[methodName],
+          methodName,
+          ...meta.methods[methodName],
         },
         [methodName]: rawService[methodName].bind(rawService),
       });
     });
-  } else {
-    services.push({
-      ...rawService,
-      identifier: `${generateIdentifier()}`,
-    });
-  }
 
   return services;
 };

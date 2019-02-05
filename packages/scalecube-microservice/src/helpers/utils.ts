@@ -2,10 +2,14 @@ export const generateIdentifier = () => `_${(Math.random() * Date.now()).toStrin
 
 export const getServiceName = (service) => getServiceMeta(service).serviceName;
 
-export const getServiceMeta = (service) => service.meta || service.constructor.meta;
+export const getMethodName = (service) => getServiceMeta(service).methodName;
+
+export const getServiceMeta = (service) => service.constructor.meta || service.meta;
+
+export const getServiceNamespace = (service) => `${getServiceName(service)}/${getMethodName(service)}`;
 
 export const isValidRawService = (service) => {
-  const meta = service.constructor.meta || service.meta;
+  const meta = getServiceMeta(service);
   return meta ? isValidServiceName(meta.serviceName) && isValidMethods(meta.methods) : false;
 };
 
@@ -26,7 +30,7 @@ const isValidMethods = (methods) => {
 };
 
 const isValidMethod = ({ methodProp, method }) => {
-  if (!methodProp.type || (methodProp.type !== 'PROMISE' && methodProp.type !== 'OBSERVABLE')) {
+  if (!methodProp.asyncModel || (methodProp.asyncModel !== 'Promise' && methodProp.asyncModel !== 'Observable')) {
     console.error(new Error(`method ${method} doesn't contain valid  type (asyncModel)`));
     return false;
   }

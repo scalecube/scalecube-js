@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs6';
+
 export type ServiceMeta = Methods & {
   serviceName: string;
 };
@@ -37,8 +39,8 @@ export interface AsyncServiceLoader {
 export interface MicroServiceConfig {
   services: [];
   loadServicesAsync: AsyncServiceLoader[];
-  preRequest$: any;
-  postResponse$: any;
+  preRequest$: Observable<any>;
+  postResponse$: Observable<any>;
 }
 
 export interface MicroServiceResponse {
