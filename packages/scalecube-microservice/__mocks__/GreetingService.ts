@@ -30,6 +30,7 @@ greetingServiceInstance.constructor = greetingServiceInstance.constructor || {};
 // tslint:disable-next-line
 greetingServiceInstance.constructor['meta'] = {
   serviceName: 'GreetingService',
+  identifier: `${generateIdentifier()}`,
   methods: {
     hello: {
       asyncModel: 'Promise',

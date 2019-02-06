@@ -1,16 +1,11 @@
-import {
-  LookUpRequest,
-  ServiceEndPointResponse,
-  ServicesFromRawServiceRequest,
-  UpdateServiceRegistryRequest,
-} from '../api/Service';
+import { LookUpRequest, ServiceEndPointResponse } from '../api/Service';
 import { generateIdentifier } from '../helpers/utils';
 import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/serviceData';
 import { isValidRawService } from '../helpers/serviceValidation';
 
 export const lookUp = ({ serviceRegistry, namespace }: LookUpRequest) => serviceRegistry[namespace];
 
-export const updateServiceRegistry = ({ serviceRegistry, rawService }: UpdateServiceRegistryRequest) => {
+export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
   const immutableServiceRegistry = { ...serviceRegistry };
   if (isValidRawService(rawService)) {
     servicesFromRawService({ rawService }).forEach((service) =>
@@ -43,7 +38,7 @@ export const serviceEndPoint = ({ service }): ServiceEndPointResponse => ({
   },
 });
 
-export const servicesFromRawService = ({ rawService }: ServicesFromRawServiceRequest): object[] => {
+export const servicesFromRawService = ({ rawService }): object[] => {
   const services: object[] = [];
   const meta = getServiceMeta(rawService);
 
@@ -52,7 +47,7 @@ export const servicesFromRawService = ({ rawService }: ServicesFromRawServiceReq
     Object.keys(meta.methods).forEach((methodName) => {
       // raw meta - service with multiple methods
       services.push({
-        identifier: `${generateIdentifier()}`,
+        identifier: meta.identifier || `${generateIdentifier()}`,
         meta: {
           serviceName: getServiceName(rawService),
           methodName,

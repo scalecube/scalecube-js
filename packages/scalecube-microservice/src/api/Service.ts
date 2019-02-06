@@ -16,6 +16,7 @@ export interface LookUpRequest {
 
 interface RawServiceMeta {
   serviceName: string;
+  identifier?: string;
   methods: {
     [key: string]: Methods;
   };
