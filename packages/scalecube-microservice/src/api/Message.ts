@@ -1,5 +1,5 @@
 export interface Message {
   serviceName: string;
-  method: string;
+  methodName: string;
   data: any[];
 }

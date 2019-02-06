@@ -18,7 +18,7 @@ export const createProxy = ({ serviceRegistry, preRequest$, postResponse$, servi
 
 const validateMeta = ({ meta, dispatcher }) => (target, prop) => {
   if (!meta.methods[prop]) {
-    throw new Error(`service method ${prop} missing in the metadata`);
+    throw Error(`service method ${prop} missing in the metadata`);
   }
 
   const type = meta.methods[prop].type;
@@ -31,7 +31,7 @@ const validateMeta = ({ meta, dispatcher }) => (target, prop) => {
     };
 
     if (!allowedMethodTypes.includes(meta.methods[prop].type)) {
-      throw new Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
+      throw Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
     }
 
     return dispatcher({ message, type });
