@@ -1,11 +1,16 @@
-import { ServiceEndPoint } from '../api/Service';
+import {
+  LookUpRequest,
+  ServiceEndPointResponse,
+  ServicesFromRawServiceRequest,
+  UpdateServiceRegistryRequest,
+} from '../api/Service';
 import { generateIdentifier } from '../helpers/utils';
 import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/serviceData';
 import { isValidRawService } from '../helpers/serviceValidation';
 
-export const lookUp = ({ serviceRegistry, namespace }) => serviceRegistry[namespace];
+export const lookUp = ({ serviceRegistry, namespace }: LookUpRequest) => serviceRegistry[namespace];
 
-export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
+export const updateServiceRegistry = ({ serviceRegistry, rawService }: UpdateServiceRegistryRequest) => {
   const immutableServiceRegistry = { ...serviceRegistry };
   if (isValidRawService(rawService)) {
     servicesFromRawService({ rawService }).forEach((service) =>
@@ -26,7 +31,7 @@ export const addServiceToRegistry = ({ serviceRegistry, service }) => {
   return serviceRegistry;
 };
 
-export const serviceEndPoint = ({ service }): ServiceEndPoint => ({
+export const serviceEndPoint = ({ service }): ServiceEndPointResponse => ({
   [service.identifier]: {
     id: '',
     host: '',
@@ -38,7 +43,7 @@ export const serviceEndPoint = ({ service }): ServiceEndPoint => ({
   },
 });
 
-export const servicesFromRawService = ({ rawService }): object[] => {
+export const servicesFromRawService = ({ rawService }: ServicesFromRawServiceRequest): object[] => {
   const services: object[] = [];
   const meta = getServiceMeta(rawService);
 

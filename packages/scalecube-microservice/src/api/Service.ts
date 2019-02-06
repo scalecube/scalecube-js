@@ -1,10 +1,20 @@
 import { Observable } from 'rxjs6';
 
-export type ServiceMeta = Methods & {
-  serviceName: string;
-};
+export interface ServicesFromRawServiceRequest {
+  rawService: RawServiceMeta;
+}
 
-export interface RawServiceMeta {
+export interface UpdateServiceRegistryRequest {
+  rawService: RawServiceMeta;
+  serviceRegistry: object;
+}
+
+export interface LookUpRequest {
+  namespace: string;
+  serviceRegistry: object;
+}
+
+interface RawServiceMeta {
   serviceName: string;
   methods: {
     [key: string]: Methods;
@@ -16,10 +26,10 @@ interface Methods {
 }
 
 interface MethodMeta {
-  type: string; // asyncModel
+  asyncModel: string;
 }
 
-export interface ServiceEndPoint {
+export interface ServiceEndPointResponse {
   [key: string]: {
     id: string;
     host: string;
