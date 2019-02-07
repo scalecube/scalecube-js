@@ -22,19 +22,18 @@ const getHandler = ({ dispatcher, meta, microservices }) => (target, prop) => {
     if (meta.methods[prop].type !== 'Promise' && meta.methods[prop].type !== 'Observable') {
       return Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
     }
-    //
-    // const chain$ = Observable
-    //     .from([{
-    //         message,
-    //         serviceDefinition: meta,
-    //         thisMs: microservices
-    //     }])
-    //     .switchMap((req) => type === "Promise" ?
-    //         Observable.from(dispatcher.invoke(req.message)) :
-    //         dispatcher.listen(req.message)
-    //     );
 
-    return dispatcher.serviceCall(message, type);
+    const chain$ = Observable.from([
+      {
+        message,
+        serviceDefinition: meta,
+        thisMs: microservices,
+      },
+    ]).switchMap((req) =>
+      type === 'Promise' ? Observable.from(dispatcher.invoke(req.message)) : dispatcher.listen(req.message)
+    );
+
+    return type === 'Promise' ? chain$.toPromise() : chain$;
   };
 };
 

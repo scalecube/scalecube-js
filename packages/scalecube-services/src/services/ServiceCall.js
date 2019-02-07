@@ -7,7 +7,6 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/do';
 import { isObservable, isPromise } from './utils';
 
 // Private helper methods
@@ -44,9 +43,7 @@ export class ServiceCall {
         }
         throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
       })
-      .do((msg) => console.log('1', msg.message))
       .pipe((source$) => Observable.from(this.microservices.preRequest(source$)))
-      .do((msg) => console.log('2', msg.message))
       .switchMap(({ inst }) =>
         utils.isLoader(inst)
           ? Observable.from(new Promise((r) => inst.service.promise.then((res) => r(res))))
@@ -58,7 +55,6 @@ export class ServiceCall {
         }
         throw Error(`Service not found error: ${message.serviceName}.${message.method}`);
       })
-      .do((service) => console.log('3', service))
       .switchMap((service) => {
         const serviceMethod = service[message.method](...message.data);
         if (isPromise(serviceMethod)) {
@@ -71,7 +67,6 @@ export class ServiceCall {
           }
         }
       })
-      .do((response$) => console.log('4', response$))
       .pipe((response$) => {
         const inst = getInstanceOfMessage(message);
         const data = {
