@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs6';
+import { Message } from './Message';
 
 export interface ServicesFromRawServiceRequest {
   rawService: RawServiceMeta;
@@ -48,10 +49,11 @@ export interface AsyncServiceLoader {
 }
 
 export interface MicroServiceConfig {
-  services: [];
-  loadServicesAsync: AsyncServiceLoader[];
-  preRequest$: Observable<any>;
-  postResponse$: Observable<any>;
+  services: any[];
+  loadServicesAsync?: AsyncServiceLoader[];
+
+  getPreRequest$?: (req$: Observable<Message>) => any;
+  postResponse$?: (req$: Observable<Message>) => any;
 }
 
 export interface MicroServiceResponse {

@@ -2,7 +2,7 @@ import { Observable } from 'rxjs6';
 import { generateIdentifier } from '../src/helpers/utils';
 
 class GreetingService {
-  public hello(name: string) {
+  public hello(name?: string) {
     return new Promise((resolve, reject) => {
       if (!name) {
         reject(new Error('please provide user to greet'));

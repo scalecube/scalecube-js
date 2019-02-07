@@ -4,36 +4,39 @@ import { Message } from '../api/Message';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
-export const createProxy = ({ serviceRegistry, preRequest$, postResponse$, serviceContract, router }) => {
+export const createProxy = ({ serviceContract, dispatcher, proxy }) => {
   const meta = getServiceMeta(serviceContract);
-  const dispatcher = createDispatcher({ router, serviceRegistry, preRequest$, postResponse$ });
-
   return new Proxy(
     {},
     {
-      get: validateMeta({ meta, dispatcher }),
+      get: validateMeta({ meta, dispatcher, proxy }),
     }
   );
 };
 
-const validateMeta = ({ meta, dispatcher }) => (target, prop) => {
+export const proxyDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
+  return createDispatcher({ router, serviceRegistry, getPreRequest$, postResponse$ });
+};
+
+const validateMeta = ({ meta, dispatcher, proxy }) => (target, prop) => {
   if (!meta.methods[prop]) {
     throw Error(`service method ${prop} missing in the metadata`);
   }
 
-  const type = meta.methods[prop].type;
+  const { asyncModel } = meta.methods[prop];
 
   return (...data) => {
     const message: Message = {
       serviceName: meta.serviceName,
-      method: prop,
+      methodName: prop,
       data,
+      proxy,
     };
 
-    if (!allowedMethodTypes.includes(meta.methods[prop].type)) {
+    if (!allowedMethodTypes.includes(asyncModel)) {
       throw Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
     }
 
-    return dispatcher({ message, type });
+    return dispatcher({ message, type: asyncModel });
   };
 };
