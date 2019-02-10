@@ -18,12 +18,12 @@ export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, post
     const enrichMsgDataPreRequest = (msg: Message) =>
       iif(
         () => typeof getPreRequest$ === 'function',
-        of(msg).pipe(mergeMap((msg) => getPreRequest$(of(msg)))),
+        of(msg).pipe(mergeMap((req) => getPreRequest$(of(req)))),
         of(msg)
       );
 
     const enrichMsgDataPostResponse = (msg: Message) =>
-      iif(() => typeof postResponse$ === 'function', of(msg).pipe(mergeMap((msg) => postResponse$(of(msg)))), of(msg));
+      iif(() => typeof postResponse$ === 'function', of(msg).pipe(mergeMap((req) => postResponse$(of(req)))), of(msg));
 
     const invokeMethod = mergeMap((msg: Message) =>
       from(method(msg.data)).pipe(

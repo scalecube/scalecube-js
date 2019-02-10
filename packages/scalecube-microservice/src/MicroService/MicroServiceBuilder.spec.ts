@@ -1,12 +1,17 @@
 import { addServices, addServicesAsync } from './MicroServiceBuilder';
-import { greetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
+import { getGreetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
 import { getServiceNamespace } from '../helpers/serviceData';
 
 describe('MicroServiceBuilder', () => {
+  let services: any[];
+  beforeAll(() => {
+    services = [getGreetingServiceInstance('1'), getGreetingServiceInstance('2'), getGreetingServiceInstance('3')];
+  });
+
   it('addServices - immutability', () => {
     const serviceRegistry = {};
     const newServiceRegistry = addServices({
-      services: [greetingServiceInstance, greetingServiceInstance, greetingServiceInstance],
+      services,
       serviceRegistry,
     });
 
@@ -16,7 +21,7 @@ describe('MicroServiceBuilder', () => {
 
   it('addServices - add services to serviceRegistry', () => {
     const serviceRegistry = addServices({
-      services: [greetingServiceInstance, greetingServiceInstance, greetingServiceInstance],
+      services,
       serviceRegistry: {},
     });
     const helloService = createHelloService();

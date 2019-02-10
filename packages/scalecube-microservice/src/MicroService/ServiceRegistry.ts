@@ -1,5 +1,5 @@
 import { LookUpRequest, ServiceEndPointResponse } from '../api/Service';
-import { generateIdentifier } from '../helpers/utils';
+import { generateUUID } from '../helpers/utils';
 import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/serviceData';
 import { isValidRawService } from '../helpers/serviceValidation';
 
@@ -47,7 +47,7 @@ export const servicesFromRawService = ({ rawService }): object[] => {
     Object.keys(meta.methods).forEach((methodName) => {
       // raw meta - service with multiple methods
       services.push({
-        identifier: meta.identifier || `${generateIdentifier()}`,
+        identifier: meta.identifier || `${generateUUID()}`,
         meta: {
           serviceName: getServiceName(rawService),
           methodName,

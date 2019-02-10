@@ -1,4 +1,4 @@
-import { generateIdentifier } from '../src/helpers/utils';
+import { generateUUID } from '../src/helpers/utils';
 
 class AuthService {
   public auth(): Promise<boolean> {
@@ -12,7 +12,7 @@ authServiceInstance.constructor = authServiceInstance.constructor || {};
 // tslint:disable-next-line
 authServiceInstance.constructor['meta'] = {
   serviceName: 'AuthService',
-  identifier: `${generateIdentifier()}`,
+  identifier: `${generateUUID()}`,
   methods: {
     auth: {
       asyncModel: 'Promise',

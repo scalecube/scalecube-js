@@ -1,7 +1,7 @@
 import { catchError, filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
 
-import { greetingServiceInstance } from '../__mocks__/GreetingService';
+import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
 import { authServiceInstance } from '../__mocks__/AuthService';
 
 import { MicroService } from '../src/MicroService';
@@ -47,7 +47,7 @@ describe('Service proxy middleware suite', () => {
 
   it('getPreRequest$ should enrich the request - promise example', () => {
     const ms = MicroService.create({
-      services: [greetingServiceInstance, greetingServiceInstance],
+      services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           map((req) => ({
@@ -59,7 +59,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: greetingServiceInstance,
+      serviceContract: getGreetingServiceInstance(),
       router: defaultRouter,
     });
 
@@ -70,7 +70,7 @@ describe('Service proxy middleware suite', () => {
     expect.assertions(3);
 
     const ms = MicroService.create({
-      services: [greetingServiceInstance, greetingServiceInstance],
+      services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) => {
@@ -86,7 +86,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: greetingServiceInstance,
+      serviceContract: getGreetingServiceInstance(),
       router: defaultRouter,
     });
 
@@ -101,7 +101,7 @@ describe('Service proxy middleware suite', () => {
     expect.assertions(1);
 
     const ms = MicroService.create({
-      services: [greetingServiceInstance, authServiceInstance],
+      services: [getGreetingServiceInstance(), authServiceInstance],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) =>
@@ -112,7 +112,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: greetingServiceInstance,
+      serviceContract: getGreetingServiceInstance(),
       router: defaultRouter,
     });
 
@@ -122,7 +122,7 @@ describe('Service proxy middleware suite', () => {
   it('postResponse$ use proxy to create AuthService', () => {
     expect.assertions(1);
     const ms = MicroService.create({
-      services: [greetingServiceInstance, authServiceInstance],
+      services: [getGreetingServiceInstance(), authServiceInstance],
       postResponse$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) =>
@@ -133,7 +133,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: greetingServiceInstance,
+      serviceContract: getGreetingServiceInstance(),
       router: defaultRouter,
     });
 

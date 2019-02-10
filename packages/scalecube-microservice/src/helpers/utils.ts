@@ -1,3 +1,15 @@
-export const generateIdentifier = () => `_${(Math.random() * Date.now()).toString(36).substr(2, 9)}`;
+// tslint:disable
+export const generateUUID = (name?: string) => {
+  // Public Domain/MIT
+  let d = new Date().getTime();
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+    d += performance.now(); //use high-precision timer if available
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16) + name;
+  });
+};
 
 export const isObject = (obj) => obj && typeof obj === 'object' && obj.constructor === Object;

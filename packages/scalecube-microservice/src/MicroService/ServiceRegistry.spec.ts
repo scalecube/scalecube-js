@@ -1,4 +1,4 @@
-import { greetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
+import { getGreetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
 import {
   servicesFromRawService,
   addServiceToRegistry,
@@ -11,14 +11,14 @@ import { getMethodName, getServiceName, getServiceNamespace } from '../helpers/s
 describe('ServiceRegistry', () => {
   it('check serviceRegistry immutability', () => {
     const serviceRegistry = {};
-    const newServiceRegistry = updateServiceRegistry({ serviceRegistry, rawService: greetingServiceInstance });
+    const newServiceRegistry = updateServiceRegistry({ serviceRegistry, rawService: getGreetingServiceInstance() });
 
     expect(Object.keys(serviceRegistry)).toHaveLength(0);
     expect(Object.keys(newServiceRegistry)).toHaveLength(2);
   });
 
   it('servicesFromRawService - split rawService to multiple services', () => {
-    const services = servicesFromRawService({ rawService: greetingServiceInstance });
+    const services = servicesFromRawService({ rawService: getGreetingServiceInstance() });
 
     expect(Array.isArray(services)).toBe(true);
     expect(services).toHaveLength(2);
@@ -47,13 +47,13 @@ describe('ServiceRegistry', () => {
   });
 
   it('updateServiceRegistry - add rawService to serviceRegistry', () => {
-    const serviceRegistry = updateServiceRegistry({ serviceRegistry: {}, rawService: greetingServiceInstance });
+    const serviceRegistry = updateServiceRegistry({ serviceRegistry: {}, rawService: getGreetingServiceInstance() });
 
     expect(Object.keys(serviceRegistry)).toHaveLength(2);
   });
 
   it('lookUp - extract service from serviceRegistry by namespace', () => {
-    const serviceRegistry = updateServiceRegistry({ serviceRegistry: {}, rawService: greetingServiceInstance });
+    const serviceRegistry = updateServiceRegistry({ serviceRegistry: {}, rawService: getGreetingServiceInstance() });
     const namespace = getServiceNamespace(createHelloService());
     const service = lookUp({ serviceRegistry, namespace });
 

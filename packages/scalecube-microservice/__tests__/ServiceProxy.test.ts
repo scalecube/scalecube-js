@@ -1,4 +1,4 @@
-import { greetingServiceInstance } from '../__mocks__/GreetingService';
+import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
 
 import { MicroService } from '../src/MicroService';
 import { defaultRouter } from '../src/Routers/default';
@@ -9,11 +9,11 @@ describe('Service proxy', () => {
   const defaultUser = 'defaultUser';
 
   const ms = MicroService.create({
-    services: [greetingServiceInstance, greetingServiceInstance],
+    services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
   });
 
   const greetingService = ms.asProxy({
-    serviceContract: greetingServiceInstance,
+    serviceContract: getGreetingServiceInstance(),
     router: defaultRouter,
   });
 

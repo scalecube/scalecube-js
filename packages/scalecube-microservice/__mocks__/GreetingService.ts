@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs6';
-import { generateIdentifier } from '../src/helpers/utils';
+import { generateUUID } from '../src/helpers/utils';
 
 class GreetingService {
   public hello(name?: string) {
@@ -24,44 +24,38 @@ class GreetingService {
   }
 }
 
-const greetingServiceInstance = new GreetingService();
+const createHelloService = () => {
+  const greetingServiceInstance = new GreetingService();
 
-greetingServiceInstance.constructor = greetingServiceInstance.constructor || {};
-// tslint:disable-next-line
-greetingServiceInstance.constructor['meta'] = {
-  serviceName: 'GreetingService',
-  identifier: `${generateIdentifier()}`,
-  methods: {
-    hello: {
-      asyncModel: 'Promise',
-    },
-    greet$: {
-      asyncModel: 'Observable',
-    },
-  },
-};
-
-const createHelloService = () => ({
-  identifier: `${generateIdentifier()}`,
-  meta: {
-    serviceName: 'GreetingService',
-    methodName: 'hello',
-    asyncModel: 'Promise',
-  },
-  hello: greetingServiceInstance.hello.bind(greetingServiceInstance),
-});
-
-/*
-,
-  {
-    identifier: '_yy025n.4n',
+  return {
+    identifier: `${generateUUID()}`,
     meta: {
       serviceName: 'GreetingService',
-      methodName: 'greet$',
-      asyncModel: 'Observable'
+      methodName: 'hello',
+      asyncModel: 'Promise',
     },
-    'greet$': greetingServiceInstance.greet$.bind(greetingServiceInstance)
-  }
-];
- */
-export { greetingServiceInstance, createHelloService };
+    hello: greetingServiceInstance.hello.bind(greetingServiceInstance),
+  };
+};
+
+const getGreetingServiceInstance = (identifier?: string) => {
+  const greetingServiceInstance = new GreetingService();
+
+  greetingServiceInstance.constructor = { ...greetingServiceInstance.constructor } || {};
+  // tslint:disable-next-line
+  greetingServiceInstance.constructor['meta'] = {
+    serviceName: 'GreetingService',
+    identifier: `${generateUUID(identifier)}`,
+    methods: {
+      hello: {
+        asyncModel: 'Promise',
+      },
+      greet$: {
+        asyncModel: 'Observable',
+      },
+    },
+  };
+  return greetingServiceInstance;
+};
+
+export { getGreetingServiceInstance, createHelloService };
