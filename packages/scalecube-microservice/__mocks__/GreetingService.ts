@@ -12,13 +12,13 @@ class GreetingService {
     });
   }
 
-  public greet$(...greetings: string[]) {
+  public greet$(greetings: string[]) {
     return Observable.create((observer) => {
       if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
         observer.error(new Error('please provide Array of greetings'));
         return () => {};
       }
-      greetings.map((i) => observer.next(i));
+      greetings.map((i) => observer.next(`greetings ${i}`));
       return () => {};
     });
   }

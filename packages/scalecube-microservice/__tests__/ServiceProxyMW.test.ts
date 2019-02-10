@@ -2,14 +2,18 @@ import { greetingServiceInstance } from '../__mocks__/GreetingService';
 import { authServiceInstance } from '../__mocks__/AuthService';
 import { MicroService } from '../src/MicroService';
 import { defaultRouter } from '../src/Routers/default';
-import { catchError, map, mergeMap, tap } from 'rxjs6/operators';
+import { catchError, filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
 import { Message } from '../src/api/Message';
 
 describe('Service proxy middleware suite', () => {
   const defaultUser = 'defaultUser';
+  let subscriber;
+  beforeEach(() => {
+    subscriber && subscriber.unsubscribe();
+  });
 
-  it('getPreRequest$ should add enrich the request data', () => {
+  it('getPreRequest$ should enrich the request - promise example', () => {
     const ms = MicroService.create({
       services: [greetingServiceInstance, greetingServiceInstance],
       getPreRequest$: (req$: Observable<Message>) => {
@@ -30,7 +34,45 @@ describe('Service proxy middleware suite', () => {
     expect(greetingService.hello()).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
-  it('getPreRequest$ use AuthService async', () => {
+  it('getPreRequest$ should enrich the request - stream example', () => {
+    expect.assertions(3);
+    const ms = MicroService.create({
+      services: [greetingServiceInstance, greetingServiceInstance],
+      getPreRequest$: (req$: Observable<Message>) => {
+        return req$.pipe(
+          mergeMap((req) => {
+            const [data] = [...req.data];
+            return from(data).pipe(
+              map((param) => param.toString()),
+              filter((param: string) => param.includes(defaultUser)),
+              reduce((data: any[], param: string) => [...data, param], []),
+              map((data) => ({
+                ...req,
+                data,
+              }))
+            );
+          }),
+          map((req) => ({
+            ...req,
+            data: [...req.data, defaultUser],
+          }))
+        );
+      },
+    });
+
+    const greetingService = ms.asProxy({
+      serviceContract: greetingServiceInstance,
+      router: defaultRouter,
+    });
+
+    subscriber = greetingService
+      .greet$([`${defaultUser}1`, `${defaultUser}2`, 'filteredOut1', 'filteredOut2'])
+      .subscribe((res) => {
+        expect(res).toMatch(defaultUser);
+      });
+  });
+
+  it('getPreRequest$ use proxy to create AuthService', () => {
     expect.assertions(1);
     const ms = MicroService.create({
       services: [greetingServiceInstance, authServiceInstance],
@@ -70,7 +112,7 @@ describe('Service proxy middleware suite', () => {
     return expect(greetingService.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser} connected`);
   });
 
-  it('postResponse$ use AuthService async', () => {
+  it('postResponse$ use proxy to create AuthService', () => {
     expect.assertions(1);
     const ms = MicroService.create({
       services: [greetingServiceInstance, authServiceInstance],
