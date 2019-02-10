@@ -1,6 +1,8 @@
-import { ServiceCallRequest } from '../api/Dispatcher';
-import { from, iif, of } from 'rxjs6';
+import { EMPTY, from, iif, of } from 'rxjs6';
 import { switchMap, tap, map, mergeMap, catchError } from 'rxjs6/operators';
+
+import { ServiceCallRequest } from '../api/Dispatcher';
+import { Message } from '../api/Message';
 
 export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
   // TODO add ServiceCallResponse - serviceCall implementation
@@ -13,40 +15,38 @@ export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, post
     const serviceInstance = routerInstance.service;
     const method = serviceInstance[message.methodName];
 
-    const enrichMsgDataPreRequest = (msg) =>
+    const enrichMsgDataPreRequest = (msg: Message) =>
       iif(
         () => typeof getPreRequest$ === 'function',
         of(msg).pipe(mergeMap((msg) => getPreRequest$(of(msg)))),
         of(msg)
       );
 
-    const enrichMsgDataPostResponse = (msg) =>
+    const enrichMsgDataPostResponse = (msg: Message) =>
       iif(() => typeof postResponse$ === 'function', of(msg).pipe(mergeMap((msg) => postResponse$(of(msg)))), of(msg));
+
+    const invokeMethod = mergeMap((msg: Message) =>
+      from(method(msg.data)).pipe(
+        map((response) => ({
+          ...msg,
+          data: response,
+        }))
+      )
+    );
 
     const isAsyncLoader = (service) => false; // TODO asyncService
 
     const chain$ = enrichMsgDataPreRequest(message).pipe(
       catchError((err) => {
         console.warn(new Error(`dispatcher error: ${err}`));
-        return of({});
+        return EMPTY;
       }),
       switchMap((msg) =>
         isAsyncLoader(routerInstance)
           ? from(new Promise((resolve) => method(msg.data).then((data) => resolve(data))))
           : of(msg).pipe(
-              mergeMap((msg) =>
-                from(method(msg.data)).pipe(
-                  map((response) => ({
-                    response,
-                    msg,
-                  })),
-                  map((data: any) => ({
-                    ...data.msg,
-                    data: data.response,
-                  })),
-                  mergeMap(enrichMsgDataPostResponse)
-                )
-              )
+              invokeMethod,
+              mergeMap(enrichMsgDataPostResponse)
             )
       ),
       map((msg) => msg.data)

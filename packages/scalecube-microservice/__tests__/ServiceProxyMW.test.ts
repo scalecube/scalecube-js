@@ -1,9 +1,11 @@
-import { greetingServiceInstance } from '../__mocks__/GreetingService';
-import { authServiceInstance } from '../__mocks__/AuthService';
-import { MicroService } from '../src/MicroService';
-import { defaultRouter } from '../src/Routers/default';
 import { catchError, filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
+
+import { greetingServiceInstance } from '../__mocks__/GreetingService';
+import { authServiceInstance } from '../__mocks__/AuthService';
+
+import { MicroService } from '../src/MicroService';
+import { defaultRouter } from '../src/Routers/default';
 import { Message } from '../src/api/Message';
 
 describe('Service proxy middleware suite', () => {
@@ -85,17 +87,11 @@ describe('Service proxy middleware suite', () => {
                 mergeMap((req) =>
                   from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
                     map((response) => ({
-                      originalReq: req,
-                      response,
+                      ...req,
+                      data: response ? `${req.data} connected` : `${req.data} please connect`,
                     }))
                   )
-                ),
-                map((data: any) => ({
-                  ...data.originalReq,
-                  data: data.response
-                    ? `${data.originalReq.data} connected`
-                    : `${data.originalReq.data} please connect`,
-                }))
+                )
               ),
               of(req)
             )
@@ -125,17 +121,11 @@ describe('Service proxy middleware suite', () => {
                 mergeMap((req) =>
                   from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
                     map((response) => ({
-                      originalReq: req,
-                      response,
+                      ...req,
+                      data: response ? `${req.data} connected` : `${req.data} please connect`,
                     }))
                   )
-                ),
-                map((data: any) => ({
-                  ...data.originalReq,
-                  data: data.response
-                    ? `${data.originalReq.data} connected`
-                    : `${data.originalReq.data} please connect`,
-                }))
+                )
               ),
               of(req)
             )

@@ -13,7 +13,7 @@ class GreetingService {
   }
 
   public greet$(greetings: string[]) {
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
         observer.error(new Error('please provide Array of greetings'));
         return () => {};
