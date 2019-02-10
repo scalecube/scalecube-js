@@ -15,6 +15,36 @@ describe('Service proxy middleware suite', () => {
     subscriber && subscriber.unsubscribe();
   });
 
+  /**
+   * Use req.proxy go create authService,
+   * Invoke authService auth to check user authentication status.
+   * enrich the original req with the user authentication status.
+   */
+  const isUserAuthenticated = mergeMap((req: any) =>
+    from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
+      map((response) => ({
+        ...req,
+        data: response ? `${req.data} connected` : `${req.data} please connect`,
+      }))
+    )
+  );
+
+  /**
+   * Return original req with filtered data : string[]
+   * @param data
+   * @param req
+   */
+  const filterReqData = ({ data, req }) =>
+    from(data).pipe(
+      map((param) => param.toString()),
+      filter((param: string) => param.includes(defaultUser)),
+      reduce((data: any[], param: string) => [...data, param], []),
+      map((data) => ({
+        ...req,
+        data,
+      }))
+    );
+
   it('getPreRequest$ should enrich the request - promise example', () => {
     const ms = MicroService.create({
       services: [greetingServiceInstance, greetingServiceInstance],
@@ -38,23 +68,16 @@ describe('Service proxy middleware suite', () => {
 
   it('getPreRequest$ should enrich the request - stream example', () => {
     expect.assertions(3);
+
     const ms = MicroService.create({
       services: [greetingServiceInstance, greetingServiceInstance],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) => {
             const [data] = [...req.data];
-            return from(data).pipe(
-              map((param) => param.toString()),
-              filter((param: string) => param.includes(defaultUser)),
-              reduce((data: any[], param: string) => [...data, param], []),
-              map((data) => ({
-                ...req,
-                data,
-              }))
-            );
+            return filterReqData({ data, req });
           }),
-          map((req) => ({
+          map((req: any) => ({
             ...req,
             data: [...req.data, defaultUser],
           }))
@@ -76,25 +99,13 @@ describe('Service proxy middleware suite', () => {
 
   it('getPreRequest$ use proxy to create AuthService', () => {
     expect.assertions(1);
+
     const ms = MicroService.create({
       services: [greetingServiceInstance, authServiceInstance],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) =>
-            iif(
-              () => req.serviceName.toLowerCase() !== 'authservice',
-              of(req).pipe(
-                mergeMap((req) =>
-                  from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
-                    map((response) => ({
-                      ...req,
-                      data: response ? `${req.data} connected` : `${req.data} please connect`,
-                    }))
-                  )
-                )
-              ),
-              of(req)
-            )
+            iif(() => req.serviceName.toLowerCase() !== 'authservice', of(req).pipe(isUserAuthenticated), of(req))
           )
         );
       },
@@ -115,20 +126,7 @@ describe('Service proxy middleware suite', () => {
       postResponse$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) =>
-            iif(
-              () => req.serviceName.toLowerCase() !== 'authservice',
-              of(req).pipe(
-                mergeMap((req) =>
-                  from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
-                    map((response) => ({
-                      ...req,
-                      data: response ? `${req.data} connected` : `${req.data} please connect`,
-                    }))
-                  )
-                )
-              ),
-              of(req)
-            )
+            iif(() => req.serviceName.toLowerCase() !== 'authservice', of(req).pipe(isUserAuthenticated), of(req))
           )
         );
       },
