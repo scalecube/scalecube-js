@@ -47,7 +47,7 @@ describe('Service proxy middleware suite', () => {
 
   it('getPreRequest$ should enrich the request - promise example', () => {
     const ms = MicroService.create({
-      services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
+      services: [getGreetingServiceInstance(), getGreetingServiceInstance()],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           map((req) => ({
@@ -70,7 +70,7 @@ describe('Service proxy middleware suite', () => {
     expect.assertions(3);
 
     const ms = MicroService.create({
-      services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
+      services: [getGreetingServiceInstance(), getGreetingServiceInstance()],
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) => {

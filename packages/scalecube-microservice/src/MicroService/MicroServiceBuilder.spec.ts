@@ -5,7 +5,7 @@ import { getServiceNamespace } from '../helpers/serviceData';
 describe('MicroServiceBuilder', () => {
   let services: any[];
   beforeAll(() => {
-    services = [getGreetingServiceInstance('1'), getGreetingServiceInstance('2'), getGreetingServiceInstance('3')];
+    services = [getGreetingServiceInstance(), getGreetingServiceInstance(), getGreetingServiceInstance()];
   });
 
   it('addServices - immutability', () => {

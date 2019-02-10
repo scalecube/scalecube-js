@@ -38,14 +38,14 @@ const createHelloService = () => {
   };
 };
 
-const getGreetingServiceInstance = (identifier?: string) => {
+const getGreetingServiceInstance = () => {
   const greetingServiceInstance = new GreetingService();
 
   greetingServiceInstance.constructor = { ...greetingServiceInstance.constructor } || {};
   // tslint:disable-next-line
   greetingServiceInstance.constructor['meta'] = {
     serviceName: 'GreetingService',
-    identifier: `${generateUUID(identifier)}`,
+    identifier: `${generateUUID()}`,
     methods: {
       hello: {
         asyncModel: 'Promise',

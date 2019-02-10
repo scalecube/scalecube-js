@@ -9,7 +9,7 @@ describe('Service proxy', () => {
   const defaultUser = 'defaultUser';
 
   const ms = MicroService.create({
-    services: [getGreetingServiceInstance('1'), getGreetingServiceInstance('2')],
+    services: [getGreetingServiceInstance(), getGreetingServiceInstance()],
   });
 
   const greetingService = ms.asProxy({
