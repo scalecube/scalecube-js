@@ -24,7 +24,7 @@ export const fakeService = {
     methodName: 'fakeMethod',
     asyncModel: 'Promise',
   },
-  fakeMethod: (data) => Promise.resolve({ request: data, response: fakeMethodResponse }),
+  fakeMethod: (data) => Promise.resolve(fakeMethodResponse),
 };
 
 export const fakeMessage = {

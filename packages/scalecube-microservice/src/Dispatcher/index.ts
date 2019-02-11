@@ -3,7 +3,7 @@ import { switchMap, map, catchError } from 'rxjs6/operators';
 
 import { ServiceCallRequest } from '../api/Dispatcher';
 import { Message } from '../api/Message';
-import { enrichMsgDataPostResponse$, enrichMsgDataPreRequest$, processMethodBaseOnLaziness$ } from './actions';
+import { processMethodBaseOnLaziness$, enrichMsgData$ } from './actions';
 
 export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
   return ({ message, type }: ServiceCallRequest) => {
@@ -15,13 +15,13 @@ export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, post
     const serviceInstance = routerInstance.service;
     const method = serviceInstance[message.methodName];
 
-    const chain$ = enrichMsgDataPreRequest$({ msg: message, getPreRequest$ }).pipe(
+    const chain$ = enrichMsgData$({ msg: message, enrichMethod: getPreRequest$ }).pipe(
       catchError((err) => {
         console.warn(new Error(`dispatcher error: ${err}`));
         return EMPTY;
       }),
       switchMap((msg) => processMethodBaseOnLaziness$({ serviceInstance, method, msg })),
-      switchMap((msg) => enrichMsgDataPostResponse$({ msg, postResponse$ })),
+      switchMap((msg) => enrichMsgData$({ msg, enrichMethod: postResponse$ })),
       map((msg: Message) => msg.data)
     );
 
