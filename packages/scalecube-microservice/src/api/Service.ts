@@ -49,11 +49,15 @@ export interface AsyncServiceLoader {
 }
 
 export interface MicroServiceConfig {
-  services: any[];
-  loadServicesAsync?: AsyncServiceLoader[];
-
+  services?: any[];
+  lazyServices?: LazyService[];
   getPreRequest$?: (req$: Observable<Message>) => any;
   postResponse$?: (req$: Observable<Message>) => any;
+}
+
+interface LazyService {
+  loader: any;
+  meta: any;
 }
 
 export interface MicroServiceResponse {

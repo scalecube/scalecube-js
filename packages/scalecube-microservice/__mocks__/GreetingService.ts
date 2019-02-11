@@ -59,3 +59,5 @@ const getGreetingServiceInstance = () => {
 };
 
 export { getGreetingServiceInstance, createHelloService };
+
+export default GreetingService;

@@ -1,4 +1,4 @@
-import { addServices, addServicesAsync } from './MicroServiceBuilder';
+import { addServices, addServicesLazy } from './MicroServiceBuilder';
 import { getGreetingServiceInstance, createHelloService } from '../../__mocks__/GreetingService';
 import { getServiceNamespace } from '../helpers/serviceData';
 

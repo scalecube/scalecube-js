@@ -5,10 +5,10 @@ import { isValidRawService } from '../helpers/serviceValidation';
 
 export const lookUp = ({ serviceRegistry, namespace }: LookUpRequest) => serviceRegistry[namespace];
 
-export const updateServiceRegistry = ({ serviceRegistry, rawService }) => {
+export const updateServiceRegistry = ({ serviceRegistry, rawService, isLazy }) => {
   const immutableServiceRegistry = { ...serviceRegistry };
   if (isValidRawService(rawService)) {
-    servicesFromRawService({ rawService }).forEach((service) =>
+    servicesFromRawService({ rawService, isLazy }).forEach((service) =>
       addServiceToRegistry({ serviceRegistry: immutableServiceRegistry, service })
     );
   }
@@ -38,7 +38,7 @@ export const serviceEndPoint = ({ service }): ServiceEndPointResponse => ({
   },
 });
 
-export const servicesFromRawService = ({ rawService }): object[] => {
+export const servicesFromRawService = ({ rawService, isLazy }): object[] => {
   const services: object[] = [];
   const meta = getServiceMeta(rawService);
 
@@ -49,11 +49,12 @@ export const servicesFromRawService = ({ rawService }): object[] => {
       services.push({
         identifier: meta.identifier || `${generateUUID()}`,
         meta: {
+          isLazy,
           serviceName: getServiceName(rawService),
           methodName,
           ...meta.methods[methodName],
         },
-        [methodName]: rawService[methodName].bind(rawService),
+        [methodName]: isLazy ? rawService.loader : rawService[methodName],
       });
     });
 
