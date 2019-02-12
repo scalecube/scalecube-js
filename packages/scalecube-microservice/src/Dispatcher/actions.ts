@@ -1,6 +1,6 @@
 import { getServiceMeta } from '../helpers/serviceData';
-import { map, mergeMap, tap } from 'rxjs6/operators';
-import { from, iif, Observable, of } from 'rxjs6';
+import { catchError, map, mergeMap, tap } from 'rxjs6/operators';
+import { EMPTY, from, iif, Observable, of } from 'rxjs6';
 import { Message } from '../api/Message';
 
 /**
@@ -19,7 +19,7 @@ export const isAsyncLoader = (service): boolean => {
  */
 export const processMethodBaseOnLaziness$ = ({ serviceInstance, method, msg }): Observable<Message> =>
   isAsyncLoader(serviceInstance)
-    ? handleLazyService$({ method, msg, context: serviceInstance })
+    ? handleLazyService$({ loader: method, msg, context: serviceInstance })
     : invokeMethod$({ method, msg, context: serviceInstance });
 /**
  * Import the lazy service
@@ -27,8 +27,12 @@ export const processMethodBaseOnLaziness$ = ({ serviceInstance, method, msg }): 
  * @param context
  * @param msg
  */
-export const handleLazyService$ = ({ method, context, msg }): Observable<Message> =>
-  from(method()).pipe(
+export const handleLazyService$ = ({ loader, context, msg }): Observable<Message> =>
+  from(loader()).pipe(
+    catchError((err) => {
+      console.warn(new Error(`dispatcher handleLazyService$ error: ${err}`));
+      return EMPTY;
+    }),
     mergeMap(
       (importedService: any): Observable<Message> =>
         invokeMethod$({ msg, method: importedService[msg.methodName], context })

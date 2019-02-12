@@ -30,11 +30,15 @@ describe('Dispatcher actions', () => {
     });
   });
 
-  it('Test handleLazyService$({ method, context, msg}): Observable<Message>', (done) => {
+  it('Test handleLazyService$({ loader, context, msg}): Observable<Message>', (done) => {
     expect.assertions(1);
     const method = fakeLazyService.fakeMethod.loader;
 
-    subscriber = handleLazyService$({ method, context: fakeService, msg: fakeMessage }).subscribe((msg: Message) => {
+    subscriber = handleLazyService$({
+      loader: method,
+      context: fakeService,
+      msg: fakeMessage,
+    }).subscribe((msg: Message) => {
       expect(msg.data).toEqual(fakeMethodResponse);
       done();
     });

@@ -20,7 +20,7 @@ export const proxyDispatcher = ({ router, serviceRegistry, getPreRequest$, postR
 
 const validateMeta = ({ meta, dispatcher, proxy }) => (target, prop) => {
   if (!meta.methods[prop]) {
-    const error = Error(`service method ${prop} missing in the metadata`);
+    const error = Error(`service method '${prop}' missing in the metadata`);
     console.warn(error);
     throw error;
   }

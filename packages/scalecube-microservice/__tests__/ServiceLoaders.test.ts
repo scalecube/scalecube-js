@@ -4,6 +4,7 @@ import { defaultRouter } from '../src/Routers/default';
 
 describe('Service Loaders suite', () => {
   const defaultUser = 'defaultUser';
+  const importGreetingService = import('../__mocks__/GreetingService');
 
   describe('Service Loaders', () => {
     it('Import services - lazy', () => {
@@ -12,14 +13,14 @@ describe('Service Loaders suite', () => {
         lazyServices: [
           {
             loader: () =>
-              import('../__mocks__/GreetingService')
+              importGreetingService
                 .then((service: any) => new service.default())
                 .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
             meta: getGreetingServiceInstance().constructor['meta'],
           },
           {
             loader: () =>
-              import('../__mocks__/GreetingService')
+              importGreetingService
                 .then((service: any) => new service.default())
                 .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
             meta: getGreetingServiceInstance().constructor['meta'],
@@ -35,27 +36,96 @@ describe('Service Loaders suite', () => {
       return expect(greetingService.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
     });
 
-    // it('Greeting should be loaded without calling it', () => {
-    //
-    //   const mockFn = jest.fn((GreetingService) => new GreetingService.default());
-    //   const greetingService = Microservices
-    //     .builder()
-    //     .serviceLoaders(
-    //       {
-    //         loader: () => new Promise((resolve, reject) =>
-    //           ImportGreetingService.then((GreetingService) => resolve(mockFn(GreetingService))).catch(e => reject(e))
-    //         ),
-    //         serviceClass: GreetingService
-    //       })
-    //     .build()
-    //     .proxy()
-    //     .api(GreetingService)
-    //     .create();
-    //
-    //   expect.assertions(1);
-    //   return ImportGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(1));
-    // });
+    it('Test lazyService been import only when needed', (done) => {
+      expect.assertions(3);
+
+      const mockFn = jest.fn((GreetingService) => new GreetingService.default());
+      const lazyServices = [
+        {
+          loader: () =>
+            importGreetingService
+              .then((GreetingService) => mockFn(GreetingService))
+              .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
+          meta: getGreetingServiceInstance().constructor['meta'],
+        },
+        {
+          loader: () =>
+            importGreetingService
+              .then((GreetingService) => mockFn(GreetingService))
+              .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
+          meta: getGreetingServiceInstance().constructor['meta'],
+        },
+      ];
+
+      const greetingService = MicroService.create({
+        lazyServices,
+      }).asProxy({
+        serviceContract: getGreetingServiceInstance(),
+        router: defaultRouter,
+      });
+
+      importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(0));
+      greetingService.hello(defaultUser).then((res) => {
+        importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(1));
+        expect(res).toEqual(`Hello ${defaultUser}`);
+        done();
+      });
+    });
   });
+
+  describe('Isolate testing with console logs', () => {
+    console.warn = jest.fn(); // disable validation logs while doing this test
+
+    it('Use lazyService to load service base on logic', async (done) => {
+      expect.assertions(7);
+
+      const mockFn = jest.fn((GreetingService) => new GreetingService.default());
+
+      const lazyServices = [
+        {
+          loader: (() => {
+            let cache = 0;
+            return () =>
+              new Promise((resolve, reject) => {
+                cache++;
+                if (cache <= 2) {
+                  importGreetingService
+                    .then((GreetingService) => resolve(mockFn(GreetingService)))
+                    .catch((err) => console.error(new Error(`Unable to import the service ${err}`)));
+                } else {
+                  reject({});
+                }
+              });
+          })(),
+          meta: getGreetingServiceInstance().constructor['meta'],
+        },
+      ];
+
+      const greetingService = MicroService.create({
+        lazyServices,
+      }).asProxy({
+        serviceContract: getGreetingServiceInstance(),
+        router: defaultRouter,
+      });
+
+      importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(0));
+      const greetings1 = await greetingService.hello(defaultUser);
+      importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(1));
+      expect(greetings1).toEqual(`Hello ${defaultUser}`);
+
+      const greetings2 = await greetingService.hello(defaultUser);
+      importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(2));
+      expect(greetings2).toEqual(`Hello ${defaultUser}`);
+
+      const greetings3 = await greetingService.hello(defaultUser);
+      expect(greetings3).not.toBeDefined();
+
+      importGreetingService.then(() => expect(mockFn.mock.calls.length).toBe(2));
+
+      done();
+    });
+  });
+
   // describe('onDemand Service Loaders', () => {
   //   it('Greeting.hello should greet Idan with hello', () => {
   //     const greetingService = Microservices
