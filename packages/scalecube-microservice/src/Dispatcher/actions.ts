@@ -45,7 +45,7 @@ export const handleLazyService$ = ({ loader, context, msg }): Observable<Message
  * @param msg
  */
 export const invokeMethod$ = ({ method, context, msg }): Observable<Message> =>
-  from(method.call(context, msg.data)).pipe(
+  from(method.call(context, ...msg.data)).pipe(
     map((response) => ({
       ...msg,
       data: response,

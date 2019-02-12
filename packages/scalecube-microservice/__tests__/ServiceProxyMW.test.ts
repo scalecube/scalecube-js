@@ -1,4 +1,4 @@
-import { filter, map, mergeMap, reduce } from 'rxjs6/operators';
+import { filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
 
 import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
@@ -79,7 +79,7 @@ describe('Service proxy middleware suite', () => {
           }),
           map((req: any) => ({
             ...req,
-            data: [...req.data, defaultUser],
+            data: [[...req.data, defaultUser]],
           }))
         );
       },
@@ -105,7 +105,24 @@ describe('Service proxy middleware suite', () => {
       getPreRequest$: (req$: Observable<Message>) => {
         return req$.pipe(
           mergeMap((req) =>
-            iif(() => req.serviceName.toLowerCase() !== 'authservice', of(req).pipe(isUserAuthenticated), of(req))
+            iif(
+              () => req.serviceName.toLowerCase() !== 'authservice',
+              of(req).pipe(
+                map((req) => {
+                  const [data] = req.data;
+                  return {
+                    ...req,
+                    data,
+                  };
+                }),
+                isUserAuthenticated,
+                map((req: Message) => ({
+                  ...req,
+                  data: [req.data],
+                }))
+              ),
+              of(req)
+            )
           )
         );
       },
