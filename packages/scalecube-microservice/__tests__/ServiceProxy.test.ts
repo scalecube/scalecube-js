@@ -25,7 +25,7 @@ describe('Service proxy', () => {
     try {
       greetingService.fakeHello();
     } catch (e) {
-      expect(e.message).toEqual('service method fakeHello missing in the metadata');
+      expect(e.message).toEqual(`service method 'fakeHello' missing in the metadata`);
     }
   });
 });

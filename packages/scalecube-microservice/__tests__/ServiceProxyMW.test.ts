@@ -1,4 +1,4 @@
-import { catchError, filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
+import { filter, map, mergeMap, reduce } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
 
 import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
