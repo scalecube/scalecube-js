@@ -1,5 +1,5 @@
 import { MicroService } from '../src/MicroService';
-import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
+import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
 import { defaultRouter } from '../src/Routers/default';
 
 describe('Service Loaders suite', () => {
@@ -16,20 +16,20 @@ describe('Service Loaders suite', () => {
               importGreetingService
                 .then((service: any) => new service.default())
                 .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
-            meta: getGreetingServiceInstance().constructor['meta'],
+            meta: greetingServiceMeta,
           },
           {
             loader: () =>
               importGreetingService
                 .then((service: any) => new service.default())
                 .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
-            meta: getGreetingServiceInstance().constructor['meta'],
+            meta: greetingServiceMeta,
           },
         ],
       });
 
       const greetingService = ms.asProxy({
-        serviceContract: getGreetingServiceInstance(),
+        serviceContract: greetingServiceMeta,
         router: defaultRouter,
       });
 
@@ -46,21 +46,21 @@ describe('Service Loaders suite', () => {
             importGreetingService
               .then((GreetingService) => mockFn(GreetingService))
               .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
-          meta: getGreetingServiceInstance().constructor['meta'],
+          meta: greetingServiceMeta,
         },
         {
           loader: () =>
             importGreetingService
               .then((GreetingService) => mockFn(GreetingService))
               .catch((err) => console.error(new Error(`Unable to import the service ${err}`))),
-          meta: getGreetingServiceInstance().constructor['meta'],
+          meta: greetingServiceMeta,
         },
       ];
 
       const greetingService = MicroService.create({
         lazyServices,
       }).asProxy({
-        serviceContract: getGreetingServiceInstance(),
+        serviceContract: greetingServiceMeta,
         router: defaultRouter,
       });
 
@@ -97,14 +97,14 @@ describe('Service Loaders suite', () => {
                 }
               });
           })(),
-          meta: getGreetingServiceInstance().constructor['meta'],
+          meta: greetingServiceMeta,
         },
       ];
 
       const greetingService = MicroService.create({
         lazyServices,
       }).asProxy({
-        serviceContract: getGreetingServiceInstance(),
+        serviceContract: greetingServiceMeta,
         router: defaultRouter,
       });
 

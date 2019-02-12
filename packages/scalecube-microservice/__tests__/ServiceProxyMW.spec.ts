@@ -1,8 +1,8 @@
 import { filter, map, mergeMap, reduce, tap } from 'rxjs6/operators';
 import { from, iif, Observable, of } from 'rxjs6';
 
-import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
-import { authServiceInstance } from '../__mocks__/AuthService';
+import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
+import { authServiceInstance, authServiceMeta } from '../__mocks__/AuthService';
 
 import { MicroService } from '../src/MicroService';
 import { defaultRouter } from '../src/Routers/default';
@@ -21,7 +21,7 @@ describe('Service proxy middleware suite', () => {
    * enrich the original req with the user authentication status.
    */
   const isUserAuthenticated = mergeMap((req: any) =>
-    from(req.proxy({ serviceContract: authServiceInstance }).auth()).pipe(
+    from(req.proxy({ serviceContract: authServiceMeta }).auth()).pipe(
       map((response) => ({
         ...req,
         data: response ? `${req.data} connected` : `${req.data} please connect`,
@@ -59,7 +59,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: getGreetingServiceInstance(),
+      serviceContract: greetingServiceMeta,
       router: defaultRouter,
     });
 
@@ -86,7 +86,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: getGreetingServiceInstance(),
+      serviceContract: greetingServiceMeta,
       router: defaultRouter,
     });
 
@@ -129,7 +129,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: getGreetingServiceInstance(),
+      serviceContract: greetingServiceMeta,
       router: defaultRouter,
     });
 
@@ -150,7 +150,7 @@ describe('Service proxy middleware suite', () => {
     });
 
     const greetingService = ms.asProxy({
-      serviceContract: getGreetingServiceInstance(),
+      serviceContract: greetingServiceMeta,
       router: defaultRouter,
     });
 

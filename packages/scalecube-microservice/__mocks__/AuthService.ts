@@ -6,13 +6,8 @@ class AuthService {
   }
 }
 
-const authServiceInstance = new AuthService();
-
-authServiceInstance.constructor = authServiceInstance.constructor || {};
-// tslint:disable-next-line
-authServiceInstance.constructor['meta'] = {
+const authServiceMeta = {
   serviceName: 'AuthService',
-  identifier: `${generateUUID()}`,
   methods: {
     auth: {
       asyncModel: 'Promise',
@@ -20,4 +15,13 @@ authServiceInstance.constructor['meta'] = {
   },
 };
 
-export { authServiceInstance };
+const authServiceInstance = new AuthService();
+
+authServiceInstance.constructor = authServiceInstance.constructor || {};
+// tslint:disable-next-line
+authServiceInstance.constructor['meta'] = {
+  identifier: `${generateUUID()}`,
+  ...authServiceMeta,
+};
+
+export { authServiceInstance, authServiceMeta };

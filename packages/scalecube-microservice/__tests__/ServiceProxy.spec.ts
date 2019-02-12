@@ -1,4 +1,4 @@
-import { getGreetingServiceInstance } from '../__mocks__/GreetingService';
+import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
 
 import { MicroService } from '../src/MicroService';
 import { defaultRouter } from '../src/Routers/default';
@@ -13,7 +13,7 @@ describe('Service proxy', () => {
   });
 
   const greetingService = ms.asProxy({
-    serviceContract: getGreetingServiceInstance(),
+    serviceContract: greetingServiceMeta,
     router: defaultRouter,
   });
 

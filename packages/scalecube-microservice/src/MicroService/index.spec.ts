@@ -1,5 +1,5 @@
 import { MicroService } from './index';
-import { getGreetingServiceInstance } from '../../__mocks__/GreetingService';
+import { getGreetingServiceInstance, greetingServiceMeta } from '../../__mocks__/GreetingService';
 import { defaultRouter } from '../Routers/default';
 
 describe('Testing MicroService', () => {
@@ -23,7 +23,7 @@ describe('Testing MicroService', () => {
 
   describe('Creating Proxy from MicroService', () => {
     const greetingService = ms.asProxy({
-      serviceContract: getGreetingServiceInstance(),
+      serviceContract: greetingServiceMeta,
       router: defaultRouter,
     });
 
@@ -44,7 +44,7 @@ describe('Testing MicroService', () => {
       router: defaultRouter,
     });
 
-    it('Invoke method from dispatcher', () => {
+    it('Invoke method from dispatcher', (done) => {
       const message = {
         serviceName: 'GreetingService',
         methodName: 'hello',
@@ -52,7 +52,10 @@ describe('Testing MicroService', () => {
         proxy: null,
       };
 
-      expect(greetingDispatcher.invoke(message).resolves.toEqual(`Hello ${defaultUser}`));
+      greetingDispatcher.invoke(message).then((response) => {
+        expect(response).toEqual(`Hello ${defaultUser}`);
+        done();
+      });
     });
 
     it('Listen to method from dispatcher', () => {

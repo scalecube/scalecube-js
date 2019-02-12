@@ -38,26 +38,30 @@ const createHelloService = () => {
   };
 };
 
+const greetingServiceMeta = {
+  serviceName: 'GreetingService',
+  methods: {
+    hello: {
+      asyncModel: 'Promise',
+    },
+    greet$: {
+      asyncModel: 'Observable',
+    },
+  },
+};
+
 const getGreetingServiceInstance = () => {
   const greetingServiceInstance = new GreetingService();
 
   greetingServiceInstance.constructor = { ...greetingServiceInstance.constructor } || {};
   // tslint:disable-next-line
   greetingServiceInstance.constructor['meta'] = {
-    serviceName: 'GreetingService',
     identifier: `${generateUUID()}`,
-    methods: {
-      hello: {
-        asyncModel: 'Promise',
-      },
-      greet$: {
-        asyncModel: 'Observable',
-      },
-    },
+    ...greetingServiceMeta,
   };
   return greetingServiceInstance;
 };
 
-export { getGreetingServiceInstance, createHelloService };
+export { getGreetingServiceInstance, createHelloService, greetingServiceMeta };
 
 export default GreetingService;

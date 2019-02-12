@@ -1,15 +1,13 @@
-import { getServiceMeta } from '../helpers/serviceData';
 import { createDispatcher } from '../Dispatcher';
 import { Message } from '../api/Message';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
 export const createProxy = ({ serviceContract, dispatcher, proxy }) => {
-  const meta = getServiceMeta(serviceContract);
   return new Proxy(
     {},
     {
-      get: validateMeta({ meta, dispatcher, proxy }),
+      get: validateMeta({ meta: serviceContract, dispatcher, proxy }),
     }
   );
 };
