@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
-    "test": "yarn run lint && jest"
+    "test": "yarn run lint && jest --collect-coverage",
+    "test-watch": "yarn run lint && jest --collect-coverage --watchAll"
   },
   "jest": {
     "transform": {
