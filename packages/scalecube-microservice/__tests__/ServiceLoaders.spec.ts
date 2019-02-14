@@ -10,6 +10,7 @@ describe('Service Loaders suite', () => {
     it('Import services - lazy', () => {
       expect.assertions(1);
       const ms = MicroService.create({
+        services: []
         lazyServices: [
           {
             loader: () =>

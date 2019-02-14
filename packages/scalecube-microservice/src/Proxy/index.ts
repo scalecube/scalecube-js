@@ -7,7 +7,7 @@ export const createProxy = ({ serviceContract, dispatcher, proxy }) => {
   return new Proxy(
     {},
     {
-      get: validateMeta({ meta: serviceContract, dispatcher, proxy }),
+      get: prepareServiceCall({ meta: serviceContract, dispatcher, proxy }),
     }
   );
 };
@@ -16,7 +16,7 @@ export const proxyDispatcher = ({ router, serviceRegistry, getPreRequest$, postR
   return createDispatcher({ router, serviceRegistry, getPreRequest$, postResponse$ });
 };
 
-const validateMeta = ({ meta, dispatcher, proxy }) => (target, prop) => {
+const prepareServiceCall = ({ meta, dispatcher, proxy }) => (target, prop) => {
   if (!meta.methods[prop]) {
     const error = Error(`service method '${prop}' missing in the metadata`);
     console.warn(error);
