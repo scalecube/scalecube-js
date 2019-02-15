@@ -1,43 +1,36 @@
-import { createDispatcher } from '../Dispatcher';
-import { Message } from '../api/Message';
+import Message from '../api2/Message';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
-export const createProxy = ({ serviceContract, dispatcher, proxy }) => {
+export const createProxy = ({ serviceDefinition, dispatcher, microservice }) => {
   return new Proxy(
     {},
     {
-      get: prepareServiceCall({ meta: serviceContract, dispatcher, proxy }),
+      get: preDispatch({ serviceDefinition, dispatcher, microservice }),
     }
   );
 };
 
-export const proxyDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
-  return createDispatcher({ router, serviceRegistry, getPreRequest$, postResponse$ });
-};
+const preDispatch = ({ serviceDefinition, dispatcher, microservice }) => (target, prop) => {
+  console.log('preDispatch target', target);
+  console.log('preDispatch prop', prop);
 
-const prepareServiceCall = ({ meta, dispatcher, proxy }) => (target, prop) => {
-  console.log('prepareServiceCall target', target);
-  console.log('prepareServiceCall prop', prop);
-
-  if (!meta.methods[prop]) {
-    const error = Error(`service method '${prop}' missing in the metadata`);
-    console.warn(error);
-    throw error;
+  if (!serviceDefinition.methods[prop]) {
+    throw new Error(`service method '${prop}' missing in the metadata`);
   }
 
-  const { asyncModel } = meta.methods[prop];
+  const { asyncModel } = serviceDefinition.methods[prop];
 
   return (...data) => {
     const message: Message = {
-      serviceName: meta.serviceName,
+      serviceName: serviceDefinition.serviceName,
       methodName: prop,
       data,
-      proxy,
+      microservice,
     };
 
     if (!allowedMethodTypes.includes(asyncModel)) {
-      throw Error(`service method unknown type error: ${meta.serviceName}.${prop}`);
+      throw Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
     }
 
     return dispatcher({ message, type: asyncModel });

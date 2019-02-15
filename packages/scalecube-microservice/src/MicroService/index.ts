@@ -1,23 +1,25 @@
-import { MicroServiceConfig, MicroServiceResponse } from '../api/Service';
 import { addServices, addServicesLazy } from './MicroServiceBuilder';
-import { createProxy, proxyDispatcher } from '../Proxy';
+import { createProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createDispatcher } from '../Dispatcher';
-import { Message } from '../api/Message';
+import Microservices from '../api2/Microservices';
+import Message from '../api2/Message';
+import MicroserviceConfig from '../api2/MicroserviceConfig';
+import Microservice from '../api2/Microservice';
 
-export const MicroService = Object.freeze({
-  create: ({ services, lazyServices, getPreRequest$, postResponse$ }: MicroServiceConfig): MicroServiceResponse => {
+export const Microservices: Microservices = Object.freeze({
+  create: ({ services, lazyServices, preRequest, postResponse }: MicroserviceConfig): Microservice => {
     let serviceRegistry = {};
     serviceRegistry = addServiceToRegistry({ arr: services, serviceRegistry, action: addServices });
     serviceRegistry = addServiceToRegistry({ arr: lazyServices, serviceRegistry, action: addServicesLazy });
 
-    const microServiceResponse = Object.freeze({
-      asProxy({ router = defaultRouter, serviceContract }) {
-        const dispatcher = proxyDispatcher({ router, serviceRegistry, getPreRequest$, postResponse$ });
-        return createProxy({ dispatcher, serviceContract, proxy: this.asProxy.bind(microServiceResponse) });
+    const microservice: Microservice = Object.freeze({
+      createProxy({ router = defaultRouter, serviceDefinition }) {
+        const dispatcher = createDispatcher({ router, serviceRegistry, preRequest, postResponse });
+        return createProxy({ dispatcher, serviceDefinition, microservice: this });
       },
-      asDispatcher({ router = defaultRouter }) {
-        const dispatcher = createDispatcher({ router, serviceRegistry, getPreRequest$, postResponse$ });
+      createDispatcher({ router = defaultRouter }) {
+        const dispatcher = createDispatcher({ router, serviceRegistry, preRequest, postResponse });
         return Object.freeze({
           listen: (message: Message) => dispatcher({ message, type: 'Observable' }),
           invoke: (message: Message) => dispatcher({ message, type: 'Promise' }),
@@ -25,7 +27,7 @@ export const MicroService = Object.freeze({
       },
     });
 
-    return microServiceResponse;
+    return microservice;
   },
 });
 
