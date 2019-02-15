@@ -44,8 +44,6 @@ export interface Builder{
     services(any): Builder;
 };
 
-
-
 export abstract class Microservice {
     abstract createDispatcher(): Dispatcher;
     abstract createProxy<T>(): Proxy<T>;

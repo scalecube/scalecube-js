@@ -1,5 +1,5 @@
 class HtmlService {
-  render() {
+  public render() {
     return import('./HtmlProducts');
   }
 }

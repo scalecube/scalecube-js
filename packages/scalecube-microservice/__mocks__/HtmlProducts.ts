@@ -1,15 +1,15 @@
 class HtmlProduct extends HTMLElement {
-  connectedCallback() {
+  public connectedCallback() {
     this.innerHTML = this.render();
   }
 
-  render() {
+  public render() {
     return '<h3>HTML Service</h3>';
   }
 
-  disconnectedCallback() {}
+  public disconnectedCallback() {}
 
-  log(...args) {
+  public log(...args) {
     console.warn('️HtmlService ', ...args);
   }
 }

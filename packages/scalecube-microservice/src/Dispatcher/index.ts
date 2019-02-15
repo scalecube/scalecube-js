@@ -6,10 +6,14 @@ import { Message } from '../api/Message';
 import { processMethodBaseOnLaziness$, enrichMsgData$ } from './actions';
 
 export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
+  console.log('creating dispatcher');
   return ({ message, type }: ServiceCallRequest) => {
     if (!message) {
       throw Error('Error: data was not provided');
     }
+
+    console.log('dispatcher call: message', message);
+    console.log('dispatcher call: type', type);
 
     const routerInstance = router.route({ serviceRegistry, request: message });
     const serviceInstance = routerInstance.service;
@@ -24,6 +28,8 @@ export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, post
       switchMap((msg) => enrichMsgData$({ msg, enrichMethod: postResponse$ })),
       map((msg: Message) => msg.data)
     );
+
+    console.log('chain$ as a response of dispatcher', chain$);
 
     return type === 'Promise' ? chain$.toPromise() : chain$;
   };

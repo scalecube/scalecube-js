@@ -6,8 +6,11 @@
   "license": "MIT",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
-    "test": "yarn run lint && jest --collect-coverage",
-    "test-watch": "yarn run lint && jest --collect-coverage --watchAll"
+    "lint:fix": "yarn lint --fix",
+    "test": "jest --collect-coverage",
+    "test-watch": "yarn run lint && jest --collect-coverage --watchAll",
+    "check-all": "yarn lint && yarn test",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx,js,jsx}'"
   },
   "jest": {
     "transform": {

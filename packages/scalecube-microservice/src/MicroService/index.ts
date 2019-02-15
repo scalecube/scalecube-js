@@ -8,9 +8,7 @@ import { Message } from '../api/Message';
 export const MicroService = Object.freeze({
   create: ({ services, lazyServices, getPreRequest$, postResponse$ }: MicroServiceConfig): MicroServiceResponse => {
     let serviceRegistry = {};
-
     serviceRegistry = addServiceToRegistry({ arr: services, serviceRegistry, action: addServices });
-
     serviceRegistry = addServiceToRegistry({ arr: lazyServices, serviceRegistry, action: addServicesLazy });
 
     const microServiceResponse = Object.freeze({
