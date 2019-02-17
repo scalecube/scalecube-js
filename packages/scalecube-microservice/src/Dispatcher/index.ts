@@ -1,13 +1,14 @@
 import { EMPTY } from 'rxjs6';
 import { switchMap, map, catchError } from 'rxjs6/operators';
 
-import { ServiceCallRequest } from '../api/Dispatcher';
-import { Message } from '../api/Message';
 import { processMethodBaseOnLaziness$, enrichMsgData$ } from './actions';
+import Message from '../api2/Message'
+import DispatcherRequest from '../api2/DispatcherRequest'
+import DispatcherResponse from '../api2/DispatcherResponse'
 
-export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, postResponse$ }) => {
+export const createDispatcher = ({ router, serviceRegistry, preRequest, postResponse }) => {
   console.log('creating dispatcher');
-  return ({ message, type }: ServiceCallRequest) => {
+  return ({ message, type }: DispatcherRequest): DispatcherResponse => {
     if (!message) {
       throw Error('Error: data was not provided');
     }
@@ -15,17 +16,17 @@ export const createDispatcher = ({ router, serviceRegistry, getPreRequest$, post
     console.log('dispatcher call: message', message);
     console.log('dispatcher call: type', type);
 
-    const routerInstance = router.route({ serviceRegistry, request: message });
-    const serviceInstance = routerInstance.service;
-    const method = serviceInstance[message.methodName];
+    const routerInstance = router.route({ serviceRegistry, message });
+    const { service } = routerInstance.service;
+    const method = service[message.qualifier.methodName];
 
-    const chain$ = enrichMsgData$({ msg: message, enrichMethod: getPreRequest$ }).pipe(
+    const chain$ = enrichMsgData$({ msg: message, enrichMethod: preRequest }).pipe(
       catchError((err) => {
         console.warn(new Error(`dispatcher error: ${err}`));
         return EMPTY;
       }),
-      switchMap((msg) => processMethodBaseOnLaziness$({ serviceInstance, method, msg })),
-      switchMap((msg) => enrichMsgData$({ msg, enrichMethod: postResponse$ })),
+      switchMap((msg) => processMethodBaseOnLaziness$({ service, method, msg })),
+      switchMap((msg) => enrichMsgData$({ msg, enrichMethod: postResponse })),
       map((msg: Message) => msg.data)
     );
 

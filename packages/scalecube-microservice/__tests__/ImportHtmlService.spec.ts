@@ -1,5 +1,5 @@
 import HtmlService from '../__mocks__/HtmlService';
-import { MicroService } from '../src/MicroService';
+import { MicroService } from '../src/Microservices';
 import { defaultRouter } from '../src/Routers/default';
 
 describe('htmlService', () => {

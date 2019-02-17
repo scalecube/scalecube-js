@@ -1,4 +1,4 @@
-import { lookUp } from '../MicroService/ServiceRegistry';
+import { lookUp } from '../Microservices/ServiceRegistry';
 import { getServiceNamespaceFromMessage } from '../helpers/serviceData';
 import { RouteRequest } from '../api/Routers';
 

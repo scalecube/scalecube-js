@@ -1,4 +1,4 @@
-import { MicroService } from '../src/MicroService';
+import { MicroService } from '../src/Microservices';
 import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
 import { defaultRouter } from '../src/Routers/default';
 

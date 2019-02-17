@@ -4,7 +4,7 @@ import { from, iif, Observable, of } from 'rxjs6';
 import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
 import { authServiceInstance, authServiceMeta } from '../__mocks__/AuthService';
 
-import { MicroService } from '../src/MicroService';
+import { MicroService } from '../src/Microservices';
 import { defaultRouter } from '../src/Routers/default';
 import { Message } from '../src/api/Message';
 

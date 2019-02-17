@@ -1,6 +1,6 @@
 import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
 
-import { MicroService } from '../src/MicroService';
+import { MicroService } from '../src/Microservices';
 import { defaultRouter } from '../src/Routers/default';
 
 describe('Service proxy', () => {
