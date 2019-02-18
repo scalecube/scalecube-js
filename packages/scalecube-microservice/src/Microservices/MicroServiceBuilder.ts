@@ -1,6 +1,7 @@
 import { updateServiceRegistry } from './ServiceRegistry';
+import { ActionForAddingServiceToRegistryRequest } from '../api2';
 
-const addServices = ({ services, serviceRegistry, isLazy = false }) => {
+const addServices = ({ services = [], serviceRegistry, isLazy = false }: ActionForAddingServiceToRegistryRequest) => {
   services.forEach((rawService) => {
     serviceRegistry = updateServiceRegistry({
       rawService,
@@ -12,7 +13,7 @@ const addServices = ({ services, serviceRegistry, isLazy = false }) => {
   return serviceRegistry;
 };
 
-const addServicesLazy = ({ services, serviceRegistry }) => {
+const addServicesLazy = ({ services, serviceRegistry }: ActionForAddingServiceToRegistryRequest) => {
   return addServices({ services, serviceRegistry, isLazy: true });
 };
 

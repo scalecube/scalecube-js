@@ -1,9 +1,5 @@
-import { Observable } from 'rxjs6';
-import Message from './Message';
+import Router from './Router';
 
 export default interface CreateDispatcherRequest {
-  router: any;
-  serviceRegistry: any;
-  preRequest: (req$: Observable<Message>) => any;
-  postResponse: (req$: Observable<Message>) => any;
+  router: Router;
 }

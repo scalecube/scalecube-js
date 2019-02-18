@@ -6,7 +6,6 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "noImplicitAny": false,
     "moduleResolution": "node",
     "baseUrl": "./src",
     "esModuleInterop": true,
