@@ -13,8 +13,8 @@ export const createServiceCall = ({ router, serviceRegistry, preRequest, postRes
       throw Error('Error: data was not provided');
     }
 
-    const routerInstance = router.route({ serviceRegistry, qualifier: message.qualifier });
-    const { service } = routerInstance.service;
+    const serviceInstance = router.route({ serviceRegistry, qualifier: message.qualifier });
+    const { service } = serviceInstance.service;
     const method = service[message.qualifier.methodName];
 
     const chain$ = enrichMsgData$({ msg: message, enrichMethod: preRequest }).pipe(

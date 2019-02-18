@@ -1,5 +1,4 @@
-import { GeneralService, ServiceRegistry } from '.';
-import { ActionForAddingServiceToRegistryRequest } from './ActionForAddingServiceToRegistryRequest';
+import { GeneralService, ServiceRegistry, ActionForAddingServiceToRegistryRequest } from '.';
 
 export default interface AddServiceToRegistryRequest {
   services?: GeneralService[];

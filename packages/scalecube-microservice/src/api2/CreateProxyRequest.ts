@@ -1,6 +1,9 @@
 import ServiceDefinition from './ServiceDefinition';
+import { Router } from '.';
+
+// Use Options instead of config
 
 export default interface CreateProxyRequest {
-  router: any;
+  router: Router;
   serviceDefinition: ServiceDefinition;
 }

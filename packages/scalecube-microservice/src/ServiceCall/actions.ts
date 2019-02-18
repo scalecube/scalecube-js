@@ -4,6 +4,8 @@ import { EMPTY, from, iif, Observable, of } from 'rxjs6';
 import Message from '../api2/Message';
 import ServiceCallResponse from '../api2/DispatcherResponse';
 
+const loaders = {};
+
 /**
  * Determine if service is lazy by his meta
  * @param service

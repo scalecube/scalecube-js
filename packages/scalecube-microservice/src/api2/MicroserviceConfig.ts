@@ -3,9 +3,11 @@ import Message from '../api2/Message';
 import Service from './Service';
 import LazyService from './LazyService';
 
+// Include lazyServices in services
+
 export default interface MicroserviceConfig {
   services?: Service[];
-  lazyServices?: LazyService[];
+  // lazyServices?: LazyService[];
   preRequest?: (req$: Observable<Message>) => Observable<Message>;
   postResponse?: (res$: Observable<Message>) => Observable<Message>;
 }
