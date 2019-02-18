@@ -1,3 +1,3 @@
-type AsyncModel = 'Obsevable' | 'Promise';
+type AsyncModel = 'Observable' | 'Promise';
 
 export default AsyncModel;

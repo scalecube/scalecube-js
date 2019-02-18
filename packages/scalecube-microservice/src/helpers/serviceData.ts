@@ -1,4 +1,4 @@
-import { Message } from '../api/Message';
+import Qualifier from '../api2/Qualifier';
 
 export const getServiceName = (service) => getServiceMeta(service).serviceName;
 
@@ -8,4 +8,5 @@ export const getServiceMeta = (service) => service.constructor.meta || service.m
 
 export const getServiceNamespace = (service) => `${getServiceName(service)}/${getMethodName(service)}`;
 
-export const getServiceNamespaceFromMessage = (message: Message) => `${message.serviceName}/${message.methodName}`;
+export const getServiceNamespaceFromMessage = (qualifier: Qualifier) =>
+  `${qualifier.serviceName}/${qualifier.methodName}`;

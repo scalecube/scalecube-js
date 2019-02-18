@@ -2,30 +2,30 @@ import Message from '../api2/Message';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
-export const createProxy = ({ serviceDefinition, dispatcher, microservice }) => {
+export const createProxy = ({ serviceCall, serviceDefinition, microservice }) => {
   return new Proxy(
     {},
     {
-      get: preDispatch({ serviceDefinition, dispatcher, microservice }),
+      get: preDispatch({ serviceDefinition, serviceCall, microservice }),
     }
   );
 };
 
-const preDispatch = ({ serviceDefinition, dispatcher, microservice }) => (target, prop) => {
-  console.log('preDispatch target', target);
-  console.log('preDispatch prop', prop);
-
+const preDispatch = ({ serviceDefinition, serviceCall, microservice }) => (target, prop) => {
   if (!serviceDefinition.methods[prop]) {
     throw new Error(`service method '${prop}' missing in the metadata`);
   }
 
   const { asyncModel } = serviceDefinition.methods[prop];
 
-  return (...data) => {
+  return (...requestParams) => {
     const message: Message = {
-      serviceName: serviceDefinition.serviceName,
-      methodName: prop,
-      data,
+      qualifier: {
+        serviceName: serviceDefinition.serviceName,
+        methodName: prop,
+      },
+      serviceDefinition,
+      requestParams,
       microservice,
     };
 
@@ -33,6 +33,6 @@ const preDispatch = ({ serviceDefinition, dispatcher, microservice }) => (target
       throw Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
     }
 
-    return dispatcher({ message, type: asyncModel });
+    return serviceCall({ message, type: asyncModel });
   };
 };

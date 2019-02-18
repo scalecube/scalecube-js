@@ -1,6 +1,7 @@
-import DispatcherRequest from './DispatcherRequest';
-import DispatcherResponse from './DispatcherResponse';
+import Message from './Message';
+import ServiceCallResponse from './ServiceCallResponse';
 
-type Dispatcher = (dispatcherRequest: DispatcherRequest) => DispatcherResponse;
-
-export default Dispatcher;
+export default interface Dispatcher {
+  listen: (message: Message) => ServiceCallResponse;
+  invoke: (message: Message) => ServiceCallResponse;
+}

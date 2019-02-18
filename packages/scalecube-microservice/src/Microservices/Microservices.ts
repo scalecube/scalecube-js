@@ -1,7 +1,7 @@
 import { addServices, addServicesLazy } from './MicroServiceBuilder';
 import { createProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
-import { createDispatcher } from '../Dispatcher';
+import { createServiceCall } from '../ServiceCall';
 import Microservices from '../api2/Microservices';
 import Message from '../api2/Message';
 import MicroserviceConfig from '../api2/MicroserviceConfig';
@@ -15,14 +15,15 @@ export const Microservices: Microservices = Object.freeze({
 
     const microservice: Microservice = Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {
-        const dispatcher = createDispatcher({ router, serviceRegistry, preRequest, postResponse });
-        return createProxy({ dispatcher, serviceDefinition, microservice: this });
+        const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
+        return createProxy({ serviceCall, serviceDefinition, microservice: this });
       },
       createDispatcher({ router = defaultRouter }) {
-        const dispatcher = createDispatcher({ router, serviceRegistry, preRequest, postResponse });
+        // Is dispatcher an object with listen and invoke or is it a function, that returns method call result?
+        const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
         return Object.freeze({
-          listen: (message: Message) => dispatcher({ message, type: 'Observable' }),
-          invoke: (message: Message) => dispatcher({ message, type: 'Promise' }),
+          listen: (message: Message) => serviceCall({ message, type: 'Observable' }),
+          invoke: (message: Message) => serviceCall({ message, type: 'Promise' }),
         });
       },
     });

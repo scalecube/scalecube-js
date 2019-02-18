@@ -1,3 +1,5 @@
+import RouteRequest from './RouteRequest';
+
 export default interface Router {
-  route: () => object;
+  route: (routeRequest: RouteRequest) => object;
 }
