@@ -1,5 +1,5 @@
 import { updateServiceRegistry } from './ServiceRegistry';
-import { ActionForAddingServiceToRegistryRequest } from '../api2';
+import { ActionForAddingServiceToRegistryRequest } from '../api2/public';
 
 const addServices = ({ services = [], serviceRegistry, isLazy = false }: ActionForAddingServiceToRegistryRequest) => {
   services.forEach((rawService) => {

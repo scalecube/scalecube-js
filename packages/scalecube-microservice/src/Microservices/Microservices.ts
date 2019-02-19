@@ -1,42 +1,35 @@
-import { addServices, addServicesLazy } from './MicroServiceBuilder';
+import { addServices } from './MicroServiceBuilder';
 import { getProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall';
 import {
-  AddServiceToRegistryRequest,
-  CreateDispatcherRequest,
+  CreateDispatcherOptions,
   ProxyOptions,
   Dispatcher,
   Message,
   Microservice,
   MicroserviceOptions,
-  MicroserviceProxy,
   Microservices as MicroservicesInterface,
-  ServiceCall,
-} from '../api2';
+} from '../api2/public';
+import { Observable } from 'rxjs6';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, preRequest, postResponse }: MicroserviceOptions): Microservice => {
-    let serviceRegistry = {};
-    serviceRegistry = addServiceToRegistry({ services, serviceRegistry, action: addServices });
+  create: ({ services }: MicroserviceOptions): Microservice => {
+    const serviceRegistry = services && Array.isArray(services) ? addServices({ services, serviceRegistry: {} }) : {};
 
-    const microservice: Microservice = Object.freeze({
-      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions): MicroserviceProxy<T> {
-        const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
-        return getProxy({ serviceCall, serviceDefinition, microservice });
+    return Object.freeze({
+      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {
+        const serviceCall = createServiceCall({ router, serviceRegistry });
+        return getProxy({ serviceCall, serviceDefinition });
       },
-      createDispatcher({ router = defaultRouter }: CreateDispatcherRequest): Dispatcher {
-        const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
+      createDispatcher({ router = defaultRouter }: CreateDispatcherOptions): Dispatcher {
+        const serviceCall = createServiceCall({ router, serviceRegistry });
         return Object.freeze({
-          listen: (message: Message) => serviceCall({ message, type: 'Observable' }),
-          invoke: (message: Message) => serviceCall({ message, type: 'Promise' }),
+          requestStream: (message: Message) =>
+            serviceCall({ message, asyncModel: 'Observable' }) as Observable<Message>,
+          requestResponse: (message: Message) => serviceCall({ message, asyncModel: 'Promise' }) as Promise<Message>,
         });
       },
     });
-
-    return microservice;
   },
 });
-
-const addServiceToRegistry = ({ services, serviceRegistry, action }: AddServiceToRegistryRequest) =>
-  services && Array.isArray(services) ? action({ services, serviceRegistry }) : serviceRegistry;

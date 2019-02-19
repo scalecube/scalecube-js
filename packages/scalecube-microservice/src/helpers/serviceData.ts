@@ -9,10 +9,10 @@
 // export const getServiceNamespaceFromMessage = (qualifier: Qualifier) =>
 //   `${qualifier.serviceName}/${qualifier.methodName}`;
 
-import { GetQualifierOptions } from '../api2/types';
+import { GetQualifierOptions } from '../api2/private/types';
 
-export const getServiceName = (qualifier: string) => qualifier.split('/')[0];
+export const getServiceName = ({ qualifier }: { qualifier: string }) => qualifier.split('/')[0];
 
-export const getMethodName = (qualifier: string) => qualifier.split('/')[1];
+export const getMethodName = ({ qualifier }: { qualifier: string }) => qualifier.split('/')[1];
 
 export const getQualifier = ({ serviceName, methodName }: GetQualifierOptions) => `${serviceName}/${methodName}`;

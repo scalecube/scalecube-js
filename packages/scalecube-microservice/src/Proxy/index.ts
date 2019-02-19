@@ -1,22 +1,19 @@
-import { Message, ServiceCallData } from '../api2';
-import { GetProxyOptions } from '../api2/types';
+import { Message } from '../api2/public';
+import { GetProxyOptions } from '../api2/private/types';
 import { getQualifier } from '../helpers/serviceData';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
-export const getProxy = ({ serviceCall, serviceDefinition, microservice }: GetProxyOptions) => {
+export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
   return new Proxy(
     {},
     {
-      get: preServiceCall({ serviceDefinition, serviceCall, microservice }),
+      get: preServiceCall({ serviceDefinition, serviceCall }),
     }
   );
 };
 
-const preServiceCall = ({ serviceCall, serviceDefinition, microservice }: GetProxyOptions) => (
-  target: object,
-  prop: string
-) => {
+const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => (target: object, prop: string) => {
   if (!serviceDefinition.methods[prop]) {
     throw new Error(`service method '${prop}' missing in the metadata`);
   }
@@ -28,15 +25,11 @@ const preServiceCall = ({ serviceCall, serviceDefinition, microservice }: GetPro
       qualifier: getQualifier({ serviceName: serviceDefinition.serviceName, methodName: prop }),
       data,
     };
-    const serviceCallData: ServiceCallData = {
-      serviceDefinition,
-      microservice,
-    };
 
     if (!allowedMethodTypes.includes(asyncModel)) {
       throw Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
     }
 
-    return serviceCall({ message, type: asyncModel, serviceCallData });
+    return serviceCall({ message, asyncModel });
   };
 };

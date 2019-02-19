@@ -1,6 +1,6 @@
 import { lookUp } from '../Microservices/ServiceRegistry';
 import { getServiceNamespaceFromMessage } from '../helpers/serviceData';
-import RouteOptions from '../api2/RouteOptions';
+import RouteOptions from '../api2/public/RouteOptions';
 
 export const defaultRouter = Object.freeze({
   route: ({ qualifier, serviceRegistry }: RouteOptions) => {
