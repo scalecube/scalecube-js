@@ -1,9 +1,8 @@
-import { ServiceRegistry, Router, ServiceDefinition, ServiceCall, Service, Message } from '../public';
+import { ServiceRegistry, Router, ServiceDefinition, ServiceCall, RawService, Message } from '../public';
 
-export default interface ActionForAddingServiceToRegistryRequest {
-  services?: Service[];
+export interface AddServicesToRegistryOptions {
+  services?: RawService[];
   serviceRegistry: ServiceRegistry;
-  isLazy?: boolean;
 }
 
 export interface ServiceCallOptions {
@@ -27,7 +26,16 @@ export interface InvokeMethodOptions {
   context: object;
 }
 
-export default interface CreateServiceCallRequest {
+export interface CreateServiceCallRequest {
   router: Router;
   serviceRegistry: ServiceRegistry;
+}
+
+export interface GetUpdatedServiceRegistryOptions {
+  serviceRegistry: ServiceRegistry;
+  rawService: RawService;
+}
+
+export interface GetServicesFromRawServiceOptions {
+  rawService: RawService;
 }

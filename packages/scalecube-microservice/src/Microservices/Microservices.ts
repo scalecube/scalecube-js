@@ -3,7 +3,7 @@ import { getProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall';
 import {
-  CreateDispatcherOptions,
+  DispatcherOptions,
   ProxyOptions,
   Dispatcher,
   Message,
@@ -19,10 +19,12 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {
-        const serviceCall = createServiceCall({ router, serviceRegistry });
-        return getProxy({ serviceCall, serviceDefinition });
+        return getProxy({
+          serviceCall: createServiceCall({ router, serviceRegistry }),
+          serviceDefinition,
+        });
       },
-      createDispatcher({ router = defaultRouter }: CreateDispatcherOptions): Dispatcher {
+      createDispatcher({ router = defaultRouter }: DispatcherOptions): Dispatcher {
         const serviceCall = createServiceCall({ router, serviceRegistry });
         return Object.freeze({
           requestStream: (message: Message) =>
