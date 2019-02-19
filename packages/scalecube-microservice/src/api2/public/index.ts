@@ -8,6 +8,7 @@ import Microservices from './Microservices';
 import Router from './Router';
 import RouteOptions from './RouteOptions';
 import RawService from './RawService';
+import Service from './Service';
 import ServiceCall from './ServiceCall';
 import ServiceDefinition from './ServiceDefinition';
 import ServiceRegistry from './ServiceRegistry';
@@ -24,6 +25,7 @@ export {
   Router,
   RouteOptions,
   RawService,
+  Service,
   ServiceCall,
   ServiceDefinition,
   ServiceRegistry,

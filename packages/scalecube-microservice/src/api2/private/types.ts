@@ -1,4 +1,4 @@
-import { ServiceRegistry, Router, ServiceDefinition, ServiceCall, RawService, Message } from '../public';
+import { ServiceRegistry, Router, ServiceDefinition, ServiceCall, RawService, Service, Message } from '../public';
 
 export interface AddServicesToRegistryOptions {
   services?: RawService[];
@@ -38,4 +38,13 @@ export interface GetUpdatedServiceRegistryOptions {
 
 export interface GetServicesFromRawServiceOptions {
   rawService: RawService;
+}
+
+export interface AddServiceToRegistryOptions {
+  serviceRegistry: ServiceRegistry;
+  service: Service;
+}
+
+export interface GetServiceWithEndPointOptions {
+  service: Service;
 }

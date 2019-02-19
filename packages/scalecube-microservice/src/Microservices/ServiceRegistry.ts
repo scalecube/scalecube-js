@@ -5,10 +5,12 @@ import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/
 import { isValidRawService } from '../helpers/serviceValidation';
 import {
   AddServicesToRegistryOptions,
+  AddServiceToRegistryOptions,
   GetServicesFromRawServiceOptions,
+  GetServiceWithEndPointOptions,
   GetUpdatedServiceRegistryOptions,
 } from '../api2/private/types';
-import { ServiceRegistry, RawService } from '../api2/public';
+import { ServiceRegistry, RawService, Service } from '../api2/public';
 
 export const lookUp = ({ serviceRegistry, namespace }: LookUpRequest) => serviceRegistry[namespace];
 
@@ -32,7 +34,7 @@ export const getUpdatedServiceRegistry = ({
 }: GetUpdatedServiceRegistryOptions): ServiceRegistry => {
   const immutableServiceRegistry = { ...serviceRegistry };
   if (isValidRawService(rawService)) {
-    getServicesFromRawService({ rawService }).forEach((service: object) =>
+    getServicesFromRawService({ rawService }).forEach((service: Service) =>
       addServiceToRegistry({ serviceRegistry: immutableServiceRegistry, service })
     );
   }
@@ -40,20 +42,20 @@ export const getUpdatedServiceRegistry = ({
   return immutableServiceRegistry;
 };
 
-export const getServicesFromRawService = ({ rawService }: GetServicesFromRawServiceOptions): object[] => {
-  const services: object[] = [];
-  const meta = getServiceMeta(rawService);
+export const getServicesFromRawService = ({ rawService }: GetServicesFromRawServiceOptions): Service[] => {
+  const services: Service[] = [];
+  const serviceDefinition = getServiceMeta(rawService);
 
-  meta &&
-    meta.methods &&
-    Object.keys(meta.methods).forEach((methodName) => {
+  serviceDefinition &&
+    serviceDefinition.methods &&
+    Object.keys(serviceDefinition.methods).forEach((methodName) => {
       // raw meta - service with multiple methods
       services.push({
-        identifier: meta.identifier || `${generateUUID()}`,
-        meta: {
+        identifier: serviceDefinition.identifier || `${generateUUID()}`,
+        serviceDefinition: {
           serviceName: getServiceName(rawService),
           methodName,
-          ...meta.methods[methodName],
+          ...serviceDefinition.methods[methodName],
         },
         [methodName]: rawService[methodName],
       });
@@ -62,17 +64,17 @@ export const getServicesFromRawService = ({ rawService }: GetServicesFromRawServ
   return services;
 };
 
-export const addServiceToRegistry = ({ serviceRegistry, service }) => {
+export const addServiceToRegistry = ({ serviceRegistry, service }: AddServiceToRegistryOptions) => {
   const nameSpace = getServiceNamespace(service);
   serviceRegistry[nameSpace] = {
     ...(serviceRegistry[nameSpace] || {}),
-    ...serviceEndPoint({ service }),
+    ...getServiceWithEndPoint({ service }),
   };
 
   return serviceRegistry;
 };
 
-export const serviceEndPoint = ({ service }): ServiceEndPointResponse => ({
+export const getServiceWithEndPoint = ({ service }: GetServiceWithEndPointOptions): ServiceEndPointResponse => ({
   [service.identifier]: {
     id: '',
     host: '',
