@@ -1,9 +1,9 @@
 import { lookUp } from '../Microservices/ServiceRegistry';
 import { getServiceNamespaceFromMessage } from '../helpers/serviceData';
-import RouteRequest from '../api2/RouteRequest';
+import RouteOptions from '../api2/RouteOptions';
 
 export const defaultRouter = Object.freeze({
-  route: ({ qualifier, serviceRegistry }: RouteRequest) => {
+  route: ({ qualifier, serviceRegistry }: RouteOptions) => {
     const services = lookUp({ serviceRegistry, namespace: getServiceNamespaceFromMessage(qualifier) });
     if (!services) {
       throw Error(`can't find services with the request: '${JSON.stringify(qualifier)}'`);

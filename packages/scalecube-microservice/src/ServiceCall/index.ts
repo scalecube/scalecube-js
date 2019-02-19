@@ -2,20 +2,27 @@ import { EMPTY } from 'rxjs6';
 import { switchMap, map, catchError } from 'rxjs6/operators';
 
 import { processMethodBaseOnLaziness$, enrichMsgData$ } from './actions';
+import { ServiceCallOptions } from '../api2/types';
+
 import Message from '../api2/Message';
 import ServiceCallRequest from '../api2/ServiceCallRequest';
 import ServiceCallResponse from '../api2/ServiceCallResponse';
 import ServiceCall from '../api2/ServiceCall';
+import { getMethodName } from '../helpers/serviceData';
 
-export const createServiceCall = ({ router, serviceRegistry, preRequest, postResponse }): ServiceCall => {
+export const createServiceCall = ({
+  router,
+  serviceRegistry,
+  preRequest,
+  postResponse,
+}: ServiceCallOptions): ServiceCall => {
   return ({ message, type }: ServiceCallRequest): ServiceCallResponse => {
     if (!message) {
       throw Error('Error: data was not provided');
     }
 
-    const serviceInstance = router.route({ serviceRegistry, qualifier: message.qualifier });
-    const { service } = serviceInstance.service;
-    const method = service[message.qualifier.methodName];
+    const { service } = router.route({ serviceRegistry, qualifier: message.qualifier! });
+    const method = service[getMethodName(message.qualifier!)];
 
     const chain$ = enrichMsgData$({ msg: message, enrichMethod: preRequest }).pipe(
       catchError((err) => {
@@ -24,10 +31,9 @@ export const createServiceCall = ({ router, serviceRegistry, preRequest, postRes
       }),
       switchMap((msg) => processMethodBaseOnLaziness$({ service, method, msg })),
       switchMap((msg) => enrichMsgData$({ msg, enrichMethod: postResponse })),
-      map((msg: Message) => msg.response)
+      map((msg: Message) => msg.data)
     );
 
-    // We should extract method response from Observable without invoking this method response
     return type === 'Promise' ? chain$.toPromise() : chain$;
   };
 };

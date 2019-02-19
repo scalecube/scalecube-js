@@ -1,31 +1,35 @@
-import Message from '../api2/Message';
+import { Message, ServiceCallData } from '../api2';
+import { GetProxyOptions } from '../api2/types';
+import { getQualifier } from '../helpers/serviceData';
 
 const allowedMethodTypes = ['Promise', 'Observable'];
 
-export const createProxy = ({ serviceCall, serviceDefinition, microservice }) => {
+export const getProxy = ({ serviceCall, serviceDefinition, microservice }: GetProxyOptions) => {
   return new Proxy(
     {},
     {
-      get: preDispatch({ serviceDefinition, serviceCall, microservice }),
+      get: preServiceCall({ serviceDefinition, serviceCall, microservice }),
     }
   );
 };
 
-const preDispatch = ({ serviceDefinition, serviceCall, microservice }) => (target, prop) => {
+const preServiceCall = ({ serviceCall, serviceDefinition, microservice }: GetProxyOptions) => (
+  target: object,
+  prop: string
+) => {
   if (!serviceDefinition.methods[prop]) {
     throw new Error(`service method '${prop}' missing in the metadata`);
   }
 
   const { asyncModel } = serviceDefinition.methods[prop];
 
-  return (...requestParams) => {
+  return (...data: any[]) => {
     const message: Message = {
-      qualifier: {
-        serviceName: serviceDefinition.serviceName,
-        methodName: prop,
-      },
+      qualifier: getQualifier({ serviceName: serviceDefinition.serviceName, methodName: prop }),
+      data,
+    };
+    const serviceCallData: ServiceCallData = {
       serviceDefinition,
-      requestParams,
       microservice,
     };
 
@@ -33,6 +37,6 @@ const preDispatch = ({ serviceDefinition, serviceCall, microservice }) => (targe
       throw Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
     }
 
-    return serviceCall({ message, type: asyncModel });
+    return serviceCall({ message, type: asyncModel, serviceCallData });
   };
 };

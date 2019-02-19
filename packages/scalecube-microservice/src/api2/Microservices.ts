@@ -1,8 +1,8 @@
-import MicroserviceConfig from './MicroserviceConfig';
+import MicroserviceOptions from './MicroserviceOptions';
 import Microservice from './Microservice';
 
 // MicroserviceConfig -> Options
 
 export default interface Microservices {
-  create(microservicesConfig: MicroserviceConfig): Microservice;
+  create(microservicesConfig: MicroserviceOptions): Microservice;
 }

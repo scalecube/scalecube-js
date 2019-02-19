@@ -1,5 +1,5 @@
-import RouteRequest from './RouteRequest';
+import { Service, RouteOptions } from './index';
 
 export default interface Router {
-  route: (routeRequest: RouteRequest) => object;
+  route: (routeOptions: RouteOptions) => Service;
 }

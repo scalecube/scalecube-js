@@ -1,30 +1,29 @@
 import { addServices, addServicesLazy } from './MicroServiceBuilder';
-import { createProxy } from '../Proxy';
+import { getProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall';
 import {
   AddServiceToRegistryRequest,
   CreateDispatcherRequest,
-  CreateProxyRequest,
+  ProxyOptions,
   Dispatcher,
   Message,
   Microservice,
-  MicroserviceConfig,
+  MicroserviceOptions,
   MicroserviceProxy,
   Microservices as MicroservicesInterface,
   ServiceCall,
 } from '../api2';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, lazyServices, preRequest, postResponse }: MicroserviceConfig): Microservice => {
+  create: ({ services, preRequest, postResponse }: MicroserviceOptions): Microservice => {
     let serviceRegistry = {};
     serviceRegistry = addServiceToRegistry({ services, serviceRegistry, action: addServices });
-    serviceRegistry = addServiceToRegistry({ services: lazyServices, serviceRegistry, action: addServicesLazy });
 
     const microservice: Microservice = Object.freeze({
-      createProxy({ router = defaultRouter, serviceDefinition }: CreateProxyRequest): MicroserviceProxy<ServiceCall> {
+      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions): MicroserviceProxy<T> {
         const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
-        return createProxy({ serviceCall, serviceDefinition, microservice: this });
+        return getProxy({ serviceCall, serviceDefinition, microservice });
       },
       createDispatcher({ router = defaultRouter }: CreateDispatcherRequest): Dispatcher {
         const serviceCall = createServiceCall({ router, serviceRegistry, preRequest, postResponse });
