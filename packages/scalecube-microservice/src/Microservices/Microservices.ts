@@ -1,4 +1,5 @@
-import { getProxy } from '../Proxy';
+import { Observable } from 'rxjs6';
+import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall/ServiceCall';
 import {
@@ -10,7 +11,6 @@ import {
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
 } from '../api2/public';
-import { Observable } from 'rxjs6';
 import { addServicesToRegistry } from './ServiceRegistry';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
@@ -29,8 +29,9 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         const serviceCall = createServiceCall({ router, serviceRegistry });
         return Object.freeze({
           requestStream: (message: Message) =>
-            serviceCall({ message, asyncModel: 'Observable' }) as Observable<Message>,
-          requestResponse: (message: Message) => serviceCall({ message, asyncModel: 'Promise' }) as Promise<Message>,
+            serviceCall({ message, asyncModel: 'Observable', includeMessage: true }) as Observable<Message>,
+          requestResponse: (message: Message) =>
+            serviceCall({ message, asyncModel: 'Promise', includeMessage: true }) as Promise<Message>,
         });
       },
     });

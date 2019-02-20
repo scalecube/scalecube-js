@@ -8,10 +8,8 @@ import Microservices from './Microservices';
 import Router from './Router';
 import RouteOptions from './RouteOptions';
 import Service from './Service';
-import ServiceCall from './ServiceCall';
-import ServiceCallRequest from './ServiceCallRequest';
-import ServiceCallResponse from './ServiceCallResponse';
 import ServiceDefinition from './ServiceDefinition';
+import ServiceImplementation from './ServiceImplementation';
 import ServiceRegistry from './ServiceRegistry';
 import DispatcherOptions from './DispatcherOptions';
 import LookupOptions from './LookupOptions';
@@ -28,10 +26,8 @@ export {
   Router,
   RouteOptions,
   Service,
-  ServiceCall,
-  ServiceCallRequest,
-  ServiceCallResponse,
   ServiceDefinition,
+  ServiceImplementation,
   ServiceRegistry,
   DispatcherOptions,
   LookupOptions,

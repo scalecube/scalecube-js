@@ -1,4 +1,4 @@
-import { AddServicesToRegistryOptions, GetServicesFromRawServiceOptions } from '../api2/private/types';
+import { AddServicesToRegistryOptions } from '../api2/private/types';
 import { ServiceRegistry, Service, LookupOptions, Endpoint } from '../api2/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
@@ -37,7 +37,7 @@ export const getUpdatedServiceRegistry = ({
   ),
 });
 
-export const getEndpointsFromService = ({ service }: GetServicesFromRawServiceOptions): Endpoint[] | [] => {
+export const getEndpointsFromService = ({ service }: { service: Service }): Endpoint[] | [] => {
   let endpoints: Endpoint[] | [] = [];
   const { definition, implementation } = service;
   const { serviceName } = definition;

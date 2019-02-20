@@ -1,6 +1,5 @@
 import { Observable, from } from 'rxjs6';
-import { ServiceCallOptions } from '../api2/private/types';
-import { ServiceCall, ServiceCallRequest, ServiceCallResponse } from '../api2/public';
+import { ServiceCallOptions, ServiceCall, ServiceCallRequest, ServiceCallResponse } from '../api2/private/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 
 export const createServiceCall = ({ router, serviceRegistry }: ServiceCallOptions): ServiceCall => {

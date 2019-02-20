@@ -1,6 +1,6 @@
-import { ProxyOptions, Dispatcher, DispatcherOptions } from '.';
+import { ProxyOptions, Dispatcher, DispatcherOptions, ServiceImplementation } from '.';
 
 export default interface Microservice {
-  createProxy(proxyOptions: ProxyOptions): { [methodName: string]: any };
+  createProxy(proxyOptions: ProxyOptions): ServiceImplementation;
   createDispatcher(dispatcherOptions: DispatcherOptions): Dispatcher;
 }

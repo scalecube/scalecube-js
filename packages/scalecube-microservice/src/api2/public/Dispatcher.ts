@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs6';
-import Message from './Message';
+import { Message } from '.';
 
 export default interface Dispatcher {
   requestStream: (message: Message) => Observable<Message>;

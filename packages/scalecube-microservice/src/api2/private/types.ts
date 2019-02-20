@@ -1,4 +1,15 @@
-import { ServiceRegistry, Router, ServiceDefinition, ServiceCall, Service, Message, Endpoint } from '../public';
+import { Observable } from 'rxjs6';
+import { ServiceRegistry, Router, ServiceDefinition, Service, Message, AsyncModel } from '../public';
+
+export interface ServiceCallRequest {
+  message: Message;
+  asyncModel: AsyncModel;
+  includeMessage: boolean;
+}
+
+export type ServiceCallResponse = Observable<any> | Promise<any>;
+
+export type ServiceCall = (serviceCallRequest: ServiceCallRequest) => ServiceCallResponse;
 
 export interface AddServicesToRegistryOptions {
   services?: Service[];
@@ -15,41 +26,7 @@ export interface GetProxyOptions {
   serviceDefinition: ServiceDefinition;
 }
 
-export interface GetQualifierOptions {
+export interface Qualifier {
   serviceName: string;
   methodName: string;
-}
-
-export interface InvokeMethodOptions {
-  method: (arg: any) => any;
-  message: Message;
-  context: object;
-}
-
-export interface CreateServiceCallRequest {
-  router: Router;
-  serviceRegistry: ServiceRegistry;
-}
-
-export interface GetUpdatedServiceRegistryOptions {
-  serviceRegistry: ServiceRegistry;
-  service: Service;
-}
-
-export interface GetServicesFromRawServiceOptions {
-  service: Service;
-}
-
-export interface AddServiceToRegistryOptions {
-  serviceRegistry: ServiceRegistry;
-  service: Service;
-}
-
-export interface GetServiceWithEndPointOptions {
-  service: Service;
-}
-
-export interface AddEndpointToRegistryOptions {
-  serviceRegistry: ServiceRegistry;
-  endpoint: Endpoint;
 }

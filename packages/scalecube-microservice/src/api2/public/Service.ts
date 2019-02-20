@@ -1,8 +1,6 @@
-import ServiceDefinition from './ServiceDefinition';
+import { ServiceImplementation, ServiceDefinition } from '.';
 
 export default interface Service {
   definition: ServiceDefinition;
-  implementation: {
-    [methodName: string]: any;
-  };
+  implementation: ServiceImplementation;
 }
