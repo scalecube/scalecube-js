@@ -1,17 +1,3 @@
-// export const getServiceName = (service) => getServiceMeta(service).serviceName;
-//
-// export const getMethodName = (service) => getServiceMeta(service).methodName;
-//
-import { Service } from '../api2/public';
-
-// Why do we need to put it inside constructor
-export const getServiceMeta = (service: Service) => service.constructor.serviceDefinition || service.serviceDefinition;
-//
-// export const getServiceNamespace = (service) => `${getServiceName(service)}/${getMethodName(service)}`;
-//
-// export const getServiceNamespaceFromMessage = (qualifier: Qualifier) =>
-//   `${qualifier.serviceName}/${qualifier.methodName}`;
-
 import { GetQualifierOptions } from '../api2/private/types';
 
 export const getServiceName = ({ qualifier }: { qualifier: string }) => qualifier.split('/')[0];

@@ -1,7 +1,10 @@
 import { AddServicesToRegistryOptions, GetServicesFromRawServiceOptions } from '../api2/private/types';
 import { ServiceRegistry, Service, LookupOptions, Endpoint } from '../api2/public';
+import { isValidServiceDefinition } from '../helpers/serviceValidation';
+import { getQualifier } from '../helpers/serviceData';
 
-export const lookUp = ({ qualifier, serviceRegistry }: LookupOptions): Endpoint[] => serviceRegistry[qualifier];
+export const lookUp = ({ qualifier, serviceRegistry }: LookupOptions): Endpoint[] | [] =>
+  serviceRegistry[qualifier] || [];
 
 export const addServicesToRegistry = ({
   services = [],
@@ -25,12 +28,13 @@ export const getUpdatedServiceRegistry = ({
   endpoints: Endpoint[];
 }) => ({
   ...serviceRegistry,
-  ...endpoints.reduce((res: ServiceRegistry, endpoint: Endpoint) => {
-    return {
+  ...endpoints.reduce(
+    (res: ServiceRegistry, endpoint: Endpoint) => ({
       ...res,
       [endpoint.qualifier]: [...res[endpoint.qualifier], endpoint],
-    };
-  }, {}),
+    }),
+    {}
+  ),
 });
 
 export const getEndpointsFromService = ({ service }: GetServicesFromRawServiceOptions): Endpoint[] | [] => {
@@ -39,10 +43,10 @@ export const getEndpointsFromService = ({ service }: GetServicesFromRawServiceOp
   const { serviceName } = definition;
   const transport = '';
 
-  if (definition && definition.methods) {
+  if (isValidServiceDefinition(definition)) {
     endpoints = Object.keys(definition.methods).map((methodName: string) => ({
       uri: `${transport}/${serviceName}/${methodName}`,
-      qualifier: `${serviceName}/${methodName}`,
+      qualifier: getQualifier({ serviceName, methodName }),
       transport,
       serviceName,
       methodName,

@@ -1,12 +1,12 @@
 import { isObject } from './utils';
-import { getServiceMeta } from './serviceData';
+import { ServiceDefinition } from '../api2/public';
+import AsyncModel from '../api2/public/AsyncModel';
 
-export const isValidRawService = (service) => {
-  const meta = getServiceMeta(service);
-  return meta ? isValidServiceName(meta.serviceName) && isValidMethods(meta.methods) : false;
+export const isValidServiceDefinition = (definition: ServiceDefinition) => {
+  return definition ? isValidServiceName(definition.serviceName) && isValidMethods(definition.methods) : false;
 };
 
-export const isValidServiceName = (serviceName) => {
+export const isValidServiceName = (serviceName: string) => {
   if (typeof serviceName !== 'string') {
     console.error(new Error('Service missing serviceName:string'));
     return false;
@@ -14,17 +14,23 @@ export const isValidServiceName = (serviceName) => {
   return true;
 };
 
-export const isValidMethods = (methods) => {
+export const isValidMethods = (methods: { [methodName: string]: { asyncModel: AsyncModel } }) => {
   if (!isObject(methods)) {
     console.error(new Error('Service missing methods:object'));
     return false;
   }
-  return Object.keys(methods).every((method) => isValidMethod({ methodProp: methods[method], method }));
+  return Object.keys(methods).every((methodName) => isValidMethod({ methodData: methods[methodName], methodName }));
 };
 
-export const isValidMethod = ({ methodProp, method }) => {
-  if (!methodProp.asyncModel || (methodProp.asyncModel !== 'Promise' && methodProp.asyncModel !== 'Observable')) {
-    console.error(new Error(`method ${method} doesn't contain valid  type (asyncModel)`));
+export const isValidMethod = ({
+  methodData,
+  methodName,
+}: {
+  methodData: { asyncModel: string };
+  methodName: string;
+}) => {
+  if (!methodData.asyncModel || (methodData.asyncModel !== 'Promise' && methodData.asyncModel !== 'Observable')) {
+    console.error(new Error(`method ${methodName} doesn't contain valid  type (asyncModel)`));
     return false;
   }
   return true;
