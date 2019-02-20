@@ -28,10 +28,10 @@ export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
   methods: {
     hello: {
-      asyncModel: 'Promise' as AsyncModel,
+      asyncModel: AsyncModel.Promise,
     },
     greet$: {
-      asyncModel: 'Observable' as AsyncModel,
+      asyncModel: AsyncModel.Observable,
     },
   },
 };

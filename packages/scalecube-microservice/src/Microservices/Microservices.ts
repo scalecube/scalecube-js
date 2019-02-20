@@ -3,15 +3,17 @@ import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall/ServiceCall';
 import {
-  DispatcherOptions,
-  ProxyOptions,
+  AsyncModel,
   Dispatcher,
+  DispatcherOptions,
   Message,
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
+  ProxyOptions,
 } from '../api/public';
 import { addServicesToRegistry } from './ServiceRegistry';
+import { ServiceCallRequest } from '../api/private/types';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services }: MicroserviceOptions): Microservice => {
@@ -29,9 +31,17 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         const serviceCall = createServiceCall({ router, serviceRegistry });
         return Object.freeze({
           requestStream: (message: Message) =>
-            serviceCall({ message, asyncModel: 'Observable', includeMessage: true }) as Observable<Message>,
+            serviceCall({
+              message,
+              asyncModel: AsyncModel.Observable,
+              includeMessage: true,
+            } as ServiceCallRequest) as Observable<Message>,
           requestResponse: (message: Message) =>
-            serviceCall({ message, asyncModel: 'Promise', includeMessage: true }) as Promise<Message>,
+            serviceCall({
+              message,
+              asyncModel: AsyncModel.Promise,
+              includeMessage: true,
+            } as ServiceCallRequest) as Promise<Message>,
         });
       },
     });

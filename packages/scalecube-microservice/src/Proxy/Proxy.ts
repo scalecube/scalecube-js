@@ -1,8 +1,8 @@
-import { Message } from '../api/public';
+import { AsyncModel, Message } from '../api/public';
 import { GetProxyOptions } from '../api/private/types';
 import { getQualifier } from '../helpers/serviceData';
 
-const allowedMethodTypes = ['Promise', 'Observable'];
+const allowedMethodTypes = [AsyncModel.Observable, AsyncModel.Promise];
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
   return new Proxy(

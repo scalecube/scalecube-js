@@ -1,3 +1,6 @@
-type AsyncModel = 'Observable' | 'Promise';
+enum AsyncModel {
+  Observable = 'Observable',
+  Promise = 'Promise',
+}
 
 export default AsyncModel;
