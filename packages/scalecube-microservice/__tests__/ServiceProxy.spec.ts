@@ -1,41 +1,62 @@
-import { getGreetingServiceInstance, greetingServiceMeta } from '../__mocks__/GreetingService';
-
-import { MicroService } from '../src/Microservices';
+import GreetingService, { greetingServiceDefinition } from '../__mocks__/GreetingService';
+import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
+import { Service } from '../src/api2/public';
 
 describe('Service proxy', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
 
   const defaultUser = 'defaultUser';
-
-  const marketService = {
-    serviceDefinition: {
-      serviceName: 'MarketService',
-      methods: {
-        tradeBox$: { asyncModel: 'Observable' },
+  const wrongDefinition = {
+    ...greetingServiceDefinition,
+    methods: {
+      ...greetingServiceDefinition.methods,
+      hello: {
+        asyncModel: 'wrongAsyncModel',
       },
     },
-    service: new MarketService(),
   };
 
-  const ms = MicroService.create({
-    services: [getGreetingServiceInstance(), getGreetingServiceInstance()],
+  const greetingService1: Service = {
+    definition: greetingServiceDefinition,
+    implementation: new GreetingService(),
+  };
+  const greetingService2: Service = {
+    definition: greetingServiceDefinition,
+    implementation: new GreetingService(),
+  };
+
+  const ms = Microservices.create({
+    services: [greetingService1, greetingService2],
   });
 
-  const greetingService = ms.asProxy({
-    serviceContract: greetingServiceMeta,
+  const greetingServiceProxy = ms.createProxy({
+    serviceDefinition: greetingServiceDefinition,
     router: defaultRouter,
   });
 
   it('Invoke method that define in the contract', () => {
-    expect(greetingService.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
+    return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
   it('Throw error message if method does not define in the contract', () => {
     try {
-      greetingService.fakeHello();
+      greetingServiceProxy.fakeHello();
     } catch (e) {
       expect(e.message).toEqual(`service method 'fakeHello' missing in the metadata`);
+    }
+  });
+
+  it('Throw error message when async model in the serviceDefinition of proxy is incorrect', () => {
+    const greetingServiceProxyWithError = ms.createProxy({
+      // @ts-ignore-next-line
+      serviceDefinition: wrongDefinition,
+      router: defaultRouter,
+    });
+    try {
+      greetingServiceProxyWithError.hello(defaultUser);
+    } catch (e) {
+      expect(e.message).toEqual('service method unknown type error: GreetingService.hello');
     }
   });
 });

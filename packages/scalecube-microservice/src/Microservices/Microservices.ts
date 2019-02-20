@@ -1,6 +1,6 @@
 import { getProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
-import { createServiceCall } from '../ServiceCall';
+import { createServiceCall } from '../ServiceCall/ServiceCall';
 import {
   DispatcherOptions,
   ProxyOptions,

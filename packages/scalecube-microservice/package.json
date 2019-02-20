@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "yarn lint --fix",
-    "test": "jest --collect-coverage",
+    "test": "jest",
     "test-watch": "yarn run lint && jest --collect-coverage --watchAll",
     "check-all": "yarn lint && yarn test",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx,js,jsx}'"
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "husky": "^1.3.1",
-    "jest": "^24.0.0",
+    "jest": "^23.0.0",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.4"
   },

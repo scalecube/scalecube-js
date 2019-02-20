@@ -1,15 +1,16 @@
-// tslint:disable
-export const generateUUID = () => {
-  // Public Domain/MIT
-  let d = new Date().getTime();
-  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
-    d += performance.now(); //use high-precision timer if available
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    let r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-};
+import { throwError } from 'rxjs6';
+import { AsyncModel } from '../api2/public';
 
-export const isObject = (obj) => obj && typeof obj === 'object' && obj.constructor === Object;
+export const isObject = (obj: object) => obj && typeof obj === 'object' && obj.constructor === Object;
+
+export const throwErrorFromServiceCall = ({
+  asyncModel,
+  errorMessage,
+}: {
+  asyncModel: AsyncModel;
+  errorMessage: string;
+}) => {
+  const error = new Error(errorMessage);
+  console.warn(errorMessage);
+  return asyncModel === 'Promise' ? Promise.reject(error) : throwError(error);
+};

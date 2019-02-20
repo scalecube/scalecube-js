@@ -31,7 +31,7 @@ export const getUpdatedServiceRegistry = ({
   ...endpoints.reduce(
     (res: ServiceRegistry, endpoint: Endpoint) => ({
       ...res,
-      [endpoint.qualifier]: [...res[endpoint.qualifier], endpoint],
+      [endpoint.qualifier]: [...(res[endpoint.qualifier] || []), endpoint],
     }),
     {}
   ),

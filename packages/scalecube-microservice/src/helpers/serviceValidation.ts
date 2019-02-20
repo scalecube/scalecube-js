@@ -1,6 +1,5 @@
 import { isObject } from './utils';
-import { ServiceDefinition } from '../api2/public';
-import AsyncModel from '../api2/public/AsyncModel';
+import { ServiceDefinition, AsyncModel } from '../api2/public';
 
 export const isValidServiceDefinition = (definition: ServiceDefinition) => {
   return definition ? isValidServiceName(definition.serviceName) && isValidMethods(definition.methods) : false;

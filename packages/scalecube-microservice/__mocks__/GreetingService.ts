@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs6';
-import { generateUUID } from '../src/helpers/utils';
+import { AsyncModel } from '../src/api2/public';
 
 class GreetingService {
-  public hello(name?: string) {
+  public hello = (name: any): any => {
     return new Promise((resolve, reject) => {
       if (!name) {
         reject(new Error('please provide user to greet'));
@@ -10,7 +10,7 @@ class GreetingService {
         resolve(`Hello ${name}`);
       }
     });
-  }
+  };
 
   public greet$(greetings: string[]) {
     return new Observable((observer) => {
@@ -24,44 +24,16 @@ class GreetingService {
   }
 }
 
-const createHelloService = () => {
-  const greetingServiceInstance = new GreetingService();
-
-  return {
-    identifier: `${generateUUID()}`,
-    meta: {
-      serviceName: 'GreetingService',
-      methodName: 'hello',
-      asyncModel: 'Promise',
-    },
-    hello: greetingServiceInstance.hello.bind(greetingServiceInstance),
-  };
-};
-
-const greetingServiceMeta = {
+export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
   methods: {
     hello: {
-      asyncModel: 'Promise',
+      asyncModel: 'Promise' as AsyncModel,
     },
     greet$: {
-      asyncModel: 'Observable',
+      asyncModel: 'Observable' as AsyncModel,
     },
   },
 };
-
-const getGreetingServiceInstance = () => {
-  const greetingServiceInstance = new GreetingService();
-
-  greetingServiceInstance.constructor = { ...greetingServiceInstance.constructor } || {};
-  // tslint:disable-next-line
-  greetingServiceInstance.constructor['meta'] = {
-    identifier: `${generateUUID()}`,
-    ...greetingServiceMeta,
-  };
-  return greetingServiceInstance;
-};
-
-export { getGreetingServiceInstance, createHelloService, greetingServiceMeta };
 
 export default GreetingService;
