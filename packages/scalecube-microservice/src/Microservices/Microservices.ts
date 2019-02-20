@@ -1,4 +1,3 @@
-import { addServices } from './MicroServiceBuilder';
 import { getProxy } from '../Proxy';
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall } from '../ServiceCall';
@@ -12,10 +11,12 @@ import {
   Microservices as MicroservicesInterface,
 } from '../api2/public';
 import { Observable } from 'rxjs6';
+import { addServicesToRegistry } from './ServiceRegistry';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services }: MicroserviceOptions): Microservice => {
-    const serviceRegistry = services && Array.isArray(services) ? addServices({ services, serviceRegistry: {} }) : {};
+    const serviceRegistry =
+      services && Array.isArray(services) ? addServicesToRegistry({ services, serviceRegistry: {} }) : {};
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {

@@ -1,5 +1,4 @@
 import { lookUp } from '../Microservices/ServiceRegistry';
-import { getServiceNamespaceFromMessage } from '../helpers/serviceData';
 import { ABTestingRequest, RouteRequest } from '../api/Routers';
 
 export const AB = Object.freeze({
@@ -37,6 +36,6 @@ export const AB = Object.freeze({
 
 const randomRoute = ({ a, b, trashHold, request, serviceRegistry }) => {
   const random = Math.random() * 100;
-  const services = lookUp({ serviceRegistry, namespace: getServiceNamespaceFromMessage(request) });
-  return services[random <= trashHold ? a : b];
+  const endpoints = lookUp({ serviceRegistry, qualifier: request.qualifier });
+  return endpoints[random <= trashHold ? a : b];
 };

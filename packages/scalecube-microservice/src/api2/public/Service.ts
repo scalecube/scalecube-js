@@ -1,13 +1,8 @@
-import { AsyncModel } from '.';
+import ServiceDefinition from './ServiceDefinition';
 
 export default interface Service {
-  identifier: string;
-  serviceDefinition: {
-    serviceName: string;
-    methodName: string;
-    asyncModel: AsyncModel;
-  };
-  service: {
+  definition: ServiceDefinition;
+  implementation: {
     [methodName: string]: (arg: any) => any;
   };
 }

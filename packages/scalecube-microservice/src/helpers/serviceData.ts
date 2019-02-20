@@ -2,11 +2,10 @@
 //
 // export const getMethodName = (service) => getServiceMeta(service).methodName;
 //
-import { RawService } from '../api2/public';
+import { Service } from '../api2/public';
 
 // Why do we need to put it inside constructor
-export const getServiceMeta = (service: RawService) =>
-  service.constructor.serviceDefinition || service.serviceDefinition;
+export const getServiceMeta = (service: Service) => service.constructor.serviceDefinition || service.serviceDefinition;
 //
 // export const getServiceNamespace = (service) => `${getServiceName(service)}/${getMethodName(service)}`;
 //

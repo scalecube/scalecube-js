@@ -8,6 +8,16 @@ describe('Service proxy', () => {
 
   const defaultUser = 'defaultUser';
 
+  const marketService = {
+    serviceDefinition: {
+      serviceName: 'MarketService',
+      methods: {
+        tradeBox$: { asyncModel: 'Observable' },
+      },
+    },
+    service: new MarketService(),
+  };
+
   const ms = MicroService.create({
     services: [getGreetingServiceInstance(), getGreetingServiceInstance()],
   });

@@ -1,1 +1,5 @@
-export default interface ServiceRegistry {}
+import { Endpoint } from '.';
+
+export default interface ServiceRegistry {
+  [qualifier: string]: Endpoint[];
+}

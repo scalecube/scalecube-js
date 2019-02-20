@@ -1,5 +1,5 @@
-import { RawService, RouteOptions } from '.';
+import { Endpoint, RouteOptions } from '.';
 
 export default interface Router {
-  route: (routeOptions: RouteOptions) => RawService;
+  route: (routeOptions: RouteOptions) => Endpoint;
 }

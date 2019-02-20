@@ -1,87 +1,57 @@
-import { LookUpRequest, ServiceEndPointResponse } from '../api/Service';
+import { AddServicesToRegistryOptions, GetServicesFromRawServiceOptions } from '../api2/private/types';
+import { ServiceRegistry, Service, LookupOptions, Endpoint } from '../api2/public';
 
-import { generateUUID } from '../helpers/utils';
-import { getServiceMeta, getServiceName, getServiceNamespace } from '../helpers/serviceData';
-import { isValidRawService } from '../helpers/serviceValidation';
-import {
-  AddServicesToRegistryOptions,
-  AddServiceToRegistryOptions,
-  GetServicesFromRawServiceOptions,
-  GetServiceWithEndPointOptions,
-  GetUpdatedServiceRegistryOptions,
-} from '../api2/private/types';
-import { ServiceRegistry, RawService, Service } from '../api2/public';
-
-export const lookUp = ({ serviceRegistry, namespace }: LookUpRequest) => serviceRegistry[namespace];
+export const lookUp = ({ qualifier, serviceRegistry }: LookupOptions): Endpoint[] => serviceRegistry[qualifier];
 
 export const addServicesToRegistry = ({
   services = [],
   serviceRegistry,
-}: AddServicesToRegistryOptions): ServiceRegistry => {
-  services.forEach((rawService: RawService) => {
-    serviceRegistry = getUpdatedServiceRegistry({
-      serviceRegistry,
-      rawService,
-    });
+}: AddServicesToRegistryOptions): ServiceRegistry =>
+  getUpdatedServiceRegistry({
+    serviceRegistry,
+    endpoints: getEndpointsFromServices({ services }),
   });
 
-  return serviceRegistry;
-};
+// Helpers
+
+export const getEndpointsFromServices = ({ services }: { services: Service[] }) =>
+  services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], []);
 
 export const getUpdatedServiceRegistry = ({
   serviceRegistry,
-  rawService,
-}: GetUpdatedServiceRegistryOptions): ServiceRegistry => {
-  const immutableServiceRegistry = { ...serviceRegistry };
-  if (isValidRawService(rawService)) {
-    getServicesFromRawService({ rawService }).forEach((service: Service) =>
-      addServiceToRegistry({ serviceRegistry: immutableServiceRegistry, service })
-    );
+  endpoints,
+}: {
+  serviceRegistry: ServiceRegistry;
+  endpoints: Endpoint[];
+}) => ({
+  ...serviceRegistry,
+  ...endpoints.reduce((res: ServiceRegistry, endpoint: Endpoint) => {
+    return {
+      ...res,
+      [endpoint.qualifier]: [...res[endpoint.qualifier], endpoint],
+    };
+  }, {}),
+});
+
+export const getEndpointsFromService = ({ service }: GetServicesFromRawServiceOptions): Endpoint[] | [] => {
+  let endpoints: Endpoint[] | [] = [];
+  const { definition, implementation } = service;
+  const { serviceName } = definition;
+  const transport = '';
+
+  if (definition && definition.methods) {
+    endpoints = Object.keys(definition.methods).map((methodName: string) => ({
+      uri: `${transport}/${serviceName}/${methodName}`,
+      qualifier: `${serviceName}/${methodName}`,
+      transport,
+      serviceName,
+      methodName,
+      methodPointer: {
+        [methodName]: implementation[methodName],
+      },
+      context: implementation,
+    }));
   }
 
-  return immutableServiceRegistry;
+  return endpoints;
 };
-
-export const getServicesFromRawService = ({ rawService }: GetServicesFromRawServiceOptions): Service[] => {
-  const services: Service[] = [];
-  const serviceDefinition = getServiceMeta(rawService);
-
-  serviceDefinition &&
-    serviceDefinition.methods &&
-    Object.keys(serviceDefinition.methods).forEach((methodName) => {
-      // raw meta - service with multiple methods
-      services.push({
-        identifier: serviceDefinition.identifier || `${generateUUID()}`,
-        serviceDefinition: {
-          serviceName: getServiceName(rawService),
-          methodName,
-          ...serviceDefinition.methods[methodName],
-        },
-        [methodName]: rawService[methodName],
-      });
-    });
-
-  return services;
-};
-
-export const addServiceToRegistry = ({ serviceRegistry, service }: AddServiceToRegistryOptions) => {
-  const nameSpace = getServiceNamespace(service);
-  serviceRegistry[nameSpace] = {
-    ...(serviceRegistry[nameSpace] || {}),
-    ...getServiceWithEndPoint({ service }),
-  };
-
-  return serviceRegistry;
-};
-
-export const getServiceWithEndPoint = ({ service }: GetServiceWithEndPointOptions): ServiceEndPointResponse => ({
-  [service.identifier]: {
-    id: '',
-    host: '',
-    port: 1,
-    contentTypes: [],
-    tags: {},
-    serviceRegistrations: {},
-    service,
-  },
-});

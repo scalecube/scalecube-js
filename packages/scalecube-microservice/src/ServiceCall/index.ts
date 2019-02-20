@@ -1,10 +1,6 @@
 import { invokeMethod } from './actions';
 import { ServiceCallOptions } from '../api2/private/types';
-
-import ServiceCallRequest from '../api2/public/ServiceCallRequest';
-import ServiceCallResponse from '../api2/public/ServiceCallResponse';
-import ServiceCall from '../api2/public/ServiceCall';
-import { getMethodName } from '../helpers/serviceData';
+import { ServiceCall, ServiceCallRequest, ServiceCallResponse } from '../api2/public';
 
 export const createServiceCall = ({ router, serviceRegistry }: ServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel }: ServiceCallRequest): ServiceCallResponse => {
@@ -13,9 +9,9 @@ export const createServiceCall = ({ router, serviceRegistry }: ServiceCallOption
     }
 
     const { qualifier } = message;
-    const { service } = router.route({ serviceRegistry, qualifier });
-    const method = service[getMethodName({ qualifier })];
-    const res$ = invokeMethod({ method, message, context: service });
+    const { methodPointer, methodName, context } = router.route({ serviceRegistry, qualifier });
+    const method = methodPointer[methodName];
+    const res$ = invokeMethod({ method, message, context });
 
     return asyncModel === 'Promise' ? res$.toPromise() : res$;
   };

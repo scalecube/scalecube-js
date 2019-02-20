@@ -1,5 +1,5 @@
-import { RawService } from '.';
+import { Service } from '.';
 
 export default interface MicroserviceOptions {
-  services?: RawService[];
+  services?: Service[];
 }
