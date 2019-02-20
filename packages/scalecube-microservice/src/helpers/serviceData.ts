@@ -1,4 +1,4 @@
-import { Qualifier } from '../api2/private/types';
+import { Qualifier } from '../api/private/types';
 
 export const getServiceName = ({ qualifier }: { qualifier: string }) => qualifier.split('/')[0];
 

@@ -9,7 +9,7 @@ class HtmlProduct extends HTMLElement {
 
   public disconnectedCallback() {}
 
-  public log(...args) {
+  public log(...args: any[]) {
     console.warn('️HtmlService ', ...args);
   }
 }

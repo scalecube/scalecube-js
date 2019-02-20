@@ -1,5 +1,5 @@
-import { AddServicesToRegistryOptions } from '../api2/private/types';
-import { ServiceRegistry, Service, LookupOptions, Endpoint } from '../api2/public';
+import { AddServicesToRegistryOptions } from '../api/private/types';
+import { ServiceRegistry, Service, LookupOptions, Endpoint } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
 

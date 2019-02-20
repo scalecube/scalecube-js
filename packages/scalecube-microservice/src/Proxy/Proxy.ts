@@ -1,5 +1,5 @@
-import { Message } from '../api2/public';
-import { GetProxyOptions } from '../api2/private/types';
+import { Message } from '../api/public';
+import { GetProxyOptions } from '../api/private/types';
 import { getQualifier } from '../helpers/serviceData';
 
 const allowedMethodTypes = ['Promise', 'Observable'];

@@ -1,7 +1,7 @@
 import GreetingService, { greetingServiceDefinition } from '../__mocks__/GreetingService';
 import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
-import { Service } from '../src/api2/public';
+import { Service } from '../src/api/public';
 
 describe('Service proxy', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test

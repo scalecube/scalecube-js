@@ -1,32 +1,29 @@
 import HtmlService from '../__mocks__/HtmlService';
-import { MicroService } from '../src/Microservices';
+import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
+import AsyncModel from '../src/api/public/AsyncModel';
 
 describe('htmlService', () => {
   it('Import HTMLElement with htmlService and render it', (done) => {
-    const htmlServiceMeta = {
+    const htmlServiceDefinition = {
       serviceName: 'HtmlService',
       methods: {
         render: {
-          asyncModel: 'Promise',
+          asyncModel: 'Promise' as AsyncModel,
         },
       },
     };
 
-    const htmlServiceInstance = new HtmlService();
-    (htmlServiceInstance as any).constructor = htmlServiceInstance.constructor || {};
-    (htmlServiceInstance.constructor as any).meta = htmlServiceMeta;
-
-    const ms = MicroService.create({
-      services: [htmlServiceInstance],
+    const ms = Microservices.create({
+      services: [{ definition: htmlServiceDefinition, implementation: new HtmlService() }],
     });
 
-    const htmlService = ms.asProxy({
-      serviceContract: htmlServiceMeta,
+    const htmlServiceProxy = ms.createProxy({
+      serviceDefinition: htmlServiceDefinition,
       router: defaultRouter,
     });
 
-    htmlService.render().then((response) => {
+    htmlServiceProxy.render().then((response: { default: any }) => {
       const htmlProduct = Object.create(response.default.prototype, {});
       expect(htmlProduct.render()).toEqual('<h3>HTML Service</h3>');
       done();

@@ -10,7 +10,7 @@ import {
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
-} from '../api2/public';
+} from '../api/public';
 import { addServicesToRegistry } from './ServiceRegistry';
 
 export const Microservices: MicroservicesInterface = Object.freeze({

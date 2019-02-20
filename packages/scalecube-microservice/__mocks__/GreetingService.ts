@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs6';
-import { AsyncModel } from '../src/api2/public';
+import { AsyncModel } from '../src/api/public';
 
 class GreetingService {
   public hello = (name: any): any => {

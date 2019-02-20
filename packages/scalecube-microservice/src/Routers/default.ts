@@ -1,5 +1,5 @@
 import { lookUp } from '../Microservices/ServiceRegistry';
-import { RouteOptions, Endpoint } from '../api2/public';
+import { RouteOptions, Endpoint } from '../api/public';
 
 export const defaultRouter = Object.freeze({
   route: ({ qualifier, serviceRegistry }: RouteOptions): Endpoint => {
