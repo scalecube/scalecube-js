@@ -18,7 +18,7 @@ const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => 
   }
   const { asyncModel } = serviceDefinition.methods[prop];
   if (!isValidAsyncModel({ asyncModel })) {
-    throw new Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
+    throw new Error(`service method asyncModel has unknown type error: ${serviceDefinition.serviceName}.${prop}`);
   }
 
   return (...data: any[]) => {

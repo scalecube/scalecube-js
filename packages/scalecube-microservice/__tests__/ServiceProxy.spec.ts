@@ -56,7 +56,7 @@ describe('Service proxy', () => {
     try {
       greetingServiceProxyWithError.hello(defaultUser);
     } catch (e) {
-      expect(e.message).toEqual('service method unknown type error: GreetingService.hello');
+      expect(e.message).toEqual('service method asyncModel has unknown type error: GreetingService.hello');
     }
   });
 });
