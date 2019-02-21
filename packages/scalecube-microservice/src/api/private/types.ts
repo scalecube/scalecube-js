@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs6';
 import { ServiceRegistry, Router, ServiceDefinition, Service, Message, AsyncModel } from '../public';
 
-export interface ServiceCallRequest {
+export interface ServiceCallOptions {
   message: Message;
   asyncModel: AsyncModel;
   includeMessage: boolean;
@@ -9,14 +9,14 @@ export interface ServiceCallRequest {
 
 export type ServiceCallResponse = Observable<any> | Promise<any>;
 
-export type ServiceCall = (serviceCallRequest: ServiceCallRequest) => ServiceCallResponse;
+export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCallResponse;
 
 export interface AddServicesToRegistryOptions {
   services?: Service[];
   serviceRegistry: ServiceRegistry;
 }
 
-export interface ServiceCallOptions {
+export interface CreateServiceCallOptions {
   router: Router;
   serviceRegistry: ServiceRegistry;
 }

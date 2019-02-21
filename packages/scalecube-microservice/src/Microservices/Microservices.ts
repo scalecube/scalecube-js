@@ -12,7 +12,7 @@ import {
   ProxyOptions,
 } from '../api/public';
 import { addServicesToRegistry } from './ServiceRegistry';
-import { ServiceCallRequest } from '../api/private/types';
+import { ServiceCallOptions } from '../api/private/types';
 import { asyncModelTypes } from '../helpers/utils';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
@@ -35,13 +35,13 @@ export const Microservices: MicroservicesInterface = Object.freeze({
               message,
               asyncModel: asyncModelTypes.observable,
               includeMessage: true,
-            } as ServiceCallRequest) as Observable<Message>,
+            } as ServiceCallOptions) as Observable<Message>,
           requestResponse: (message: Message) =>
             serviceCall({
               message,
               asyncModel: asyncModelTypes.promise,
               includeMessage: true,
-            } as ServiceCallRequest) as Promise<Message>,
+            } as ServiceCallOptions) as Promise<Message>,
         });
       },
     });
