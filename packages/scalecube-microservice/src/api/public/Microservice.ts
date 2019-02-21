@@ -1,6 +1,6 @@
-import { ProxyOptions, Dispatcher, DispatcherOptions, ServiceImplementation } from '.';
+import { ProxyOptions, ServiceCall, CreateServiceCallOptions } from '.';
 
 export default interface Microservice {
-  createProxy(proxyOptions: ProxyOptions): ServiceImplementation;
-  createDispatcher(dispatcherOptions: DispatcherOptions): Dispatcher;
+  createProxy<T>(proxyOptions: ProxyOptions): Proxy<T>;
+  createServiceCall(options: CreateServiceCallOptions): ServiceCall;
 }

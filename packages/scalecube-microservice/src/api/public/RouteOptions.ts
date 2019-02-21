@@ -1,6 +1,6 @@
-import { ServiceRegistry } from '.';
+import { Message, Registry } from '.';
 
 export default interface RouteOptions {
-  serviceRegistry: ServiceRegistry;
-  qualifier: string;
+  registry: Registry;
+  message: Message;
 }

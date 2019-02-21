@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs6';
-import { ServiceRegistry, Router, ServiceDefinition, Service, Message, AsyncModel } from '../public';
+import { Registry, Router, ServiceDefinition, Service, Message, AsyncModel, Endpoint } from '../public';
 
 export interface ServiceCallOptions {
   message: Message;
@@ -11,14 +11,13 @@ export type ServiceCallResponse = Observable<any> | Promise<any>;
 
 export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCallResponse;
 
-export interface AddServicesToRegistryOptions {
+export interface CreateRegistryOptions {
   services?: Service[];
-  serviceRegistry: ServiceRegistry;
 }
 
 export interface CreateServiceCallOptions {
   router: Router;
-  serviceRegistry: ServiceRegistry;
+  registry: Registry;
 }
 
 export interface GetProxyOptions {

@@ -19,11 +19,11 @@ describe('Service proxy', () => {
 
   const greetingService1: Service = {
     definition: greetingServiceDefinition,
-    implementation: new GreetingService(),
+    reference: new GreetingService(), // class / module / function
   };
   const greetingService2: Service = {
     definition: greetingServiceDefinition,
-    implementation: new GreetingService(),
+    reference: new GreetingService(),
   };
 
   const ms = Microservices.create({

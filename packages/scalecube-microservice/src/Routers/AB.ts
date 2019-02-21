@@ -1,4 +1,4 @@
-import { lookUp } from '../Microservices/ServiceRegistry';
+import { lookUp } from '../Microservices/Registry';
 import { ABTestingRequest, RouteRequest } from '../api/Routers';
 
 export const AB = Object.freeze({

@@ -1,5 +1,5 @@
 import { Endpoint } from '.';
 
-export default interface ServiceRegistry {
+export default interface ServiceRegistryDataStructure {
   [qualifier: string]: Endpoint[];
 }

@@ -4,6 +4,12 @@ import { getQualifier } from '../helpers/serviceData';
 import { isValidAsyncModel } from '../helpers/serviceValidation';
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
+  // TODO: move this validation to creation of proxy - loop on all methods and check it on creation
+  // const { asyncModel } = serviceDefinition.methods[prop];
+  // if (!isValidAsyncModel({ asyncModel })) {
+  //   throw new Error(`service method asyncModel has unknown type error: ${serviceDefinition.serviceName}.${prop}`);
+  // }
+
   return new Proxy(
     {},
     {
@@ -16,10 +22,8 @@ const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => 
   if (!serviceDefinition.methods[prop]) {
     throw new Error(`service method '${prop}' missing in the metadata`);
   }
+
   const { asyncModel } = serviceDefinition.methods[prop];
-  if (!isValidAsyncModel({ asyncModel })) {
-    throw new Error(`service method asyncModel has unknown type error: ${serviceDefinition.serviceName}.${prop}`);
-  }
 
   return (...data: any[]) => {
     const message: Message = {

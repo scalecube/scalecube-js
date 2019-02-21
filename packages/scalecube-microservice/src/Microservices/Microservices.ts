@@ -1,34 +1,35 @@
 import { Observable } from 'rxjs6';
 import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
-import { createServiceCall } from '../ServiceCall/ServiceCall';
+import { getServiceCall } from '../ServiceCall/ServiceCall';
 import {
-  Dispatcher,
-  DispatcherOptions,
+  ServiceCall,
+  CreateServiceCallOptions,
   Message,
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
   ProxyOptions,
 } from '../api/public';
-import { addServicesToRegistry } from './ServiceRegistry';
-import { ServiceCallOptions } from '../api/private/types';
+import { createRegistry } from './Registry';
+
 import { asyncModelTypes } from '../helpers/utils';
+import { ServiceCallOptions } from '../api/private/types';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services }: MicroserviceOptions): Microservice => {
-    const serviceRegistry =
-      services && Array.isArray(services) ? addServicesToRegistry({ services, serviceRegistry: {} }) : {};
+    const registry = createRegistry();
+    services && Array.isArray(services) && registry.AddToMethodRegistry({ services });
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {
         return getProxy({
-          serviceCall: createServiceCall({ router, serviceRegistry }),
+          serviceCall: getServiceCall({ router, registry }),
           serviceDefinition,
         });
       },
-      createDispatcher({ router = defaultRouter }: DispatcherOptions): Dispatcher {
-        const serviceCall = createServiceCall({ router, serviceRegistry });
+      createServiceCall({ router = defaultRouter }: CreateServiceCallOptions): ServiceCall {
+        const serviceCall = getServiceCall({ router, registry });
         return Object.freeze({
           requestStream: (message: Message) =>
             serviceCall({
