@@ -1,8 +1,7 @@
-import { AsyncModel, Message } from '../api/public';
+import { Message } from '../api/public';
 import { GetProxyOptions } from '../api/private/types';
 import { getQualifier } from '../helpers/serviceData';
-
-const allowedMethodTypes = [AsyncModel.Observable, AsyncModel.Promise];
+import { isValidAsyncModel } from '../helpers/serviceValidation';
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
   return new Proxy(
@@ -18,7 +17,7 @@ const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => 
     throw new Error(`service method '${prop}' missing in the metadata`);
   }
   const { asyncModel } = serviceDefinition.methods[prop];
-  if (!allowedMethodTypes.includes(asyncModel)) {
+  if (!isValidAsyncModel({ asyncModel })) {
     throw new Error(`service method unknown type error: ${serviceDefinition.serviceName}.${prop}`);
   }
 

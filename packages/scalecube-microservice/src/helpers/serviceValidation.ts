@@ -1,4 +1,4 @@
-import { isObject } from './utils';
+import { asyncModelTypes, isObject } from './utils';
 import { ServiceDefinition, AsyncModel } from '../api/public';
 
 export const isValidServiceDefinition = (definition: ServiceDefinition) => {
@@ -28,9 +28,12 @@ export const isValidMethod = ({
   methodData: { asyncModel: string };
   methodName: string;
 }) => {
-  if (!methodData.asyncModel || (methodData.asyncModel !== 'Promise' && methodData.asyncModel !== 'Observable')) {
+  if (!isValidAsyncModel({ asyncModel: methodData.asyncModel as AsyncModel })) {
     console.error(new Error(`method ${methodName} doesn't contain valid  type (asyncModel)`));
     return false;
   }
   return true;
 };
+
+export const isValidAsyncModel = ({ asyncModel }: { asyncModel: AsyncModel }) =>
+  Object.values(asyncModelTypes).includes(asyncModel);

@@ -1,7 +1,7 @@
 import HtmlService from '../__mocks__/HtmlService';
 import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
-import AsyncModel from '../src/api/public/AsyncModel';
+import { PromiseAsyncModel } from '../src/api/public';
 
 describe('htmlService', () => {
   it('Import HTMLElement with htmlService and render it', (done) => {
@@ -9,7 +9,7 @@ describe('htmlService', () => {
       serviceName: 'HtmlService',
       methods: {
         render: {
-          asyncModel: 'Promise' as AsyncModel,
+          asyncModel: 'Promise' as PromiseAsyncModel,
         },
       },
     };

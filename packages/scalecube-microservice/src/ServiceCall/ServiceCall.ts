@@ -1,6 +1,6 @@
 import { Observable, from } from 'rxjs6';
 import { ServiceCallOptions, ServiceCall, ServiceCallRequest, ServiceCallResponse } from '../api/private/types';
-import { throwErrorFromServiceCall } from '../helpers/utils';
+import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 
 export const createServiceCall = ({ router, serviceRegistry }: ServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel }: ServiceCallRequest): ServiceCallResponse => {
@@ -13,6 +13,6 @@ export const createServiceCall = ({ router, serviceRegistry }: ServiceCallOption
     const method = methodPointer[methodName];
     const res$ = from(method.apply(context, message.data)) as Observable<any>;
 
-    return asyncModel === 'Promise' ? res$.toPromise() : res$;
+    return asyncModel === asyncModelTypes.promise ? res$.toPromise() : res$;
   };
 };

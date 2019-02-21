@@ -1,4 +1,5 @@
 import AsyncModel from './AsyncModel';
+import { ObservableAsyncModel, PromiseAsyncModel } from './AsyncModel';
 import ProxyOptions from './ProxyOptions';
 import Dispatcher from './Dispatcher';
 import Message from './Message';
@@ -17,6 +18,8 @@ import Endpoint from './Endpoint';
 
 export {
   AsyncModel,
+  ObservableAsyncModel,
+  PromiseAsyncModel,
   ProxyOptions,
   Dispatcher,
   Message,
