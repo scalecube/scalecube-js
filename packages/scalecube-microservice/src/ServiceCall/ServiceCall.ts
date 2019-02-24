@@ -3,11 +3,12 @@ import { map } from 'rxjs6/operators';
 import { ServiceCall, CreateServiceCallOptions, ServiceCallResponse, ServiceCallOptions } from '../api/private/types';
 import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { Message } from '../api/public';
+import { MESSAGE_NOT_PROVIDED } from '../helpers/constants';
 
 export const getServiceCall = ({ router, registry }: CreateServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel, includeMessage }: ServiceCallOptions): ServiceCallResponse => {
     if (!message) {
-      return throwErrorFromServiceCall({ asyncModel, errorMessage: 'Message has not been provided' });
+      return throwErrorFromServiceCall({ asyncModel, errorMessage: MESSAGE_NOT_PROVIDED });
     }
 
     let localService = registry.lookUpLocal({ qualifier: message.qualifier });

@@ -1,5 +1,16 @@
 import { Observable } from 'rxjs6';
-import { Registry, Router, ServiceDefinition, Service, Message, AsyncModel, Endpoint } from '../public';
+import {
+  Registry,
+  Router,
+  ServiceDefinition,
+  Service,
+  Message,
+  AsyncModel,
+  Endpoint,
+  ServiceRegistryDataStructure,
+  MethodRegistryDataStructure,
+  Reference,
+} from '../public';
 
 export interface ServiceCallOptions {
   message: Message;
@@ -28,4 +39,19 @@ export interface GetProxyOptions {
 export interface Qualifier {
   serviceName: string;
   methodName: string;
+}
+
+export interface GetUpdatedServiceRegistryOptions {
+  serviceRegistry: ServiceRegistryDataStructure | null;
+  endpoints: Endpoint[];
+}
+
+export interface GetUpdatedMethodRegistryOptions {
+  methodRegistry: MethodRegistryDataStructure | null;
+  references: Reference[];
+}
+
+export interface GetDataFromServiceOptions {
+  service: Service;
+  type: 'reference' | 'endPoint';
 }

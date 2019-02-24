@@ -1,4 +1,9 @@
-import { CreateRegistryOptions } from '../api/private/types';
+import {
+  CreateRegistryOptions,
+  GetDataFromServiceOptions,
+  GetUpdatedMethodRegistryOptions,
+  GetUpdatedServiceRegistryOptions,
+} from '../api/private/types';
 import {
   Registry,
   Service,
@@ -10,25 +15,54 @@ import {
 } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
+import { END_POINT, MICROSERVICE_NOT_EXISTS, REFERENCE } from '../helpers/constants';
 
 export const createRegistry = (): Registry => {
-  let serviceRegistry: ServiceRegistryDataStructure = {}; // remote
-  let methodRegistry: MethodRegistryDataStructure = {}; // local
+  let serviceRegistry: ServiceRegistryDataStructure | null = {}; // remote
+  let methodRegistry: MethodRegistryDataStructure | null = {}; // local
 
   return Object.freeze({
-    lookUpRemote: ({ qualifier }: LookupOptions): Endpoint[] | [] => serviceRegistry[qualifier] || [],
-    lookUpLocal: ({ qualifier }: LookupOptions): Reference => methodRegistry[qualifier],
-    AddToMethodRegistry: ({ services = [] }: CreateRegistryOptions) => {
+    lookUpRemote: ({ qualifier }: LookupOptions): Endpoint[] | [] => {
+      if (!serviceRegistry) {
+        throw new Error(MICROSERVICE_NOT_EXISTS);
+      }
+
+      return serviceRegistry[qualifier] || [];
+    },
+    lookUpLocal: ({ qualifier }: LookupOptions): Reference => {
+      if (!methodRegistry) {
+        throw new Error(MICROSERVICE_NOT_EXISTS);
+      }
+
+      return methodRegistry[qualifier];
+    },
+    AddToMethodRegistry: ({ services = [] }: CreateRegistryOptions): MethodRegistryDataStructure => {
+      if (!methodRegistry) {
+        throw new Error(MICROSERVICE_NOT_EXISTS);
+      }
+
       methodRegistry = getUpdatedMethodRegistry({
         methodRegistry,
         references: getReferenceFromServices({ services }), //all services => reference[]
       });
+      return { ...methodRegistry };
     },
-    AddToServiceRegistry: ({ services = [] }: CreateRegistryOptions) => {
+
+    AddToServiceRegistry: ({ services = [] }: CreateRegistryOptions): ServiceRegistryDataStructure => {
+      if (!serviceRegistry) {
+        throw new Error(MICROSERVICE_NOT_EXISTS);
+      }
+
       serviceRegistry = getUpdatedServiceRegistry({
         serviceRegistry,
         endpoints: getEndpointsFromServices({ services }) as Endpoint[], //all services => endPoints[]
       });
+      return { ...serviceRegistry };
+    },
+    destroy: (): null => {
+      serviceRegistry = null;
+      methodRegistry = null;
+      return null;
     },
   });
 };
@@ -41,7 +75,7 @@ export const getEndpointsFromServices = ({ services }: { services: Service[] }):
       ...res,
       ...getDataFromService({
         service,
-        type: 'endPoint',
+        type: END_POINT,
       }),
     ],
     []
@@ -53,7 +87,7 @@ export const getReferenceFromServices = ({ services }: { services: Service[] }):
       ...res,
       ...getDataFromService({
         service,
-        type: 'reference',
+        type: REFERENCE,
       }),
     ],
     []
@@ -62,44 +96,32 @@ export const getReferenceFromServices = ({ services }: { services: Service[] }):
 export const getUpdatedServiceRegistry = ({
   serviceRegistry,
   endpoints,
-}: {
-  serviceRegistry: ServiceRegistryDataStructure;
-  endpoints: Endpoint[];
-}) => ({
+}: GetUpdatedServiceRegistryOptions): ServiceRegistryDataStructure => ({
   ...serviceRegistry,
   ...endpoints.reduce(
     (res: ServiceRegistryDataStructure, endpoint: Endpoint) => ({
       ...res,
       [endpoint.qualifier]: [...(res[endpoint.qualifier] || []), endpoint],
     }),
-    {}
+    serviceRegistry || {}
   ),
 });
 
 export const getUpdatedMethodRegistry = ({
   methodRegistry,
   references,
-}: {
-  methodRegistry: MethodRegistryDataStructure;
-  references: Reference[];
-}) => ({
+}: GetUpdatedMethodRegistryOptions): MethodRegistryDataStructure => ({
   ...methodRegistry,
   ...references.reduce(
     (res: MethodRegistryDataStructure, reference: Reference) => ({
       ...res,
       [reference.qualifier]: reference,
     }),
-    {}
+    methodRegistry || {}
   ),
 });
 
-export const getDataFromService = ({
-  service,
-  type,
-}: {
-  service: Service;
-  type: 'reference' | 'endPoint';
-}): Reference[] | Endpoint[] => {
+export const getDataFromService = ({ service, type }: GetDataFromServiceOptions): Reference[] | Endpoint[] => {
   let data: Reference[] | Endpoint[] = [];
   const { definition, reference } = service;
   const { serviceName } = definition;
@@ -107,22 +129,23 @@ export const getDataFromService = ({
 
   if (isValidServiceDefinition(definition)) {
     data = Object.keys(definition.methods).map((methodName: string) =>
-      type === 'endPoint'
-        ? {
-            qualifier: getQualifier({ serviceName, methodName }),
-            serviceName,
-            methodName,
-            transport,
-            uri: `${transport}/${serviceName}/${methodName}`,
-          }
-        : {
-            qualifier: getQualifier({ serviceName, methodName }),
-            serviceName,
-            methodName,
-            reference: {
-              [methodName]: reference[methodName].bind(reference),
-            },
-          }
+      Object.assign(
+        {
+          qualifier: getQualifier({ serviceName, methodName }),
+          serviceName,
+          methodName,
+        },
+        type === END_POINT
+          ? {
+              transport,
+              uri: `${transport}/${serviceName}/${methodName}`,
+            }
+          : {
+              reference: {
+                [methodName]: reference[methodName].bind(reference),
+              },
+            }
+      )
     );
   } else {
     throw new Error(`service ${definition.serviceName} is not valid.`);
