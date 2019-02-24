@@ -9,6 +9,7 @@ import {
   getUpdatedServiceRegistry,
 } from './Registry';
 import { END_POINT, REFERENCE } from '../helpers/constants';
+import { getQualifier } from '../helpers/serviceData';
 
 describe('Registry Testing', () => {
   describe('Test registry factory', () => {
@@ -57,6 +58,50 @@ describe('Registry Testing', () => {
 
       const endpoints: Endpoint[] = serviceRegistry[qualifiers[0]];
       expect(endpoints).toHaveLength(2);
+    });
+
+    it('Test lookUpRemote ({ qualifier }): Endpoint[] | []', () => {
+      registry.AddToServiceRegistry({
+        services: [service],
+      });
+
+      const emptyResult = registry.lookUpRemote({ qualifier: 'fakeQualifier' });
+      expect(emptyResult).toMatchObject([]);
+
+      const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+      const result = registry.lookUpRemote({ qualifier });
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(
+        expect.objectContaining({
+          asyncModel: expect.any(String),
+          methodName: expect.any(String),
+          qualifier: expect.any(String),
+          serviceName: expect.any(String),
+          uri: expect.any(String),
+          transport: expect.any(String),
+        })
+      );
+    });
+
+    it('Test lookUpLocal ({ qualifier }): Reference', () => {
+      registry.AddToMethodRegistry({
+        services: [service],
+      });
+
+      const emptyResult = registry.lookUpLocal({ qualifier: 'fakeQualifier' });
+      expect(emptyResult).toBe(undefined);
+
+      const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+      const result = registry.lookUpLocal({ qualifier });
+      expect(result).toEqual(
+        expect.objectContaining({
+          asyncModel: expect.any(String),
+          methodName: expect.any(String),
+          qualifier: expect.any(String),
+          reference: expect.any(Object),
+          serviceName: expect.any(String),
+        })
+      );
     });
   });
   describe('Test destroy() : null', () => {
@@ -185,11 +230,15 @@ describe('Registry Testing', () => {
 
       const reference: Reference = references[0];
       expect(Object.keys(reference)).toHaveLength(NUMBER_OF_PROPERTY_REFERENCE);
-      expect(reference.qualifier).toBeDefined();
-      expect(reference.serviceName).toBeDefined();
-      expect(reference.methodName).toBeDefined();
-      expect(reference.reference).toBeDefined();
-      expect(reference.asyncModel).toBeDefined();
+      expect(reference).toEqual(
+        expect.objectContaining({
+          asyncModel: expect.any(String),
+          methodName: expect.any(String),
+          qualifier: expect.any(String),
+          reference: expect.any(Object),
+          serviceName: expect.any(String),
+        })
+      );
     });
 
     it('Test getDataFromService({ service, type }) : Endpoint[]', () => {
@@ -204,12 +253,16 @@ describe('Registry Testing', () => {
 
       const endPoint: Endpoint = endPoints[0];
       expect(Object.keys(endPoint)).toHaveLength(NUMBER_OF_PROPERTY_END_POINT);
-      expect(endPoint.qualifier).toBeDefined();
-      expect(endPoint.serviceName).toBeDefined();
-      expect(endPoint.methodName).toBeDefined();
-      expect(endPoint.transport).toBeDefined();
-      expect(endPoint.uri).toBeDefined();
-      expect(endPoint.asyncModel).toBeDefined();
+      expect(endPoint).toEqual(
+        expect.objectContaining({
+          asyncModel: expect.any(String),
+          methodName: expect.any(String),
+          qualifier: expect.any(String),
+          serviceName: expect.any(String),
+          uri: expect.any(String),
+          transport: expect.any(String),
+        })
+      );
     });
   });
 });
