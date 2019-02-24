@@ -2,6 +2,9 @@ import GreetingService, { greetingServiceDefinition } from '../__mocks__/Greetin
 import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
 import { Service } from '../src/api/public';
+import { asyncModelTypes } from '../src/helpers/utils';
+import { EMPTY } from 'rxjs6';
+import { catchError } from 'rxjs6/operators';
 
 describe('Service proxy', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -14,6 +17,19 @@ describe('Service proxy', () => {
       ...greetingServiceDefinition.methods,
       hello: {
         asyncModel: 'wrongAsyncModel',
+      },
+    },
+  };
+
+  const missMatchDefinition = {
+    ...greetingServiceDefinition,
+    methods: {
+      ...greetingServiceDefinition.methods,
+      hello: {
+        asyncModel: asyncModelTypes.observable,
+      },
+      greet$: {
+        asyncModel: asyncModelTypes.promise,
       },
     },
   };
@@ -33,6 +49,11 @@ describe('Service proxy', () => {
 
   const greetingServiceProxy = ms.createProxy({
     serviceDefinition: greetingServiceDefinition,
+    router: defaultRouter,
+  });
+
+  const greetingServiceMissMatchAsyncModel = ms.createProxy({
+    serviceDefinition: missMatchDefinition,
     router: defaultRouter,
   });
 
@@ -74,5 +95,25 @@ describe('Service proxy', () => {
     } catch (e) {
       expect(e.message).toEqual('service GreetingService is not valid.');
     }
+  });
+
+  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable', (done) => {
+    greetingServiceMissMatchAsyncModel
+      .hello(defaultUser)
+      .pipe(
+        catchError((error: any) => {
+          expect(error.message).toMatch('asyncModel miss match, expect Observable but received Promise');
+          done();
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  });
+
+  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - promise', (done) => {
+    greetingServiceMissMatchAsyncModel.greet$([defaultUser]).catch((error: any) => {
+      expect(error.message).toMatch('asyncModel miss match, expect Promise but received Observable');
+      done();
+    });
   });
 });
