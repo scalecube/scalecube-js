@@ -43,7 +43,7 @@ export const createRegistry = (): Registry => {
 
       methodRegistry = getUpdatedMethodRegistry({
         methodRegistry,
-        references: getReferenceFromServices({ services }), //all services => reference[]
+        references: getReferenceFromServices({ services }), // all services => reference[]
       });
       return { ...methodRegistry };
     },
@@ -55,7 +55,7 @@ export const createRegistry = (): Registry => {
 
       serviceRegistry = getUpdatedServiceRegistry({
         serviceRegistry,
-        endpoints: getEndpointsFromServices({ services }) as Endpoint[], //all services => endPoints[]
+        endpoints: getEndpointsFromServices({ services }) as Endpoint[], // all services => endPoints[]
       });
       return { ...serviceRegistry };
     },

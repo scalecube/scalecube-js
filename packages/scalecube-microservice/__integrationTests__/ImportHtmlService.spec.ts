@@ -1,7 +1,7 @@
 import HtmlService from '../__mocks__/HtmlService';
 import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
-import { PromiseAsyncModel } from '../src/api/public';
+import { asyncModelTypes } from '../src/helpers/utils';
 
 describe('htmlService', () => {
   it('Import HTMLElement with htmlService and render it', (done) => {
@@ -9,13 +9,13 @@ describe('htmlService', () => {
       serviceName: 'HtmlService',
       methods: {
         render: {
-          asyncModel: 'Promise' as PromiseAsyncModel,
+          asyncModel: asyncModelTypes.promise,
         },
       },
     };
 
     const ms = Microservices.create({
-      services: [{ definition: htmlServiceDefinition, implementation: new HtmlService() }],
+      services: [{ definition: htmlServiceDefinition, reference: new HtmlService() }],
     });
 
     const htmlServiceProxy = ms.createProxy({
