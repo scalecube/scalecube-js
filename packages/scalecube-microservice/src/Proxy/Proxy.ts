@@ -1,14 +1,12 @@
 import { Message } from '../api/public';
 import { GetProxyOptions } from '../api/private/types';
 import { getQualifier } from '../helpers/serviceData';
-import { isValidAsyncModel } from '../helpers/serviceValidation';
+import { isValidServiceDefinition } from '../helpers/serviceValidation';
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
-  // TODO: move this validation to creation of proxy - loop on all methods and check it on creation
-  // const { asyncModel } = serviceDefinition.methods[prop];
-  // if (!isValidAsyncModel({ asyncModel })) {
-  //   throw new Error(`service method asyncModel has unknown type error: ${serviceDefinition.serviceName}.${prop}`);
-  // }
+  if (!isValidServiceDefinition(serviceDefinition)) {
+    throw new Error(`service ${serviceDefinition.serviceName} is not valid.`);
+  }
 
   return new Proxy(
     {},

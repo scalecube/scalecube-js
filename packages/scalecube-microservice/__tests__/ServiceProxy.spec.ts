@@ -5,6 +5,7 @@ import { Service } from '../src/api/public';
 
 describe('Service proxy', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
+  console.error = jest.fn(); // disable validation logs while doing this test
 
   const defaultUser = 'defaultUser';
   const wrongDefinition = {
@@ -35,11 +36,11 @@ describe('Service proxy', () => {
     router: defaultRouter,
   });
 
-  it('Invoke method that define in the contract', () => {
+  it('Invoke method that define in the serviceDefinition', () => {
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
-  it('Throw error message if method does not define in the contract', () => {
+  it('Throw error message if method does not define in the serviceDefinition', () => {
     try {
       greetingServiceProxy.fakeHello();
     } catch (e) {
@@ -47,16 +48,31 @@ describe('Service proxy', () => {
     }
   });
 
-  it('Throw error message when async model in the serviceDefinition of proxy is incorrect', () => {
-    const greetingServiceProxyWithError = ms.createProxy({
-      // @ts-ignore-next-line
-      serviceDefinition: wrongDefinition,
-      router: defaultRouter,
-    });
+  it('Throw error message when creating microservice with invalid serviceDefinition', () => {
     try {
-      greetingServiceProxyWithError.hello(defaultUser);
+      const msWithError = Microservices.create({
+        // @ts-ignore-next-line
+        services: [
+          {
+            definition: wrongDefinition,
+            reference: new GreetingService(),
+          },
+        ],
+      });
     } catch (e) {
-      expect(e.message).toEqual('service method asyncModel has unknown type error: GreetingService.hello');
+      expect(e.message).toEqual('service GreetingService is not valid.');
+    }
+  });
+
+  it('Throw error message when creating proxy with invalid serviceDefinition', () => {
+    try {
+      const greetingServiceProxyWithError = ms.createProxy({
+        // @ts-ignore-next-line
+        serviceDefinition: wrongDefinition,
+        router: defaultRouter,
+      });
+    } catch (e) {
+      expect(e.message).toEqual('service GreetingService is not valid.');
     }
   });
 });

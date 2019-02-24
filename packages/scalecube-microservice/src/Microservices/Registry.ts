@@ -124,6 +124,8 @@ export const getDataFromService = ({
             },
           }
     );
+  } else {
+    throw new Error(`service ${definition.serviceName} is not valid.`);
   }
 
   return data;

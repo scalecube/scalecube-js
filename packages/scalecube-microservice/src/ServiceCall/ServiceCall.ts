@@ -13,6 +13,8 @@ export const getServiceCall = ({ router, registry }: CreateServiceCallOptions): 
     let localService = registry.lookUpLocal({ qualifier: message.qualifier });
     let res$: Observable<any> = of({});
 
+    // TODO check if the provider serviceDefinition === consumer serviceDefinition, if not equal then throw error
+
     if (localService && localService.reference) {
       const method = localService.reference[localService.methodName];
 
