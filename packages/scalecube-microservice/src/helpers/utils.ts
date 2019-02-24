@@ -3,6 +3,8 @@ import { AsyncModel, ObservableAsyncModel, PromiseAsyncModel } from '../api/publ
 
 export const isObject = (obj: object) => obj && typeof obj === 'object' && obj.constructor === Object;
 
+export const isFunction = (obj: object) => obj && obj instanceof Function;
+
 export const throwErrorFromServiceCall = ({
   asyncModel,
   errorMessage,

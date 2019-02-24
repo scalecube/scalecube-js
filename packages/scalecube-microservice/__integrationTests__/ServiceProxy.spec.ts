@@ -6,7 +6,7 @@ import { asyncModelTypes } from '../src/helpers/utils';
 import { EMPTY } from 'rxjs6';
 import { catchError } from 'rxjs6/operators';
 
-describe('Service proxy', () => {
+describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
   console.error = jest.fn(); // disable validation logs while doing this test
 
@@ -36,15 +36,11 @@ describe('Service proxy', () => {
 
   const greetingService1: Service = {
     definition: greetingServiceDefinition,
-    reference: new GreetingService(), // class / module / function
-  };
-  const greetingService2: Service = {
-    definition: greetingServiceDefinition,
     reference: new GreetingService(),
   };
 
   const ms = Microservices.create({
-    services: [greetingService1, greetingService2],
+    services: [greetingService1],
   });
 
   const greetingServiceProxy = ms.createProxy({
@@ -66,22 +62,6 @@ describe('Service proxy', () => {
       greetingServiceProxy.fakeHello();
     } catch (e) {
       expect(e.message).toEqual(`service method 'fakeHello' missing in the metadata`);
-    }
-  });
-
-  it('Throw error message when creating microservice with invalid serviceDefinition', () => {
-    try {
-      const msWithError = Microservices.create({
-        // @ts-ignore-next-line
-        services: [
-          {
-            definition: wrongDefinition,
-            reference: new GreetingService(),
-          },
-        ],
-      });
-    } catch (e) {
-      expect(e.message).toEqual('service GreetingService is not valid.');
     }
   });
 

@@ -16,6 +16,7 @@ import {
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
 import { END_POINT, MICROSERVICE_NOT_EXISTS, REFERENCE } from '../helpers/constants';
+import { isFunction } from '../helpers/utils';
 
 export const createRegistry = (): Registry => {
   let serviceRegistry: ServiceRegistryDataStructure | null = {}; // remote
@@ -144,7 +145,7 @@ export const getDataFromService = ({ service, type }: GetDataFromServiceOptions)
             }
           : {
               reference: {
-                [methodName]: reference[methodName].bind(reference),
+                [methodName]: isFunction(reference) ? reference : reference[methodName].bind(reference),
               },
             }
       )
