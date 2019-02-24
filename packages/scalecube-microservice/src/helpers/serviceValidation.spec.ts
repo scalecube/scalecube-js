@@ -1,14 +1,21 @@
-import { isValidRawService, isValidServiceName, isValidMethods, isValidMethod } from './serviceValidation';
+import { isValidServiceDefinition, isValidServiceName, isValidMethods, isValidMethod } from './serviceValidation';
+import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
 
 describe('Unit testing serviceValidations', () => {
   console.error = jest.fn(); // disable validation logs while doing this test
 
   it('Test isValidMethods(methods) - invalid methods - invoke with invalid value type', () => {
+    // @ts-ignore
     expect(isValidMethods('')).toBe(false);
+    // @ts-ignore
     expect(isValidMethods(true)).toBe(false);
+    // @ts-ignore
     expect(isValidMethods(1)).toBe(false);
+    // @ts-ignore
     expect(isValidMethods([])).toBe(false);
+    // @ts-ignore
     expect(isValidMethods(null)).toBe(false);
+    // @ts-ignore
     expect(isValidMethods(undefined)).toBe(false);
   });
 
@@ -22,28 +29,35 @@ describe('Unit testing serviceValidations', () => {
     ).toBe(true);
   });
 
-  it('Test isValidMethod({methodProp, method}) - invalid - no methodProp.type', () => {
-    expect(isValidMethod({ methodProp: {}, method: 'testMethod' })).toBe(false);
+  it('Test isValidMethod({methodData, methodName}) - invalid - no methodProp.type', () => {
+    // @ts-ignore
+    expect(isValidMethod({ methodData: {}, methodName: 'testMethod' })).toBe(false);
   });
 
-  it('Test isValidMethod({methodProp, method}) - invalid - methodProp.type !== Promise | Observable', () => {
-    expect(isValidMethod({ methodProp: { asyncModel: 'something' }, method: 'testMethod' })).toBe(false);
+  it('Test isValidMethod({methodData, methodName}) - invalid - methodProp.type !== Promise | Observable', () => {
+    expect(isValidMethod({ methodData: { asyncModel: 'something' }, methodName: 'testMethod' })).toBe(false);
   });
 
-  it('Test isValidMethod({methodProp, method}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodProp: { asyncModel: 'Promise' }, method: 'testMethod' })).toBe(true);
+  it('Test isValidMethod({methodData, methodName}) - valid - methodProp.type === Promise | Observable', () => {
+    expect(isValidMethod({ methodData: { asyncModel: 'Promise' }, methodName: 'testMethod' })).toBe(true);
   });
 
-  it('Test isValidMethod({methodProp, method}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodProp: { asyncModel: 'Observable' }, method: 'testMethod' })).toBe(true);
+  it('Test isValidMethod({methodProp, methodName}) - valid - methodProp.type === Promise | Observable', () => {
+    expect(isValidMethod({ methodData: { asyncModel: 'Observable' }, methodName: 'testMethod' })).toBe(true);
   });
 
   it('Test isValidServiceName(serviceName) - invalid value type', () => {
+    // @ts-ignore
     expect(isValidServiceName(1)).toBe(false);
+    // @ts-ignore
     expect(isValidServiceName(true)).toBe(false);
+    // @ts-ignore
     expect(isValidServiceName({})).toBe(false);
+    // @ts-ignore
     expect(isValidServiceName([])).toBe(false);
+    // @ts-ignore
     expect(isValidServiceName(null)).toBe(false);
+    // @ts-ignore
     expect(isValidServiceName(undefined)).toBe(false);
   });
 
@@ -52,17 +66,11 @@ describe('Unit testing serviceValidations', () => {
   });
 
   it('Test isValidService(service) - invalid - no meta data', () => {
-    expect(isValidRawService({})).toBe(false);
+    // @ts-ignore
+    expect(isValidServiceDefinition({})).toBe(false);
   });
 
   it('Test isValidService(service) - valid - meta data', () => {
-    expect(
-      isValidRawService({
-        meta: {
-          serviceName: 'serviceName',
-          methods: { hello: { asyncModel: 'Promise' } },
-        },
-      })
-    ).toBe(true);
+    expect(isValidServiceDefinition(greetingServiceDefinition)).toBe(true);
   });
 });
