@@ -45,12 +45,6 @@ describe('Registry Testing', () => {
 
       const qualifiers = Object.keys(methodRegistry);
       expect(qualifiers).toHaveLength(NUMBER_OF_REFERENCES);
-
-      const firstReference: Reference = methodRegistry[qualifiers[0]];
-      expect(firstReference.qualifier).toBeDefined();
-      expect(firstReference.serviceName).toBeDefined();
-      expect(firstReference.methodName).toBeDefined();
-      expect(firstReference.reference).toBeDefined();
     });
 
     it('Test AddToServiceRegistry({ services }): ServiceRegistryDataStructure', () => {
@@ -63,13 +57,6 @@ describe('Registry Testing', () => {
 
       const endpoints: Endpoint[] = serviceRegistry[qualifiers[0]];
       expect(endpoints).toHaveLength(2);
-
-      const endPoint: Endpoint = endpoints[0];
-      expect(endPoint.qualifier).toBeDefined();
-      expect(endPoint.serviceName).toBeDefined();
-      expect(endPoint.methodName).toBeDefined();
-      expect(endPoint.transport).toBeDefined();
-      expect(endPoint.uri).toBeDefined();
     });
   });
   describe('Test destroy() : null', () => {
@@ -138,12 +125,13 @@ describe('Registry Testing', () => {
 
       const qualifier = 'qualifier';
 
-      const endpoint = {
+      const endpoint: Endpoint = {
         qualifier,
         serviceName: 'serviceName',
         methodName: 'methodName',
         transport: 'transport',
         uri: 'uri',
+        asyncModel: 'Promise',
       };
       const serviceRegistry = {
         [qualifier]: [endpoint, endpoint],
@@ -167,6 +155,7 @@ describe('Registry Testing', () => {
         qualifier,
         serviceName: 'serviceName',
         methodName: 'methodName',
+        asyncModel: 'Promise',
         reference: {
           fakeMethod: () => {},
         },
@@ -186,6 +175,7 @@ describe('Registry Testing', () => {
 
     it('Test getDataFromService({ service, type }) : Reference[]', () => {
       const NUMBER_OF_REFERENCES = 2;
+      const NUMBER_OF_PROPERTY_REFERENCE = 5;
 
       const references = getDataFromService({
         service,
@@ -194,14 +184,17 @@ describe('Registry Testing', () => {
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
 
       const reference: Reference = references[0];
+      expect(Object.keys(reference)).toHaveLength(NUMBER_OF_PROPERTY_REFERENCE);
       expect(reference.qualifier).toBeDefined();
       expect(reference.serviceName).toBeDefined();
       expect(reference.methodName).toBeDefined();
       expect(reference.reference).toBeDefined();
+      expect(reference.asyncModel).toBeDefined();
     });
 
     it('Test getDataFromService({ service, type }) : Endpoint[]', () => {
       const NUMBER_OF_END_POINTS = 2;
+      const NUMBER_OF_PROPERTY_END_POINT = 6;
 
       const endPoints = getDataFromService({
         service,
@@ -210,11 +203,13 @@ describe('Registry Testing', () => {
       expect(endPoints).toHaveLength(NUMBER_OF_END_POINTS);
 
       const endPoint: Endpoint = endPoints[0];
+      expect(Object.keys(endPoint)).toHaveLength(NUMBER_OF_PROPERTY_END_POINT);
       expect(endPoint.qualifier).toBeDefined();
       expect(endPoint.serviceName).toBeDefined();
       expect(endPoint.methodName).toBeDefined();
       expect(endPoint.transport).toBeDefined();
       expect(endPoint.uri).toBeDefined();
+      expect(endPoint.asyncModel).toBeDefined();
     });
   });
 });

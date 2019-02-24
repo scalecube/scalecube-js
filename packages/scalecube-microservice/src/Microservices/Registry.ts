@@ -124,16 +124,18 @@ export const getUpdatedMethodRegistry = ({
 export const getDataFromService = ({ service, type }: GetDataFromServiceOptions): Reference[] | Endpoint[] => {
   let data: Reference[] | Endpoint[] = [];
   const { definition, reference } = service;
-  const { serviceName } = definition;
   const transport = 'window:/';
 
   if (isValidServiceDefinition(definition)) {
-    data = Object.keys(definition.methods).map((methodName: string) =>
+    const { serviceName, methods } = definition;
+
+    data = Object.keys(methods).map((methodName: string) =>
       Object.assign(
         {
           qualifier: getQualifier({ serviceName, methodName }),
           serviceName,
           methodName,
+          asyncModel: methods[methodName].asyncModel,
         },
         type === END_POINT
           ? {

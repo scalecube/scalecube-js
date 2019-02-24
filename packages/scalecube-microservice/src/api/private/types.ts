@@ -55,3 +55,27 @@ export interface GetDataFromServiceOptions {
   service: Service;
   type: 'reference' | 'endPoint';
 }
+
+export interface LocalCallOptions {
+  localService: Reference;
+  asyncModel: AsyncModel;
+  message: Message;
+  includeMessage: boolean;
+}
+
+export interface RemoteCallOptions {
+  router: Router;
+  registry: Registry;
+  message: Message;
+  asyncModel: AsyncModel;
+}
+
+export interface InvokeMethodOptions {
+  method: (...args: any[]) => any;
+  message: Message;
+}
+
+export interface AddMessageToResponseOptions {
+  includeMessage: boolean;
+  message: Message;
+}

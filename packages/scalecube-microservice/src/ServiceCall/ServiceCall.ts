@@ -4,6 +4,9 @@ import { ServiceCall, CreateServiceCallOptions, ServiceCallResponse, ServiceCall
 import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { Message } from '../api/public';
 import { MESSAGE_NOT_PROVIDED } from '../helpers/constants';
+import AsyncModel from '../api/public/AsyncModel';
+import { localCall } from './LocalCall';
+import { remoteCall } from './RemoteCall';
 
 export const getServiceCall = ({ router, registry }: CreateServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel, includeMessage }: ServiceCallOptions): ServiceCallResponse => {
@@ -12,34 +15,10 @@ export const getServiceCall = ({ router, registry }: CreateServiceCallOptions): 
     }
 
     let localService = registry.lookUpLocal({ qualifier: message.qualifier });
-    let res$: Observable<any> = of({});
-
-    // TODO check if the provider serviceDefinition === consumer serviceDefinition, if not equal then throw error
-
-    if (localService && localService.reference) {
-      const method = localService.reference[localService.methodName];
-
-      res$ = invokeMethod({ method, message }).pipe(addMessageToResponse({ includeMessage, message }));
-    } else {
-      const endPoint = router.route({ registry, message });
-      // TODO remote invoke
-      // TODO if service is remote then use transport else invoke the function
-    }
+    let res$: Observable<any> = localService
+      ? of(localCall({ localService, asyncModel, includeMessage, message }))
+      : of(remoteCall({ router, registry, message, asyncModel }));
 
     return asyncModel === asyncModelTypes.promise ? res$.toPromise() : res$;
   };
 };
-
-export const invokeMethod = ({ method, message }: { method: (...args: any[]) => any; message: Message }) =>
-  (from(method(message.data)) as Observable<any>).pipe();
-
-export const addMessageToResponse = ({ includeMessage, message }: { includeMessage: boolean; message: Message }) =>
-  map((response: any) => {
-    if (includeMessage) {
-      return {
-        ...message,
-        data: response,
-      };
-    }
-    return response;
-  });
