@@ -21,7 +21,7 @@ import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services }: MicroserviceOptions): Microservice => {
     let registry: Registry | null = createRegistry();
-    services && Array.isArray(services) && registry.AddToMethodRegistry({ services });
+    services && Array.isArray(services) && registry.addToMethodRegistry({ services });
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {

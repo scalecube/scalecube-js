@@ -37,7 +37,7 @@ export const createRegistry = (): Registry => {
 
       return methodRegistry[qualifier];
     },
-    AddToMethodRegistry: ({ services = [] }: CreateRegistryOptions): MethodRegistryDataStructure => {
+    addToMethodRegistry: ({ services = [] }: CreateRegistryOptions): MethodRegistryDataStructure => {
       if (!methodRegistry) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -49,7 +49,7 @@ export const createRegistry = (): Registry => {
       return { ...methodRegistry };
     },
 
-    AddToServiceRegistry: ({ services = [] }: CreateRegistryOptions): ServiceRegistryDataStructure => {
+    addToServiceRegistry: ({ services = [] }: CreateRegistryOptions): ServiceRegistryDataStructure => {
       if (!serviceRegistry) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }

@@ -30,17 +30,17 @@ describe('Registry Testing', () => {
 
       expect(registry.lookUpRemote).toBeDefined();
       expect(registry.lookUpLocal).toBeDefined();
-      expect(registry.AddToMethodRegistry).toBeDefined();
-      expect(registry.AddToServiceRegistry).toBeDefined();
+      expect(registry.addToMethodRegistry).toBeDefined();
+      expect(registry.addToServiceRegistry).toBeDefined();
       expect(registry.destroy).toBeDefined();
 
       expect(Object.keys(registry)).toHaveLength(NUMBER_OF_REGISTRY_PROPERTIES);
     });
 
-    it('Test AddToMethodRegistry({ services }): MethodRegistryDataStructure', () => {
+    it('Test addToMethodRegistry({ services }): MethodRegistryDataStructure', () => {
       const NUMBER_OF_REFERENCES = 2;
 
-      const methodRegistry = registry.AddToMethodRegistry({
+      const methodRegistry = registry.addToMethodRegistry({
         services: [service, service],
       });
 
@@ -48,8 +48,8 @@ describe('Registry Testing', () => {
       expect(qualifiers).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
-    it('Test AddToServiceRegistry({ services }): ServiceRegistryDataStructure', () => {
-      const serviceRegistry = registry.AddToServiceRegistry({
+    it('Test addToServiceRegistry({ services }): ServiceRegistryDataStructure', () => {
+      const serviceRegistry = registry.addToServiceRegistry({
         services: [service, service],
       });
 
@@ -61,7 +61,7 @@ describe('Registry Testing', () => {
     });
 
     it('Test lookUpRemote ({ qualifier }): Endpoint[] | []', () => {
-      registry.AddToServiceRegistry({
+      registry.addToServiceRegistry({
         services: [service],
       });
 
@@ -84,7 +84,7 @@ describe('Registry Testing', () => {
     });
 
     it('Test lookUpLocal ({ qualifier }): Reference', () => {
-      registry.AddToMethodRegistry({
+      registry.addToMethodRegistry({
         services: [service],
       });
 
@@ -126,16 +126,16 @@ describe('Registry Testing', () => {
         expect(e.message).toMatch('microservice does not exists');
       }
     });
-    it('Test AddToMethodRegistry after use of destroy', () => {
+    it('Test addToMethodRegistry after use of destroy', () => {
       try {
-        registry.AddToMethodRegistry({ services: [] });
+        registry.addToMethodRegistry({ services: [] });
       } catch (e) {
         expect(e.message).toMatch('microservice does not exists');
       }
     });
-    it('Test AddToServiceRegistry after use of destroy', () => {
+    it('Test addToServiceRegistry after use of destroy', () => {
       try {
-        registry.AddToServiceRegistry({ services: [] });
+        registry.addToServiceRegistry({ services: [] });
       } catch (e) {
         expect(e.message).toMatch('microservice does not exists');
       }

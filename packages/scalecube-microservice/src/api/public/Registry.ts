@@ -4,7 +4,7 @@ import { CreateRegistryOptions } from '../private/types';
 export default interface Registry {
   lookUpRemote: ({ qualifier }: LookupOptions) => Endpoint[] | [];
   lookUpLocal: ({ qualifier }: LookupOptions) => Reference | null;
-  AddToMethodRegistry: ({ services }: CreateRegistryOptions) => any;
-  AddToServiceRegistry: ({ services }: CreateRegistryOptions) => any;
+  addToMethodRegistry: ({ services }: CreateRegistryOptions) => any;
+  addToServiceRegistry: ({ services }: CreateRegistryOptions) => any;
   destroy: () => null;
 }
