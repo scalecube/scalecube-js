@@ -18,7 +18,7 @@ export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) =>
 
 const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => (target: object, prop: string) => {
   if (!serviceDefinition.methods[prop]) {
-    throw new Error(`service method '${prop}' missing in the metadata`);
+    throw new Error(`service method '${prop}' missing in the serviceDefinition`);
   }
 
   const { asyncModel } = serviceDefinition.methods[prop];

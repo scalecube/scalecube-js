@@ -24,7 +24,7 @@ export const localCall = ({ localService, asyncModel, includeMessage, message }:
   }
 };
 
-export const invokeMethod = ({ method, message }: InvokeMethodOptions) => from(method(message.data)).pipe();
+export const invokeMethod = ({ method, message }: InvokeMethodOptions) => from(method(...message.data)).pipe();
 
 export const addMessageToResponse = ({ includeMessage, message }: AddMessageToResponseOptions) =>
   map((response: any) => {

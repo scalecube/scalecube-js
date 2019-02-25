@@ -46,7 +46,7 @@ describe('Microservices Testing', () => {
       it('Test requestStream(message):ServiceCallOptions', (done) => {
         const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
         const message: Message = {
-          data: ['fake message'],
+          data: [['fake message']],
           qualifier,
         };
         serviceCall.requestStream(message).subscribe((response: any) => {

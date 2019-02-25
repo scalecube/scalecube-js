@@ -30,10 +30,12 @@ describe('Test creating microservice from function constructor', () => {
     services: [greetingService1, greetingService2],
   });
 
-  const greetingServiceProxy = ms.createProxy({
+  const greetingServiceProxy = ms.createProxy<GreetingService>({
     serviceDefinition: greetingServiceDefinition,
     router: defaultRouter,
   });
+
+  // todo check serviceDefinition is not missing/incorrect/...
 
   it('Invoke method that define in the serviceDefinition', () => {
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);

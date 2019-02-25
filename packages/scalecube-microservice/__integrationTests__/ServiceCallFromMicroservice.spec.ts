@@ -24,11 +24,15 @@ describe('Test creating proxy from microservice', () => {
     router: defaultRouter,
   });
 
+  // todo check serviceCall doesn't convert the asyncModel to something else
+  // todo check data must be an array
+  // todo if can't find the service locally or remote then throw error
+
   it('Test requestResponse(message):ServiceCallOptions', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
-      data: defaultUser,
+      data: [defaultUser],
     };
     return expect(greetingServiceCall.requestResponse(message)).resolves.toMatchObject({
       ...message,
@@ -40,7 +44,7 @@ describe('Test creating proxy from microservice', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
-      data: defaultUser,
+      data: [defaultUser],
     };
     greetingServiceCall.requestResponse(message).catch((error: any) => {
       expect(error.message).toMatch('asyncModel miss match, expect Promise but received Observable');
@@ -51,7 +55,7 @@ describe('Test creating proxy from microservice', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
-      data: [defaultUser],
+      data: [[defaultUser]],
     };
     greetingServiceCall.requestStream(message).subscribe((response: any) => {
       expect(response).toMatchObject({
@@ -66,7 +70,7 @@ describe('Test creating proxy from microservice', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
-      data: [defaultUser],
+      data: [[defaultUser]],
     };
     greetingServiceCall
       .requestStream(message)

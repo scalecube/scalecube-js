@@ -52,6 +52,10 @@ describe('Test creating proxy from microservice', () => {
     serviceDefinition: missMatchDefinition,
     router: defaultRouter,
   });
+  // todo check that proxies doesn't have conflict with each other
+  // todo check reject from method (promise)
+  // todo check reject from method (observable)
+  // todo check proxy doesn't convert the asyncModel to something else
 
   it('Invoke method that define in the serviceDefinition', () => {
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
@@ -61,7 +65,7 @@ describe('Test creating proxy from microservice', () => {
     try {
       greetingServiceProxy.fakeHello();
     } catch (e) {
-      expect(e.message).toEqual(`service method 'fakeHello' missing in the metadata`);
+      expect(e.message).toEqual(`service method 'fakeHello' missing in the serviceDefinition`);
     }
   });
 
