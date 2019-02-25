@@ -24,7 +24,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     services && Array.isArray(services) && registry.addToMethodRegistry({ services });
 
     return Object.freeze({
-      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions) {
+      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions): T {
         if (!registry) {
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
@@ -32,7 +32,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         return getProxy({
           serviceCall: getServiceCall({ router, registry }),
           serviceDefinition,
-        });
+        }) as T;
       },
       createServiceCall({ router = defaultRouter }: CreateServiceCallOptions): ServiceCall {
         if (!registry) {
