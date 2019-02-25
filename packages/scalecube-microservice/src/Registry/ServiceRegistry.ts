@@ -3,8 +3,9 @@ import {
   AvailableServices,
   GetUpdatedServiceRegistryOptions,
   ServiceRegistry,
+  ServiceRegistryMap,
 } from '../api/private/types';
-import { Service, LookupOptions, Endpoint, ServiceRegistryMap } from '../api/public';
+import { Service, Endpoint } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
@@ -40,8 +41,10 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
 // Helpers
 
-export const getEndpointsFromServices = ({ services }: { services: Service[] }): Endpoint[] =>
-  services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], []);
+export const getEndpointsFromServices = ({ services }: AvailableServices): Endpoint[] | [] =>
+  services
+    ? services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], [])
+    : [];
 
 export const getUpdatedServiceRegistry = ({
   serviceRegistryMap,

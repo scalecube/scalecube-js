@@ -11,13 +11,10 @@ import RouteOptions from './RouteOptions';
 import Service from './Service';
 import ServiceDefinition from './ServiceDefinition';
 import ServiceImplementation from './ServiceImplementation';
-import Registry from './Registry';
 import CreateServiceCallOptions from './CreateServiceCallOptions';
 import LookupOptions from './LookupOptions';
 import Endpoint from './Endpoint';
 import Reference from './Reference';
-import ServiceRegistryMap from './ServiceRegistryMap';
-import MethodRegistryDataStructure from './MethodRegistryDataStructure';
 import { LookUp } from './LookUp';
 
 export {
@@ -35,12 +32,9 @@ export {
   Service,
   ServiceDefinition,
   ServiceImplementation,
-  Registry,
   CreateServiceCallOptions,
   LookupOptions,
   Endpoint,
   Reference,
-  ServiceRegistryMap,
-  MethodRegistryDataStructure,
   LookUp,
 };

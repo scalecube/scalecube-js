@@ -29,7 +29,7 @@ export const createMethodRegistry = (): MethodRegistry => {
 
       methodRegistryMap = getUpdatedMethodRegistry({
         methodRegistryMap,
-        references: getReferenceFromServices({ services }), // all services => reference[]
+        references: getReferenceFromServices({ services }),
       });
       return { ...methodRegistryMap };
     },
