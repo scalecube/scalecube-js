@@ -2,13 +2,14 @@ import { Endpoint, LookupOptions, Reference } from '../api/public';
 import { CreateRegistryOptions } from '../api/private/types';
 
 export default interface MicroservicesContext {
-  registry: {
+  remoteRegistry: {
     addToServiceRegistry: ({ services }: CreateRegistryOptions) => any;
-    lookUpRemote: ({ qualifier }: LookupOptions) => Endpoint[] | [];
+    lookUp: ({ qualifier }: LookupOptions) => Endpoint[] | [];
+    destroy: () => null;
   };
-  localRegisry: {
-    lookUpLocal: ({ qualifier }: LookupOptions) => Reference | null;
+  localRegistry: {
+    lookUp: ({ qualifier }: LookupOptions) => Reference | null;
     addToMethodRegistry: ({ services }: CreateRegistryOptions) => any;
+    destroy: () => null;
   };
-  destroy: () => null;
 }
