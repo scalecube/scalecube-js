@@ -1,6 +1,6 @@
 import { ServiceDefinition, Router } from '.';
 
 export default interface ProxyOptions {
-  router: Router;
+  router?: Router;
   serviceDefinition: ServiceDefinition;
 }

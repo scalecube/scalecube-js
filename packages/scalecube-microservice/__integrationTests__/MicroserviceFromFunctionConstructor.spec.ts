@@ -44,8 +44,7 @@ describe('Test creating microservice from function constructor', () => {
 
   it('Throw error message when creating microservice with invalid serviceDefinition', () => {
     try {
-      const msWithError = Microservices.create({
-        // @ts-ignore-next-line
+      Microservices.create({
         services: [
           {
             // @ts-ignore-next-line
