@@ -2,6 +2,7 @@ import GreetingService, { greetingServiceDefinition } from '../__mocks__/Greetin
 import { Microservices } from '../src/Microservices/Microservices';
 import { defaultRouter } from '../src/Routers/default';
 import { Service } from '../src/api/public';
+
 describe('Test creating microservice from function constructor', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
   console.error = jest.fn(); // disable validation logs while doing this test
@@ -47,6 +48,7 @@ describe('Test creating microservice from function constructor', () => {
         // @ts-ignore-next-line
         services: [
           {
+            // @ts-ignore-next-line
             definition: wrongDefinition,
             reference: new GreetingService(),
           },

@@ -1,6 +1,6 @@
-import { Message, Registry } from '.';
+import { LookUp, Message } from '.';
 
 export default interface RouteOptions {
-  registry: Registry;
+  lookUp: LookUp;
   message: Message;
 }

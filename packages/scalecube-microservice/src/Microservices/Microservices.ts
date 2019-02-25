@@ -1,21 +1,16 @@
-import { Observable } from 'rxjs6';
 import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import {
-  ServiceCall,
-  CreateServiceCallOptions,
   Message,
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
-  ProxyOptions,
   Registry,
 } from '../api/public';
 import { createRegistry } from './Registry';
 
 import { asyncModelTypes } from '../helpers/utils';
-import { ServiceCallOptions } from '../api/private/types';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
@@ -24,7 +19,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     services && Array.isArray(services) && registry.addToMethodRegistry({ services });
 
     return Object.freeze({
-      createProxy({ router = defaultRouter, serviceDefinition }: ProxyOptions): T {
+      createProxy({ router = defaultRouter, serviceDefinition }) {
         if (!registry) {
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
@@ -32,9 +27,9 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         return getProxy({
           serviceCall: getServiceCall({ router, registry }),
           serviceDefinition,
-        }) as T;
+        });
       },
-      createServiceCall({ router = defaultRouter }: CreateServiceCallOptions): ServiceCall {
+      createServiceCall({ router = defaultRouter }) {
         if (!registry) {
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
@@ -46,13 +41,13 @@ export const Microservices: MicroservicesInterface = Object.freeze({
               message,
               asyncModel: asyncModelTypes.observable,
               includeMessage: true,
-            } as ServiceCallOptions) as Observable<Message>,
+            }),
           requestResponse: (message: Message) =>
             serviceCall({
               message,
               asyncModel: asyncModelTypes.promise,
               includeMessage: true,
-            } as ServiceCallOptions) as Promise<Message>,
+            }),
         });
       },
       destroy(): null {
@@ -64,6 +59,6 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
         return registry;
       },
-    });
+    } as Microservice);
   },
 });

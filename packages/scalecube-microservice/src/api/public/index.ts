@@ -18,6 +18,8 @@ import Endpoint from './Endpoint';
 import Reference from './Reference';
 import ServiceRegistryDataStructure from './ServiceRegistryDataStructure';
 import MethodRegistryDataStructure from './MethodRegistryDataStructure';
+import { LookUp } from './LookUp';
+
 export {
   AsyncModel,
   ObservableAsyncModel,
@@ -40,4 +42,5 @@ export {
   Reference,
   ServiceRegistryDataStructure,
   MethodRegistryDataStructure,
+  LookUp,
 };
