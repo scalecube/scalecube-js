@@ -16,7 +16,7 @@ import CreateServiceCallOptions from './CreateServiceCallOptions';
 import LookupOptions from './LookupOptions';
 import Endpoint from './Endpoint';
 import Reference from './Reference';
-import ServiceRegistryDataStructure from './ServiceRegistryDataStructure';
+import ServiceRegistryMap from './ServiceRegistryMap';
 import MethodRegistryDataStructure from './MethodRegistryDataStructure';
 import { LookUp } from './LookUp';
 
@@ -40,7 +40,7 @@ export {
   LookupOptions,
   Endpoint,
   Reference,
-  ServiceRegistryDataStructure,
+  ServiceRegistryMap,
   MethodRegistryDataStructure,
   LookUp,
 };

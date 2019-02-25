@@ -3,8 +3,13 @@ import { Observable, of } from 'rxjs6';
 import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api/public';
 
-export const remoteCall = ({ router, registry, message, asyncModel }: RemoteCallOptions): Observable<any> => {
-  const endPoint: Endpoint = router.route({ lookUp: registry.lookUpRemote, message });
+export const remoteCall = ({
+  router,
+  microserviceContext,
+  message,
+  asyncModel,
+}: RemoteCallOptions): Observable<any> => {
+  const endPoint: Endpoint = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
   const { asyncModel: asyncModelProvider, transport } = endPoint;
 
   if (asyncModelProvider !== asyncModel) {

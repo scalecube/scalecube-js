@@ -1,5 +1,5 @@
 import {
-  CreateRegistryOptions,
+  AvailableServices,
   GetDataFromServiceOptions,
   GetUpdatedMethodRegistryOptions,
   GetUpdatedServiceRegistryOptions,
@@ -9,7 +9,7 @@ import {
   Service,
   LookupOptions,
   Endpoint,
-  ServiceRegistryDataStructure,
+  ServiceRegistryMap,
   Reference,
   MethodRegistryDataStructure,
 } from '../api/public';
@@ -19,7 +19,7 @@ import { END_POINT, MICROSERVICE_NOT_EXISTS, REFERENCE } from '../helpers/consta
 import { isFunction } from '../helpers/utils';
 
 export const createRegistry = (): Registry => {
-  let serviceRegistry: ServiceRegistryDataStructure | null = {}; // remote
+  let serviceRegistry: ServiceRegistryMap | null = {}; // remote
   let methodRegistry: MethodRegistryDataStructure | null = {}; // local
 
   return Object.freeze({
@@ -37,7 +37,7 @@ export const createRegistry = (): Registry => {
 
       return methodRegistry[qualifier];
     },
-    addToMethodRegistry: ({ services = [] }: CreateRegistryOptions): MethodRegistryDataStructure => {
+    addToMethodRegistry: ({ services = [] }: AvailableServices): MethodRegistryDataStructure => {
       if (!methodRegistry) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -49,7 +49,7 @@ export const createRegistry = (): Registry => {
       return { ...methodRegistry };
     },
 
-    addToServiceRegistry: ({ services = [] }: CreateRegistryOptions): ServiceRegistryDataStructure => {
+    addToServiceRegistry: ({ services = [] }: AvailableServices): ServiceRegistryMap => {
       if (!serviceRegistry) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -97,10 +97,10 @@ export const getReferenceFromServices = ({ services }: { services: Service[] }):
 export const getUpdatedServiceRegistry = ({
   serviceRegistry,
   endpoints,
-}: GetUpdatedServiceRegistryOptions): ServiceRegistryDataStructure => ({
+}: GetUpdatedServiceRegistryOptions): ServiceRegistryMap => ({
   ...serviceRegistry,
   ...endpoints.reduce(
-    (res: ServiceRegistryDataStructure, endpoint: Endpoint) => ({
+    (res: ServiceRegistryMap, endpoint: Endpoint) => ({
       ...res,
       [endpoint.qualifier]: [...(res[endpoint.qualifier] || []), endpoint],
     }),

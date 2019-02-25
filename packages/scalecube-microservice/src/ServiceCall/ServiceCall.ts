@@ -5,16 +5,16 @@ import { MESSAGE_NOT_PROVIDED } from '../helpers/constants';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 
-export const getServiceCall = ({ router, registry }: CreateServiceCallOptions): ServiceCall => {
+export const getServiceCall = ({ router, microserviceContext }: CreateServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel, includeMessage }: ServiceCallOptions): ServiceCallResponse => {
     if (!message) {
       return throwErrorFromServiceCall({ asyncModel, errorMessage: MESSAGE_NOT_PROVIDED });
     }
 
-    const localService = registry.lookUpLocal({ qualifier: message.qualifier });
+    const localService = microserviceContext.methodRegistry.lookUp({ qualifier: message.qualifier });
     const res$: Observable<any> = localService
       ? localCall({ localService, asyncModel, includeMessage, message })
-      : remoteCall({ router, registry, message, asyncModel });
+      : remoteCall({ router, microserviceContext, message, asyncModel });
 
     return asyncModel === asyncModelTypes.promise ? res$.toPromise() : res$;
   };

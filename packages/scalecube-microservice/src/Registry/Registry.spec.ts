@@ -11,7 +11,7 @@ import {
 import { END_POINT, REFERENCE } from '../helpers/constants';
 import { getQualifier } from '../helpers/serviceData';
 
-describe('Registry Testing', () => {
+describe.skip('Registry Testing', () => {
   describe('Test registry factory', () => {
     let registry: Registry;
 
