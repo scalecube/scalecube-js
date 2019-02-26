@@ -23,7 +23,7 @@ describe('ServiceRegistry Testing', () => {
       reference: new GreetingService(),
     };
 
-    it('Test after createMethodRegistry(): ServiceRegistry - all methods are define', () => {
+    it('Test after createMethodRegistry(): MethodRegistry - all methods are define', () => {
       const NUMBER_OF_REGISTRY_PROPERTIES = 3;
 
       expect(registry.lookUp).toBeDefined();
@@ -33,26 +33,33 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(registry)).toHaveLength(NUMBER_OF_REGISTRY_PROPERTIES);
     });
 
-    it('Test add({ services }): AvailableServices', () => {
+    it('Test add({ services }): AvailableServices - add reference for each method no matter how many of the same services we add', () => {
+      const services = [service, service, service, service];
+      const NUMBER_OF_SERVICES = Object.keys(service).length;
       const methodRegistry = registry.add({
-        services: [service, service],
+        services,
       });
 
-      const qualifiers = Object.keys(methodRegistry);
-      expect(qualifiers).toHaveLength(2);
+      const references = Object.keys(methodRegistry);
+      expect(references).toHaveLength(NUMBER_OF_SERVICES);
     });
 
-    it('Test lookUp ({ qualifier }): Reference | null', () => {
+    it('Test lookUp ({ qualifier }): Reference | null - return null if qualifier not found', () => {
       registry.add({
         services: [service],
       });
 
       const emptyResult = registry.lookUp({ qualifier: 'fakeQualifier' });
       expect(emptyResult).toBe(null);
+    });
 
+    it('Test lookUp ({ qualifier }): Reference | null - return reference if qualifier found', () => {
+      registry.add({
+        services: [service],
+      });
       const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
-      const result = registry.lookUp({ qualifier });
-      expect(result).toEqual(
+      const reference = registry.lookUp({ qualifier });
+      expect(reference).toEqual(
         expect.objectContaining({
           asyncModel: expect.any(String),
           methodName: expect.any(String),
@@ -63,9 +70,10 @@ describe('ServiceRegistry Testing', () => {
       );
     });
   });
+
   describe('Test destroy() : null', () => {
     const registry: any = createMethodRegistry();
-    const qualifier = 'faleQualifier';
+    const qualifier = 'falseQualifier';
     const registryAfterClean = registry.destroy();
 
     it('Test output of registry.destroy = null', () => {
@@ -93,16 +101,17 @@ describe('ServiceRegistry Testing', () => {
       reference: new GreetingService(),
     };
 
-    it('Test getReferenceFromServices({ services }) : Reference[] | []', () => {
-      const NUMBER_OF_REFERENCES = 6;
+    it('Test getReferenceFromServices({ services }) : Reference[] | [] -  create reference for each method in each service', () => {
+      const services = [service, service, service];
+      const NUMBER_OF_REFERENCES = Object.keys(service).length * services.length;
       const references: Reference[] = getReferenceFromServices({
-        services: [service, service, service],
+        services,
       });
 
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
-    it('Test getUpdatedMethodRegistry({ methodRegistry, references }) : ServiceRegistryDataStructure', () => {
+    it('Test getUpdatedMethodRegistry({ methodRegistry, references }) - save only 1 reference per qualifier in the methodRegistry', () => {
       const NUMBER_OF_REFERENCES = 1;
 
       const qualifier = 'qualifier';
@@ -129,7 +138,7 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(immutableMethodRegistry)).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
-    it('Test getDataFromService({ service, type }) : Reference[]', () => {
+    it('Test getDataFromService({ service }) : Reference[]', () => {
       const NUMBER_OF_REFERENCES = 2;
       const NUMBER_OF_PROPERTY_REFERENCE = 5;
 

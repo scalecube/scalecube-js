@@ -33,26 +33,34 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(registry)).toHaveLength(NUMBER_OF_REGISTRY_PROPERTIES);
     });
 
-    it('Test add({ services }): AvailableServices', () => {
+    it('Test add({ services }): AvailableServices - add qualifier for each unique qualifier, push to the unique qualifier all endPoints with the same qualifier', () => {
+      const services = [service, service, service, service];
+      const NUMBER_OF_END_POINTS_IN_QUALIFIER = services.length;
+      const NUMBER_OF_QUALIFIER = Object.keys(service).length;
       const serviceRegistry = registry.add({
-        services: [service, service],
+        services,
       });
 
       const qualifiers = Object.keys(serviceRegistry);
-      expect(qualifiers).toHaveLength(2);
+      expect(qualifiers).toHaveLength(NUMBER_OF_QUALIFIER);
 
       const endpoints: Endpoint[] = serviceRegistry[qualifiers[0]];
-      expect(endpoints).toHaveLength(2);
+      expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS_IN_QUALIFIER);
     });
 
-    it('Test lookUp ({ qualifier }): Endpoint[] | []', () => {
+    it('Test lookUp ({ qualifier }): Endpoint[] | [] - return [] if qualifier not found', () => {
       registry.add({
         services: [service],
       });
 
       const emptyResult = registry.lookUp({ qualifier: 'fakeQualifier' });
       expect(emptyResult).toMatchObject([]);
+    });
 
+    it('Test lookUp ({ qualifier }): Endpoint[] | [] - return endPoint[] if qualifier is found', () => {
+      registry.add({
+        services: [service],
+      });
       const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
       const result = registry.lookUp({ qualifier });
       expect(result).toHaveLength(1);
