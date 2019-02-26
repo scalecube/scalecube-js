@@ -1,5 +1,5 @@
 import { isValidServiceDefinition, isValidServiceName, isValidMethods, isValidMethod } from './serviceValidation';
-import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
+import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 
 describe('Unit testing serviceValidations', () => {
   console.error = jest.fn(); // disable validation logs while doing this test

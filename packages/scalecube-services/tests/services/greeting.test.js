@@ -172,39 +172,39 @@ describe('Greeting suite', () => {
     expect(window['repeatToStreamUnsubscribe']).toBe(true);
   });
 
-  // it('ServiceCall should greet Idan with hello', () => {
-  //   const microservices = Microservices.builder()
-  //     .services(new GreetingService())
-  //     .build();
-  //
-  //   const dispatcher = microservices.dispatcher().create();
-  //
-  //   const message: Message = {
-  //     serviceName: 'GreetingService',
-  //     method: 'hello',
-  //     data: ['Idan'],
-  //   };
-  //
-  //   expect.assertions(1);
-  //   return expect(dispatcher.invoke(message)).resolves.toEqual('Hello Idan');
-  // });
+  it('ServiceCall should greet Idan with hello', () => {
+    const microservices = Microservices.builder()
+      .services(new GreetingService())
+      .build();
 
-  // it('ServiceCall should fail if message data is not Array', () => {
-  //   const microservices = Microservices.builder()
-  //     .services(new GreetingService())
-  //     .build();
-  //
-  //   const dispatcher = microservices.dispatcher().create();
-  //
-  //   const message: Message = {
-  //     serviceName: 'GreetingService',
-  //     method: 'hello',
-  //     data: { user: 'Idan' },
-  //   };
-  //
-  //   expect.assertions(1);
-  //   return expect(dispatcher.invoke(message)).rejects.toEqual(new Error('Message format error: data must be Array'));
-  // });
+    const dispatcher = microservices.dispatcher().create();
+
+    const message: Message = {
+      serviceName: 'GreetingService',
+      method: 'hello',
+      data: ['Idan'],
+    };
+
+    expect.assertions(1);
+    return expect(dispatcher.invoke(message)).resolves.toEqual('Hello Idan');
+  });
+
+  it('ServiceCall should fail if message data is not Array', () => {
+    const microservices = Microservices.builder()
+      .services(new GreetingService())
+      .build();
+
+    const dispatcher = microservices.dispatcher().create();
+
+    const message: Message = {
+      serviceName: 'GreetingService',
+      method: 'hello',
+      data: { user: 'Idan' },
+    };
+
+    expect.assertions(1);
+    return expect(dispatcher.invoke(message)).rejects.toEqual(new Error('Message format error: data must be Array'));
+  });
 
   it('ServiceCall should fail with service not found error', () => {
     const microservices = Microservices.builder().build();
@@ -222,37 +222,37 @@ describe('Greeting suite', () => {
     );
   });
 
-  // it('ServiceCall listen should return observable ', () => {
-  //   const microservices = Microservices.builder()
-  //     .services(new GreetingService())
-  //     .build();
-  //
-  //   const dispatcher = microservices.dispatcher().create();
-  //
-  //   const message: Message = {
-  //     serviceName: 'GreetingService',
-  //     method: 'repeatToStream',
-  //     data: ['Hello', 'Hey', 'Yo'],
-  //   };
-  //
-  //   expect.assertions(3);
-  //   let i = 0;
-  //   dispatcher.listen(message).subscribe((item) => {
-  //     switch (i) {
-  //       case 0:
-  //         expect(item).toBe('Hello');
-  //         break;
-  //       case 1:
-  //         expect(item).toBe('Hey');
-  //         break;
-  //       case 2:
-  //         expect(item).toBe('Yo');
-  //         break;
-  //       default:
-  //         expect(0).toBe(1);
-  //         break;
-  //     }
-  //     i = i + 1;
-  //   });
-  // });
+  it('ServiceCall listen should return observable ', () => {
+    const microservices = Microservices.builder()
+      .services(new GreetingService())
+      .build();
+
+    const dispatcher = microservices.dispatcher().create();
+
+    const message: Message = {
+      serviceName: 'GreetingService',
+      method: 'repeatToStream',
+      data: ['Hello', 'Hey', 'Yo'],
+    };
+
+    expect.assertions(3);
+    let i = 0;
+    dispatcher.listen(message).subscribe((item) => {
+      switch (i) {
+        case 0:
+          expect(item).toBe('Hello');
+          break;
+        case 1:
+          expect(item).toBe('Hey');
+          break;
+        case 2:
+          expect(item).toBe('Yo');
+          break;
+        default:
+          expect(0).toBe(1);
+          break;
+      }
+      i = i + 1;
+    });
+  });
 });

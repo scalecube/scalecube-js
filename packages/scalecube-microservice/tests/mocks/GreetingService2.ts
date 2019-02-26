@@ -1,13 +1,13 @@
 import { Observable } from 'rxjs6';
-import { asyncModelTypes } from '../src/helpers/utils';
+import { asyncModelTypes } from '../../src/helpers/utils';
 
-class GreetingService {
+class GreetingService2 {
   public hello = (name: any): any => {
     return new Promise((resolve, reject) => {
       if (!name) {
-        reject(new Error('please provide user to greet'));
+        reject(new Error('please provide user to say hey to'));
       } else {
-        resolve(`Hello ${name}`);
+        resolve(`hey ${name}`);
       }
     });
   };
@@ -15,17 +15,17 @@ class GreetingService {
   public greet$(greetings: string[]) {
     return new Observable((observer) => {
       if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
-        observer.error(new Error('please provide Array of greetings'));
+        observer.error(new Error('please provide Array of heys'));
         return () => {};
       }
-      greetings.map((i) => observer.next(`greetings ${i}`));
+      greetings.map((i) => observer.next(`hey ${i}`));
       return () => {};
     });
   }
 }
 
-export const greetingServiceDefinition = {
-  serviceName: 'GreetingService',
+export const greetingServiceDefinition2 = {
+  serviceName: 'GreetingService2',
   methods: {
     hello: {
       asyncModel: asyncModelTypes.promise,
@@ -36,4 +36,4 @@ export const greetingServiceDefinition = {
   },
 };
 
-export default GreetingService;
+export default GreetingService2;

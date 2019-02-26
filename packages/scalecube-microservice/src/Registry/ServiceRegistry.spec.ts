@@ -1,6 +1,6 @@
 import { Endpoint, Service } from '../api/public';
-import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
-import GreetingService from '../../__mocks__/GreetingService';
+import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
+import GreetingService from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
   createServiceRegistry,

@@ -3,11 +3,10 @@ import {
   greet$,
   greetingServiceDefinitionHello,
   greetingServiceDefinitionGreet$,
-} from '../__mocks__/GreetingServiceModule';
-import { Microservices } from '../src/Microservices/Microservices';
-import { Service } from '../src/api/public';
-import { greetingServiceDefinition } from '../__mocks__/GreetingService';
-import { defaultRouter } from '../src/Routers/default';
+} from '../mocks/GreetingServiceModule';
+import { Microservices } from '../../src/Microservices/Microservices';
+import { Service } from '../../src/api/public';
+import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 
 describe('Test creating microservice from module', () => {
   const defaultUser = 'defaultUser';
@@ -24,8 +23,7 @@ describe('Test creating microservice from module', () => {
       services: [greetingService1],
     });
 
-    const greetingServiceProxy = ms.createProxy({
-      router: defaultRouter,
+    const greetingServiceProxy = ms.createProxy<GreetingService>({
       serviceDefinition: greetingServiceDefinition,
     });
 
@@ -34,7 +32,7 @@ describe('Test creating microservice from module', () => {
     });
 
     it('Test observable', (done) => {
-      greetingServiceProxy.greet$([defaultUser]).subscribe((response: any) => {
+      greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
         expect(response).toEqual(`greetings ${defaultUser}`);
         done();
       });
@@ -56,7 +54,6 @@ describe('Test creating microservice from module', () => {
 
     it('Test promise', () => {
       const greetingServiceProxy = ms.createProxy({
-        router: defaultRouter,
         serviceDefinition: greetingServiceDefinitionHello,
       });
       return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
@@ -64,10 +61,9 @@ describe('Test creating microservice from module', () => {
 
     it('Test observable', (done) => {
       const greetingServiceProxy = ms.createProxy({
-        router: defaultRouter,
         serviceDefinition: greetingServiceDefinitionGreet$,
       });
-      greetingServiceProxy.greet$([defaultUser]).subscribe((response: any) => {
+      greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
         expect(response).toEqual(`greetings ${defaultUser}`);
         done();
       });

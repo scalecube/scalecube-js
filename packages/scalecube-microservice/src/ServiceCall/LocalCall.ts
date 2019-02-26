@@ -1,8 +1,8 @@
-import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { from, throwError, Observable } from 'rxjs6';
 import { map } from 'rxjs6/operators';
+import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../api/private/types';
-import { WRONG_DATA_FORMAT_IN_MESSAGE } from '../helpers/constants';
+import { getAsyncModelMissmatch, WRONG_DATA_FORMAT_IN_MESSAGE } from '../helpers/constants';
 
 export const localCall = ({ localService, asyncModel, includeMessage, message }: LocalCallOptions): Observable<any> => {
   const { reference, asyncModel: asyncModelProvider } = localService;
@@ -11,7 +11,7 @@ export const localCall = ({ localService, asyncModel, includeMessage, message }:
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
       asyncModel: asyncModelTypes.observable,
-      errorMessage: `asyncModel miss match, expect ${asyncModel} but received ${asyncModelProvider}`,
+      errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
     }) as Observable<any>;
   }
 
@@ -21,6 +21,7 @@ export const localCall = ({ localService, asyncModel, includeMessage, message }:
     }
     return invokeMethod({ method, message }).pipe(addMessageToResponse({ includeMessage, message }));
   } else {
+    // TODO How can we test it?
     return throwErrorFromServiceCall({
       asyncModel: asyncModelTypes.observable,
       errorMessage: `Can't find method ${message.qualifier}`,

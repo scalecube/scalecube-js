@@ -1,9 +1,9 @@
-import GreetingService, { greetingServiceDefinition } from '../__mocks__/GreetingService';
-import { Microservices } from '../src/Microservices/Microservices';
-import { Message, Service } from '../src/api/public';
-import { getQualifier } from '../src/helpers/serviceData';
-import { expectWithFailNow } from './utils';
-import { getNotFoundByRouterError, WRONG_DATA_FORMAT_IN_MESSAGE } from '../src/helpers/constants';
+import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
+import { Microservices } from '../../src/Microservices/Microservices';
+import { Message, Service } from '../../src/api/public';
+import { getQualifier } from '../../src/helpers/serviceData';
+import { expectWithFailNow } from '../helpers/utils';
+import { getNotFoundByRouterError, WRONG_DATA_FORMAT_IN_MESSAGE } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -18,10 +18,7 @@ describe('Test creating proxy from microservice', () => {
   const ms = Microservices.create({
     services: [greetingService1],
   });
-
   const greetingServiceCall = ms.createServiceCall({});
-
-  // todo if can't find the service locally or remote then throw error
 
   it('Test requestResponse(message):ServiceCallOptions', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });

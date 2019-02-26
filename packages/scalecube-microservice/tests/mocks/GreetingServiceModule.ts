@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs6';
-import { asyncModelTypes } from '../src/helpers/utils';
+import { asyncModelTypes } from '../../src/helpers/utils';
 
-export const hello = (name: any): any => {
+export const hello = (name: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     if (!name) {
       reject(new Error('please provide user to greet'));
@@ -11,7 +11,7 @@ export const hello = (name: any): any => {
   });
 };
 
-export const greet$ = (greetings: string[]) => {
+export const greet$ = (greetings: string[]): Observable<string> => {
   return new Observable((observer) => {
     if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
       observer.error(new Error('please provide Array of greetings'));
