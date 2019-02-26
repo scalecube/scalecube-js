@@ -9,6 +9,7 @@ import AsyncModel from '../src/api/public/AsyncModel';
 import { expectWithFailNow } from './utils';
 import {
   getServiceIsNotValidError,
+  getServiceMethodIsMissingError,
   SERVICE_DEFINITION_NOT_PROVIDED,
   SERVICE_NAME_NOT_PROVIDED,
 } from '../src/helpers/constants';
@@ -75,12 +76,20 @@ describe('Test creating proxy from microservice', () => {
   });
 
   it('Throw error message when creating proxy with missing serviceName in serviceDefinition', () => {
-    const ms = Microservices.create({ services: [greetingService] });
     try {
       // @ts-ignore-next-line
-      ms.createProxy({ serviceDefinition: { methods: { ...greetingServiceDefinition.methods } } });
+      prepareScalecubeForGreetingService({ serviceDefinition: { methods: { ...greetingServiceDefinition.methods } } });
     } catch (e) {
       expect(e.message).toEqual(SERVICE_NAME_NOT_PROVIDED);
+    }
+  });
+
+  it('Throw error message when creating proxy with missing methods in serviceDefinition', () => {
+    try {
+      // @ts-ignore-next-line
+      prepareScalecubeForGreetingService({ serviceDefinition: { serviceName: greetingServiceDefinition.serviceName } });
+    } catch (e) {
+      expect(e.message).toEqual(getServiceIsNotValidError(greetingServiceDefinition.serviceName));
     }
   });
 
@@ -89,7 +98,7 @@ describe('Test creating proxy from microservice', () => {
     try {
       greetingServiceProxy.fakeHello();
     } catch (e) {
-      expect(e.message).toEqual(`service method 'fakeHello' missing in the serviceDefinition`);
+      expect(e.message).toEqual(getServiceMethodIsMissingError('fakeHello'));
     }
   });
 
@@ -113,7 +122,10 @@ describe('Test creating proxy from microservice', () => {
 
     greetingServiceMissMatchAsyncModel.hello(defaultUser).subscribe({
       error: (error: Error) => {
-        expect(error.message).toMatch('asyncModel miss match, expect Observable but received Promise');
+        expectWithFailNow(
+          () => expect(error.message).toMatch('asyncModel miss match, expect Observable but received' + ' Promise'),
+          done
+        );
         done();
       },
     });
@@ -125,7 +137,10 @@ describe('Test creating proxy from microservice', () => {
     });
 
     greetingServiceMissMatchAsyncModel.greet$([defaultUser]).catch((error: any) => {
-      expect(error.message).toMatch('asyncModel miss match, expect Promise but received Observable');
+      expectWithFailNow(
+        () => expect(error.message).toMatch('asyncModel miss match, expect Promise but received' + ' Observable'),
+        done
+      );
       done();
     });
   });
@@ -155,6 +170,35 @@ describe('Test creating proxy from microservice', () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(1);
     return expect(greetingServiceProxy.hello()).rejects.toEqual(new Error('please provide user to greet'));
+  });
+
+  it('greet$ should return observable of greetings ', (done) => {
+    const greetingServiceProxy = prepareScalecubeForGreetingService();
+
+    expect.assertions(4);
+    let i = 0;
+    greetingServiceProxy.greet$(['Hello', 'Hey', 'Yo']).subscribe((item: string) => {
+      switch (i) {
+        case 0:
+          expectWithFailNow(() => expect(item).toBe('greetings Hello'), done);
+          break;
+        case 1:
+          expectWithFailNow(() => expect(item).toBe('greetings Hey'), done);
+          break;
+        case 2:
+          expectWithFailNow(() => expect(item).toBe('greetings Yo'), done);
+          break;
+        default:
+          expect(0).toBe(1);
+          break;
+      }
+      i = i + 1;
+    });
+
+    setTimeout(() => {
+      expectWithFailNow(() => expect(i).toBe(3), done);
+      done();
+    }, 1000);
   });
 
   it('Greeting.repeatToStream should fail without arg ', (done) => {
