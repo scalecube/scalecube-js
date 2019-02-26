@@ -2,6 +2,7 @@ import { RemoteCallOptions } from '../api/private/types';
 import { Observable, of } from 'rxjs6';
 import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api/public';
+import { getNotFoundByRouterError } from '../helpers/constants';
 
 export const remoteCall = ({
   router,
@@ -9,8 +10,14 @@ export const remoteCall = ({
   message,
   asyncModel,
 }: RemoteCallOptions): Observable<any> => {
-  const endPoint: Endpoint = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
-  const { asyncModel: asyncModelProvider, transport } = endPoint;
+  const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
+  if (!endPoint) {
+    return throwErrorFromServiceCall({
+      asyncModel: asyncModelTypes.observable,
+      errorMessage: getNotFoundByRouterError(message.qualifier),
+    }) as Observable<any>;
+  }
+  const { asyncModel: asyncModelProvider, transport } = endPoint!;
 
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({

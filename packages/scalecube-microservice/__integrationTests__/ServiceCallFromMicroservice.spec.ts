@@ -1,10 +1,9 @@
 import GreetingService, { greetingServiceDefinition } from '../__mocks__/GreetingService';
 import { Microservices } from '../src/Microservices/Microservices';
-import { defaultRouter } from '../src/Routers/default';
 import { Message, Service } from '../src/api/public';
 import { getQualifier } from '../src/helpers/serviceData';
-import { catchError } from 'rxjs6/operators';
-import { of } from 'rxjs6';
+import { expectWithFailNow } from './utils';
+import { getNotFoundByRouterError, WRONG_DATA_FORMAT_IN_MESSAGE } from '../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -20,12 +19,8 @@ describe('Test creating proxy from microservice', () => {
     services: [greetingService1],
   });
 
-  const greetingServiceCall = ms.createServiceCall({
-    router: defaultRouter,
-  });
+  const greetingServiceCall = ms.createServiceCall({});
 
-  // todo check serviceCall doesn't convert the asyncModel to something else
-  // todo check data must be an array
   // todo if can't find the service locally or remote then throw error
 
   it('Test requestResponse(message):ServiceCallOptions', () => {
@@ -46,7 +41,7 @@ describe('Test creating proxy from microservice', () => {
       qualifier,
       data: [defaultUser],
     };
-    greetingServiceCall.requestResponse(message).catch((error: any) => {
+    return greetingServiceCall.requestResponse(message).catch((error: Error) => {
       expect(error.message).toMatch('asyncModel miss match, expect Promise but received Observable');
     });
   });
@@ -57,30 +52,67 @@ describe('Test creating proxy from microservice', () => {
       qualifier,
       data: [[defaultUser]],
     };
-    greetingServiceCall.requestStream(message).subscribe((response: any) => {
-      expect(response).toMatchObject({
-        ...message,
-        data: `greetings ${defaultUser}`,
-      });
+    greetingServiceCall.requestStream(message).subscribe((response: Message) => {
+      expectWithFailNow(
+        () =>
+          expect(response).toMatchObject({
+            ...message,
+            data: `greetings ${defaultUser}`,
+          }),
+        done
+      );
       done();
     });
   });
 
   it('Test requestStream(message):ServiceCallOptions - asyncModel miss match', (done) => {
+    expect.assertions(1);
+
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
       data: [[defaultUser]],
     };
-    greetingServiceCall
-      .requestStream(message)
-      .pipe(
-        catchError((error: any) => {
-          expect(error.message).toMatch('asyncModel miss match, expect Observable but received Promise');
-          done();
-          return of({});
-        })
-      )
-      .subscribe();
+    greetingServiceCall.requestStream(message).subscribe(
+      () => expect(0).toBe(1),
+      (error: Error) => {
+        expect(error.message).toMatch('asyncModel miss match, expect Observable but received Promise');
+        done();
+      }
+    );
+  });
+
+  it('ServiceCall should fail if message data is not Array', () => {
+    expect.assertions(1);
+
+    const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+    const message: Message = {
+      qualifier,
+      data: defaultUser,
+    };
+
+    return greetingServiceCall.requestResponse(message).catch((error: Error) => {
+      expect(error.message).toMatch(WRONG_DATA_FORMAT_IN_MESSAGE);
+    });
+  });
+
+  it('ServiceCall should fail with service not found error', () => {
+    expect.assertions(1);
+
+    const ms = Microservices.create({
+      services: [],
+    });
+
+    const greetingServiceCall = ms.createServiceCall({});
+
+    const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+    const message: Message = {
+      qualifier,
+      data: defaultUser,
+    };
+
+    return greetingServiceCall.requestResponse(message).catch((error: Error) => {
+      expect(error.message).toMatch(getNotFoundByRouterError(message.qualifier));
+    });
   });
 });

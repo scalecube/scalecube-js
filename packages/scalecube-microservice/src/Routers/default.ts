@@ -1,13 +1,13 @@
-import { RouteOptions, Endpoint } from '../api/public';
+import { Router } from '../api/public';
 
-export const defaultRouter = Object.freeze({
-  route: ({ message, lookUp }: RouteOptions): Endpoint => {
+export const defaultRouter: Router = Object.freeze({
+  route: ({ message, lookUp }) => {
     const { qualifier } = message;
     const endpoints = lookUp({ qualifier });
     if (!(endpoints && Array.isArray(endpoints) && endpoints.length > 0)) {
-      throw Error(`can't find services with the request: '${JSON.stringify(qualifier)}'`);
+      return null;
     } else {
       return endpoints[0];
     }
   },
-});
+} as Router);
