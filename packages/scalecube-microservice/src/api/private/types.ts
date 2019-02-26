@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs6';
 import {
-  Registry,
   Router,
   ServiceDefinition,
   Service,

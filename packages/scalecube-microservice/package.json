@@ -10,8 +10,8 @@
     "test": "jest",
     "test-watch": "yarn run lint && jest --collect-coverage --watchAll",
     "check-all": "yarn lint && yarn test",
-    "prettier": "prettier --write '{src,__tests__,__mocks__}/**/*.{ts,tsx,js,jsx}'",
-    "build": "tsc"
+    "prettier": "prettier --write '{src,__integrationTests__,__mocks__}/**/*.{ts,tsx,js,jsx}'",
+    "build": "rm -rf lib/ && tsc"
   },
   "jest": {
     "transform": {
