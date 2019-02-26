@@ -1,4 +1,8 @@
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
-export const END_POINT = 'endPoint';
-export const REFERENCE = 'reference';
+export const SERVICE_DEFINITION_NOT_PROVIDED = '(serviceDefinition) is not defined';
+export const SERVICE_NAME_NOT_PROVIDED = '(serviceDefinition.serviceName) is not defined';
+
+export const getServiceIsNotValidError = (serviceName: string) => `service ${serviceName} is not valid.`;
+export const getServiceMethodIsMissingError = (methodName: string) =>
+  `service method '${methodName}' missing in the serviceDefinition`;

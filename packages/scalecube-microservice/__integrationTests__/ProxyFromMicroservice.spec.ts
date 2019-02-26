@@ -1,3 +1,4 @@
+import { isObservable } from 'rxjs';
 import GreetingService, { greetingServiceDefinition } from '../__mocks__/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../__mocks__/GreetingService2';
 import { Microservices } from '../src/Microservices/Microservices';
@@ -5,6 +6,12 @@ import { defaultRouter } from '../src/Routers/default';
 import { ProxyOptions, Service, ServiceDefinition } from '../src/api/public';
 import { asyncModelTypes } from '../src/helpers/utils';
 import AsyncModel from '../src/api/public/AsyncModel';
+import { expectWithFailNow } from './utils';
+import {
+  getServiceIsNotValidError,
+  SERVICE_DEFINITION_NOT_PROVIDED,
+  SERVICE_NAME_NOT_PROVIDED,
+} from '../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -52,16 +59,32 @@ describe('Test creating proxy from microservice', () => {
     return ms.createProxy({ serviceDefinition });
   };
 
-  // todo check reject from method (promise)
-  // todo check reject from method (observable)
-  // todo check proxy doesn't convert the asyncModel to something else
-
   it('Invoke method that define in the serviceDefinition', () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
-  it('Throw error message if method does not define in the serviceDefinition', () => {
+  it('Throw error message when creating proxy with missing serviceDefinition', () => {
+    const ms = Microservices.create({ services: [greetingService] });
+    try {
+      // @ts-ignore-next-line
+      ms.createProxy({});
+    } catch (e) {
+      expect(e.message).toEqual(SERVICE_DEFINITION_NOT_PROVIDED);
+    }
+  });
+
+  it('Throw error message when creating proxy with missing serviceName in serviceDefinition', () => {
+    const ms = Microservices.create({ services: [greetingService] });
+    try {
+      // @ts-ignore-next-line
+      ms.createProxy({ serviceDefinition: { methods: { ...greetingServiceDefinition.methods } } });
+    } catch (e) {
+      expect(e.message).toEqual(SERVICE_NAME_NOT_PROVIDED);
+    }
+  });
+
+  it('Throw error message if method is not defined in the serviceDefinition', () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     try {
       greetingServiceProxy.fakeHello();
@@ -79,7 +102,7 @@ describe('Test creating proxy from microservice', () => {
         router: defaultRouter,
       });
     } catch (e) {
-      expect(e.message).toEqual('service GreetingService is not valid.');
+      expect(e.message).toEqual(getServiceIsNotValidError('GreetingService'));
     }
   });
 
@@ -126,5 +149,35 @@ describe('Test creating proxy from microservice', () => {
           .hello('Idan')
           .then((greeting2Response: GreetingService2) => expect(greeting2Response).toEqual('hey Idan'))
       );
+  });
+
+  it('Greeting should fail without args', () => {
+    const greetingServiceProxy = prepareScalecubeForGreetingService();
+    expect.assertions(1);
+    return expect(greetingServiceProxy.hello()).rejects.toEqual(new Error('please provide user to greet'));
+  });
+
+  it('Greeting.repeatToStream should fail without arg ', (done) => {
+    const greetingServiceProxy = prepareScalecubeForGreetingService();
+    expect.assertions(1);
+    greetingServiceProxy.greet$().subscribe(
+      () => expect(0).toEqual(1),
+      (err: Error) => {
+        expectWithFailNow(() => expect(err).toEqual(new Error('please provide Array of greetings')), done);
+        done();
+      }
+    );
+  });
+
+  it('Proxy does not convert the asyncModel to some other type', () => {
+    const greetingServiceProxy = prepareScalecubeForGreetingService();
+    expect.assertions(3);
+
+    const helloPromise = greetingServiceProxy.hello(defaultUser);
+    expect(typeof helloPromise.then === 'function').toBeTruthy();
+    expect(typeof helloPromise.catch === 'function').toBeTruthy();
+
+    const greetObservable = greetingServiceProxy.greet$(defaultUser);
+    expect(isObservable(greetObservable)).toBeTruthy();
   });
 });

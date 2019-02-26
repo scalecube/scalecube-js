@@ -171,6 +171,7 @@ describe('Greeting suite', () => {
       .unsubscribe();
     expect(window['repeatToStreamUnsubscribe']).toBe(true);
   });
+
   it('ServiceCall should greet Idan with hello', () => {
     const microservices = Microservices.builder()
       .services(new GreetingService())
