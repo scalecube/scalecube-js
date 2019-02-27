@@ -1,10 +1,9 @@
-import { localCall } from './LocalCall';
-import { asyncModelTypes } from '../helpers/utils';
-import { Message } from '../api/public';
 import { of } from 'rxjs6';
 import { catchError } from 'rxjs6/operators';
+import { localCall } from './LocalCall';
+import { Message } from '../api/public';
 import { getQualifier } from '../helpers/serviceData';
-import { methodNotFound } from '../helpers/constants';
+import { methodNotFound, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 describe('Test LocalCall', () => {
   const serviceName = 'fakeService';
@@ -14,7 +13,7 @@ describe('Test LocalCall', () => {
     reference: {
       hello: null,
     },
-    asyncModel: asyncModelTypes.promise,
+    asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
     methodName,
     qualifier,
     serviceName,
@@ -27,7 +26,7 @@ describe('Test LocalCall', () => {
 
   it('Test fail to find a method', (done) => {
     // @ts-ignore
-    localCall({ localService, asyncModel: asyncModelTypes.promise, includeMessage: true, message })
+    localCall({ localService, asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, includeMessage: true, message })
       .pipe(
         catchError((error: Error) => {
           expect(error.message).toMatch(`${methodNotFound(message)}`);

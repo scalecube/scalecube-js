@@ -27,7 +27,7 @@ describe('Test creating microservice from module', () => {
       serviceDefinition: greetingServiceDefinition,
     });
 
-    it('Test promise', () => {
+    it('Test REQUEST_RESPONSE', () => {
       return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
     });
 
@@ -52,7 +52,7 @@ describe('Test creating microservice from module', () => {
       services: [greetingService1, greetingService2],
     });
 
-    it('Test promise', () => {
+    it('Test REQUEST_RESPONSE', () => {
       const greetingServiceProxy = ms.createProxy({
         serviceDefinition: greetingServiceDefinitionHello,
       });

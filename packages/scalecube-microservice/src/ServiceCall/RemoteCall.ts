@@ -1,8 +1,8 @@
-import { RemoteCallOptions } from '../api/private/types';
 import { Observable, of } from 'rxjs6';
-import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
+import { RemoteCallOptions } from '../api/private/types';
+import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api/public';
-import { getNotFoundByRouterError } from '../helpers/constants';
+import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 export const remoteCall = ({
   router,
@@ -13,7 +13,7 @@ export const remoteCall = ({
   const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
   if (!endPoint) {
     return throwErrorFromServiceCall({
-      asyncModel: asyncModelTypes.observable,
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       errorMessage: getNotFoundByRouterError(message.qualifier),
     }) as Observable<any>;
   }
@@ -21,7 +21,7 @@ export const remoteCall = ({
 
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
-      asyncModel: asyncModelTypes.observable,
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       errorMessage: `asyncModel miss match, expect ${asyncModel} but received ${asyncModelProvider}`,
     }) as Observable<any>;
   }

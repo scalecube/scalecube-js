@@ -23,7 +23,7 @@ describe('Unit testing serviceValidations', () => {
     expect(
       isValidMethods({
         hello: {
-          asyncModel: 'Promise',
+          asyncModel: 'RequestResponse',
         },
       })
     ).toBe(true);
@@ -39,11 +39,11 @@ describe('Unit testing serviceValidations', () => {
   });
 
   it('Test isValidMethod({methodData, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodData: { asyncModel: 'Promise' }, methodName: 'testMethod' })).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: 'RequestResponse' }, methodName: 'testMethod' })).toBe(true);
   });
 
   it('Test isValidMethod({methodProp, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodData: { asyncModel: 'Observable' }, methodName: 'testMethod' })).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: 'RequestStream' }, methodName: 'testMethod' })).toBe(true);
   });
 
   it('Test isValidServiceName(serviceName) - invalid value type', () => {

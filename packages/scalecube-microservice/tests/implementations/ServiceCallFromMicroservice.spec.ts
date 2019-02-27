@@ -7,8 +7,8 @@ import {
   getAsyncModelMissmatch,
   getNotFoundByRouterError,
   WRONG_DATA_FORMAT_IN_MESSAGE,
+  ASYNC_MODEL_TYPES,
 } from '../../src/helpers/constants';
-import { asyncModelTypes } from '../../src/helpers/utils';
 
 describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -49,7 +49,9 @@ describe('Test creating proxy from microservice', () => {
       data: [defaultUser],
     };
     return greetingServiceCall.requestResponse(message).catch((error: Error) => {
-      expect(error.message).toMatch(getAsyncModelMissmatch(asyncModelTypes.promise, asyncModelTypes.observable));
+      expect(error.message).toMatch(
+        getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM)
+      );
     });
   });
 
@@ -83,7 +85,9 @@ describe('Test creating proxy from microservice', () => {
     greetingServiceCall.requestStream(message).subscribe(
       () => expect(0).toBe(1),
       (error: Error) => {
-        expect(error.message).toMatch(getAsyncModelMissmatch(asyncModelTypes.observable, asyncModelTypes.promise));
+        expect(error.message).toMatch(
+          getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_STREAM, ASYNC_MODEL_TYPES.REQUEST_RESPONSE)
+        );
         done();
       }
     );

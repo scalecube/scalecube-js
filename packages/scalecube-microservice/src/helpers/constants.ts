@@ -1,4 +1,4 @@
-import { AsyncModel, Message } from '../api/public';
+import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel } from '../api/public';
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
@@ -14,3 +14,11 @@ export const getNotFoundByRouterError = (qualifier: string) =>
 export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const methodNotFound = (message: Message) => `Can't find method ${message.qualifier}`;
+
+export const ASYNC_MODEL_TYPES: {
+  REQUEST_STREAM: RequestStreamAsyncModel;
+  REQUEST_RESPONSE: RequestResponseAsyncModel;
+} = {
+  REQUEST_RESPONSE: 'RequestResponse',
+  REQUEST_STREAM: 'RequestStream',
+};

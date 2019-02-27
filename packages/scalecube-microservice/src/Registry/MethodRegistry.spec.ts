@@ -120,7 +120,7 @@ describe('ServiceRegistry Testing', () => {
         qualifier,
         serviceName: 'serviceName',
         methodName: 'methodName',
-        asyncModel: 'Promise',
+        asyncModel: 'RequestResponse',
         reference: {
           fakeMethod: () => {},
         },

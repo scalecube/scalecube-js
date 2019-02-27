@@ -126,7 +126,7 @@ describe('ServiceRegistry Testing', () => {
         methodName: 'methodName',
         transport: 'transport',
         uri: 'uri',
-        asyncModel: 'Promise',
+        asyncModel: 'RequestResponse',
       };
       const serviceRegistryMap = {
         [qualifier]: [endpoint, endpoint],

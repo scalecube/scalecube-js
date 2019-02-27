@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs6';
-import { asyncModelTypes } from '../../src/helpers/utils';
+import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
 
 class GreetingService2 {
   public hello = (name: any): any => {
@@ -28,10 +28,10 @@ export const greetingServiceDefinition2 = {
   serviceName: 'GreetingService2',
   methods: {
     hello: {
-      asyncModel: asyncModelTypes.promise,
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
     },
     greet$: {
-      asyncModel: asyncModelTypes.observable,
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
     },
   },
 };

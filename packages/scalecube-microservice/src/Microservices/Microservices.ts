@@ -2,8 +2,7 @@ import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
-
-import { asyncModelTypes } from '../helpers/utils';
+import { ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
@@ -36,13 +35,13 @@ export const Microservices: MicroservicesInterface = Object.freeze({
           requestStream: (message: Message) =>
             serviceCall({
               message,
-              asyncModel: asyncModelTypes.observable,
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
               includeMessage: true,
             }),
           requestResponse: (message: Message) =>
             serviceCall({
               message,
-              asyncModel: asyncModelTypes.promise,
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
               includeMessage: true,
             }),
         });

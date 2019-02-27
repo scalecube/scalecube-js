@@ -1,5 +1,5 @@
 import AsyncModel from './AsyncModel';
-import { ObservableAsyncModel, PromiseAsyncModel } from './AsyncModel';
+import { RequestStreamAsyncModel, RequestResponseAsyncModel } from './AsyncModel';
 import ProxyOptions from './ProxyOptions';
 import ServiceCall from './ServiceCall';
 import Message from './Message';
@@ -19,8 +19,8 @@ import { LookUp } from './LookUp';
 
 export {
   AsyncModel,
-  ObservableAsyncModel,
-  PromiseAsyncModel,
+  RequestStreamAsyncModel,
+  RequestResponseAsyncModel,
   ProxyOptions,
   ServiceCall,
   Message,

@@ -4,7 +4,6 @@ import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingS
 import { Microservices } from '../../src/Microservices/Microservices';
 import { defaultRouter } from '../../src/Routers/default';
 import { ProxyOptions, Service, ServiceDefinition } from '../../src/api/public';
-import { asyncModelTypes } from '../../src/helpers/utils';
 import AsyncModel from '../../src/api/public/AsyncModel';
 import { expectWithFailNow } from '../helpers/utils';
 import {
@@ -13,6 +12,7 @@ import {
   getServiceMethodIsMissingError,
   SERVICE_DEFINITION_NOT_PROVIDED,
   SERVICE_NAME_NOT_PROVIDED,
+  ASYNC_MODEL_TYPES,
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
@@ -36,10 +36,10 @@ describe('Test creating proxy from microservice', () => {
     methods: {
       ...greetingServiceDefinition.methods,
       hello: {
-        asyncModel: asyncModelTypes.observable,
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       },
       greet$: {
-        asyncModel: asyncModelTypes.promise,
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
       },
     },
   };
@@ -152,19 +152,25 @@ describe('Test creating proxy from microservice', () => {
 
     greetingServiceMissMatchAsyncModel.hello(defaultUser).subscribe({
       error: (error: Error) => {
-        expectWithFailNow(() => expect(error.message).toMatch(getAsyncModelMissmatch('Observable', 'Promise')), done);
+        expectWithFailNow(
+          () => expect(error.message).toMatch(getAsyncModelMissmatch('RequestStream', 'RequestResponse')),
+          done
+        );
         done();
       },
     });
   });
 
-  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - promise', (done) => {
+  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE', (done) => {
     const greetingServiceMissMatchAsyncModel = prepareScalecubeForGreetingService({
       serviceDefinition: missMatchDefinition,
     });
 
     greetingServiceMissMatchAsyncModel.greet$([defaultUser]).catch((error: any) => {
-      expectWithFailNow(() => expect(error.message).toMatch(getAsyncModelMissmatch('Promise', 'Observable')), done);
+      expectWithFailNow(
+        () => expect(error.message).toMatch(getAsyncModelMissmatch('RequestResponse', 'RequestStream')),
+        done
+      );
       done();
     });
   });
