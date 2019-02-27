@@ -7,7 +7,8 @@ import {
   getReferenceFromService,
   getReferenceFromServices,
   getUpdatedMethodRegistry,
-} from './MethodRegistry';
+} from './methodRegistry';
+import { serviceIsNotValid } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
@@ -42,6 +43,11 @@ describe('ServiceRegistry Testing', () => {
 
       const references = Object.keys(methodRegistry);
       expect(references).toHaveLength(NUMBER_OF_SERVICES);
+    });
+
+    it('Test add({ services }): AvailableServices - without services', () => {
+      const methodRegistry = registry.add({});
+      expect(methodRegistry).toMatchObject({});
     });
 
     it('Test lookUp ({ qualifier }): Reference | null - return null if qualifier not found', () => {
@@ -96,6 +102,8 @@ describe('ServiceRegistry Testing', () => {
     });
   });
   describe('Test helpers', () => {
+    console.error = jest.fn(); // disable validation logs while doing this test
+
     const service: Service = {
       definition: greetingServiceDefinition,
       reference: new GreetingService(),
@@ -109,6 +117,13 @@ describe('ServiceRegistry Testing', () => {
       });
 
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
+    });
+
+    it('Test getReferenceFromServices({ services }) : Reference[] | [] -  without parameters', () => {
+      const references: Reference[] = getReferenceFromServices({});
+
+      expect(Array.isArray(references)).toBeTruthy();
+      expect(references).toHaveLength(0);
     });
 
     it('Test getUpdatedMethodRegistry({ methodRegistry, references }) - save only 1 reference per qualifier in the methodRegistry', () => {
@@ -138,7 +153,7 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(immutableMethodRegistry)).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
-    it('Test getDataFromService({ service }) : Reference[]', () => {
+    it('Test getReferenceFromService({ service }) : Reference[]', () => {
       const NUMBER_OF_REFERENCES = 2;
       const NUMBER_OF_PROPERTY_REFERENCE = 5;
 
@@ -158,6 +173,23 @@ describe('ServiceRegistry Testing', () => {
           serviceName: expect.any(String),
         })
       );
+    });
+
+    it('Test getReferenceFromService({ service }) : Reference[] - fail', () => {
+      const serviceName = 'fakeService';
+      try {
+        const references = getReferenceFromService({
+          service: {
+            // @ts-ignore
+            definition: {
+              serviceName,
+            },
+            reference: new GreetingService(),
+          },
+        });
+      } catch (e) {
+        expect(e.message).toMatch(serviceIsNotValid(serviceName));
+      }
     });
   });
 });

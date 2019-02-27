@@ -8,7 +8,7 @@ import {
 import { Service, Endpoint } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { MICROSERVICE_NOT_EXISTS, serviceIsNotValid } from '../helpers/constants';
 
 export const createServiceRegistry = (): ServiceRegistry => {
   let serviceRegistryMap: ServiceRegistryMap | null = {};
@@ -25,10 +25,10 @@ export const createServiceRegistry = (): ServiceRegistry => {
       if (!serviceRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
-
+      const endpoints = getEndpointsFromServices({ services }) as Endpoint[]; // all services => endPoints[]
       serviceRegistryMap = getUpdatedServiceRegistry({
         serviceRegistryMap,
-        endpoints: getEndpointsFromServices({ services }) as Endpoint[], // all services => endPoints[]
+        endpoints,
       });
       return { ...serviceRegistryMap };
     },
@@ -41,10 +41,8 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
 // Helpers
 
-export const getEndpointsFromServices = ({ services }: AvailableServices): Endpoint[] | [] =>
-  services
-    ? services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], [])
-    : [];
+export const getEndpointsFromServices = ({ services = [] }: AvailableServices): Endpoint[] | [] =>
+  services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], []);
 
 export const getUpdatedServiceRegistry = ({
   serviceRegistryMap,
@@ -77,7 +75,7 @@ export const getEndpointsFromService = ({ service }: AvailableService): Endpoint
       uri: `${transport}/${serviceName}/${methodName}`,
     }));
   } else {
-    throw new Error(`service ${definition.serviceName} is not valid.`);
+    throw new Error(serviceIsNotValid(definition.serviceName));
   }
 
   return data;

@@ -15,6 +15,8 @@ export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedA
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const methodNotFound = (message: Message) => `Can't find method ${message.qualifier}`;
 
+export const serviceIsNotValid = (serviceName: string) => `service ${serviceName} is not valid.`;
+
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
   REQUEST_RESPONSE: RequestResponseAsyncModel;
