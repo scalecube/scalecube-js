@@ -14,3 +14,5 @@ export const getNotFoundByRouterError = (qualifier: string) =>
 export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const methodNotFound = (message: Message) => `Can't find method ${message.qualifier}`;
+
+export const serviceIsNotValid = (serviceName: string) => `service ${serviceName} is not valid.`;

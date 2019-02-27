@@ -8,6 +8,7 @@ import {
   getEndpointsFromServices,
   getUpdatedServiceRegistry,
 } from './ServiceRegistry';
+import { serviceIsNotValid } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
@@ -46,6 +47,11 @@ describe('ServiceRegistry Testing', () => {
 
       const endpoints: Endpoint[] = serviceRegistry[qualifiers[0]];
       expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS_IN_QUALIFIER);
+    });
+
+    it('Test add({ services }): AvailableServices - without services', () => {
+      const serviceRegistry = registry.add({});
+      expect(serviceRegistry).toMatchObject({});
     });
 
     it('Test lookUp ({ qualifier }): Endpoint[] | [] - return [] if qualifier not found', () => {
@@ -101,6 +107,7 @@ describe('ServiceRegistry Testing', () => {
     });
   });
   describe('Test helpers', () => {
+    console.error = jest.fn(); // disable validation logs while doing this test
     const service: Service = {
       definition: greetingServiceDefinition,
       reference: new GreetingService(),
@@ -113,6 +120,13 @@ describe('ServiceRegistry Testing', () => {
       });
 
       expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS);
+    });
+
+    it('Test getEndpointsFromServices({ services }) : Endpoint[] | [] -  without parameters', () => {
+      const endpoints: Endpoint[] = getEndpointsFromServices({});
+
+      expect(Array.isArray(endpoints)).toBeTruthy();
+      expect(endpoints).toHaveLength(0);
     });
 
     it('Test getUpdatedServiceRegistry({ serviceRegistry, endpoints }) : ServiceRegistryMap', () => {
@@ -141,7 +155,7 @@ describe('ServiceRegistry Testing', () => {
       expect(immutableServiceRegistry[qualifier]).toHaveLength(NUMBER_OF_END_POINTS);
     });
 
-    it('Test getDataFromService({ service, type }) : Endpoint[]', () => {
+    it('Test getEndpointsFromService({ service, type }) : Endpoint[]', () => {
       const NUMBER_OF_END_POINTS = 2;
       const NUMBER_OF_PROPERTY_END_POINT = 6;
 
@@ -162,6 +176,23 @@ describe('ServiceRegistry Testing', () => {
           transport: expect.any(String),
         })
       );
+    });
+
+    it('Test getEndpointsFromService({ service }) : Endpoint[] - fail', () => {
+      const serviceName = 'fakeService';
+      try {
+        const endpoints = getEndpointsFromService({
+          service: {
+            // @ts-ignore
+            definition: {
+              serviceName,
+            },
+            reference: new GreetingService(),
+          },
+        });
+      } catch (e) {
+        expect(e.message).toMatch(serviceIsNotValid(serviceName));
+      }
     });
   });
 });
