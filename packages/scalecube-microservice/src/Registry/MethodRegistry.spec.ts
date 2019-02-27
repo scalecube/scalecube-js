@@ -7,7 +7,7 @@ import {
   getReferenceFromService,
   getReferenceFromServices,
   getUpdatedMethodRegistry,
-} from './methodRegistry';
+} from './MethodRegistry';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
