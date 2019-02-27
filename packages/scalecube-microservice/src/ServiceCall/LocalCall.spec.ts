@@ -29,7 +29,7 @@ describe('Test LocalCall', () => {
     // @ts-ignore
     localCall({ localService, asyncModel: asyncModelTypes.promise, includeMessage: true, message })
       .pipe(
-        catchError((error: any) => {
+        catchError((error: Error) => {
           expect(error.message).toMatch(`${methodNotFound(message)}`);
           done();
           return of({});
