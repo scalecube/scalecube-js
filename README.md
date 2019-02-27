@@ -26,7 +26,7 @@ for more details about 0.1.x go to https://github.com/scalecube/scalecube-js/iss
 
 yarn add @scalecube/scalecube-microservice
 
-import Microservice from '@scalecube/scalecube-microservice'
+import Microservices from '@scalecube/scalecube-microservice'
 
 ## Basic Usage
 

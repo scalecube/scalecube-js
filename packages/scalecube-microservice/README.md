@@ -38,6 +38,8 @@ const greetingServiceDefinition = {
 ## Bootstrap the service:
 
 ```javascript
+import Microservices from '@scalecube/scalecube-microservice';
+
 // the provider of the service create greetingService and export it.
 const greetingService = Microservices.create({
   services: [
@@ -59,12 +61,16 @@ greetingServiceProxy.hello('someone').then((response) => console.log(response));
 
 ## ServiceDefinition structure
 
+export type RequestStreamAsyncModel = 'RequestStream';
+
+export type RequestResponseAsyncModel = 'RequestResponse';
+
 ```
 {
   serviceName: string; // name of the service
   methods: { // all methods in the service
     [methodName: string]: { // methodName
-      asyncModel: AsyncModel; // Promise || Observable
+      asyncModel: AsyncModel; // RequestStream (Observable) || RequestResponse (Promise)
     };
   };
 }
