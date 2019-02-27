@@ -7,7 +7,7 @@ import {
   getReferenceFromService,
   getReferenceFromServices,
   getUpdatedMethodRegistry,
-} from './methodRegistry';
+} from './MethodRegistry';
 import { serviceIsNotValid } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
