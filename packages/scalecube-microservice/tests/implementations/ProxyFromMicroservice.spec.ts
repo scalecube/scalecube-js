@@ -31,16 +31,6 @@ describe('Test creating proxy from microservice', () => {
     },
   };
 
-  const definitionWithMissingMethod: ServiceDefinition = {
-    ...greetingServiceDefinition,
-    methods: {
-      ...greetingServiceDefinition.methods,
-      ghost: {
-        asyncModel: asyncModelTypes.promise,
-      },
-    },
-  };
-
   const missMatchDefinition = {
     ...greetingServiceDefinition,
     methods: {
@@ -191,12 +181,12 @@ describe('Test creating proxy from microservice', () => {
 
     expect.assertions(2);
     return greetingServiceProxy
-      .hello('Idan')
-      .then((greeting1Response: GreetingService) => expect(greeting1Response).toEqual('Hello Idan'))
+      .hello(defaultUser)
+      .then((greeting1Response: GreetingService) => expect(greeting1Response).toEqual(`Hello ${defaultUser}`))
       .then(() =>
         greetingService2Proxy
-          .hello('Idan')
-          .then((greeting2Response: GreetingService2) => expect(greeting2Response).toEqual('hey Idan'))
+          .hello(defaultUser)
+          .then((greeting2Response: GreetingService2) => expect(greeting2Response).toEqual(`hey ${defaultUser}`))
       );
   });
 
@@ -229,14 +219,4 @@ describe('Test creating proxy from microservice', () => {
     const greetObservable = greetingServiceProxy.greet$(defaultUser);
     expect(isObservable(greetObservable)).toBeTruthy();
   });
-
-  // it('Test', () => {
-  //   expect.assertions(1);
-  //   const greetingServiceProxy = prepareScalecubeForGreetingService({ serviceDefinition: definitionWithMissingMethod });
-  //   greetingServiceProxy.ghost({ test: 'hello' })
-  //     .catch((error: Error) => {
-  //       console.log('error', error);
-  //       expect(true).toBeTruthy();
-  //     })
-  // });
 });

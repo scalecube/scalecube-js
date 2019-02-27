@@ -8,9 +8,9 @@
     "lint": "tslint -p tsconfig.json",
     "lint:fix": "yarn lint --fix",
     "test": "jest",
-    "test-watch": "yarn run lint && jest --collect-coverage --watchAll",
     "check-all": "yarn lint && yarn test",
-    "prettier": "prettier --write '{src,__integrationTests__,__mocks__}/**/*.{ts,tsx,js,jsx}'",
+    "test-lint-cov": "yarn run lint && jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**' --watchAll",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
     "build": "rm -rf lib/ && tsc"
   },
   "jest": {

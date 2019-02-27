@@ -3,7 +3,12 @@ import { Microservices } from '../../src/Microservices/Microservices';
 import { Message, Service } from '../../src/api/public';
 import { getQualifier } from '../../src/helpers/serviceData';
 import { expectWithFailNow } from '../helpers/utils';
-import { getNotFoundByRouterError, WRONG_DATA_FORMAT_IN_MESSAGE } from '../../src/helpers/constants';
+import {
+  getAsyncModelMissmatch,
+  getNotFoundByRouterError,
+  WRONG_DATA_FORMAT_IN_MESSAGE,
+} from '../../src/helpers/constants';
+import { asyncModelTypes } from '../../src/helpers/utils';
 
 describe('Test creating proxy from microservice', () => {
   console.warn = jest.fn(); // disable validation logs while doing this test
@@ -15,10 +20,15 @@ describe('Test creating proxy from microservice', () => {
     reference: new GreetingService(),
   };
 
-  const ms = Microservices.create({
-    services: [greetingService1],
+  let ms: any;
+  let greetingServiceCall: any;
+
+  beforeEach(() => {
+    ms = Microservices.create({
+      services: [greetingService1],
+    });
+    greetingServiceCall = ms.createServiceCall({});
   });
-  const greetingServiceCall = ms.createServiceCall({});
 
   it('Test requestResponse(message):ServiceCallOptions', () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
@@ -39,7 +49,7 @@ describe('Test creating proxy from microservice', () => {
       data: [defaultUser],
     };
     return greetingServiceCall.requestResponse(message).catch((error: Error) => {
-      expect(error.message).toMatch('asyncModel miss match, expect Promise but received Observable');
+      expect(error.message).toMatch(getAsyncModelMissmatch(asyncModelTypes.promise, asyncModelTypes.observable));
     });
   });
 
@@ -73,7 +83,7 @@ describe('Test creating proxy from microservice', () => {
     greetingServiceCall.requestStream(message).subscribe(
       () => expect(0).toBe(1),
       (error: Error) => {
-        expect(error.message).toMatch('asyncModel miss match, expect Observable but received Promise');
+        expect(error.message).toMatch(getAsyncModelMissmatch(asyncModelTypes.observable, asyncModelTypes.promise));
         done();
       }
     );
@@ -96,13 +106,7 @@ describe('Test creating proxy from microservice', () => {
   it('ServiceCall should fail with service not found error', () => {
     expect.assertions(1);
 
-    const ms = Microservices.create({
-      services: [],
-    });
-
-    const greetingServiceCall = ms.createServiceCall({});
-
-    const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+    const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'fakeHello' });
     const message: Message = {
       qualifier,
       data: defaultUser,
