@@ -1,0 +1,43 @@
+{
+  "name": "@scalecube/scalecube-microservice",
+  "version": "1.0.0",
+  "private": false,
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint -p tsconfig.json",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest",
+    "coverage": "yarn run lint && jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
+    "build": "rm -rf lib/ && tsc",
+    "check-all": "yarn coverage && yarn build"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec|steps))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/src"
+    ]
+  },
+  "author": "Scalecube",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "10.1.4",
+    "husky": "^1.3.1",
+    "jest": "^23.0.0",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "rxjs": "^6.4.0"
+  }
+}

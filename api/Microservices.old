@@ -24,7 +24,7 @@ export interface ProxyContext {
   router<T: Router>(router: T): T;
   router(): ProxyContext;
 }
-export interface ServiceRegistry {
+export interface Registry {
   registerService(serviceObject: ServiceConfig): void;
   unregisterService(serviceObject: Object): void;
   serviceLookup(serviceName: string): List<ServiceInstance> ;
@@ -46,6 +46,6 @@ export interface Microservices {
   builder(): Builder;
   dispatcher(): DispatcherContext;
   proxy(): ProxyContext;
-  serviceRegistry(): ServiceRegistry;
+  serviceRegistry(): Registry;
 }
 
