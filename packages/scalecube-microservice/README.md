@@ -4,7 +4,7 @@
 
 # Microservices - Basic Usage
 
-scalecube-js microservices basic usage for creating micro-frontEnd.
+Scalecube.js microservices basic usage for creating microfrontend.
 
 ## Define service:
 
@@ -15,21 +15,20 @@ class GreetingService {
     return Promise.resolve(`hello ${name}`);
   }
   greet$(...names) {
-    return new Observable((observer) => {
-      names.map((name) => observer.next(`greetings ${name}`));
-      return () => {};
-    });
+    // RX.Js from() creator of Observable
+    return from(names).pipe(map((name) => `greetings ${name}`));
   }
 }
-// serviceDefinition is a plain object
+
+// serviceDefinition is a plain object, that describes the asyncModel for each method, that you want to use within your microfrontend
 const greetingServiceDefinition = {
   serviceName: 'GreetingService',
   methods: {
     hello: {
-      asyncModel: 'Promise',
+      asyncModel: 'RequestResponse',
     },
     greet$: {
-      asyncModel: 'Observable',
+      asyncModel: 'RequestStream',
     },
   },
 };
@@ -38,10 +37,8 @@ const greetingServiceDefinition = {
 ## Bootstrap the service:
 
 ```javascript
-import Microservices from '@scalecube/scalecube-microservice';
-
-// the provider of the service create greetingService and export it.
-const greetingService = Microservices.create({
+// the provider of the service creates microserviceContainer and specifies the services that should be included in it
+const microserviceContainer = Microservices.create({
   services: [
     {
       definition: greetingServiceDefinition,
@@ -50,27 +47,34 @@ const greetingService = Microservices.create({
   ],
 });
 
-// the consumer of the service create a proxy from the greetingService.
-const greetingServiceProxy = greetingService.createProxy({
+// the consumer of the service creates a proxy from the microserviceContainer
+const greetingServiceProxy = microserviceContainer.createProxy({
   serviceDefinition: greetingServiceDefinition,
 });
 
-// then the consumer can invoke the proxy
-greetingServiceProxy.hello('someone').then((response) => console.log(response));
+// then the consumer can invoke the method from GreetingService using the proxy
+greetingServiceProxy.hello('someone').then((response) => console.log(response)); // hello someone
+```
+
+## Service structure
+
+```
+{
+  definition: greetingServiceDefinition,
+  reference: { // an object with all the methods that can be used in microfrontend
+    [methodName: string]: (...args: any[]) => any
+  }
+}
 ```
 
 ## ServiceDefinition structure
-
-export type RequestStreamAsyncModel = 'RequestStream';
-
-export type RequestResponseAsyncModel = 'RequestResponse';
 
 ```
 {
   serviceName: string; // name of the service
   methods: { // all methods in the service
     [methodName: string]: { // methodName
-      asyncModel: AsyncModel; // RequestStream (Observable) || RequestResponse (Promise)
+      asyncModel: AsyncModel; // RequestResponse || RequestStream
     };
   };
 }
