@@ -13,9 +13,8 @@ export const getNotFoundByRouterError = (qualifier: string) =>
   `can't find services with the request: '${JSON.stringify(qualifier)}'`;
 export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
-export const methodNotFound = (message: Message) => `Can't find method ${message.qualifier}`;
-
-export const serviceIsNotValid = (serviceName: string) => `service ${serviceName} is not valid.`;
+export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
+export const getInvalidMethodReferenceError = (qualifier: string) => `Invalid method reference for ${qualifier}`;
 
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;

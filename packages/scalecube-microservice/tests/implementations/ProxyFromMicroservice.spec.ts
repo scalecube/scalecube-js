@@ -21,7 +21,7 @@ describe('Test creating proxy from microservice', () => {
 
   const defaultUser = 'defaultUser';
 
-  const wrongDefinition: ServiceDefinition = {
+  const definitionWithWrongAsyncModel: ServiceDefinition = {
     ...greetingServiceDefinition,
     methods: {
       ...greetingServiceDefinition.methods,
@@ -137,7 +137,7 @@ describe('Test creating proxy from microservice', () => {
     try {
       ms.createProxy({
         // @ts-ignore-next-line
-        serviceDefinition: wrongDefinition,
+        serviceDefinition: definitionWithWrongAsyncModel,
         router: defaultRouter,
       });
     } catch (e) {

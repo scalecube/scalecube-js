@@ -2,6 +2,11 @@ import { Observable } from 'rxjs6';
 import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
 
 class GreetingService {
+  public empty: null;
+  constructor() {
+    this.empty = null;
+  }
+
   public hello = (name: any): any => {
     return new Promise((resolve, reject) => {
       if (!name) {

@@ -22,6 +22,8 @@ export const greet$ = (greetings: string[]): Observable<string> => {
   });
 };
 
+export const empty = null;
+
 export const greetingServiceDefinitionHello = {
   serviceName: 'GreetingService',
   methods: {

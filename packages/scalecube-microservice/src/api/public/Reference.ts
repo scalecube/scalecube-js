@@ -5,7 +5,7 @@ export default interface Reference {
   serviceName: string;
   methodName: string;
   reference?: {
-    [mathodName: string]: (data: any) => any;
+    [methodName: string]: (...args: any[]) => any;
   };
   asyncModel: AsyncModel;
 }

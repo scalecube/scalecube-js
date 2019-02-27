@@ -7,9 +7,8 @@ import {
 } from '../api/private/types';
 import { Service, Reference } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
-import { getQualifier } from '../helpers/serviceData';
-import { MICROSERVICE_NOT_EXISTS, serviceIsNotValid } from '../helpers/constants';
-import { isFunction } from '../helpers/utils';
+import { getQualifier, getReferencePointer } from '../helpers/serviceData';
+import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';
 
 export const createMethodRegistry = (): MethodRegistry => {
   let methodRegistryMap: MethodRegistryMap | null = {};
@@ -69,23 +68,25 @@ export const getUpdatedMethodRegistry = ({
 });
 
 export const getReferenceFromService = ({ service }: AvailableService): Reference[] => {
-  let data: Reference[] = [];
+  const data: Reference[] = [];
   const { definition, reference } = service;
 
   if (isValidServiceDefinition(definition)) {
     const { serviceName, methods } = definition;
-
-    data = Object.keys(methods).map((methodName: string) => ({
-      qualifier: getQualifier({ serviceName, methodName }),
-      serviceName,
-      methodName,
-      asyncModel: methods[methodName].asyncModel,
-      reference: {
-        [methodName]: isFunction(reference) ? reference : reference[methodName].bind(reference),
-      },
-    }));
+    Object.keys(methods).forEach((methodName: string) => {
+      const qualifier = getQualifier({ serviceName, methodName });
+      data.push({
+        qualifier,
+        serviceName,
+        methodName,
+        asyncModel: methods[methodName].asyncModel,
+        reference: {
+          [methodName]: getReferencePointer({ reference, methodName, qualifier }),
+        },
+      });
+    });
   } else {
-    throw new Error(serviceIsNotValid(definition.serviceName));
+    throw new Error(getServiceIsNotValidError(definition.serviceName));
   }
 
   return data;

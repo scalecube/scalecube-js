@@ -3,7 +3,7 @@ import { catchError } from 'rxjs6/operators';
 import { localCall } from './LocalCall';
 import { Message } from '../api/public';
 import { getQualifier } from '../helpers/serviceData';
-import { methodNotFound, ASYNC_MODEL_TYPES } from '../helpers/constants';
+import { getMethodNotFoundError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 describe('Test LocalCall', () => {
   const serviceName = 'fakeService';
@@ -29,7 +29,7 @@ describe('Test LocalCall', () => {
     localCall({ localService, asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, includeMessage: true, message })
       .pipe(
         catchError((error: Error) => {
-          expect(error.message).toMatch(`${methodNotFound(message)}`);
+          expect(error.message).toMatch(`${getMethodNotFoundError(message)}`);
           done();
           return of({});
         })

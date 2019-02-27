@@ -8,7 +8,7 @@ import {
 import { Service, Endpoint } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
-import { MICROSERVICE_NOT_EXISTS, serviceIsNotValid } from '../helpers/constants';
+import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';
 
 export const createServiceRegistry = (): ServiceRegistry => {
   let serviceRegistryMap: ServiceRegistryMap | null = {};
@@ -75,7 +75,7 @@ export const getEndpointsFromService = ({ service }: AvailableService): Endpoint
       uri: `${transport}/${serviceName}/${methodName}`,
     }));
   } else {
-    throw new Error(serviceIsNotValid(definition.serviceName));
+    throw new Error(getServiceIsNotValidError(definition.serviceName));
   }
 
   return data;

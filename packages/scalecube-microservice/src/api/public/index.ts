@@ -10,7 +10,10 @@ import Router from './Router';
 import RouteOptions from './RouteOptions';
 import Service from './Service';
 import ServiceDefinition from './ServiceDefinition';
-import ServiceImplementation from './ServiceImplementation';
+import ServiceImplementation, {
+  ServiceImplementationForObject,
+  ServiceImplementationForModule,
+} from './ServiceImplementation';
 import CreateServiceCallOptions from './CreateServiceCallOptions';
 import LookupOptions from './LookupOptions';
 import Endpoint from './Endpoint';
@@ -32,6 +35,8 @@ export {
   Service,
   ServiceDefinition,
   ServiceImplementation,
+  ServiceImplementationForObject,
+  ServiceImplementationForModule,
   CreateServiceCallOptions,
   LookupOptions,
   Endpoint,

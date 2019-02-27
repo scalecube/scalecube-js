@@ -4,7 +4,7 @@ import { throwErrorFromServiceCall } from '../helpers/utils';
 import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../api/private/types';
 import {
   getAsyncModelMissmatch,
-  methodNotFound,
+  getMethodNotFoundError,
   WRONG_DATA_FORMAT_IN_MESSAGE,
   ASYNC_MODEL_TYPES,
 } from '../helpers/constants';
@@ -28,7 +28,7 @@ export const localCall = ({ localService, asyncModel, includeMessage, message }:
     ? invokeMethod({ method, message }).pipe(addMessageToResponse({ includeMessage, message }))
     : (throwErrorFromServiceCall({
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        errorMessage: `${methodNotFound(message)}`,
+        errorMessage: `${getMethodNotFoundError(message)}`,
       }) as Observable<any>);
 };
 

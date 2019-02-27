@@ -8,7 +8,7 @@ import {
   getReferenceFromServices,
   getUpdatedMethodRegistry,
 } from './MethodRegistry';
-import { serviceIsNotValid } from '../helpers/constants';
+import { getServiceIsNotValidError } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
@@ -188,7 +188,7 @@ describe('ServiceRegistry Testing', () => {
           },
         });
       } catch (e) {
-        expect(e.message).toMatch(serviceIsNotValid(serviceName));
+        expect(e.message).toMatch(getServiceIsNotValidError(serviceName));
       }
     });
   });
