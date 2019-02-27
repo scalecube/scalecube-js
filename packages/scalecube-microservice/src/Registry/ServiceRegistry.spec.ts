@@ -1,6 +1,5 @@
 import { Endpoint, Service } from '../api/public';
-import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
-import GreetingService from '../../tests/mocks/GreetingService';
+import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
   createServiceRegistry,
@@ -8,7 +7,7 @@ import {
   getEndpointsFromServices,
   getUpdatedServiceRegistry,
 } from './ServiceRegistry';
-import { getServiceIsNotValidError } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
@@ -140,7 +139,7 @@ describe('ServiceRegistry Testing', () => {
         methodName: 'methodName',
         transport: 'transport',
         uri: 'uri',
-        asyncModel: 'RequestResponse',
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
       };
       const serviceRegistryMap = {
         [qualifier]: [endpoint, endpoint],

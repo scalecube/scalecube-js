@@ -1,5 +1,6 @@
 import { isValidServiceDefinition, isValidServiceName, isValidMethods, isValidMethod } from './serviceValidation';
 import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
+import { ASYNC_MODEL_TYPES } from './constants';
 
 describe('Unit testing serviceValidations', () => {
   console.error = jest.fn(); // disable validation logs while doing this test
@@ -23,7 +24,7 @@ describe('Unit testing serviceValidations', () => {
     expect(
       isValidMethods({
         hello: {
-          asyncModel: 'RequestResponse',
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
         },
       })
     ).toBe(true);

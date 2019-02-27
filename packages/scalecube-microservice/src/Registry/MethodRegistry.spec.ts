@@ -1,6 +1,5 @@
 import { Reference, Service } from '../api/public';
-import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
-import GreetingService from '../../tests/mocks/GreetingService';
+import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
   createMethodRegistry,
@@ -8,7 +7,7 @@ import {
   getReferenceFromServices,
   getUpdatedMethodRegistry,
 } from './MethodRegistry';
-import { getServiceIsNotValidError } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   describe('Test ServiceRegistry factory', () => {
@@ -135,7 +134,7 @@ describe('ServiceRegistry Testing', () => {
         qualifier,
         serviceName: 'serviceName',
         methodName: 'methodName',
-        asyncModel: 'RequestResponse',
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
         reference: {
           fakeMethod: () => {},
         },

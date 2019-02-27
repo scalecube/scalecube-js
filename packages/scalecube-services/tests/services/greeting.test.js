@@ -218,7 +218,7 @@ describe('Greeting suite', () => {
 
     expect.assertions(1);
     return expect(dispatcher.invoke(message)).rejects.toEqual(
-      new Error('Service not found error: GreetingService.hello')
+      new Error('Service not found error: GreetingServiceMock.hello')
     );
   });
 
