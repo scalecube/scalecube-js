@@ -1,5 +1,5 @@
-import { from, throwError, Observable } from 'rxjs6';
-import { map } from 'rxjs6/operators';
+import { from, throwError, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../api/private/types';
 import {

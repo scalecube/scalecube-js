@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-js",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -21,58 +21,18 @@
     "services"
   ],
   "scripts": {
-    "clean": "rimraf lib dist es coverage ./packages/scalecube-services/libdef.js.flow ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
-    "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
-    "test": "cross-env BABEL_ENV=jest jest --runInBand --no-cache --env=jsdom",
-    "test:snapshot": "cross-env BABEL_ENV=jest jest --maxWorkers=4 -u",
-    "test:inspect": "cross-env BABEL_ENV=jest NODE_ENV=development node --debug-brk ./node_modules/jest/bin/jest.js --runInBand --no-cache",
-    "test:watch": "npm test -- --watch",
-    "test:cov": "npm test -- --coverage",
-    "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
-    "build:es": "cross-env OUT_DIR=es node scripts/build.js",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs OUT_DIR=build node scripts/build.js",
-    "build": "npm run clean && npm run build:es && npm run build:commonjs && npm run flow:gen",
-    "flow": "flow",
-    "flow:install": "flow-typed install",
-    "flow:gen": "flow gen-flow-files ./packages/scalecube-services/src/services/libdef.js --out-dir ./packages/scalecube-services/ && npm run flow:gen:move && npm run flowToTs ",
-    "flow:gen:move": "rname \"./packages/scalecube-services/libdef.js.flow\" \"./packages/scalecube-services/index.js.flow\"",
-    "flowToTs": "node build/flowToTs ./packages/scalecube-services/index.js.flow ./packages/scalecube-services/index.d.ts",
-    "flow:reset": "flow stop && flow start",
-    "flow:check": "npm run flow:reset && flow check",
-    "deploy:prepublish": "lerna publish prerelease --yes -m '[skip ci]'",
-    "deploy:publish": "lerna publish patch --yes -m '[skip ci]'",
-    "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm",
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "lerna bootstrap --npm-client=yarn",
+    "build": "lerna run build"
   },
-  "author": "Idan Levin (https://github.com/IdanILT)",
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "license": "MIT",
+  "dependencies": {
+    "husky": "^1.3.1"
+  },
   "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-jest": "^21.2.0",
-    "babel-plugin-dynamic-import-node": "^1.2.0",
-    "babel-plugin-module-resolver": "^3.0.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
-    "cross-env": "^5.1.1",
-    "flow": "^0.2.3",
-    "flow-bin": "^0.59.0",
-    "flow-typed": "^2.2.3",
-    "jest": "^21.2.1",
-    "lerna": "^3.0.1",
-    "redux": "^4.0.0",
-    "regenerator-runtime": "^0.11.0",
-    "rename-cli": "^5.0.0",
-    "rxjs": "^5.5.5",
-    "rxjs-compat": "^6.1.0",
-    "rxjs6": "npm:rxjs@6.1.0",
-    "prettier": "^1.15.3",
-    "pretty-quick": "^1.8.1",
-    "husky": "^1.3.1",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.17.0"
+    "lerna": "^3.13.1",
+    "prettier": "^1.16.4",
+    "pretty-quick": "^1.10.0"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
