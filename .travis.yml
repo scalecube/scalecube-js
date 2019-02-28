@@ -16,7 +16,7 @@ install:
 script:
   - yarn run build
   - npm run test
-#  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then yarn run deploy:canary; fi'
+  - 'if [ "$TRAVIS_BRANCH" != "develop" ]; then bash scripts/publish.sh; fi'
 
 deploy:
   - provider: script

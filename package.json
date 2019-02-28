@@ -22,8 +22,7 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap --npm-client=yarn",
-    "build": "lerna run build",
-    "deploy:canary": "lerna publish --canary --preid snapshot.`date +%s` --yes --npm-client npm"
+    "build": "lerna run build"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "license": "MIT",
