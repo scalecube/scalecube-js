@@ -1,7 +1,7 @@
 {
   "name": "@scalecube/scalecube-js",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "publishConfig": {
     "access": "public"
   },
@@ -33,15 +33,5 @@
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0"
-  },
-  "jest": {
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "./"
-    ]
   }
 }
