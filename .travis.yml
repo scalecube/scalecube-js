@@ -15,7 +15,6 @@ install:
 
 script:
   - yarn run build
-  - npm run test
   - 'if [ "$TRAVIS_BRANCH" != "develop" ]; then bash scripts/publish.sh; fi'
 
 deploy:
@@ -25,18 +24,6 @@ deploy:
     on:
       repo: scalecube/scalecube-js
       branch: develop
-#  - provider: script
-#    skip_cleanup: true
-#    script: git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git && git checkout develop && yarn run deploy:prepublish
-#    on:
-#      repo: scalecube/scalecube-js
-#      branch: develop
-#  - provider: script
-#    skip_cleanup: true
-#    script: git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git && git checkout master && yarn run deploy:publish
-#    on:
-#      repo: scalecube/scalecube-js
-#      branch: master
 
 after_deploy:
   - git status
