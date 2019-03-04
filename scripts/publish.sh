@@ -22,7 +22,7 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     else
         echo $MSG_VERSION_FAIL && exit 1
     fi
-    lerna publish --npm-tag snapshot
+    lerna publish --npm-tag snapshot --canary
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
