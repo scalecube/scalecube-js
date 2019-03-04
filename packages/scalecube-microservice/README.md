@@ -1,1 +1,3 @@
 # scalecube-microservice
+
+ci test
