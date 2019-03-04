@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "0.1.0-remove-deprecated-packages-1551693754",
+  "version": "0.1.0",
   "private": false,
   "main": "index.js",
   "license": "MIT",
