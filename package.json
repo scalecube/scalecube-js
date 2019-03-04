@@ -11,7 +11,7 @@
     }
   },
   "workspaces": [
-    "packages/scalecube-microservice"
+    "packages/*"
   ],
   "repository": "github:scalecube/scalecube-js",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
