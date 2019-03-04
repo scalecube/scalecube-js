@@ -16,13 +16,13 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
-    npm version $VERSION-$BRANCH_NAME-$TIMESTAMP
+    lerna version $VERSION-$BRANCH_NAME-$TIMESTAMP
     if [[ "$?" == 0 ]]; then
         echo $MSG_VERSION_SUCCESS
     else
         echo $MSG_VERSION_FAIL && exit 1
     fi
-    lerna publish --canary
+    lerna publish --npm-tag snapshot
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
@@ -33,13 +33,13 @@ elif [[ "$TRAVIS_BRANCH" == "develop" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false"
     echo "--------------------------------------------"
     echo "|     Deploying latest on npm registry     |"
     echo "--------------------------------------------"
-    npm version patch
+    lerna version patch
     if [[ "$?" == 0 ]]; then
         echo $MSG_VERSION_SUCCESS
     else
         echo $MSG_VERSION_FAIL && exit 1
     fi
-    lerna publish --canary
+    lerna publish
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
