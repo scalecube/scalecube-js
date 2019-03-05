@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
 MSG_PUBLISH_SUCCESS="lerna publish: Succeed"
 MSG_PUBLISH_FAIL="lerna publish: Failed"
 

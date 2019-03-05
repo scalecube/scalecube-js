@@ -5,7 +5,7 @@ cache:
     - node_modules
 language: node_js
 node_js:
-  - '8'
+  - '10'
 
 before_install:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
@@ -15,6 +15,7 @@ install:
 
 script:
   - yarn run build
+  - yarn run test
   - 'if [ "$TRAVIS_BRANCH" != "develop" ]; then bash scripts/publish.sh; fi'
 
 deploy:
@@ -24,6 +25,12 @@ deploy:
     on:
       repo: scalecube/scalecube-js
       branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/publish.sh
+    on:
+      repo: scalecube/scalecube-js
+      branch: master
 
 after_deploy:
   - git status

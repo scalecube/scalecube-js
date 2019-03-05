@@ -23,7 +23,8 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap --npm-client=yarn",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "test": "lerna run test"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "license": "MIT",
