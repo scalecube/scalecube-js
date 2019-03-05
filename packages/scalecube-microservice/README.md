@@ -6,7 +6,7 @@
 
 Scalecube.js microservices basic usage for creating microfrontend.
 
-## Define service:
+## Define service
 
 ```javascript
 // service can be class || module || function
@@ -34,7 +34,7 @@ const greetingServiceDefinition = {
 };
 ```
 
-## Bootstrap the service:
+## Bootstrap the service
 
 ```javascript
 // the provider of the service creates microserviceContainer and specifies the services that should be included in it
