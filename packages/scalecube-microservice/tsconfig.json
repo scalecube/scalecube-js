@@ -12,5 +12,5 @@
     "experimentalDecorators": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.*", "**/*.md"]
+  "exclude": ["node_modules", "**/*.spec.*"]
 }

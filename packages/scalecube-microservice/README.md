@@ -69,7 +69,7 @@ greetingServiceProxy.hello('someone').then((response) => console.log(response));
 
 ## ServiceDefinition structure
 
-```
+```text
 {
   serviceName: string; // name of the service
   methods: { // all methods in the service
