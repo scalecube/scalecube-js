@@ -1,5 +1,5 @@
-import { of } from 'rxjs6';
-import { catchError } from 'rxjs6/operators';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { localCall } from './LocalCall';
 import { Message } from '../api/public';
 import { getQualifier } from '../helpers/serviceData';
