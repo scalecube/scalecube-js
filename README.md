@@ -20,7 +20,7 @@ in the road map scalecube-js will support client side and server side. as such s
 currently we are working on version 0.1.x
 and it will be the first version with LTS (meaning the API will be backwards compatible until the major will change).
 The SLA is still under debate and will be release as part of 0.1.x
-for more details about 0.1.x go to https://github.com/scalecube/scalecube-js/issues/30
+for more details about 0.1.x go to <https://github.com/scalecube/scalecube-js/issues/30>
 
 ## Install
 
@@ -44,7 +44,7 @@ To run/debug jest tests:
 
 - jest options: --runInBand --no-cache --env=jsdom
 - env variables: BABEL_ENV=commonjs
-- you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: https://facebook.github.io/jest/docs/en/troubleshooting.html
+- you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
   ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
 ## Version

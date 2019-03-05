@@ -58,14 +58,12 @@ greetingServiceProxy.hello('someone').then((response) => console.log(response));
 
 ## Service structure
 
-```
-{
-  definition: greetingServiceDefinition,
-  reference: { // an object with all the methods that can be used in microfrontend
-    [methodName: string]: (...args: any[]) => any
-  }
-}
-```
+    {
+      definition: greetingServiceDefinition,
+      reference: { // an object with all the methods that can be used in microfrontend
+        [methodName: string]: (...args: any[]) => any
+      }
+    }
 
 ## ServiceDefinition structure
 

@@ -13,6 +13,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "remarkConfig": {
+    "plugins": [
+      "remark-preset-lint-recommended"
+    ]
+  },
   "repository": "github:scalecube/scalecube-js",
   "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
   "keywords": [
@@ -24,7 +29,9 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "lint-md": "remark .",
+    "lint-md-fix": "remark .  --output"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "license": "MIT",
@@ -35,6 +42,9 @@
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
+    "remark-cli": "^6.0.1",
+    "remark-lint": "^6.0.4",
+    "remark-preset-lint-recommended": "^3.0.2",
     "tslint-config-prettier": "^1.17.0"
   }
 }
