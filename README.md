@@ -4,16 +4,16 @@
 
 # Scalecube-js
 
-Microservices library inspired by the java scalecube-services. scalecube-js provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupeling between service implemntation and technology.
+Microservices library inspired by the java scalecube-services. scalecube-js provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupling between service implementation and technology.
 
-With scalecube-js decouple service by interface and agnostic to the location of service implementaion, location, and technology.
-in the roadmap scalecube-js will support client side and server side. as such services may be:
+With scalecube-js decouple service by interface and agnostic to the location of service implementation, location, and technology.
+in the road map scalecube-js will support client side and server side. as such services may be:
 
-- Deployable unit of same application and technology
-- Deployable unit of diffrent application and diffrent technology
-- Diffrent service workers in a browser
+- Deploy-able unit of same application and technology
+- Deploy-able unit of different application and different technology
+- Different service workers in a browser
 - Node-js services on same host
-- Node-js services on diffrent host communicating via api.
+- Node-js services on different host communicating via api.
 
 ## Project Status
 
@@ -22,7 +22,7 @@ and it will be the first version with LTS (meaning the API will be backwards com
 The SLA is still under debate and will be release as part of 0.1.x
 for more details about 0.1.x go to https://github.com/scalecube/scalecube-js/issues/30
 
-## Install:
+## Install
 
 yarn add @scalecube/scalecube-microservice
 
@@ -49,7 +49,7 @@ To run/debug jest tests:
 
 ## Version
 
-- http://semver.org/ format
+- [semver format](http://semver.org/)
 
 **MAJOR** version when you make incompatible API changes,
 
