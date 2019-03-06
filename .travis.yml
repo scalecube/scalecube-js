@@ -34,3 +34,4 @@ deploy:
 
 after_deploy:
   - git status
+
