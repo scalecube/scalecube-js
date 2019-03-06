@@ -1,4 +1,5 @@
 <!-- prettier-ignore -->
+
 [![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
@@ -10,11 +11,11 @@ Microservices library inspired by the java scalecube-services. scalecube-js prov
 With scalecube-js decouple service by interface and agnostic to the location of service implementation, location, and technology.
 in the road map scalecube-js will support client side and server side. as such services may be:
 
-- Deploy-able unit of same application and technology
-- Deploy-able unit of different application and different technology
-- Different service workers in a browser
-- Node-js services on same host
-- Node-js services on different host communicating via api.
+-   Deploy-able unit of same application and technology
+-   Deploy-able unit of different application and different technology
+-   Different service workers in a browser
+-   Node-js services on same host
+-   Node-js services on different host communicating via api.
 
 ## Project Status
 
@@ -43,14 +44,14 @@ Run test `npm test`
 
 To run/debug jest tests:
 
-- jest options: --runInBand --no-cache --env=jsdom
-- env variables: BABEL_ENV=commonjs
-- you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
-  ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
+-   jest options: --runInBand --no-cache --env=jsdom
+-   env variables: BABEL_ENV=commonjs
+-   you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
+    ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
 ## Version
 
-- [semver format](http://semver.org/)
+-   [semver format](http://semver.org/)
 
 **MAJOR** version when you make incompatible API changes,
 
