@@ -11,7 +11,7 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git status
     git checkout $TRAVIS_BRANCH
-    git status
+    git diff
     lerna publish --canary --preid snapshot.$(date +%s) --yes -m '[skip ci]'
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
