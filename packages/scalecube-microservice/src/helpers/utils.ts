@@ -1,4 +1,4 @@
-import { throwError } from 'rxjs6';
+import { throwError } from 'rxjs';
 import { AsyncModel } from '../api/public';
 import { ASYNC_MODEL_TYPES } from './constants';
 

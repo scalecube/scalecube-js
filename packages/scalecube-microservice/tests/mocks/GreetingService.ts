@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs6';
+import { Observable } from 'rxjs';
 import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
 
 class GreetingService {

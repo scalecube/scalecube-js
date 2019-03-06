@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs6';
+import { Observable, of } from 'rxjs';
 import { RemoteCallOptions } from '../api/private/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api/public';

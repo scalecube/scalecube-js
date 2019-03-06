@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs6';
+import { Observable } from 'rxjs';
 import { Message } from '.';
 
 export default interface ServiceCall {
