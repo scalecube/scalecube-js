@@ -15,10 +15,10 @@ export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
   methods: {
     hello: {
-      asyncModel: 'RequestResponse',
+      asyncModel: 'RequestResponse', // Promise
     },
     greet$: {
-      asyncModel: 'RequestStream',
+      asyncModel: 'RequestStream', // Observable
     },
   },
 };
