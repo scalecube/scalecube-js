@@ -5,13 +5,27 @@
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
 # Microservices - Basic Usage
-
 Scalecube.js microservices basic usage for creating microfrontend.
 
-
 ## Create a service
+The contract the creator of the service need to uphold.
+```javascript
+// serviceDefinition is a plain object, that describes the asyncModel for each method, that you want to use within your microfrontend
+export const greetingServiceDefinition = {
+  serviceName: 'GreetingService',
+  methods: {
+    hello: {
+      asyncModel: 'RequestResponse', // Promise
+    },
+    greet$: {
+      asyncModel: 'RequestStream', // Observable
+    },
+  },
+};
+```
 Create your service how ever you like,
 It can be done using Class approach
+
 ```javascript
 // service can be class
 export default class GreetingService {
@@ -30,24 +44,10 @@ It can be done using Module approach
 export const hello = (name) => Promise.resolve(`hello ${name}`);
 export const greet$ = (...names) => from(names).pipe(map((name) => `greetings ${name}`));
 ```
-As long as it hold to the contract(serviceDefinition):
-```javascript
-// serviceDefinition is a plain object, that describes the asyncModel for each method, that you want to use within your microfrontend
-export const greetingServiceDefinition = {
-  serviceName: 'GreetingService',
-  methods: {
-    hello: {
-      asyncModel: 'RequestResponse',
-    },
-    greet$: {
-      asyncModel: 'RequestStream',
-    },
-  },
-};
-```
 
 ## Provision the service
 The provider of the service creates microserviceContainer and specifies the services that should be included in it
+
 ```javascript
 // Creating microservice from class
 const microserviceContainer = Microservices.create({
@@ -71,8 +71,8 @@ const microserviceContainer = Microservices.create({
   ],
 });
 ```
-## Creating a proxy from the microservice and use the service
 
+## Creating a proxy from the microservice and use the service
 ```javascript
 // the consumer of the service creates a proxy from the microserviceContainer
 const greetingServiceProxy = microserviceContainer.createProxy({
@@ -86,5 +86,3 @@ greetingServiceProxy.greet$(['someone1','someone2'])
     console.log(response) // greetings someone1 
   );                      // greetings someone2
 ```
-
-
