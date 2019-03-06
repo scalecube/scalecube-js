@@ -8,11 +8,8 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
-    git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
-    git status
-    git checkout $TRAVIS_BRANCH
-    git diff
-    lerna publish --canary --preid snapshot.$(date +%s) --yes -m '[skip ci]'
+
+    lerna publish --canary --preid snapshot.$(date +%s) --yes
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
