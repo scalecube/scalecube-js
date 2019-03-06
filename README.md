@@ -36,7 +36,9 @@ Run test `npm test`
 To run/debug jest tests:
 
 -   jest options: --runInBand --no-cache --env=jsdom
+
 -   env variables: BABEL_ENV=commonjs
+
 -   you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
     ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
