@@ -4,25 +4,16 @@
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
-# Scalecube-js
+# Scalecube
 
-Microservices library inspired by the java scalecube-services. scalecube-js provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupling between service implementation and technology.
-
-With scalecube-js decouple service by interface and agnostic to the location of service implementation, location, and technology.
-in the road map scalecube-js will support client side and server side. as such services may be:
-
--   Deploy-able unit of same application and technology
--   Deploy-able unit of different application and different technology
--   Different service workers in a browser
--   Node-js services on same host
--   Node-js services on different host communicating via api.
+Microservices library inspired by the java scalecube-services. scalecube provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupling between service implementation and technology.
 
 ## Project Status
 
-currently we are working on version 0.1.x
+currently we are working on version 0.2.x
 and it will be the first version with LTS (meaning the API will be backwards compatible until the major will change).
-The SLA is still under debate and will be release as part of 0.1.x
-for more details about 0.1.x go to <https://github.com/scalecube/scalecube-js/issues/30>
+The SLA is still under debate and will be release as part of 0.2.x
+for more details about 0.2.x go to <https://github.com/scalecube/scalecube-js/issues/30>
 
 ## Install
 
