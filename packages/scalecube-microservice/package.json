@@ -2,7 +2,7 @@
   "name": "@scalecube/scalecube-microservice",
   "version": "0.1.1",
   "private": false,
-  "main": "dist/index.js",
+  "main": "dist/es2015/index.js",
   "license": "MIT",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
@@ -11,8 +11,12 @@
     "coverage": "yarn run lint && jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
     "check-all": "yarn coverage && yarn build",
-    "lib": "rm -rf lib/ && tsc --emitDeclarationOnly",
-    "build": "yarn run lib  && rm -rf dist/ && parcel build src/index.ts --no-source-maps --experimental-scope-hoisting"
+    "build": "rm -rf dist/ && npm run build:es2015 && npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:umd:min",
+    "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
+    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
+    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd",
+    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min"
   },
   "jest": {
     "transform": {
