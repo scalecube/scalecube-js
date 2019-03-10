@@ -1,0 +1,48 @@
+{
+  "name": "@scalecube/scalecube-discovery",
+  "version": "0.1.1",
+  "private": false,
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint -p tsconfig.json",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest",
+    "coverage": "yarn run lint && jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
+    "check-all": "yarn coverage && yarn build",
+    "build": "rm -rf dist/ && npm run build:es2015 && npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:umd:min",
+    "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
+    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
+    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd",
+    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec|steps))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/src"
+    ]
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "10.1.4",
+    "jest": "^23.0.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "rxjs": "^6.4.0"
+  }
+}
