@@ -1,5 +1,5 @@
 import HtmlService from '../mocks/HtmlService';
-import { Microservices } from '../../src/Microservices/Microservices';
+import Microservices from '../../src/index';
 import { defaultRouter } from '../../src/Routers/default';
 import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
 

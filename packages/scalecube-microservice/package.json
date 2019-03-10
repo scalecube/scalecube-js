@@ -2,7 +2,7 @@
   "name": "@scalecube/scalecube-microservice",
   "version": "0.1.2-alpha.0",
   "private": false,
-  "main": "index.js",
+  "main": "dist/es2015/index.js",
   "license": "MIT",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
@@ -10,8 +10,13 @@
     "test": "jest",
     "coverage": "yarn run lint && jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
-    "build": "rm -rf lib/ && tsc",
-    "check-all": "yarn coverage && yarn build"
+    "check-all": "yarn coverage && yarn build",
+    "build": "rm -rf dist/ && npm run build:es2015 && npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:umd:min",
+    "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
+    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
+    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd",
+    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min"
   },
   "jest": {
     "transform": {
@@ -33,6 +38,8 @@
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^23.0.0",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typescript": "^3.2.4"

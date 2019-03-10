@@ -5,7 +5,7 @@ import {
   greetingServiceDefinitionHello,
   greetingServiceDefinitionGreet$,
 } from '../mocks/GreetingServiceModule';
-import { Microservices } from '../../src/Microservices/Microservices';
+import Microservices from '../../src/index';
 import { Service, ServiceDefinition } from '../../src/api/public';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import { ASYNC_MODEL_TYPES, getInvalidMethodReferenceError } from '../../src/helpers/constants';
