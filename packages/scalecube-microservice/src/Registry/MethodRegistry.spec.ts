@@ -8,8 +8,10 @@ import {
   getUpdatedMethodRegistry,
 } from './MethodRegistry';
 import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
+import { uuidv4 } from "../helpers/utils";
 
 describe('ServiceRegistry Testing', () => {
+  const address = uuidv4();
   describe('Test ServiceRegistry factory', () => {
     let registry: any;
 
@@ -113,13 +115,14 @@ describe('ServiceRegistry Testing', () => {
       const NUMBER_OF_REFERENCES = Object.keys(service).length * services.length;
       const references: Reference[] = getReferenceFromServices({
         services,
+        address
       });
 
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
     it('Test getReferenceFromServices({ services }) : Reference[] | [] -  without parameters', () => {
-      const references: Reference[] = getReferenceFromServices({});
+      const references: Reference[] = getReferenceFromServices({address});
 
       expect(Array.isArray(references)).toBeTruthy();
       expect(references).toHaveLength(0);
@@ -158,6 +161,7 @@ describe('ServiceRegistry Testing', () => {
 
       const references = getReferenceFromService({
         service,
+        address
       });
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
 
