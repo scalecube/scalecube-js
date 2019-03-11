@@ -89,7 +89,8 @@ describe('ServiceRegistry Testing', () => {
         endpoints: [endpoint],
       });
       const messageQualifier = getQualifier({ serviceName: endpoint.serviceName, methodName: endpoint.methodName });
-      const result = registry.lookUp({ messageQualifier });
+
+      const result = registry.lookUp({ qualifier : messageQualifier });
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({
