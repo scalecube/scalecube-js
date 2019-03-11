@@ -4,11 +4,4 @@ import DiscoveryCreate from './DiscoveryCreate';
 import DiscoveryConnect from './DiscoveryConnect';
 import Seed from './Seed';
 
-
-export {
-  Node,
-  Discovery,
-  DiscoveryCreate,
-  DiscoveryConnect,
-  Seed
-}
+export { Node, Discovery, DiscoveryCreate, DiscoveryConnect, Seed };

@@ -1,6 +1,6 @@
-import { Seed } from "../public";
-import { ReplaySubject } from "rxjs";
-import { Endpoint } from "@scalecube/scalecube-microservice/src/api/public";
+import { Seed } from '../public';
+import { ReplaySubject } from 'rxjs';
+import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 
 export interface NotifyAllListeners {
   seed: Seed;

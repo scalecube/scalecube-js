@@ -1,12 +1,10 @@
-import { Discovery as DiscoveryInterface, DiscoveryConnect, DiscoveryCreate } from "../api/public";
-import { getSeed, notifyAllListeners, removeFromCluster, addToCluster } from "./DiscoveryActions";
-import { ReplaySubject } from "rxjs";
-import { Endpoint } from "@scalecube/scalecube-microservice/src/api/public";
-
+import { Discovery as DiscoveryInterface, DiscoveryConnect, DiscoveryCreate } from '../api/public';
+import { getSeed, notifyAllListeners, removeFromCluster, addToCluster } from './DiscoveryActions';
+import { ReplaySubject } from 'rxjs';
+import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 
 export const Discovery: DiscoveryInterface = Object.freeze({
   create({ address, endPoints, seedAddress }: DiscoveryConnect): DiscoveryCreate {
-
     let seed = getSeed({ seedAddress });
     const subjectNotifier = new ReplaySubject<Endpoint[]>(1);
 
@@ -15,14 +13,17 @@ export const Discovery: DiscoveryInterface = Object.freeze({
 
     return Object.freeze({
       end: () => {
-        seed = removeFromCluster({ seed, address });
-        notifyAllListeners({ seed });
-        subjectNotifier && subjectNotifier.unsubscribe();
-        return Promise.resolve('true')
+        try {
+          seed = removeFromCluster({ seed, address });
+          subjectNotifier && subjectNotifier.unsubscribe();
+          notifyAllListeners({ seed });
+          return Promise.resolve(`${address} as been removed from ${seedAddress}`);
+        } catch (e) {
+          return Promise.reject(new Error(e));
+        }
       },
 
-      subscriber: subjectNotifier
-    })
-  }
+      subscriber: subjectNotifier,
+    });
+  },
 });
-

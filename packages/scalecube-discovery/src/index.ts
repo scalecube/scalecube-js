@@ -1,3 +1,3 @@
-import { Discovery } from "./Discovery/Discovery";
+import { Discovery } from './Discovery/Discovery';
 
 export default Discovery;
