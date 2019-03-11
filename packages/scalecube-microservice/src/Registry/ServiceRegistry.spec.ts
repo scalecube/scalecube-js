@@ -8,8 +8,23 @@ import {
   getUpdatedServiceRegistry,
 } from './ServiceRegistry';
 import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
+import { uuidv4 } from "../helpers/utils";
 
 describe('ServiceRegistry Testing', () => {
+  const address = uuidv4();
+  const serviceName = 'serviceName';
+  const methodName = 'methodName';
+  const qualifier = getQualifier({ serviceName, methodName });
+  const endpoint: Endpoint = {
+    qualifier,
+    serviceName,
+    methodName,
+    transport: 'transport',
+    uri: 'uri',
+    asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+    address
+  };
+
   describe('Test ServiceRegistry factory', () => {
     let registry: any;
 
@@ -24,38 +39,41 @@ describe('ServiceRegistry Testing', () => {
     };
 
     it('Test after createServiceRegistry(): ServiceRegistry - all methods are define', () => {
-      const NUMBER_OF_REGISTRY_PROPERTIES = 3;
+      const NUMBER_OF_REGISTRY_PROPERTIES = 4;
 
       expect(registry.lookUp).toBeDefined();
       expect(registry.add).toBeDefined();
       expect(registry.destroy).toBeDefined();
+      expect(registry.createEndPoints).toBeDefined();
 
       expect(Object.keys(registry)).toHaveLength(NUMBER_OF_REGISTRY_PROPERTIES);
     });
 
-    it('Test add({ services }): AvailableServices - add qualifier for each unique qualifier, push to the unique qualifier all endPoints with the same qualifier', () => {
-      const services = [service, service, service, service];
-      const NUMBER_OF_END_POINTS_IN_QUALIFIER = services.length;
-      const NUMBER_OF_QUALIFIER = Object.keys(service).length;
+    it('Test add({ endpoints }): Endpoint[] - group all endPoints with the same qualifier', () => {
+      const endpoint1 = { ...endpoint, qualifier: 'qualifier1' };
+      const endpoint2 = { ...endpoint, qualifier: 'qualifier2' };
+
+      const endpoints = [endpoint1, endpoint1, endpoint2];
       const serviceRegistry = registry.add({
-        services,
+        endpoints,
       });
 
-      const qualifiers = Object.keys(serviceRegistry);
-      expect(qualifiers).toHaveLength(NUMBER_OF_QUALIFIER);
+      expect(Object.keys(serviceRegistry)).toHaveLength(2);
+      expect(Object.keys(serviceRegistry['qualifier1'])).toHaveLength(2);
+      expect(serviceRegistry['qualifier1'][0]).toMatchObject(endpoint1);
+      expect(Object.keys(serviceRegistry['qualifier2'])).toHaveLength(1);
+      expect(serviceRegistry['qualifier2'][0]).toMatchObject(endpoint2);
 
-      const endpoints: Endpoint[] = serviceRegistry[qualifiers[0]];
-      expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS_IN_QUALIFIER);
     });
 
-    it('Test add({ services }): AvailableServices - without services', () => {
+    it('Test add({ endpoints }): Endpoint[] - without services', () => {
       const serviceRegistry = registry.add({});
       expect(serviceRegistry).toMatchObject({});
     });
 
     it('Test lookUp ({ qualifier }): Endpoint[] | [] - return [] if qualifier not found', () => {
       registry.add({
-        services: [service],
+        endpoints: [endpoint],
       });
 
       const emptyResult = registry.lookUp({ qualifier: 'fakeQualifier' });
@@ -64,9 +82,9 @@ describe('ServiceRegistry Testing', () => {
 
     it('Test lookUp ({ qualifier }): Endpoint[] | [] - return endPoint[] if qualifier is found', () => {
       registry.add({
-        services: [service],
+        endpoints: [endpoint],
       });
-      const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
+      const qualifier = getQualifier({ serviceName: endpoint.serviceName, methodName: endpoint.methodName });
       const result = registry.lookUp({ qualifier });
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
@@ -116,13 +134,14 @@ describe('ServiceRegistry Testing', () => {
       const NUMBER_OF_END_POINTS = 6;
       const endpoints: Endpoint[] = getEndpointsFromServices({
         services: [service, service, service],
+        address
       });
 
       expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS);
     });
 
     it('Test getEndpointsFromServices({ services }) : Endpoint[] | [] -  without parameters', () => {
-      const endpoints: Endpoint[] = getEndpointsFromServices({});
+      const endpoints: Endpoint[] = getEndpointsFromServices({ address });
 
       expect(Array.isArray(endpoints)).toBeTruthy();
       expect(endpoints).toHaveLength(0);
@@ -130,17 +149,6 @@ describe('ServiceRegistry Testing', () => {
 
     it('Test getUpdatedServiceRegistry({ serviceRegistry, endpoints }) : ServiceRegistryMap', () => {
       const NUMBER_OF_END_POINTS = 5;
-
-      const qualifier = 'qualifier';
-
-      const endpoint: Endpoint = {
-        qualifier,
-        serviceName: 'serviceName',
-        methodName: 'methodName',
-        transport: 'transport',
-        uri: 'uri',
-        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-      };
       const serviceRegistryMap = {
         [qualifier]: [endpoint, endpoint],
       };
@@ -156,10 +164,11 @@ describe('ServiceRegistry Testing', () => {
 
     it('Test getEndpointsFromService({ service, type }) : Endpoint[]', () => {
       const NUMBER_OF_END_POINTS = 2;
-      const NUMBER_OF_PROPERTY_END_POINT = 6;
+      const NUMBER_OF_PROPERTY_END_POINT = 7;
 
       const endPoints = getEndpointsFromService({
         service,
+        address
       });
       expect(endPoints).toHaveLength(NUMBER_OF_END_POINTS);
 
@@ -173,6 +182,7 @@ describe('ServiceRegistry Testing', () => {
           serviceName: expect.any(String),
           uri: expect.any(String),
           transport: expect.any(String),
+          address : expect.any(String),
         })
       );
     });

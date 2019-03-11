@@ -21,11 +21,11 @@ export const createMethodRegistry = (): MethodRegistry => {
 
       return methodRegistryMap[qualifier] || null;
     },
-    add: ({ services = [] }: AvailableServices): MethodRegistryMap => {
+    add: ({ services = [] , address }: AvailableServices): MethodRegistryMap => {
       if (!methodRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
-      const references = getReferenceFromServices({ services });
+      const references = getReferenceFromServices({ services, address });
       methodRegistryMap = getUpdatedMethodRegistry({
         methodRegistryMap,
         references,
@@ -42,12 +42,13 @@ export const createMethodRegistry = (): MethodRegistry => {
 
 // Helpers
 
-export const getReferenceFromServices = ({ services = [] }: AvailableServices): Reference[] | [] =>
+export const getReferenceFromServices = ({ services = [], address }: AvailableServices): Reference[] | [] =>
   services.reduce(
     (res: Reference[], service: Service) => [
       ...res,
       ...getReferenceFromService({
         service,
+        address
       }),
     ],
     []
@@ -67,7 +68,7 @@ export const getUpdatedMethodRegistry = ({
   ),
 });
 
-export const getReferenceFromService = ({ service }: AvailableService): Reference[] => {
+export const getReferenceFromService = ({ service, address }: AvailableService): Reference[] => {
   const data: Reference[] = [];
   const { definition, reference } = service;
 

@@ -1,18 +1,31 @@
-import { getProxy } from '../Proxy/Proxy';
+import Discovery from "@scalecube/scalecube-discovery/src/index";
 import { defaultRouter } from '../Routers/default';
+import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
-import { ASYNC_MODEL_TYPES } from '../helpers/constants';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { uuidv4 } from "../helpers/utils";
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../api/private/types';
+import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
+import { ASYNC_MODEL_TYPES , MICROSERVICE_NOT_EXISTS} from '../helpers/constants';
+
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services }: MicroserviceOptions): Microservice => {
-    let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
-    const { methodRegistry } = microserviceContext;
-    services && Array.isArray(services) && methodRegistry.add({ services });
+  create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
+    const address = uuidv4();
+
+    let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
+    const { methodRegistry, serviceRegistry } = microserviceContext;
+    services && Array.isArray(services) && methodRegistry.add({ services, address });
+
+    const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({ services, address }) : [];
+    // const discovery = Discovery.create({
+    //   address,
+    //   endPoints,
+    //   seedAddress
+    // });
+
+    // discovery.subscriber.subscribe(endpoints => serviceRegistry.add({ endpoints }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {
@@ -50,6 +63,8 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         if (!microserviceContext) {
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
+
+        // discovery && discovery.end();
 
         Object.values(microserviceContext).forEach(
           (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()

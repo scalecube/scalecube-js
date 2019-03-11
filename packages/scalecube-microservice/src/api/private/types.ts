@@ -17,16 +17,18 @@ export interface ServiceCallOptions {
   includeMessage: boolean;
 }
 
-export type ServiceCallResponse = Observable<any> | Promise<any>;
+export type ServiceCallResponse = Observable<any>|Promise<any>;
 
 export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCallResponse;
 
 export interface AvailableServices {
   services?: Service[];
+  address : string;
 }
 
 export interface AvailableService {
   service: Service;
+  address : string;
 }
 
 export interface CreateServiceCallOptions {
@@ -45,12 +47,12 @@ export interface Qualifier {
 }
 
 export interface GetUpdatedServiceRegistryOptions {
-  serviceRegistryMap: ServiceRegistryMap | null;
+  serviceRegistryMap: ServiceRegistryMap|null;
   endpoints: Endpoint[];
 }
 
 export interface GetUpdatedMethodRegistryOptions {
-  methodRegistryMap: MethodRegistryMap | null;
+  methodRegistryMap: MethodRegistryMap|null;
   references: Reference[];
 }
 
@@ -90,15 +92,16 @@ export interface Registry {
   destroy: () => null;
 }
 
-type AddServiceToRegistry<T> = ({ services }: AvailableServices) => T;
+type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
 
 export interface ServiceRegistry extends Registry {
   lookUp: LookUp;
-  add: AddServiceToRegistry<ServiceRegistryMap>;
+  add: ({ endpoints }: {endpoints: Endpoint[]}) => ServiceRegistryMap;
+  createEndPoints: AddServiceToRegistry<Endpoint[]>;
 }
 
 export interface MethodRegistry extends Registry {
-  lookUp: ({ qualifier }: LookupOptions) => Reference | null;
+  lookUp: ({ qualifier }: LookupOptions) => Reference|null;
   add: AddServiceToRegistry<MethodRegistryMap>;
 }
 
