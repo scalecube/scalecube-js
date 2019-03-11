@@ -1,4 +1,4 @@
-import { Node, Seed } from "../public";
+import { Seed } from "../public";
 import { Subject } from "rxjs";
 import { Endpoint } from "@scalecube/scalecube-microservice/src/api/public";
 
@@ -12,7 +12,8 @@ export interface GetSeed {
 
 export interface AddToCluster {
   seed: Seed;
-  nodeData: Node;
+  address: string;
+  endPoints: Endpoint[];
   subjectNotifier: Subject<Endpoint[]>;
 }
 

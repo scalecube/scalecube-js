@@ -5,17 +5,17 @@ import { Endpoint } from "@scalecube/scalecube-microservice/src/api/public";
 
 
 export const Discovery: DiscoveryInterface = Object.freeze({
-  create({ nodeData, seedAddress }: DiscoveryConnect): DiscoveryCreate {
+  create({ address, endPoints, seedAddress }: DiscoveryConnect): DiscoveryCreate {
 
     let seed = getSeed({ seedAddress });
     const subjectNotifier = new Subject<Endpoint[]>();
 
-    seed = addToCluster({ seed, nodeData, subjectNotifier });
+    seed = addToCluster({ seed, address, endPoints, subjectNotifier });
     notifyAllListeners({ seed });
 
     return Object.freeze({
       end: () => {
-        seed = removeFromCluster({ seed, address: nodeData.address });
+        seed = removeFromCluster({ seed, address });
         notifyAllListeners({ seed });
         subjectNotifier && subjectNotifier.unsubscribe();
         return Promise.resolve('true')

@@ -39,19 +39,19 @@ export const removeFromCluster = ({ seed, address }: RemoveFromCluster) : Seed =
   return seed;
 };
 
-export const addToCluster = ({ seed, nodeData, subjectNotifier }: AddToCluster) : Seed => {
+export const addToCluster = ({ seed, endPoints, address, subjectNotifier }: AddToCluster) : Seed => {
   // add new endPoints[] to each node in the cluster
   seed.cluster.forEach(node => {
-    node.endPoints = [...node.endPoints, ...nodeData.endPoints]
+    node.endPoints = [...node.endPoints, ...endPoints]
   });
   // add new node to the cluster
   seed.cluster.push({
-    address: nodeData.address,
+    address: address,
     endPoints: seed.allEndPoints || [],
     subjectNotifier
   });
   // add new endPoints[] to the allEndPoints[]
-  seed.allEndPoints = seed.allEndPoints ? [...seed.allEndPoints, ...nodeData.endPoints] : [...nodeData.endPoints];
+  seed.allEndPoints = seed.allEndPoints ? [...seed.allEndPoints, ...endPoints] : [...endPoints];
 
   return seed;
 };
