@@ -31,10 +31,7 @@ export const removeFromCluster = ({ seed, address }: RemoveFromCluster) : Seed =
     node.endPoints = node.endPoints.filter(endPoint => endPoint.address !== address);
   });
   // remove node from the cluster
-  seed.cluster = {
-    ...seed.cluster,
-    [address]: null
-  };
+  seed.cluster = seed.cluster.filter(node => node.address !== address);
 
   return seed;
 };

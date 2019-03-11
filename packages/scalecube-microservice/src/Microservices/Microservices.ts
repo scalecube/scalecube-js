@@ -19,13 +19,13 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
     const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({ services, address }) : [];
-    // const discovery = Discovery.create({
-    //   address,
-    //   endPoints,
-    //   seedAddress
-    // });
+    const discovery = Discovery.create({
+      address,
+      endPoints,
+      seedAddress
+    });
 
-    // discovery.subscriber.subscribe(endpoints => serviceRegistry.add({ endpoints }));
+    discovery.subscriber.subscribe(endpoints => serviceRegistry.add({ endpoints }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {
@@ -64,7 +64,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
 
-        // discovery && discovery.end();
+        discovery && discovery.end();
 
         Object.values(microserviceContext).forEach(
           (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
