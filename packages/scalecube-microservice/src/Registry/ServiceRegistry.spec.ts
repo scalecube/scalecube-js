@@ -60,13 +60,14 @@ describe('ServiceRegistry Testing', () => {
 
       expect(Object.keys(serviceRegistry)).toHaveLength(2);
       // @ts-ignore-next-line
-      expect(Object.keys(serviceRegistry['qualifier1'])).toHaveLength(2);
+      const service1 = serviceRegistry['qualifier1'];
       // @ts-ignore-next-line
-      expect(serviceRegistry['qualifier1'][0]).toMatchObject(endpoint1);
-      // @ts-ignore-next-line
-      expect(Object.keys(serviceRegistry['qualifier2'])).toHaveLength(1);
-      // @ts-ignore-next-line
-      expect(serviceRegistry['qualifier2'][0]).toMatchObject(endpoint2);
+      const service2 = serviceRegistry['qualifier2'];
+
+      expect(Object.keys(service1)).toHaveLength(2);
+      expect(service1[0]).toMatchObject(endpoint1);
+      expect(Object.keys(service2)).toHaveLength(1);
+      expect(service2[0]).toMatchObject(endpoint2);
     });
 
     it('Test add({ endpoints }): Endpoint[] - without services', () => {

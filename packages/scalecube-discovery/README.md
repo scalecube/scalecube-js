@@ -5,4 +5,3 @@
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
 # Discovery
-
