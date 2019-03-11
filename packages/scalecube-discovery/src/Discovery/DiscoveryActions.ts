@@ -47,6 +47,8 @@ export const addToCluster = ({ seed, endPoints, address, subjectNotifier }: AddT
     endPoints: seed.allEndPoints || [],
     subjectNotifier
   });
+  // save current endPoints in the replaySubject cache.
+  subjectNotifier && subjectNotifier.next(seed.allEndPoints || []);
   // add new endPoints[] to the allEndPoints[]
   seed.allEndPoints = seed.allEndPoints ? [...seed.allEndPoints, ...endPoints] : [...endPoints];
 
