@@ -59,9 +59,13 @@ describe('ServiceRegistry Testing', () => {
       });
 
       expect(Object.keys(serviceRegistry)).toHaveLength(2);
+      // @ts-ignore-next-line
       expect(Object.keys(serviceRegistry['qualifier1'])).toHaveLength(2);
+      // @ts-ignore-next-line
       expect(serviceRegistry['qualifier1'][0]).toMatchObject(endpoint1);
+      // @ts-ignore-next-line
       expect(Object.keys(serviceRegistry['qualifier2'])).toHaveLength(1);
+      // @ts-ignore-next-line
       expect(serviceRegistry['qualifier2'][0]).toMatchObject(endpoint2);
 
     });
@@ -84,8 +88,8 @@ describe('ServiceRegistry Testing', () => {
       registry.add({
         endpoints: [endpoint],
       });
-      const qualifier = getQualifier({ serviceName: endpoint.serviceName, methodName: endpoint.methodName });
-      const result = registry.lookUp({ qualifier });
+      const messageQualifier = getQualifier({ serviceName: endpoint.serviceName, methodName: endpoint.methodName });
+      const result = registry.lookUp({ messageQualifier });
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({

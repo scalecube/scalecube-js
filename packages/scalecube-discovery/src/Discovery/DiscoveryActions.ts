@@ -43,7 +43,7 @@ export const addToCluster = ({ seed, endPoints, address, subjectNotifier }: AddT
   });
   // add new node to the cluster
   seed.cluster.push({
-    address: address,
+    address,
     endPoints: seed.allEndPoints || [],
     subjectNotifier
   });
