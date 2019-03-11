@@ -1,20 +1,19 @@
-import Discovery from "@scalecube/scalecube-discovery/src/index";
+import Discovery from '@scalecube/scalecube-discovery/src/index';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { uuidv4 } from "../helpers/utils";
+import { uuidv4 } from '../helpers/utils';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../api/private/types';
 import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
-import { ASYNC_MODEL_TYPES , MICROSERVICE_NOT_EXISTS} from '../helpers/constants';
-
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
-    let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
+    let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
@@ -22,10 +21,10 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     const discovery = Discovery.create({
       address,
       endPoints,
-      seedAddress
+      seedAddress,
     });
 
-    discovery.subscriber.subscribe(endpoints => serviceRegistry.add({ endpoints }));
+    discovery.subscriber.subscribe((endpoints) => serviceRegistry.add({ endpoints }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {

@@ -13,14 +13,10 @@ export const Discovery: DiscoveryInterface = Object.freeze({
 
     return Object.freeze({
       end: () => {
-        try {
-          seed = removeFromCluster({ seed, address });
-          subjectNotifier && subjectNotifier.unsubscribe();
-          notifyAllListeners({ seed });
-          return Promise.resolve(`${address} as been removed from ${seedAddress}`);
-        } catch (e) {
-          return Promise.reject(new Error(e));
-        }
+        seed = removeFromCluster({ seed, address });
+        subjectNotifier && subjectNotifier.unsubscribe();
+        notifyAllListeners({ seed });
+        return Promise.resolve(`${address} as been removed from ${seedAddress}`);
       },
 
       subscriber: subjectNotifier,

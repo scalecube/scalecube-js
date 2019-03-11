@@ -21,7 +21,7 @@ export const createMethodRegistry = (): MethodRegistry => {
 
       return methodRegistryMap[qualifier] || null;
     },
-    add: ({ services = [] , address }: AvailableServices): MethodRegistryMap => {
+    add: ({ services = [], address }: AvailableServices): MethodRegistryMap => {
       if (!methodRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -48,7 +48,7 @@ export const getReferenceFromServices = ({ services = [], address }: AvailableSe
       ...res,
       ...getReferenceFromService({
         service,
-        address
+        address,
       }),
     ],
     []

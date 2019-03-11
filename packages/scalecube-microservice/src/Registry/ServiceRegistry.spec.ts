@@ -8,7 +8,7 @@ import {
   getUpdatedServiceRegistry,
 } from './ServiceRegistry';
 import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
-import { uuidv4 } from "../helpers/utils";
+import { uuidv4 } from '../helpers/utils';
 
 describe('ServiceRegistry Testing', () => {
   const address = uuidv4();
@@ -22,7 +22,7 @@ describe('ServiceRegistry Testing', () => {
     transport: 'transport',
     uri: 'uri',
     asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-    address
+    address,
   };
 
   describe('Test ServiceRegistry factory', () => {
@@ -67,7 +67,6 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(serviceRegistry['qualifier2'])).toHaveLength(1);
       // @ts-ignore-next-line
       expect(serviceRegistry['qualifier2'][0]).toMatchObject(endpoint2);
-
     });
 
     it('Test add({ endpoints }): Endpoint[] - without services', () => {
@@ -90,7 +89,7 @@ describe('ServiceRegistry Testing', () => {
       });
       const messageQualifier = getQualifier({ serviceName: endpoint.serviceName, methodName: endpoint.methodName });
 
-      const result = registry.lookUp({ qualifier : messageQualifier });
+      const result = registry.lookUp({ qualifier: messageQualifier });
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({
@@ -139,7 +138,7 @@ describe('ServiceRegistry Testing', () => {
       const NUMBER_OF_END_POINTS = 6;
       const endpoints: Endpoint[] = getEndpointsFromServices({
         services: [service, service, service],
-        address
+        address,
       });
 
       expect(endpoints).toHaveLength(NUMBER_OF_END_POINTS);
@@ -173,7 +172,7 @@ describe('ServiceRegistry Testing', () => {
 
       const endPoints = getEndpointsFromService({
         service,
-        address
+        address,
       });
       expect(endPoints).toHaveLength(NUMBER_OF_END_POINTS);
 
@@ -187,7 +186,7 @@ describe('ServiceRegistry Testing', () => {
           serviceName: expect.any(String),
           uri: expect.any(String),
           transport: expect.any(String),
-          address : expect.any(String),
+          address: expect.any(String),
         })
       );
     });

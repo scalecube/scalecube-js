@@ -24,7 +24,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
-    "test": "lerna run test",
+    "test": "lerna run test:lint:prettier",
     "lint-md": "remark .",
     "lint-md-fix": "remark .  --output"
   },
