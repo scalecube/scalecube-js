@@ -16,7 +16,6 @@ install:
 script:
   - yarn run build
   - yarn run test
-  - yarn run codeStyle
   - 'if [ "$TRAVIS_BRANCH" != "develop" ]; then bash scripts/publish.sh; fi'
 
 deploy:
