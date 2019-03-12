@@ -7,3 +7,4 @@ flow-typed/
 coverage/
 .npmrc
 yarn-error.log
+.DS_Store

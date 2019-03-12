@@ -4,13 +4,13 @@ set -e
 MSG_PUBLISH_SUCCESS="lerna publish: Succeed"
 MSG_PUBLISH_FAIL="lerna publish: Failed"
 
+git status
+
 if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
 
-    git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
-    git checkout $TRAVIS_BRANCH
     lerna publish --canary --preid snapshot.$(date +%s) --yes -m '[skip ci]'
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
