@@ -58,7 +58,7 @@ describe('Test Discovery', () => {
       seedAddress: 'seedAddress1',
       endPoints: [endPoint, endPoint],
     });
-    discovery.subscriber.subscribe((endPoints) => {
+    discovery.subscribe((endPoints) => {
       switch (step) {
         case 0:
           expect(endPoints).toHaveLength(0);
@@ -73,7 +73,7 @@ describe('Test Discovery', () => {
 
     const discovery2 = Discovery.create({ address: 'cluster2', seedAddress: 'seedAddress1', endPoints: [endPoint] });
 
-    discovery2.subscriber.subscribe((endPoints) => {
+    discovery2.subscribe((endPoints) => {
       expect(endPoints).toHaveLength(2);
       step++;
       if (step === 3) {
@@ -94,7 +94,7 @@ describe('Test Discovery', () => {
     });
     const discovery2 = Discovery.create({ address: 'cluster2', seedAddress: 'seedAddress1', endPoints: [endpoint2] });
 
-    discovery.subscriber.subscribe((endPoints) => {
+    discovery.subscribe((endPoints) => {
       switch (step) {
         case 0:
           expect(endPoints).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Test Discovery', () => {
       }
     });
 
-    discovery2.end().then((response: string) => {
+    discovery2.destroy().then((response: string) => {
       expect(response).toMatch(`${endpoint2.address} as been removed from seedAddress1`);
       if (step === 2) {
         done();
