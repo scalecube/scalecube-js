@@ -1,7 +1,7 @@
 import { Discovery } from './Discovery';
 import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice/src/helpers/constants';
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
 describe('Test Discovery', () => {
   beforeEach(() => {

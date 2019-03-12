@@ -11,7 +11,7 @@ import {
   Message,
   Microservice,
   MicroserviceOptions,
-  Microservices as MicroservicesInterface
+  Microservices as MicroservicesInterface,
 } from '../api/public';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
@@ -19,7 +19,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
-    let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
+    let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
