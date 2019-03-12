@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "private": false,
   "main": "dist/es2015/index.js",
   "license": "MIT",
