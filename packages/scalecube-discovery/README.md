@@ -16,7 +16,13 @@ const discoveryConfig = {
   endPoints: [] // Endpoint[]
 }
 
-const accesspoint = Discovery.create(discoveryConfig);
+const node = Discovery.create(discoveryConfig);
 
-accesspoint.subscriber.subscribe(console.log); // emit all remote endpoints on the cluster(seedAddress)
+node.notifier.subscribe(console.log); // emit all remote endpoints on the cluster(seedAddress)
+```
+
+After a node join the cluster and subscribe to it, then it will be notified on all new endpoints that join the cluster.
+To remove node from the cluster use node.destroy
+```javascript
+node.end(); // remove node microservices from the cluster and unsubscribe from the cluster.
 ```

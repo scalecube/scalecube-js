@@ -1,7 +1,7 @@
 import { Discovery } from './Discovery';
-import { Observable } from 'rxjs';
 import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice/src/helpers/constants';
+import { Observable } from "rxjs";
 
 describe('Test Discovery', () => {
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('Test Discovery', () => {
     expect(discovery).toEqual(
       expect.objectContaining({
         end: expect.any(Function),
-        subscriber: expect.any(Observable),
+        notifier: expect.any(Observable),
       })
     );
   });
@@ -58,7 +58,7 @@ describe('Test Discovery', () => {
       seedAddress: 'seedAddress1',
       endPoints: [endPoint, endPoint],
     });
-    discovery.subscribe((endPoints) => {
+    discovery.notifier.subscribe((endPoints) => {
       switch (step) {
         case 0:
           expect(endPoints).toHaveLength(0);
@@ -73,7 +73,7 @@ describe('Test Discovery', () => {
 
     const discovery2 = Discovery.create({ address: 'cluster2', seedAddress: 'seedAddress1', endPoints: [endPoint] });
 
-    discovery2.subscribe((endPoints) => {
+    discovery2.notifier.subscribe((endPoints) => {
       expect(endPoints).toHaveLength(2);
       step++;
       if (step === 3) {
@@ -94,7 +94,7 @@ describe('Test Discovery', () => {
     });
     const discovery2 = Discovery.create({ address: 'cluster2', seedAddress: 'seedAddress1', endPoints: [endpoint2] });
 
-    discovery.subscribe((endPoints) => {
+    discovery.notifier.subscribe((endPoints) => {
       switch (step) {
         case 0:
           expect(endPoints).toHaveLength(1);
@@ -107,7 +107,7 @@ describe('Test Discovery', () => {
       }
     });
 
-    discovery2.destroy().then((response: string) => {
+    discovery2.end().then((response: string) => {
       expect(response).toMatch(`${endpoint2.address} as been removed from seedAddress1`);
       if (step === 2) {
         done();
