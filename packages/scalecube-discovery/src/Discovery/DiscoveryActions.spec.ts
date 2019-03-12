@@ -17,7 +17,7 @@ describe('Test DiscoveryActions', () => {
   it('Test getSeed({ seedAddress }): Seed', () => {
     const seed = getSeed({ seedAddress: 'mockAddress' });
     // @ts-ignore
-    expect(seed).toMatchObject(window.scalecube.discovery['mockAddress']);
+    expect(seed).toMatchObject(window.scalecube.discovery.mockAddress);
   });
 
   it('Test notifyAllListeners({seed}) - one node in the cluster', (done) => {
@@ -43,7 +43,9 @@ describe('Test DiscoveryActions', () => {
     seed.cluster.forEach((node) => {
       node.subjectNotifier.subscribe((endPoints) => {
         expect(endPoints).toHaveLength(0);
-        if (node.address === 'address3') done();
+        if (node.address === 'address3') {
+          done();
+        }
       });
     });
   });

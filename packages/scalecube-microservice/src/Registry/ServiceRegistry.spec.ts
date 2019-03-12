@@ -60,9 +60,9 @@ describe('ServiceRegistry Testing', () => {
 
       expect(Object.keys(serviceRegistry)).toHaveLength(2);
       // @ts-ignore-next-line
-      const service1 = serviceRegistry['qualifier1'];
+      const service1 = serviceRegistry.qualifier1;
       // @ts-ignore-next-line
-      const service2 = serviceRegistry['qualifier2'];
+      const service2 = serviceRegistry.qualifier2;
 
       expect(Object.keys(service1)).toHaveLength(2);
       expect(service1[0]).toMatchObject(endpoint1);
