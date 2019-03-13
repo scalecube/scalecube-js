@@ -4,13 +4,12 @@ import DiscoveryCreate from './DiscoveryCreate';
 import DiscoveryConnect from './DiscoveryConnect';
 import Cluster from './Cluster';
 import ClustersMap from './ClustersMap';
+import ScalecubeGlobal from './ScalecubeGlobal';
 
 declare global {
   interface Window {
-    scalecube: {
-      discovery: ClustersMap
-    };
+    scalecube: ScalecubeGlobal;
   }
 }
 
-export { Node, Discovery, DiscoveryCreate, DiscoveryConnect, Cluster, ClustersMap };
+export { Node, Discovery, DiscoveryCreate, DiscoveryConnect, Cluster, ClustersMap, ScalecubeGlobal };
