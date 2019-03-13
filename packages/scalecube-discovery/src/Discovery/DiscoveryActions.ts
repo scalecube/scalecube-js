@@ -38,18 +38,18 @@ export const addToCluster = ({ cluster, endPoints, address, subjectNotifier }: A
     node.endPoints = [...node.endPoints, ...endPoints];
   });
 
-  const immutEndPoints = [...(cluster.allEndPoints || [])];
+  const allPreviousEndPoints = [...(cluster.allEndPoints || [])];
 
-  // add new node to the cluster
+  // add new node to the cluster (node doesn't contain its own endpoints)
   cluster.nodes.push({
     address,
-    endPoints: immutEndPoints,
+    endPoints: allPreviousEndPoints,
     subjectNotifier,
   });
   // save current endPoints in the replaySubject cache.
-  subjectNotifier && subjectNotifier.next(immutEndPoints);
+  subjectNotifier && subjectNotifier.next(allPreviousEndPoints);
   // add new endPoints[] to the allEndPoints[]
-  cluster.allEndPoints = cluster.allEndPoints ? [...cluster.allEndPoints, ...endPoints] : [...endPoints];
+  cluster.allEndPoints = [...(cluster.allEndPoints || []), ...endPoints];
 
   return cluster;
 };
