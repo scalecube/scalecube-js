@@ -7,8 +7,8 @@ import ClustersMap from './ClustersMap';
 
 declare global {
   interface Window {
-    scalecube?: {
-      discovery?: ClustersMap
+    scalecube: {
+      discovery: ClustersMap
     };
   }
 }
