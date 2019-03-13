@@ -1,5 +1,5 @@
-import Cluster from './Cluster'
+import Cluster from './Cluster';
 
 export default interface ClustersMap {
-  [seedAddress: string]: Cluster
+  [seedAddress: string]: Cluster;
 }

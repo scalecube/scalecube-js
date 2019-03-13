@@ -1,5 +1,5 @@
 import { Microservices } from './Microservices/Microservices';
-import { RequestStreamAsyncModel, RequestResponseAsyncModel, AsyncModel } from './api/public';
+import { ASYNC_MODEL_TYPES } from './helpers/constants';
 
-export { RequestStreamAsyncModel, RequestResponseAsyncModel, AsyncModel };
+export { ASYNC_MODEL_TYPES };
 export default Microservices;
