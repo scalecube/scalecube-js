@@ -19,7 +19,9 @@
     "scalecube",
     "scalecube-js",
     "microservices",
-    "services"
+    "services",
+    "discovery",
+    "cluster"
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap --npm-client=yarn",
