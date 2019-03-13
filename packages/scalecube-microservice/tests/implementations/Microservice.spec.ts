@@ -8,7 +8,9 @@ import {
 import Microservices from '../../src/index';
 import { Service, ServiceDefinition } from '../../src/api/public';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
+import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
 import { ASYNC_MODEL_TYPES, getInvalidMethodReferenceError } from '../../src/helpers/constants';
+import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/src/api/public'
 
 describe('Test the creation of Microservice', () => {
   const defaultUser = 'defaultUser';
@@ -22,6 +24,10 @@ describe('Test the creation of Microservice', () => {
       },
     },
   };
+
+  beforeEach(() => {
+    window.scalecube = {} as ScalecubeGlobal
+  })
 
   describe('Test creating microservice from function constructor', () => {
     it('MethodRegistry throws an error when method reference is not a function', () => {
@@ -110,5 +116,29 @@ describe('Test the creation of Microservice', () => {
         });
       });
     });
+  });
+
+  describe('Test using different seedAddress', () => {
+    it('Put two microservices on the first cluster and one microservice on the second cluster', () => {
+      const ms1SeedAddress = 'cluster1';
+      const ms2SeedAddress = 'cluster2';
+      const greetingService1: Service = {
+        definition: greetingServiceDefinition,
+        reference: new GreetingService(),
+      };
+      const greetingService2: Service = {
+        definition: greetingServiceDefinition2,
+        reference: new GreetingService2(),
+      };
+      expect.assertions(3);
+
+      Microservices.create({ services: [greetingService1], seedAddress: ms1SeedAddress });
+      Microservices.create({ services: [greetingService2], seedAddress: ms1SeedAddress });
+      Microservices.create({ services: [greetingService2], seedAddress: ms2SeedAddress });
+
+      expect(Object.keys(window.scalecube.discovery)).toEqual([ms1SeedAddress, ms2SeedAddress]);
+      expect(window.scalecube.discovery[ms1SeedAddress].nodes).toHaveLength(2);
+      expect(window.scalecube.discovery[ms2SeedAddress].nodes).toHaveLength(1);
+    })
   });
 });

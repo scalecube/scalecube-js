@@ -22,7 +22,8 @@
     "transform": {
       ".(ts|tsx)": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec|steps))\\.(ts|tsx|js)$",
+    "testRegex": "(\\.|/)spec\\.ts$",
+    "testPathIgnorePatterns": ["<rootDir>/dist/", "<rootDir>/lib/", "<rootDir>/node_modules/"],
     "moduleFileExtensions": [
       "ts",
       "tsx",
