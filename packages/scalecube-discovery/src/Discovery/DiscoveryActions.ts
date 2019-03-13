@@ -1,9 +1,9 @@
-import { Cluster, ClustersMap } from '../api/public'
+import { Cluster, ClustersMap } from '../api/public';
 import { AddToCluster, GetCluster, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   window.scalecube = window.scalecube || { discovery: {} as ClustersMap };
-  const namespace = window.scalecube.discovery || {} as ClustersMap;
+  const namespace = window.scalecube.discovery || ({} as ClustersMap);
 
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
@@ -16,8 +16,7 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
 };
 
 export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
-  cluster.nodes.forEach((node) => node && node.subjectNotifier &&
-    node.subjectNotifier.next(node.endPoints || []));
+  cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
 
 export const removeFromCluster = ({ cluster, address }: RemoveFromCluster): Cluster => {
   // remove from allEndPoints[]
