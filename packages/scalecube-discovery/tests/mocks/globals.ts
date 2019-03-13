@@ -1,4 +1,12 @@
-// @ts-ignore
+import { ClustersMap } from '../../src/api/public'
+
+declare global {
+  interface Window {
+    scalecube?: {
+      discovery?: ClustersMap
+    };
+  }
+}
+
 window.scalecube = window.scalecube || {};
-// @ts-ignore
 window.scalecube.discovery = window.scalecube.discovery || {};

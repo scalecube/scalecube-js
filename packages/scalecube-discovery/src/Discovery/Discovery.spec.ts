@@ -1,12 +1,12 @@
-import { Discovery } from './Discovery';
+import { Observable } from 'rxjs';
 import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice/src/helpers/constants';
-import { Observable } from 'rxjs';
+import { Discovery } from './Discovery';
+import { ClustersMap } from '../api/public'
 
 describe('Test Discovery', () => {
   beforeEach(() => {
-    // @ts-ignore-next-line
-    window.scalecube.discovery = {};
+    window.scalecube.discovery = {} as ClustersMap;
   });
 
   const endPoint: Endpoint = {
@@ -21,21 +21,17 @@ describe('Test Discovery', () => {
 
   it('Test Discovery.create add Nodes to cluster', () => {
     const seedAddress = 'myNamespace';
-    // @ts-ignore-next-line
     expect(window.scalecube.discovery[seedAddress]).toBeUndefined();
 
     Discovery.create({ address: 'cluster1', seedAddress, endPoints: [] });
     Discovery.create({ address: 'cluster2', seedAddress, endPoints: [] });
-    // @ts-ignore-next-line
-    expect(window.scalecube.discovery[seedAddress].cluster).toHaveLength(2);
-    // @ts-ignore-next-line
+    expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(2);
     expect(Object.keys(window.scalecube.discovery)).toHaveLength(1);
   });
 
   it('Test Discovery.create add Nodes to cluster by its seedAddress', () => {
     Discovery.create({ address: 'cluster1', seedAddress: 'seedAddress1', endPoints: [] });
     Discovery.create({ address: 'cluster2', seedAddress: 'seedAddress2', endPoints: [] });
-    // @ts-ignore-next-line
     expect(Object.keys(window.scalecube.discovery)).toHaveLength(2);
   });
 

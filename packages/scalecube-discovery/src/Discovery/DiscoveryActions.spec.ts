@@ -1,10 +1,11 @@
-import { addToCluster, getSeed, notifyAllListeners } from './DiscoveryActions';
-import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 import { Observable, ReplaySubject } from 'rxjs';
+import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
+import { addToCluster, getCluster, notifyAllListeners } from './DiscoveryActions';
 
 describe('Test DiscoveryActions', () => {
+  const seedAddress = 'mockAddress';
+
   beforeEach(() => {
-    // @ts-ignore-next-line
     window.scalecube.discovery = {};
   });
 
@@ -14,33 +15,32 @@ describe('Test DiscoveryActions', () => {
     subjectNotifier: new ReplaySubject<Endpoint[]>(1),
   });
 
-  it('Test getSeed({ seedAddress }): Seed', () => {
-    const seed = getSeed({ seedAddress: 'mockAddress' });
-    // @ts-ignore
-    expect(seed).toMatchObject(window.scalecube.discovery.mockAddress);
+  it('Test getCluster({ seedAddress }): Cluster', () => {
+    const cluster = getCluster({ seedAddress });
+    expect(cluster).toMatchObject(window.scalecube.discovery[seedAddress]);
   });
 
-  it('Test notifyAllListeners({seed}) - one node in the cluster', (done) => {
-    const seed = getSeed({ seedAddress: 'mockAddress' });
-    seed.cluster = [createNode()];
+  it('Test notifyAllListeners({ cluster }) - one node in the cluster', (done) => {
+    const cluster = getCluster({ seedAddress });
+    cluster.nodes = [createNode()];
 
-    notifyAllListeners({ seed });
+    notifyAllListeners({ cluster });
 
-    seed.cluster[0].subjectNotifier.subscribe((endPoints) => {
+    cluster.nodes[0].subjectNotifier.subscribe((endPoints) => {
       expect(endPoints).toHaveLength(0);
       done();
     });
   });
 
-  it('Test notifyAllListeners({seed}) - multi nodes in the cluster', (done) => {
+  it('Test notifyAllListeners({ cluster }) - multi nodes in the cluster', (done) => {
     expect.assertions(3);
 
-    const seed = getSeed({ seedAddress: 'mockAddress' });
-    seed.cluster = [createNode('address1'), createNode('address2'), createNode('address3')];
+    const cluster = getCluster({ seedAddress });
+    cluster.nodes = [createNode('address1'), createNode('address2'), createNode('address3')];
 
-    notifyAllListeners({ seed });
+    notifyAllListeners({ cluster });
 
-    seed.cluster.forEach((node) => {
+    cluster.nodes.forEach((node) => {
       node.subjectNotifier.subscribe((endPoints) => {
         expect(endPoints).toHaveLength(0);
         if (node.address === 'address3') {
@@ -50,13 +50,13 @@ describe('Test DiscoveryActions', () => {
     });
   });
 
-  it('Test addToCluster({ seed, endPoints, address, subjectNotifier }) : Seed', () => {
+  it('Test addToCluster({ cluster, endPoints, address, subjectNotifier }): Cluster', () => {
     expect.assertions(3);
     const address = 'cluster';
-    let seed = getSeed({ seedAddress: 'mockAddress' });
-    seed = addToCluster({ seed, endPoints: [], address, subjectNotifier: new ReplaySubject(1) });
-    expect(seed.cluster).toHaveLength(1);
-    const nodeInCluster = seed.cluster[0];
+    let cluster = getCluster({ seedAddress });
+    cluster = addToCluster({ cluster, endPoints: [], address, subjectNotifier: new ReplaySubject(1) });
+    expect(cluster.nodes).toHaveLength(1);
+    const nodeInCluster = cluster.nodes[0];
     expect(nodeInCluster).toEqual(
       expect.objectContaining({
         address: expect.any(String),

@@ -1,23 +1,23 @@
-import { Seed } from '../public';
+import { Cluster } from '../public';
 import { ReplaySubject } from 'rxjs';
 import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
 
 export interface NotifyAllListeners {
-  seed: Seed;
+  cluster: Cluster;
 }
 
-export interface GetSeed {
+export interface GetCluster {
   seedAddress: string;
 }
 
 export interface AddToCluster {
-  seed: Seed;
+  cluster: Cluster;
   address: string;
   endPoints: Endpoint[];
   subjectNotifier: ReplaySubject<Endpoint[]>;
 }
 
 export interface RemoveFromCluster {
-  seed: Seed;
+  cluster: Cluster;
   address: string;
 }

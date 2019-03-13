@@ -1,15 +1,13 @@
-import { Seed } from '../api/public';
-import { AddToCluster, GetSeed, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
+import { Cluster } from '../api/public'
+import { AddToCluster, GetCluster, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
 
-export const getSeed = ({ seedAddress }: GetSeed): Seed => {
-  // @ts-ignore
+export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   window.scalecube = window.scalecube || {};
-  // @ts-ignore
   const namespace = (window.scalecube.discovery = window.scalecube.discovery || {});
 
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
-      cluster: [],
+      nodes: [],
       allEndPoints: [],
     };
   }
@@ -17,32 +15,32 @@ export const getSeed = ({ seedAddress }: GetSeed): Seed => {
   return namespace[seedAddress];
 };
 
-export const notifyAllListeners = ({ seed }: NotifyAllListeners) =>
-  seed.cluster.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
+export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
+  cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
 
-export const removeFromCluster = ({ seed, address }: RemoveFromCluster): Seed => {
+export const removeFromCluster = ({ cluster, address }: RemoveFromCluster): Cluster => {
   // remove from allEndPoints[]
-  seed.allEndPoints = seed.allEndPoints.filter((endPoint) => endPoint.address !== address);
+  cluster.allEndPoints = cluster.allEndPoints.filter((endPoint) => endPoint.address !== address);
   // remove from each Node endPoints[]
-  seed.cluster.forEach((node) => {
+  cluster.nodes.forEach((node) => {
     node.endPoints = node.endPoints.filter((endPoint) => endPoint.address !== address);
   });
   // remove node from the cluster
-  seed.cluster = seed.cluster.filter((node) => node.address !== address);
+  cluster.nodes = cluster.nodes.filter((node) => node.address !== address);
 
-  return seed;
+  return cluster;
 };
 
-export const addToCluster = ({ seed, endPoints, address, subjectNotifier }: AddToCluster): Seed => {
+export const addToCluster = ({ cluster, endPoints, address, subjectNotifier }: AddToCluster): Cluster => {
   // add new endPoints[] to each node in the cluster
-  seed.cluster.forEach((node) => {
+  cluster.nodes.forEach((node) => {
     node.endPoints = [...node.endPoints, ...endPoints];
   });
 
-  const immutEndPoints = [...(seed.allEndPoints || [])];
+  const immutEndPoints = [...(cluster.allEndPoints || [])];
 
   // add new node to the cluster
-  seed.cluster.push({
+  cluster.nodes.push({
     address,
     endPoints: immutEndPoints,
     subjectNotifier,
@@ -50,7 +48,7 @@ export const addToCluster = ({ seed, endPoints, address, subjectNotifier }: AddT
   // save current endPoints in the replaySubject cache.
   subjectNotifier && subjectNotifier.next(immutEndPoints);
   // add new endPoints[] to the allEndPoints[]
-  seed.allEndPoints = seed.allEndPoints ? [...seed.allEndPoints, ...endPoints] : [...endPoints];
+  cluster.allEndPoints = cluster.allEndPoints ? [...cluster.allEndPoints, ...endPoints] : [...endPoints];
 
-  return seed;
+  return cluster;
 };
