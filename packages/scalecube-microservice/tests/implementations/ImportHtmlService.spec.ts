@@ -25,7 +25,7 @@ describe('htmlService', () => {
 
     htmlServiceProxy.render().then((response: { default: any }) => {
       const htmlProduct = Object.create(response.default.prototype, {});
-      expect(htmlProduct.render()).toEqual('<h3>HTML Service</h3>');
+      expect(htmlProduct.render()).toEqual('<h3>HTML Service title</h3>');
       done();
     });
   });
