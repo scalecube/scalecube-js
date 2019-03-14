@@ -2,7 +2,7 @@
   "name": "@scalecube/scalecube-microservice",
   "version": "0.1.2-alpha.1",
   "private": false,
-  "main": "dist/es2015/index.js",
+  "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
   "es2015": "dist/es2015/index.js",
   "license": "MIT",
@@ -17,8 +17,8 @@
     "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
     "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
     "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
-    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd --global Microservices",
-    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min --global Microservices"
+    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd",
+    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min"
   },
   "jest": {
     "transform": {
