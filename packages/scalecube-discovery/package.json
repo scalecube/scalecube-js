@@ -11,12 +11,12 @@
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "lint:prettier": "yarn run prettier && yarn run lint",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
-    "build": "rm -rf dist/ && yarn run build:es2015 && yarn run build:esm && yarn run build:cjs && yarn run build:umd && yarn run build:umd:min",
-    "build:es2015": "tsc --module es2015 --target es2015 --outDir dist/es2015",
-    "build:esm": "tsc --module es2015 --target es5 --outDir dist/esm",
-    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
-    "build:umd": "parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd --global Discovery",
-    "build:umd:min": "parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min --global Discovery"
+    "build": "yarn run build:es2015 && yarn run build:esm && yarn run build:cjs && yarn run build:umd && yarn run build:umd:min",
+    "build:es2015": "rm -rf dist/es2015 && tsc --module es2015 --target es2015 --outDir dist/es2015",
+    "build:esm": "rm -rf dist/esm && tsc --module es2015 --target es5 --outDir dist/esm",
+    "build:cjs": "rm -rf dist/cjs && tsc --module CommonJS --target ES6 --outDir dist/cjs",
+    "build:umd": "rm -rf dist/umd && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd --global Discovery",
+    "build:umd:min": "rm -rf dist/umd.min && parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min --global Discovery"
   },
   "jest": {
     "transform": {

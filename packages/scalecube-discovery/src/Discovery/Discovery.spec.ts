@@ -49,6 +49,7 @@ describe('Test Discovery', () => {
   it('Test subscribe to cluster', (done) => {
     expect.assertions(3);
     let step = 0;
+
     const discovery = Discovery.create({
       address: 'node1',
       seedAddress: 'seedAddress1',
