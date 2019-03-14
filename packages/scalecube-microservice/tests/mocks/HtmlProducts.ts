@@ -4,7 +4,7 @@ class HtmlProduct extends HTMLElement {
   }
 
   public render() {
-    return '<h3>HTML Service</h3>';
+    return '<h3>HTML Service title</h3>';
   }
 
   public disconnectedCallback() {}
