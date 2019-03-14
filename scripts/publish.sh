@@ -22,7 +22,7 @@ elif [[ "$TRAVIS_BRANCH" == "develop" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false"
 
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git checkout develop
-    lerna publish prerelease --yes -m '[skip ci]'
+    lerna publish prerelease --dist-tag next --yes -m '[skip ci]'
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
