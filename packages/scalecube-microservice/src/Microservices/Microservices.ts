@@ -15,7 +15,7 @@ import {
 } from '../api/public';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
-const Microservices: MicroservicesInterface = Object.freeze({
+export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = typeof location !== 'undefined' ? location.hostname : 'test' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
@@ -90,5 +90,3 @@ export const createMicroserviceContext = () => {
     methodRegistry,
   };
 };
-
-export default Microservices;

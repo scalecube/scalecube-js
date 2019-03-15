@@ -1,5 +1,5 @@
-import Microservices from '@scalecube/scalecube-microservice'
-import GreetingService, { greetingServiceDefinition } from './GreetingService'
+import { Microservices } from '@scalecube/scalecube-microservice'
+import GreetingService, { greetingServiceDefinition } from './service/GreetingService'
 
 const greetingService = {
   definition: greetingServiceDefinition,
