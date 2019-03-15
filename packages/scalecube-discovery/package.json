@@ -20,7 +20,7 @@
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "lint:prettier": "yarn run prettier && yarn run lint",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
-    "build": "yarn run build:lib && yarn run build:dist && yarn run build:es",
+    "build": "rm -rf .cache && yarn run build:lib && yarn run build:dist && yarn run build:es",
     "build:lib": "rm -rf lib && tsc --module commonJS --target es5 --outDir lib",
     "build:dist": "rm -rf dist && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist --global sc-discovery",
     "build:es": "rm -rf es && tsc --module es2015 --target es5 --outDir es"
@@ -30,7 +30,11 @@
       ".(ts|tsx)": "ts-jest"
     },
     "testRegex": "(\\.|/)spec\\.ts$",
-    "testPathIgnorePatterns": ["<rootDir>/dist/", "<rootDir>/lib/", "<rootDir>/node_modules/"],
+    "testPathIgnorePatterns": [
+      "<rootDir>/es/",
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",

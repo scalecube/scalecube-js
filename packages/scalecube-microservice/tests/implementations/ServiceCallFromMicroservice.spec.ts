@@ -1,5 +1,5 @@
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
-import { Microservices } from '../../src/index';
+import { Microservices } from '../../src';
 import { Message, Service } from '../../src/api/public';
 import { getQualifier } from '../../src/helpers/serviceData';
 import { expectWithFailNow } from '../helpers/utils';
