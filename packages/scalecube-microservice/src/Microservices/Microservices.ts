@@ -1,4 +1,4 @@
-import Discovery from '@scalecube/scalecube-discovery/src/index';
+import Discovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
@@ -15,8 +15,8 @@ import {
 } from '../api/public';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
-export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
+const Microservices: MicroservicesInterface = Object.freeze({
+  create: ({ services, seedAddress = typeof location !== 'undefined' ? location.hostname : 'test' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
@@ -90,3 +90,5 @@ export const createMicroserviceContext = () => {
     methodRegistry,
   };
 };
+
+export default Microservices;

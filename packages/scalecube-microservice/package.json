@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "unpkg": "dist/index.js",
   "module": "es/index.js",
-  "typings": "lib/api/public/index.d.ts",
+  "types": "lib/index.d.ts",
   "files": [
     "dist",
     "lib",
@@ -54,6 +54,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/scalecube-discovery": "0.1.0",
     "rxjs": "^6.4.0"
   }
 }

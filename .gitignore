@@ -1,6 +1,7 @@
 .idea/
 node_modules/
 es/
+es-bundle/
 lib/
 dist/
 flow-typed/

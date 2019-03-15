@@ -3,11 +3,10 @@
     "target": "es5",
     "module": "esnext",
     "lib": ["dom", "es2015", "es2017.object", "es5", "es6", "es2016"],
-    "declaration": true,
+    "declaration": false,
     "strict": true,
     "moduleResolution": "node",
     "baseUrl": "./src"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.*"]
+  "include": ["src/**/*"]
 }

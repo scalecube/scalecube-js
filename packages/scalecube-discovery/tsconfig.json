@@ -4,12 +4,9 @@
     "module": "commonjs",
     "lib": ["dom", "es2015", "es2017.object", "es5", "es6", "es2016"],
     "declaration": true,
-    "outDir": "./lib",
     "strict": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
-    "esModuleInterop": true,
-    "experimentalDecorators": true
+    "baseUrl": "./src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.*"]

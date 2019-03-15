@@ -2,9 +2,10 @@ import { Cluster, ClustersMap, ScalecubeGlobal } from '../api/public'
 import { AddToCluster, GetCluster, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
-  window.scalecube = window.scalecube || {} as ScalecubeGlobal;
-  window.scalecube.discovery = window.scalecube.discovery || {} as ClustersMap;
-  const namespace = window.scalecube.discovery;
+  const globalNamespace: any = typeof window !== 'undefined' ? window : global;
+  globalNamespace.scalecube = globalNamespace.scalecube || {} as ScalecubeGlobal;
+  globalNamespace.scalecube.discovery = globalNamespace.scalecube.discovery || {} as ClustersMap;
+  const namespace = globalNamespace.scalecube.discovery;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
       nodes: [],

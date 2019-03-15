@@ -1,5 +1,4 @@
-import { Microservices } from './Microservices/Microservices';
-import { ASYNC_MODEL_TYPES } from './helpers/constants';
+import Microservices from './Microservices/Microservices';
 
-export { ASYNC_MODEL_TYPES };
+export { ASYNC_MODEL_TYPES } from './helpers/constants';
 export default Microservices;

@@ -1,0 +1,40 @@
+{
+  "name": "@scalecube/examples",
+  "version": "0.1.0",
+  "private": false,
+  "main": "lib/index.js",
+  "unpkg": "dist/index.js",
+  "module": "es/index.js",
+  "types": "lib/Microservices/Microservices.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "src"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
+    "open-node-example": "node lib/index.js",
+    "lint": "tslint -p tsconfig.json",
+    "lint:fix": "yarn lint --fix",
+    "lint:prettier": "yarn run prettier && yarn run lint",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
+    "build:commonJS": "rm -rf lib && tsc --module commonjs --target es5 --outDir lib",
+    "build:es-module": "rm -rf es-module && tsc --module ES6 --target es5 --outDir es",
+    "build:es-bundle": "rm -rf es-bundle && parcel build es/index.js --experimental-scope-hoisting --out-dir es-bundle",
+    "build:es": "npm-run-all build:es-module build:es-bundle"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/node": "10.1.4",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/scalecube-microservice": "0.1.2-alpha.2"
+  }
+}
