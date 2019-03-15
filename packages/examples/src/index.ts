@@ -1,5 +1,5 @@
-import { Microservices } from '@scalecube/scalecube-microservice'
-import GreetingService, { greetingServiceDefinition } from './service/GreetingService'
+import { Microservices } from '@scalecube/scalecube-microservice';
+import GreetingService, { greetingServiceDefinition } from './service/GreetingService';
 
 const greetingService = {
   definition: greetingServiceDefinition,
@@ -9,7 +9,7 @@ const greetingService = {
 const ms = Microservices.create({ services: [greetingService] });
 const greetingServiceProxy = ms.createProxy({ serviceDefinition: greetingServiceDefinition });
 greetingServiceProxy.hello('User').then((result: string) => {
-  console.log('result from greeting service', result);
+  console.info('result from greeting service', result);
 });
 
-console.log('Microservices', Microservices);
+console.info('Microservices', Microservices);

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice'
+import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 
 class GreetingService {
   public empty: null;

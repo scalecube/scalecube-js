@@ -1,10 +1,10 @@
-import { Cluster, ClustersMap, ScalecubeGlobal } from '../api/public'
+import { Cluster, ClustersMap, ScalecubeGlobal } from '../api/public';
 import { AddToCluster, GetCluster, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   const globalNamespace: any = typeof window !== 'undefined' ? window : global;
-  globalNamespace.scalecube = globalNamespace.scalecube || {} as ScalecubeGlobal;
-  globalNamespace.scalecube.discovery = globalNamespace.scalecube.discovery || {} as ClustersMap;
+  globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
+  globalNamespace.scalecube.discovery = globalNamespace.scalecube.discovery || ({} as ClustersMap);
   const namespace = globalNamespace.scalecube.discovery;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
@@ -17,8 +17,7 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
 };
 
 export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
-  cluster.nodes.forEach((node) => node && node.subjectNotifier &&
-    node.subjectNotifier.next(node.endPoints || []));
+  cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
 
 export const removeFromCluster = ({ cluster, address }: RemoveFromCluster): Cluster => {
   // remove from allEndPoints[]

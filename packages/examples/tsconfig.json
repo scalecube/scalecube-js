@@ -5,6 +5,7 @@
     "lib": ["dom", "es6"],
     "declaration": false,
     "strict": true,
+    "noUnusedLocals": true,
     "moduleResolution": "node",
     "baseUrl": "./src"
   },

@@ -17,7 +17,7 @@ export const remoteCall = ({
       errorMessage: getNotFoundByRouterError(message.qualifier),
     }) as Observable<any>;
   }
-  const { asyncModel: asyncModelProvider, transport } = endPoint!;
+  const { asyncModel: asyncModelProvider } = endPoint!;
 
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
