@@ -12,4 +12,4 @@ greetingServiceProxy.hello('User').then((result: string) => {
   console.info('result from greeting service', result);
 });
 
-console.info('Microservices', Microservices);
+console.info('Microservices from @scalecube/scalecube-microservice', Microservices);
