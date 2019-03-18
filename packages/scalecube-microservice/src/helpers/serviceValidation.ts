@@ -8,7 +8,7 @@ export const isValidServiceDefinition = (definition: ServiceDefinition) => {
 
 export const isValidServiceName = (serviceName: string) => {
   if (typeof serviceName !== 'string') {
-    console.error(new Error('Service missing serviceName:string'));
+    console.error(new Error('Service is missing serviceName:string'));
     return false;
   }
   return true;
@@ -16,7 +16,7 @@ export const isValidServiceName = (serviceName: string) => {
 
 export const isValidMethods = (methods: { [methodName: string]: { asyncModel: AsyncModel } }) => {
   if (!isObject(methods)) {
-    console.error(new Error('Service missing methods:object'));
+    console.error(new Error('Service is missing methods:object'));
     return false;
   }
   return Object.keys(methods).every((methodName) => isValidMethod({ methodData: methods[methodName], methodName }));
