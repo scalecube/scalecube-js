@@ -9,7 +9,7 @@ import Microservices, {ASYNC_MODEL_TYPES} from '../../src';
 import { Service, ServiceDefinition } from '../../src/api/public';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
-import { ASYNC_MODEL_TYPES, getInvalidMethodReferenceError } from '../../src/helpers/constants';
+import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
 import { ScalecubeGlobal } from "@scalecube/scalecube-discovery/src/helpers/types";
 
 

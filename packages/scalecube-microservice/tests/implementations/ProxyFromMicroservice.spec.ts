@@ -1,7 +1,7 @@
 import { isObservable } from 'rxjs';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
-import { Microservices, ASYNC_MODEL_TYPES } from '../../src';
+import Microservices, {  ASYNC_MODEL_TYPES } from '../../src';
 import { defaultRouter } from '../../src/Routers/default';
 import { ProxyOptions, Service, ServiceDefinition } from '../../src/api/public';
 import AsyncModel from '../../src/api/public/AsyncModel';

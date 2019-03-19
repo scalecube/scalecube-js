@@ -33,11 +33,6 @@ describe('ServiceRegistry Testing', () => {
       registry = createServiceRegistry();
     });
 
-    const service: Service = {
-      definition: greetingServiceDefinition,
-      reference: new GreetingService(),
-    };
-
     it('Test after createServiceRegistry(): ServiceRegistry - all methods are define', () => {
       const NUMBER_OF_REGISTRY_PROPERTIES = 4;
 
