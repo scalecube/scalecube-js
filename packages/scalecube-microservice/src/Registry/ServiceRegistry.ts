@@ -4,8 +4,8 @@ import {
   GetUpdatedServiceRegistryOptions,
   ServiceRegistry,
   ServiceRegistryMap,
-} from '../api/private/types';
-import { Service, Endpoint } from '../api/public';
+} from '../helpers/types';
+import { Service, Endpoint } from '../api';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';

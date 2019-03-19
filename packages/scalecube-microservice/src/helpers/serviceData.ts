@@ -1,7 +1,7 @@
-import { Qualifier } from '../api/private/types';
+import { Qualifier } from './types';
 import { isFunction } from './utils';
-import { ServiceImplementationForModule, ServiceImplementationForObject } from '../api/public';
-import ServiceImplementation from '../api/public/ServiceImplementation';
+import { ServiceImplementationForModule, ServiceImplementationForObject } from '../api';
+import ServiceImplementation from '../api/ServiceImplementation';
 import { getInvalidMethodReferenceError } from './constants';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;

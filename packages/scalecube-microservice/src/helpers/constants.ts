@@ -1,4 +1,4 @@
-import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel } from '../api/public';
+import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel } from '../api';
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';

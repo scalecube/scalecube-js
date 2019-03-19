@@ -9,7 +9,7 @@ import {
   Reference,
   LookupOptions,
   LookUp,
-} from '../public';
+} from '../api';
 
 export interface ServiceCallOptions {
   message: Message;
