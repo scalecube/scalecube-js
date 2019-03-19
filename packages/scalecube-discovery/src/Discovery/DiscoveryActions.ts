@@ -1,9 +1,16 @@
-import { Cluster, ClustersMap, ScalecubeGlobal } from '../api/public'
-import { AddToCluster, GetCluster, NotifyAllListeners, RemoveFromCluster } from '../api/private/types';
+import {
+  AddToCluster,
+  Cluster,
+  ClustersMap,
+  GetCluster,
+  NotifyAllListeners,
+  RemoveFromCluster,
+  ScalecubeGlobal,
+} from '../helpers/types';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
-  window.scalecube = window.scalecube || {} as ScalecubeGlobal;
-  window.scalecube.discovery = window.scalecube.discovery || {} as ClustersMap;
+  window.scalecube = window.scalecube || ({} as ScalecubeGlobal);
+  window.scalecube.discovery = window.scalecube.discovery || ({} as ClustersMap);
   const namespace = window.scalecube.discovery;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
@@ -16,8 +23,7 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
 };
 
 export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
-  cluster.nodes.forEach((node) => node && node.subjectNotifier &&
-    node.subjectNotifier.next(node.endPoints || []));
+  cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
 
 export const removeFromCluster = ({ cluster, address }: RemoveFromCluster): Cluster => {
   // remove from allEndPoints[]

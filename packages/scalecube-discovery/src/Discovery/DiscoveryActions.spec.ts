@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { Endpoint } from '@scalecube/scalecube-microservice/src/api/public';
+import { Item, Node } from '../helpers/types';
 import { addToCluster, getCluster, notifyAllListeners } from './DiscoveryActions';
 
 describe('Test DiscoveryActions', () => {
@@ -9,10 +9,10 @@ describe('Test DiscoveryActions', () => {
     window.scalecube.discovery = {};
   });
 
-  const createNode = (address = 'address') => ({
+  const createNode = (address = 'address'): Node => ({
     address,
     endPoints: [],
-    subjectNotifier: new ReplaySubject<Endpoint[]>(1),
+    subjectNotifier: new ReplaySubject<Item[]>(1),
   });
 
   it('Test getCluster({ seedAddress }): Cluster', () => {

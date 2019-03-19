@@ -16,7 +16,7 @@ const discoveryConfig = {
   endPoints: [] // Endpoint[]
 }
 
-const node = Discovery.create(discoveryConfig);
+const node = createDiscovery(discoveryConfig);
 
 node.notifier.subscribe(console.log); // emit all remote endpoints on the cluster(seedAddress)
 ```

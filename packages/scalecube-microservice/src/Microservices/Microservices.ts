@@ -1,4 +1,4 @@
-import Discovery from '@scalecube/scalecube-discovery/src/index';
+import CreateDiscovery from '@scalecube/scalecube-discovery/src/index';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
@@ -24,7 +24,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
     const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({ services, address }) : [];
-    const discovery = Discovery.create({
+    const discovery = CreateDiscovery({
       address,
       endPoints,
       seedAddress,
@@ -69,7 +69,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
 
-        discovery && discovery.end();
+        discovery && discovery.destroy();
 
         Object.values(microserviceContext).forEach(
           (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()

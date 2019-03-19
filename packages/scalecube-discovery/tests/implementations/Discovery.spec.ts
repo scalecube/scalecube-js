@@ -1,19 +1,17 @@
-import Discovery from "../../src/index";
-import { Endpoint } from "@scalecube/scalecube-microservice/src/api/public";
-import { ASYNC_MODEL_TYPES } from "@scalecube/scalecube-microservice/src/helpers/constants";
+import { createDiscovery } from "../../src/Discovery/Discovery";
 
 describe('test', () => {
   beforeEach(() => {
     window.scalecube.discovery = {};
   });
 
-  const endPoint: Endpoint = {
+  const endPoint = {
     uri: '',
     transport: '',
     qualifier: 'serviceName/methodName',
     serviceName: 'serviceName',
     methodName: 'methodName',
-    asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+    asyncModel: 'ASYNC_MODEL_TYPES.REQUEST_RESPONSE',
     address: '',
   };
 
@@ -24,13 +22,13 @@ describe('test', () => {
     const endPoint1 = { ...endPoint, address: 'cluster1' };
     const endPoint2 = { ...endPoint, address: 'cluster2' };
     const endPoint3 = { ...endPoint, address: 'cluster3' };
-    const discovery1 = Discovery.create({ address: 'cluster1', seedAddress, endPoints: [endPoint1] });
-    const discovery2 = Discovery.create({ address: 'cluster2', seedAddress, endPoints: [endPoint2] });
-    const discovery3 = Discovery.create({ address: 'cluster3', seedAddress, endPoints: [endPoint3] });
+    const discovery1 = createDiscovery({ address: 'cluster1', seedAddress, endPoints: [endPoint1] });
+    const discovery2 = createDiscovery({ address: 'cluster2', seedAddress, endPoints: [endPoint2] });
+    const discovery3 = createDiscovery({ address: 'cluster3', seedAddress, endPoints: [endPoint3] });
     expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(3);
     expect(window.scalecube.discovery[seedAddress].allEndPoints).toHaveLength(3);
 
-    discovery1.end().then(response => {
+    discovery1.destroy().then(response => {
       expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(2);
       expect(window.scalecube.discovery[seedAddress].allEndPoints).toHaveLength(2);
       done();
