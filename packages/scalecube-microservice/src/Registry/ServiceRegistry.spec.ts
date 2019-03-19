@@ -180,7 +180,7 @@ describe('ServiceRegistry Testing', () => {
     it('Test getEndpointsFromService({ service }) : Endpoint[] - fail', () => {
       const serviceName = 'fakeService';
       try {
-        const endpoints = getEndpointsFromService({
+        getEndpointsFromService({
           service: {
             // @ts-ignore
             definition: {

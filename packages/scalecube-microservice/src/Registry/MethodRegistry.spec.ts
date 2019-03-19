@@ -177,7 +177,7 @@ describe('ServiceRegistry Testing', () => {
     it('Test getReferenceFromService({ service }) : Reference[] - fail', () => {
       const serviceName = 'fakeService';
       try {
-        const references = getReferenceFromService({
+        getReferenceFromService({
           service: {
             // @ts-ignore
             definition: {

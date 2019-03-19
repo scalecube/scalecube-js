@@ -17,12 +17,12 @@ export const remoteCall = ({
       errorMessage: getNotFoundByRouterError(message.qualifier),
     }) as Observable<any>;
   }
-  const { asyncModel: asyncModelProvider, transport } = endPoint!;
+  const { asyncModel: asyncModelProvider } = endPoint!;
 
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-      errorMessage: `asyncModel miss match, expect ${asyncModel} but received ${asyncModelProvider}`,
+      errorMessage: `asyncModel is not correct, expected ${asyncModel} but received ${asyncModelProvider}`,
     }) as Observable<any>;
   }
 
