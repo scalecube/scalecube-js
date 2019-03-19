@@ -6,7 +6,7 @@ describe('Test DiscoveryActions', () => {
   const seedAddress = 'mockAddress';
 
   beforeEach(() => {
-    window.scalecube.discovery = {};
+    window.scalecube.clusters = {};
   });
 
   const createNode = (address = 'address'): Node => ({
@@ -17,7 +17,7 @@ describe('Test DiscoveryActions', () => {
 
   it('Test getCluster({ seedAddress }): Cluster', () => {
     const cluster = getCluster({ seedAddress });
-    expect(cluster).toMatchObject(window.scalecube.discovery[seedAddress]);
+    expect(cluster).toMatchObject(window.scalecube.clusters[seedAddress]);
   });
 
   it('Test notifyAllListeners({ cluster }) - one node in the cluster', (done) => {

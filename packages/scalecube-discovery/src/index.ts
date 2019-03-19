@@ -1,3 +1,3 @@
-import { createDiscovery as CreateDiscovery } from './Discovery/Discovery';
+import { createDiscovery } from './Discovery/Discovery';
 
-export default CreateDiscovery;
+export default createDiscovery;

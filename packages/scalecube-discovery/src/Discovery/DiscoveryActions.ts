@@ -10,8 +10,8 @@ import {
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   window.scalecube = window.scalecube || ({} as ScalecubeGlobal);
-  window.scalecube.discovery = window.scalecube.discovery || ({} as ClustersMap);
-  const namespace = window.scalecube.discovery;
+  window.scalecube.clusters = window.scalecube.clusters || ({} as ClustersMap);
+  const namespace = window.scalecube.clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
       nodes: [],

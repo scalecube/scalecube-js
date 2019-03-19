@@ -4,7 +4,7 @@ import { createDiscovery } from './Discovery';
 
 describe('Test Discovery', () => {
   beforeEach(() => {
-    window.scalecube.discovery = {} as ClustersMap;
+    window.scalecube.clusters = {} as ClustersMap;
   });
 
   const endPoint = {
@@ -19,18 +19,18 @@ describe('Test Discovery', () => {
 
   it('Test createDiscovery add Nodes to cluster', () => {
     const seedAddress = 'myNamespace';
-    expect(window.scalecube.discovery[seedAddress]).toBeUndefined();
+    expect(window.scalecube.clusters[seedAddress]).toBeUndefined();
 
     createDiscovery({ address: 'node1', seedAddress, endPoints: [] });
     createDiscovery({ address: 'node2', seedAddress, endPoints: [] });
-    expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(2);
-    expect(Object.keys(window.scalecube.discovery)).toHaveLength(1);
+    expect(window.scalecube.clusters[seedAddress].nodes).toHaveLength(2);
+    expect(Object.keys(window.scalecube.clusters)).toHaveLength(1);
   });
 
   it('Test createDiscovery add Nodes to cluster by its seedAddress', () => {
     createDiscovery({ address: 'node1', seedAddress: 'seedAddress1', endPoints: [] });
     createDiscovery({ address: 'node2', seedAddress: 'seedAddress2', endPoints: [] });
-    expect(Object.keys(window.scalecube.discovery)).toHaveLength(2);
+    expect(Object.keys(window.scalecube.clusters)).toHaveLength(2);
   });
 
   it('Test createDiscovery expose methods', () => {

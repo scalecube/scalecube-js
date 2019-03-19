@@ -2,7 +2,7 @@ import { createDiscovery } from "../../src/Discovery/Discovery";
 
 describe('test', () => {
   beforeEach(() => {
-    window.scalecube.discovery = {};
+    window.scalecube.clusters = {};
   });
 
   const endPoint = {
@@ -25,12 +25,12 @@ describe('test', () => {
     const discovery1 = createDiscovery({ address: 'cluster1', seedAddress, endPoints: [endPoint1] });
     const discovery2 = createDiscovery({ address: 'cluster2', seedAddress, endPoints: [endPoint2] });
     const discovery3 = createDiscovery({ address: 'cluster3', seedAddress, endPoints: [endPoint3] });
-    expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(3);
-    expect(window.scalecube.discovery[seedAddress].allEndPoints).toHaveLength(3);
+    expect(window.scalecube.clusters[seedAddress].nodes).toHaveLength(3);
+    expect(window.scalecube.clusters[seedAddress].allEndPoints).toHaveLength(3);
 
     discovery1.destroy().then(response => {
-      expect(window.scalecube.discovery[seedAddress].nodes).toHaveLength(2);
-      expect(window.scalecube.discovery[seedAddress].allEndPoints).toHaveLength(2);
+      expect(window.scalecube.clusters[seedAddress].nodes).toHaveLength(2);
+      expect(window.scalecube.clusters[seedAddress].allEndPoints).toHaveLength(2);
       done();
     });
   });

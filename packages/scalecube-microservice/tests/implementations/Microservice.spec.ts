@@ -137,9 +137,9 @@ describe('Test the creation of Microservice', () => {
       Microservices.create({ services: [greetingService2], seedAddress: ms1SeedAddress });
       Microservices.create({ services: [greetingService2], seedAddress: ms2SeedAddress });
 
-      expect(Object.keys(window.scalecube.discovery)).toEqual([ms1SeedAddress, ms2SeedAddress]);
-      expect(window.scalecube.discovery[ms1SeedAddress].nodes).toHaveLength(2);
-      expect(window.scalecube.discovery[ms2SeedAddress].nodes).toHaveLength(1);
+      expect(Object.keys(window.scalecube.clusters)).toEqual([ms1SeedAddress, ms2SeedAddress]);
+      expect(window.scalecube.clusters[ms1SeedAddress].nodes).toHaveLength(2);
+      expect(window.scalecube.clusters[ms2SeedAddress].nodes).toHaveLength(1);
     })
   });
 });

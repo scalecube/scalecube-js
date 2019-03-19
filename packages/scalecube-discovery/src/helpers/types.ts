@@ -44,5 +44,5 @@ export interface Node {
 }
 
 export interface ScalecubeGlobal {
-  discovery: ClustersMap;
+  clusters: ClustersMap;
 }
