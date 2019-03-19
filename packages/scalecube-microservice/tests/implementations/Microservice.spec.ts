@@ -5,10 +5,10 @@ import {
   greetingServiceDefinitionHello,
   greetingServiceDefinitionGreet$,
 } from '../mocks/GreetingServiceModule';
-import Microservices from '../../src/index';
+import { Microservices, ASYNC_MODEL_TYPES } from '../../src';
 import { Service, ServiceDefinition } from '../../src/api/public';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
-import { ASYNC_MODEL_TYPES, getInvalidMethodReferenceError } from '../../src/helpers/constants';
+import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
 
 describe('Test the creation of Microservice', () => {
   const defaultUser = 'defaultUser';
