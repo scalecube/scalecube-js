@@ -193,7 +193,7 @@ describe('ServiceRegistry Testing', () => {
           service: {
             // @ts-ignore
             definition: {
-              serviceName : fakeServiceName,
+              serviceName: fakeServiceName,
             },
             reference: new GreetingService(),
           },

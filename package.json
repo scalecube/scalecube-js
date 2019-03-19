@@ -27,7 +27,6 @@
     "start": "http-server",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
-    "codeStyle": "lerna run lint:prettier",
     "test": "lerna run test",
     "lint-md": "remark . --output",
     "lint": "yarn lint-md && lerna run lint",
