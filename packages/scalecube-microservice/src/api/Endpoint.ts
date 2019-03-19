@@ -1,10 +1,33 @@
 import AsyncModel from './AsyncModel';
 
+/**
+ * The endpoint to the part of the functionality of a service, that provides a user with an opportunity to run this
+ * peace of functionality
+ */
 export default interface Endpoint {
-  uri?: string; // uri is the full path to the method <transport/serviceName/methodName>
-  transport?: string; // ws://100.1.2.1 | window | webWorker | https://100.1.2.1 | http://100.1.2.1
-  qualifier: string; // <serviceName/methodName>
+  /**
+   * The full path to the method: <transport/serviceName/methodName>
+   */
+  uri?: string;
+  /**
+   * The transport that is used to get access to the method implementation in the service
+   * For instance: ws://100.1.2.1 | window | webWorker | https://100.1.2.1 | http://100.1.2.1
+   */
+  transport?: string;
+  /**
+   * The combination of serviceName and methodName: <serviceName/methodName>
+   */
+  qualifier: string;
+  /**
+   * The name of a service, that is provided in serviceDefinition
+   */
   serviceName: string;
+  /**
+   * The name of a method, that is provided in the methods map in serviceDefinition
+   */
   methodName: string;
+  /**
+   * Type of communication between a consumer and a provider
+   */
   asyncModel: AsyncModel;
 }
