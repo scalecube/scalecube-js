@@ -1,4 +1,4 @@
-import { Endpoint, RouteOptions } from './public';
+import { Endpoint, RouteOptions } from '.';
 
 export default interface Router {
   route: (routeOptions: RouteOptions) => Endpoint | null;

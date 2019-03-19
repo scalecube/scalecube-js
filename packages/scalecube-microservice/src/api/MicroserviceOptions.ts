@@ -1,4 +1,4 @@
-import { Service } from './public';
+import { Service } from '.';
 
 export default interface MicroserviceOptions {
   services?: Service[];

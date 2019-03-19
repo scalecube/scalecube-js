@@ -1,4 +1,4 @@
-import { LookUp, Message } from './public';
+import { LookUp, Message } from '.';
 
 export default interface RouteOptions {
   lookUp: LookUp;

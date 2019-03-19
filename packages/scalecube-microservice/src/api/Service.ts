@@ -1,4 +1,4 @@
-import { ServiceImplementation, ServiceDefinition } from './public';
+import { ServiceImplementation, ServiceDefinition } from '.';
 
 export default interface Service {
   definition: ServiceDefinition;

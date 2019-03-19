@@ -1,4 +1,4 @@
-import { ProxyOptions, ServiceCall, CreateServiceCallOptions } from './public';
+import { ProxyOptions, ServiceCall, CreateServiceCallOptions } from '.';
 
 export default interface Microservice {
   destroy: () => null;

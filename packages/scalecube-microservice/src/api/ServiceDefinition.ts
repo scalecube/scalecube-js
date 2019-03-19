@@ -1,4 +1,4 @@
-import { AsyncModel } from './public';
+import { AsyncModel } from '.';
 
 export default interface ServiceDefinition {
   serviceName: string;

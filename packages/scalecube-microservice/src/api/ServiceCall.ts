@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Message } from './public';
+import { Message } from '.';
 
 export default interface ServiceCall {
   requestStream: (message: Message) => Observable<Message>;
