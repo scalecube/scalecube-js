@@ -2,21 +2,26 @@
   "name": "@scalecube/scalecube-discovery",
   "version": "0.1.0",
   "private": false,
-  "main": "dist/es2015/index.js",
   "license": "MIT",
+  "main": "lib/index.js",
+  "unpkg": "dist/index.js",
+  "module": "es/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
   "scripts": {
-    "lint": "tslint -p tsconfig.json",
+    "build": "rm -rf .cache && yarn run build:lib && yarn run build:dist && yarn run build:es",
+    "build:lib": "rm -rf lib && tsc --module commonJS --target es5 --outDir lib",
+    "build:dist": "rm -rf dist && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist --global sc",
+    "build:es": "rm -rf es && tsc --module esnext --target es5 --outDir es",
+    "format": "yarn run lint:fix && yarn run prettier",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
     "lint:fix": "yarn lint --fix",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
     "test": "jest",
-    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
-    "lint:prettier": "yarn run prettier && yarn run lint",
-    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx,js,jsx}'",
-    "build": "yarn run build:es2015 && yarn run build:esm && yarn run build:cjs && yarn run build:umd && yarn run build:umd:min",
-    "build:es2015": "rm -rf dist/es2015 && tsc --module es2015 --target es2015 --outDir dist/es2015",
-    "build:esm": "rm -rf dist/esm && tsc --module es2015 --target es5 --outDir dist/esm",
-    "build:cjs": "rm -rf dist/cjs && tsc --module CommonJS --target ES6 --outDir dist/cjs",
-    "build:umd": "rm -rf dist/umd && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist/umd --global Discovery",
-    "build:umd:min": "rm -rf dist/umd.min && parcel build src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir dist/umd.min --global Discovery"
+    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "jest": {
     "transform": {

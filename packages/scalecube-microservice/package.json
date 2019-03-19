@@ -9,8 +9,7 @@
   "files": [
     "dist",
     "lib",
-    "es",
-    "src"
+    "es"
   ],
   "license": "MIT",
   "scripts": {
