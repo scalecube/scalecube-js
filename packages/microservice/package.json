@@ -1,5 +1,5 @@
 {
-  "name": "@scalecube/scalecube-microservice",
+  "name": "@scalecube/microservice",
   "version": "0.1.3-alpha.0",
   "private": false,
   "main": "lib/src/index.js",
