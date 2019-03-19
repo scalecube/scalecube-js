@@ -101,7 +101,6 @@ describe('ServiceRegistry Testing', () => {
   });
   describe('Test destroy() : null', () => {
     const registry: any = createServiceRegistry();
-    const qualifier = 'faleQualifier';
     const registryAfterClean = registry.destroy();
 
     it('Test output of registry.destroy = null', () => {
@@ -188,19 +187,19 @@ describe('ServiceRegistry Testing', () => {
     });
 
     it('Test getEndpointsFromService({ service }) : Endpoint[] - fail', () => {
-      const serviceName = 'fakeService';
+      const fakeServiceName = 'fakeService';
       try {
         getEndpointsFromService({
           service: {
             // @ts-ignore
             definition: {
-              serviceName,
+              serviceName : fakeServiceName,
             },
             reference: new GreetingService(),
           },
         });
       } catch (e) {
-        expect(e.message).toMatch(getServiceIsNotValidError(serviceName));
+        expect(e.message).toMatch(getServiceIsNotValidError(fakeServiceName));
       }
     });
   });
