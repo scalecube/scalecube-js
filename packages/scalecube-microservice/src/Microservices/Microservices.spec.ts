@@ -78,7 +78,7 @@ describe('Microservices Testing', () => {
 
     it('Test createProxy after microservice.destroy', () => {
       try {
-        const proxy = microservice.createProxy({
+        microservice.createProxy({
           router: defaultRouter,
           serviceDefinition: greetingServiceDefinition,
         });
@@ -89,7 +89,7 @@ describe('Microservices Testing', () => {
 
     it('Test createServiceCall after microservice.destroy', () => {
       try {
-        const serviceCall = microservice.createServiceCall({
+        microservice.createServiceCall({
           router: defaultRouter,
         });
       } catch (e) {
@@ -99,7 +99,7 @@ describe('Microservices Testing', () => {
 
     it('Test destroy after microservice.destroy', () => {
       try {
-        const destroy = microservice.destroy();
+        microservice.destroy();
       } catch (e) {
         expect(e.message).toMatch(MICROSERVICE_NOT_EXISTS);
       }

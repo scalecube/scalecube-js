@@ -1,7 +1,7 @@
 import { isObservable } from 'rxjs';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
-import Microservices from '../../src/index';
+import { Microservices, ASYNC_MODEL_TYPES } from '../../src';
 import { defaultRouter } from '../../src/Routers/default';
 import { ProxyOptions, Service, ServiceDefinition } from '../../src/api/public';
 import AsyncModel from '../../src/api/public/AsyncModel';
@@ -12,7 +12,6 @@ import {
   getServiceMethodIsMissingError,
   SERVICE_DEFINITION_NOT_PROVIDED,
   SERVICE_NAME_NOT_PROVIDED,
-  ASYNC_MODEL_TYPES,
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {

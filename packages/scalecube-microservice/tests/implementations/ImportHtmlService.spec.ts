@@ -1,7 +1,6 @@
 import HtmlService from '../mocks/HtmlService';
-import Microservices from '../../src/index';
+import { Microservices, ASYNC_MODEL_TYPES } from '../../src';
 import { defaultRouter } from '../../src/Routers/default';
-import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
 
 describe('htmlService', () => {
   it('Import HTMLElement with htmlService and render it', (done) => {
