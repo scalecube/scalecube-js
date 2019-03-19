@@ -35,6 +35,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/microservice": "0.1.3-alpha.0"
+    "@scalecube/scalecube-microservice": "0.1.3-alpha.0"
   }
 }

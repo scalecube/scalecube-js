@@ -23,7 +23,7 @@ import Microservices from '@scalecube/scalecube-microservice'
 
 ## Basic Usage
 
-[scalecube basic usage](packages/microservice/README.md)
+[scalecube basic usage](packages/scalecube-microservice/README.md)
 
 For more details how to use it see the tests
 
