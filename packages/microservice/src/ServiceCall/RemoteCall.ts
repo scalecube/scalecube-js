@@ -22,7 +22,7 @@ export const remoteCall = ({
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-      errorMessage: `asyncModel miss match, expected ${asyncModel} but received ${asyncModelProvider}`,
+      errorMessage: `asyncModel is not correct, expected ${asyncModel} but received ${asyncModelProvider}`,
     }) as Observable<any>;
   }
 
