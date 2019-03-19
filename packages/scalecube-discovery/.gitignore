@@ -1,4 +1,12 @@
 .cache
-dist
-node_modules
-lib
+.idea/
+node_modules/
+es/
+es-bundle/
+lib/
+dist/
+flow-typed/
+coverage/
+.npmrc
+yarn-error.log
+.DS_Store
