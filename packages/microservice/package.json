@@ -40,7 +40,6 @@
       "tsx",
       "js"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/mocks/globals.ts",
     "moduleDirectories": [
       "node_modules",
       "app/src"
