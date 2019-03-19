@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha.0",
   "private": false,
   "main": "lib/index.js",
   "unpkg": "dist/index.js",
@@ -35,6 +35,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/scalecube-microservice": "0.1.3-alpha.0"
+    "@scalecube/scalecube-microservice": "^0.1.3-alpha.1"
   }
 }
