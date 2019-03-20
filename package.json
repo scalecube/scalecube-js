@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "restart": "rm -rf node_modules && yarn install && lerna clean --yes && lerna bootstrap",
-    "start": "http-server",
+    "start": "http-server -a localhost -p 8000",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
     "test": "lerna run test",
