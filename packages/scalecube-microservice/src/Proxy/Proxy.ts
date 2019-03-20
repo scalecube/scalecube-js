@@ -1,5 +1,5 @@
-import { Message } from '../api/public';
-import { GetProxyOptions } from '../api/private/types';
+import { Message } from '../api';
+import { GetProxyOptions } from '../helpers/types';
 import { getQualifier } from '../helpers/serviceData';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import {

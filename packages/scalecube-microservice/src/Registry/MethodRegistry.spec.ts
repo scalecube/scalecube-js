@@ -1,4 +1,4 @@
-import { Reference, Service } from '../api/public';
+import { Reference, Service } from '../api';
 import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
