@@ -17,6 +17,14 @@ describe('test', () => {
 
   const seedAddress = 'global';
 
+  // node - discovery node
+
+  // 1. Every node with the same seed address join the same cluster
+  // 2. Nodes with different seed address join different cluster
+  // 3. Different clusters are decoupled from each other
+  // 4. Every node that joins the cluster notifies other nodes
+  // 5. Discovery.destroy will remove remove itself from the cluster, notify other nodes and complete the notifier
+
   it('Create Cluster of multiple nodes', (done) => {
     expect.assertions(4);
     const endPoint1 = { ...endPoint, address: 'cluster1' };
