@@ -1,0 +1,39 @@
+{
+  "name": "@scalecube/examples",
+  "version": "0.1.1-alpha.0",
+  "private": false,
+  "main": "lib/index.js",
+  "unpkg": "dist/index.js",
+  "module": "es/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "npm-run-all build:commonJS build:es",
+    "build:commonJS": "rm -rf lib && tsc --module commonjs --target es5 --outDir lib",
+    "build:es-module": "rm -rf es-module && tsc --module esnext --target es5 --outDir es",
+    "build:es-bundle": "rm -rf es-bundle && rm -rf .cache && parcel build es/index.js --no-minify --experimental-scope-hoisting --out-dir es-bundle",
+    "build:es": "npm-run-all build:es-module build:es-bundle",
+    "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
+    "open-node-example": "node lib/index.js",
+    "format": "yarn run lint:fix && yarn run prettier",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
+    "lint:fix": "yarn lint --fix",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/node": "10.1.4",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/scalecube-microservice": "^0.1.3-alpha.1"
+  }
+}

@@ -1,42 +1,63 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "1.0.0",
+  "version": "0.1.3-alpha.1",
   "private": false,
-  "main": "index.js",
+  "main": "lib/src/index.js",
+  "unpkg": "dist/index.js",
+  "module": "es/src/index.js",
+  "types": "lib/src/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
   "license": "MIT",
   "scripts": {
-    "lint": "tslint -p tsconfig.json",
+    "build": "rm -rf .cache && yarn run build:lib && yarn run build:dist && yarn run build:es",
+    "build:lib": "rm -rf lib && tsc --module commonJS --target es5 --outDir lib",
+    "build:dist": "rm -rf dist && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist --global sc",
+    "build:es": "rm -rf es && tsc --module esnext --target es5 --outDir es",
+    "format": "yarn run lint:fix && yarn run prettier",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
     "lint:fix": "yarn lint --fix",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
     "test": "jest",
-    "test-watch": "yarn run lint && jest --collect-coverage --watchAll",
-    "check-all": "yarn lint && yarn test",
-    "prettier": "prettier --write '{src,__integrationTests__,__mocks__}/**/*.{ts,tsx,js,jsx}'",
-    "build": "rm -rf lib/ && tsc"
+    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "jest": {
     "transform": {
       ".(ts|tsx)": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|\\.(test|spec|steps))\\.(ts|tsx|js)$",
+    "testRegex": "(\\.|/)spec\\.ts$",
+    "testPathIgnorePatterns": [
+      "<rootDir>/es/",
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/tests/mocks/globals.ts",
     "moduleDirectories": [
       "node_modules",
       "app/src"
     ]
   },
-  "author": "Scalecube",
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
     "@types/jest": "^23.3.13",
-    "husky": "^1.3.1",
+    "@types/node": "10.1.4",
     "jest": "^23.0.0",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/scalecube-discovery": "0.1.0",
     "rxjs": "^6.4.0"
   }
 }

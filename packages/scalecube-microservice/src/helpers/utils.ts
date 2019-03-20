@@ -1,5 +1,6 @@
-import { throwError } from 'rxjs6';
-import { AsyncModel, ObservableAsyncModel, PromiseAsyncModel } from '../api/public';
+import { throwError } from 'rxjs';
+import { AsyncModel } from '../api/public';
+import { ASYNC_MODEL_TYPES } from './constants';
 
 export const isObject = (obj: object) => obj && typeof obj === 'object' && obj.constructor === Object;
 
@@ -14,10 +15,13 @@ export const throwErrorFromServiceCall = ({
 }) => {
   const error = new Error(errorMessage);
   console.warn(errorMessage);
-  return asyncModel === asyncModelTypes.promise ? Promise.reject(error) : throwError(error);
+  return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? Promise.reject(error) : throwError(error);
 };
 
-export const asyncModelTypes: { observable: ObservableAsyncModel; promise: PromiseAsyncModel } = {
-  observable: 'Observable',
-  promise: 'Promise',
-};
+/* tslint:disable */
+// https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+export const uuidv4 = () =>
+  ('' + 1e7 + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: any) =>
+    (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+  );
+/* tslint:enable */

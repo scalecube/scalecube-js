@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["dom", "es2015", "es2017.object", "es5", "es6", "es2016"],
     "declaration": true,
-    "outDir": "./lib",
     "strict": true,
+    "noUnusedLocals": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
     "esModuleInterop": true,
-    "experimentalDecorators": true
+    "baseUrl": "./src"
   },
-  "include": ["src/**/*", "__integrationTests__/**/*", "__mocks__/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "__mocks__"]
+  "include": ["src/**/*", "tests/**/*"]
 }

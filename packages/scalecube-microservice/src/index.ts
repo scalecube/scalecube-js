@@ -1,10 +1,5 @@
 import { Microservices } from './Microservices/Microservices';
-import { defaultRouter } from './Routers/default';
+import { ASYNC_MODEL_TYPES } from './helpers/constants';
 
-const Routers = {
-  defaultRouter,
-};
-
-export { Routers };
-
+export { ASYNC_MODEL_TYPES };
 export default Microservices;

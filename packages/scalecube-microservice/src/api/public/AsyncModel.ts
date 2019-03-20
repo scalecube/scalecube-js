@@ -1,7 +1,7 @@
-export type ObservableAsyncModel = 'Observable';
+export type RequestStreamAsyncModel = 'RequestStream';
 
-export type PromiseAsyncModel = 'Promise';
-// change to 4 way of communication (requestResponse, ...)
-type AsyncModel = ObservableAsyncModel | PromiseAsyncModel;
+export type RequestResponseAsyncModel = 'RequestResponse';
+
+type AsyncModel = RequestStreamAsyncModel | RequestResponseAsyncModel;
 
 export default AsyncModel;

@@ -1,15 +1,17 @@
 import { Reference, Service } from '../api/public';
-import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
-import GreetingService from '../../__mocks__/GreetingService';
+import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
   createMethodRegistry,
   getReferenceFromService,
   getReferenceFromServices,
   getUpdatedMethodRegistry,
-} from './methodRegistry';
+} from './MethodRegistry';
+import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
+import { uuidv4 } from '../helpers/utils';
 
 describe('ServiceRegistry Testing', () => {
+  const address = uuidv4();
   describe('Test ServiceRegistry factory', () => {
     let registry: any;
 
@@ -42,6 +44,11 @@ describe('ServiceRegistry Testing', () => {
 
       const references = Object.keys(methodRegistry);
       expect(references).toHaveLength(NUMBER_OF_SERVICES);
+    });
+
+    it('Test add({ services }): AvailableServices - without services', () => {
+      const methodRegistry = registry.add({});
+      expect(methodRegistry).toMatchObject({});
     });
 
     it('Test lookUp ({ qualifier }): Reference | null - return null if qualifier not found', () => {
@@ -96,6 +103,8 @@ describe('ServiceRegistry Testing', () => {
     });
   });
   describe('Test helpers', () => {
+    console.error = jest.fn(); // disable validation logs while doing this test
+
     const service: Service = {
       definition: greetingServiceDefinition,
       reference: new GreetingService(),
@@ -106,9 +115,17 @@ describe('ServiceRegistry Testing', () => {
       const NUMBER_OF_REFERENCES = Object.keys(service).length * services.length;
       const references: Reference[] = getReferenceFromServices({
         services,
+        address,
       });
 
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
+    });
+
+    it('Test getReferenceFromServices({ services }) : Reference[] | [] -  without parameters', () => {
+      const references: Reference[] = getReferenceFromServices({ address });
+
+      expect(Array.isArray(references)).toBeTruthy();
+      expect(references).toHaveLength(0);
     });
 
     it('Test getUpdatedMethodRegistry({ methodRegistry, references }) - save only 1 reference per qualifier in the methodRegistry', () => {
@@ -120,7 +137,7 @@ describe('ServiceRegistry Testing', () => {
         qualifier,
         serviceName: 'serviceName',
         methodName: 'methodName',
-        asyncModel: 'Promise',
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
         reference: {
           fakeMethod: () => {},
         },
@@ -138,12 +155,13 @@ describe('ServiceRegistry Testing', () => {
       expect(Object.keys(immutableMethodRegistry)).toHaveLength(NUMBER_OF_REFERENCES);
     });
 
-    it('Test getDataFromService({ service }) : Reference[]', () => {
+    it('Test getReferenceFromService({ service }) : Reference[]', () => {
       const NUMBER_OF_REFERENCES = 2;
       const NUMBER_OF_PROPERTY_REFERENCE = 5;
 
       const references = getReferenceFromService({
         service,
+        address,
       });
       expect(references).toHaveLength(NUMBER_OF_REFERENCES);
 
@@ -158,6 +176,23 @@ describe('ServiceRegistry Testing', () => {
           serviceName: expect.any(String),
         })
       );
+    });
+
+    it('Test getReferenceFromService({ service }) : Reference[] - fail', () => {
+      const serviceName = 'fakeService';
+      try {
+        getReferenceFromService({
+          service: {
+            // @ts-ignore
+            definition: {
+              serviceName,
+            },
+            reference: new GreetingService(),
+          },
+        });
+      } catch (e) {
+        expect(e.message).toMatch(getServiceIsNotValidError(serviceName));
+      }
     });
   });
 });

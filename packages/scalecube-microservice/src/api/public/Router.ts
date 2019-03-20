@@ -1,5 +1,5 @@
-import { Reference, RouteOptions } from '.';
+import { Endpoint, RouteOptions } from '.';
 
 export default interface Router {
-  route: (routeOptions: RouteOptions) => Reference;
+  route: (routeOptions: RouteOptions) => Endpoint | null;
 }

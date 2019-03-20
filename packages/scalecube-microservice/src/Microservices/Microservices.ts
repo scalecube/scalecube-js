@@ -1,19 +1,36 @@
-import { getProxy } from '../Proxy/Proxy';
+import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
+import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
-
-import { asyncModelTypes } from '../helpers/utils';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { uuidv4 } from '../helpers/utils';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../api/private/types';
+import {
+  Endpoint,
+  Message,
+  Microservice,
+  MicroserviceOptions,
+  Microservices as MicroservicesInterface,
+} from '../api/public';
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services }: MicroserviceOptions): Microservice => {
+  create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
+    const address = uuidv4();
+
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
-    const { methodRegistry } = microserviceContext;
-    services && Array.isArray(services) && methodRegistry.add({ services });
+    const { methodRegistry, serviceRegistry } = microserviceContext;
+    services && Array.isArray(services) && methodRegistry.add({ services, address });
+
+    const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({ services, address }) : [];
+    const discovery = createDiscovery({
+      address,
+      endPoints,
+      seedAddress,
+    });
+
+    discovery.notifier.subscribe((endpoints: Endpoint[]) => serviceRegistry.add({ endpoints }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {
@@ -36,13 +53,13 @@ export const Microservices: MicroservicesInterface = Object.freeze({
           requestStream: (message: Message) =>
             serviceCall({
               message,
-              asyncModel: asyncModelTypes.observable,
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
               includeMessage: true,
             }),
           requestResponse: (message: Message) =>
             serviceCall({
               message,
-              asyncModel: asyncModelTypes.promise,
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
               includeMessage: true,
             }),
         });
@@ -51,6 +68,8 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         if (!microserviceContext) {
           throw new Error(MICROSERVICE_NOT_EXISTS);
         }
+
+        discovery && discovery.destroy();
 
         Object.values(microserviceContext).forEach(
           (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()

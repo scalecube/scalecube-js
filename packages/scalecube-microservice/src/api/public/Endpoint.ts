@@ -7,4 +7,5 @@ export default interface Endpoint {
   serviceName: string;
   methodName: string;
   asyncModel: AsyncModel;
+  address: string;
 }

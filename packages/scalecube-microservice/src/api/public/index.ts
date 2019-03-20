@@ -1,5 +1,5 @@
 import AsyncModel from './AsyncModel';
-import { ObservableAsyncModel, PromiseAsyncModel } from './AsyncModel';
+import { RequestStreamAsyncModel, RequestResponseAsyncModel } from './AsyncModel';
 import ProxyOptions from './ProxyOptions';
 import ServiceCall from './ServiceCall';
 import Message from './Message';
@@ -10,7 +10,10 @@ import Router from './Router';
 import RouteOptions from './RouteOptions';
 import Service from './Service';
 import ServiceDefinition from './ServiceDefinition';
-import ServiceImplementation from './ServiceImplementation';
+import ServiceImplementation, {
+  ServiceImplementationForObject,
+  ServiceImplementationForModule,
+} from './ServiceImplementation';
 import CreateServiceCallOptions from './CreateServiceCallOptions';
 import LookupOptions from './LookupOptions';
 import Endpoint from './Endpoint';
@@ -19,8 +22,8 @@ import { LookUp } from './LookUp';
 
 export {
   AsyncModel,
-  ObservableAsyncModel,
-  PromiseAsyncModel,
+  RequestStreamAsyncModel,
+  RequestResponseAsyncModel,
   ProxyOptions,
   ServiceCall,
   Message,
@@ -32,6 +35,8 @@ export {
   Service,
   ServiceDefinition,
   ServiceImplementation,
+  ServiceImplementationForObject,
+  ServiceImplementationForModule,
   CreateServiceCallOptions,
   LookupOptions,
   Endpoint,

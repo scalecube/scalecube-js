@@ -1,7 +1,8 @@
+import { Observable, of } from 'rxjs';
 import { RemoteCallOptions } from '../api/private/types';
-import { Observable, of } from 'rxjs6';
-import { asyncModelTypes, throwErrorFromServiceCall } from '../helpers/utils';
+import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api/public';
+import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 export const remoteCall = ({
   router,
@@ -9,13 +10,19 @@ export const remoteCall = ({
   message,
   asyncModel,
 }: RemoteCallOptions): Observable<any> => {
-  const endPoint: Endpoint = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
-  const { asyncModel: asyncModelProvider, transport } = endPoint;
+  const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
+  if (!endPoint) {
+    return throwErrorFromServiceCall({
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      errorMessage: getNotFoundByRouterError(message.qualifier),
+    }) as Observable<any>;
+  }
+  const { asyncModel: asyncModelProvider } = endPoint!;
 
   if (asyncModelProvider !== asyncModel) {
     return throwErrorFromServiceCall({
-      asyncModel: asyncModelTypes.observable,
-      errorMessage: `asyncModel miss match, expect ${asyncModel} but received ${asyncModelProvider}`,
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      errorMessage: `asyncModel is not correct, expected ${asyncModel} but received ${asyncModelProvider}`,
     }) as Observable<any>;
   }
 

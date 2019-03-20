@@ -1,7 +1,6 @@
 import { Microservices } from './Microservices';
 import { Message, Service } from '../api/public';
-import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
-import GreetingService from '../../__mocks__/GreetingService';
+import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { defaultRouter } from '../Routers/default';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { getQualifier } from '../helpers/serviceData';
@@ -79,7 +78,7 @@ describe('Microservices Testing', () => {
 
     it('Test createProxy after microservice.destroy', () => {
       try {
-        const proxy = microservice.createProxy({
+        microservice.createProxy({
           router: defaultRouter,
           serviceDefinition: greetingServiceDefinition,
         });
@@ -90,7 +89,7 @@ describe('Microservices Testing', () => {
 
     it('Test createServiceCall after microservice.destroy', () => {
       try {
-        const serviceCall = microservice.createServiceCall({
+        microservice.createServiceCall({
           router: defaultRouter,
         });
       } catch (e) {
@@ -100,7 +99,7 @@ describe('Microservices Testing', () => {
 
     it('Test destroy after microservice.destroy', () => {
       try {
-        const destroy = microservice.destroy();
+        microservice.destroy();
       } catch (e) {
         expect(e.message).toMatch(MICROSERVICE_NOT_EXISTS);
       }

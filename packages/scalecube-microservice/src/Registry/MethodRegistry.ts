@@ -7,9 +7,8 @@ import {
 } from '../api/private/types';
 import { Service, Reference } from '../api/public';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
-import { getQualifier } from '../helpers/serviceData';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { isFunction } from '../helpers/utils';
+import { getQualifier, getReferencePointer } from '../helpers/serviceData';
+import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';
 
 export const createMethodRegistry = (): MethodRegistry => {
   let methodRegistryMap: MethodRegistryMap | null = {};
@@ -22,14 +21,14 @@ export const createMethodRegistry = (): MethodRegistry => {
 
       return methodRegistryMap[qualifier] || null;
     },
-    add: ({ services = [] }: AvailableServices): MethodRegistryMap => {
+    add: ({ services = [], address }: AvailableServices): MethodRegistryMap => {
       if (!methodRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
-
+      const references = getReferenceFromServices({ services, address });
       methodRegistryMap = getUpdatedMethodRegistry({
         methodRegistryMap,
-        references: getReferenceFromServices({ services }),
+        references,
       });
       return { ...methodRegistryMap };
     },
@@ -43,18 +42,17 @@ export const createMethodRegistry = (): MethodRegistry => {
 
 // Helpers
 
-export const getReferenceFromServices = ({ services }: AvailableServices): Reference[] | [] =>
-  services
-    ? services.reduce(
-        (res: Reference[], service: Service) => [
-          ...res,
-          ...getReferenceFromService({
-            service,
-          }),
-        ],
-        []
-      )
-    : [];
+export const getReferenceFromServices = ({ services = [], address }: AvailableServices): Reference[] | [] =>
+  services.reduce(
+    (res: Reference[], service: Service) => [
+      ...res,
+      ...getReferenceFromService({
+        service,
+        address,
+      }),
+    ],
+    []
+  );
 
 export const getUpdatedMethodRegistry = ({
   methodRegistryMap,
@@ -70,24 +68,26 @@ export const getUpdatedMethodRegistry = ({
   ),
 });
 
-export const getReferenceFromService = ({ service }: AvailableService): Reference[] => {
-  let data: Reference[] = [];
+export const getReferenceFromService = ({ service, address }: AvailableService): Reference[] => {
+  const data: Reference[] = [];
   const { definition, reference } = service;
 
   if (isValidServiceDefinition(definition)) {
     const { serviceName, methods } = definition;
-
-    data = Object.keys(methods).map((methodName: string) => ({
-      qualifier: getQualifier({ serviceName, methodName }),
-      serviceName,
-      methodName,
-      asyncModel: methods[methodName].asyncModel,
-      reference: {
-        [methodName]: isFunction(reference) ? reference : reference[methodName].bind(reference),
-      },
-    }));
+    Object.keys(methods).forEach((methodName: string) => {
+      const qualifier = getQualifier({ serviceName, methodName });
+      data.push({
+        qualifier,
+        serviceName,
+        methodName,
+        asyncModel: methods[methodName].asyncModel,
+        reference: {
+          [methodName]: getReferencePointer({ reference, methodName, qualifier }),
+        },
+      });
+    });
   } else {
-    throw new Error(`service ${definition.serviceName} is not valid.`);
+    throw new Error(getServiceIsNotValidError(definition.serviceName));
   }
 
   return data;

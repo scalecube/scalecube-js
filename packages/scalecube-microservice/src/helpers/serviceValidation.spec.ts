@@ -1,5 +1,6 @@
 import { isValidServiceDefinition, isValidServiceName, isValidMethods, isValidMethod } from './serviceValidation';
-import { greetingServiceDefinition } from '../../__mocks__/GreetingService';
+import { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
+import { ASYNC_MODEL_TYPES } from './constants';
 
 describe('Unit testing serviceValidations', () => {
   console.error = jest.fn(); // disable validation logs while doing this test
@@ -23,7 +24,7 @@ describe('Unit testing serviceValidations', () => {
     expect(
       isValidMethods({
         hello: {
-          asyncModel: 'Promise',
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
         },
       })
     ).toBe(true);
@@ -39,11 +40,11 @@ describe('Unit testing serviceValidations', () => {
   });
 
   it('Test isValidMethod({methodData, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodData: { asyncModel: 'Promise' }, methodName: 'testMethod' })).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: 'RequestResponse' }, methodName: 'testMethod' })).toBe(true);
   });
 
   it('Test isValidMethod({methodProp, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(isValidMethod({ methodData: { asyncModel: 'Observable' }, methodName: 'testMethod' })).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: 'RequestStream' }, methodName: 'testMethod' })).toBe(true);
   });
 
   it('Test isValidServiceName(serviceName) - invalid value type', () => {

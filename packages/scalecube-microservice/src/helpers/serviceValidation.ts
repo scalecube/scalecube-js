@@ -1,4 +1,5 @@
-import { asyncModelTypes, isObject } from './utils';
+import { isObject } from './utils';
+import { ASYNC_MODEL_TYPES } from './constants';
 import { ServiceDefinition, AsyncModel } from '../api/public';
 
 export const isValidServiceDefinition = (definition: ServiceDefinition) => {
@@ -36,4 +37,4 @@ export const isValidMethod = ({
 };
 
 export const isValidAsyncModel = ({ asyncModel }: { asyncModel: AsyncModel }) =>
-  Object.values(asyncModelTypes).includes(asyncModel);
+  Object.values(ASYNC_MODEL_TYPES).includes(asyncModel);

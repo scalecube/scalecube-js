@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs6';
+import { Observable } from 'rxjs';
 import {
   Router,
   ServiceDefinition,
@@ -23,10 +23,12 @@ export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCal
 
 export interface AvailableServices {
   services?: Service[];
+  address: string;
 }
 
 export interface AvailableService {
   service: Service;
+  address: string;
 }
 
 export interface CreateServiceCallOptions {
@@ -90,11 +92,12 @@ export interface Registry {
   destroy: () => null;
 }
 
-type AddServiceToRegistry<T> = ({ services }: AvailableServices) => T;
+type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
 
 export interface ServiceRegistry extends Registry {
   lookUp: LookUp;
-  add: AddServiceToRegistry<ServiceRegistryMap>;
+  add: ({ endpoints }: { endpoints: Endpoint[] }) => ServiceRegistryMap;
+  createEndPoints: AddServiceToRegistry<Endpoint[]>;
 }
 
 export interface MethodRegistry extends Registry {
