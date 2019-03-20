@@ -12,6 +12,7 @@
   ],
   "license": "MIT",
   "scripts": {
+    "clean": "rm -rf node_modules",
     "build": "npm-run-all build:commonJS build:es",
     "build:commonJS": "rm -rf lib && tsc --module commonjs --target es5 --outDir lib",
     "build:es-module": "rm -rf es-module && tsc --module esnext --target es5 --outDir es",

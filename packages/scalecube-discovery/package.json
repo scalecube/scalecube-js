@@ -12,6 +12,7 @@
     "es"
   ],
   "scripts": {
+    "clean": "rm -rf node_modules",
     "build": "rm -rf .cache && yarn run build:lib && yarn run build:dist && yarn run build:es",
     "build:lib": "rm -rf lib && tsc --module commonJS --target es5 --outDir lib",
     "build:dist": "rm -rf dist && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist --global sc",

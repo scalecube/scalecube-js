@@ -24,6 +24,7 @@
     "cluster"
   ],
   "scripts": {
+    "restart": "rm -rf node_modules && yarn install && lerna clean --yes && lerna bootstrap",
     "start": "http-server",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
