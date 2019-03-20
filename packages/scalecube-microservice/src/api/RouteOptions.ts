@@ -5,7 +5,7 @@ import { LookUp, Message } from '.';
  */
 export default interface RouteOptions {
   /**
-   * The function that provides all the appropriate endpoints for a given search criteria
+   * The function that finds removeService by given criteria
    */
   lookUp: LookUp;
   /**

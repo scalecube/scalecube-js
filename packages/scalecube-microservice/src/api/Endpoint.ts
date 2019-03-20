@@ -1,8 +1,7 @@
 import AsyncModel from './AsyncModel';
 
 /**
- * The endpoint to the part of the functionality of a service, that provides a user with an opportunity to run this
- * peace of functionality
+ * Defines remote service data
  */
 export default interface Endpoint {
   /**

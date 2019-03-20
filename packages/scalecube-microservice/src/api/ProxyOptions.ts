@@ -5,7 +5,7 @@ import { ServiceDefinition, Router } from '.';
  */
 export default interface ProxyOptions {
   /**
-   * Custom router helps to specify the logic of choosing the appropriate endpoint, that matches given criteria
+   * Custom router specifies the logic of choosing the appropriate remoteService
    */
   router?: Router;
   /**

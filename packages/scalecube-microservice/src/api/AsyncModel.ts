@@ -1,11 +1,10 @@
 /**
- * "Request Stream" type of async model - a consumer requires a stream and receives the emits from a provider after
- * the subscription
+ * Defines Observable in scalecube asyncModel
  */
 export type RequestStreamAsyncModel = 'RequestStream';
 
 /**
- * "Request Response" type of async model - a consumer requires data and a provider responds with the data once
+ * Defines Promise in scalecube asyncModel
  */
 export type RequestResponseAsyncModel = 'RequestResponse';
 

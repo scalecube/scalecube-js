@@ -1,5 +1,5 @@
 /**
- * Data that is used for executing the call of service method
+ * ServiceCall data
  */
 export default interface Message {
   /**
@@ -7,7 +7,7 @@ export default interface Message {
    */
   qualifier: string;
   /**
-   * Custom data, that is used used as an argument, when service method is called
+   * Arguments of the invoked function
    */
   data: any;
 }

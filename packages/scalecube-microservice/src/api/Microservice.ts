@@ -1,21 +1,19 @@
 import { ProxyOptions, ServiceCall, CreateServiceCallOptions } from '.';
 
 /**
- * Microservice container, that incapsulates the logic for a given microservice
+ * Provides the functionality of a microservice container
  */
 export default interface Microservice {
   /**
-   * The method is used to delete microservice and close all the subscriptions related with it
+   * The method is used to delete a microservice and close all the subscriptions related with it
    */
-  destroy: () => null;
+  destroy(): null;
   /**
-   * The method is used to get a proxy, that allows to easily call any method from any of the service that was
-   * provided while creating microservice container
+   * Creates a proxy to a method and provides extra logic when is invoked
    */
   createProxy<T = any>(proxyOptions: ProxyOptions): T;
   /**
-   * The method is used to get a proxy, that allows to easily call any method from any of the service that was
-   * provided while creating microservice container
+   * Exposes serviceCall to a user (not via Proxy)
    */
   createServiceCall(options: CreateServiceCallOptions): ServiceCall;
 }

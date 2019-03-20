@@ -1,7 +1,7 @@
 import { ServiceImplementation, ServiceDefinition } from '.';
 
 /**
- * The information about service and the implementation for all the methods that are included in it
+ * Definition and implementation of a service
  */
 export default interface Service {
   /**
