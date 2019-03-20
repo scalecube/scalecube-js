@@ -1,4 +1,4 @@
-import { Endpoint, Service } from '../api/public';
+import { Endpoint, Service } from '../api';
 import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {

@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
-import { RemoteCallOptions } from '../api/private/types';
+import { RemoteCallOptions } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
-import { Endpoint } from '../api/public';
+import { Endpoint } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 export const remoteCall = ({

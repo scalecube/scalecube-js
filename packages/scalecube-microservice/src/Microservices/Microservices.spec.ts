@@ -1,5 +1,5 @@
 import { Microservices } from './Microservices';
-import { Message, Service } from '../api/public';
+import { Message, Service } from '../api';
 import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { defaultRouter } from '../Routers/default';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';

@@ -4,8 +4,8 @@ import {
   GetUpdatedMethodRegistryOptions,
   MethodRegistry,
   MethodRegistryMap,
-} from '../api/private/types';
-import { Service, Reference } from '../api/public';
+} from '../helpers/types';
+import { Service, Reference } from '../api';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier, getReferencePointer } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';

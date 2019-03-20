@@ -1,12 +1,12 @@
 import { getProxy } from '../Proxy/Proxy';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api/public';
+import { Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api';
 import { ASYNC_MODEL_TYPES } from '..';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
-import { MicroserviceContext } from '../api/private/types';
+import { MicroserviceContext } from '../helpers/types';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services }: MicroserviceOptions): Microservice => {
