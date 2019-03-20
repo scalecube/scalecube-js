@@ -1,4 +1,4 @@
-import { Router } from '../api/public';
+import { Router } from '../api';
 
 export const defaultRouter: Router = Object.freeze({
   route: ({ message, lookUp }) => {

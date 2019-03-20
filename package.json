@@ -30,7 +30,8 @@
     "test": "lerna run test",
     "lint-md": "remark . --output",
     "lint": "yarn lint-md && lerna run lint",
-    "format": "lerna run format"
+    "format": "lerna run format",
+    "doc": "lerna run doc"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "license": "MIT",

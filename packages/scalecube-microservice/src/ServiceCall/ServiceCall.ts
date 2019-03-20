@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ServiceCall, CreateServiceCallOptions, ServiceCallResponse, ServiceCallOptions } from '../api/private/types';
+import { ServiceCall, CreateServiceCallOptions, ServiceCallResponse, ServiceCallOptions } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { MESSAGE_NOT_PROVIDED, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { localCall } from './LocalCall';

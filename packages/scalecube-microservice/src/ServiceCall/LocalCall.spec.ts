@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { localCall } from './LocalCall';
-import { Message } from '../api/public';
+import { Message } from '../api';
 import { getQualifier } from '../helpers/serviceData';
 import { getMethodNotFoundError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 

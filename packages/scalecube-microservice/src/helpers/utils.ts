@@ -1,5 +1,5 @@
 import { throwError } from 'rxjs';
-import { AsyncModel } from '../api/public';
+import { AsyncModel } from '../api';
 import { ASYNC_MODEL_TYPES } from './constants';
 
 export const isObject = (obj: object) => obj && typeof obj === 'object' && obj.constructor === Object;
