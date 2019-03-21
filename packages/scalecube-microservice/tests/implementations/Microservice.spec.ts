@@ -10,7 +10,7 @@ import { Service, ServiceDefinition } from '../../src/api';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
 import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
-import { ScalecubeGlobal } from "@scalecube/scalecube-discovery/src/helpers/types";
+import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/src/helpers/types';
 
 describe('Test the creation of Microservice', () => {
   const defaultUser = 'defaultUser';
@@ -26,8 +26,8 @@ describe('Test the creation of Microservice', () => {
   };
 
   beforeEach(() => {
-    window.scalecube = {} as ScalecubeGlobal
-  })
+    window.scalecube = {} as ScalecubeGlobal;
+  });
 
   describe('Test creating microservice from function constructor', () => {
     it('MethodRegistry throws an error when method reference is not a function', () => {
@@ -139,6 +139,6 @@ describe('Test the creation of Microservice', () => {
       expect(Object.keys(window.scalecube.clusters)).toEqual([ms1SeedAddress, ms2SeedAddress]);
       expect(window.scalecube.clusters[ms1SeedAddress].nodes).toHaveLength(2);
       expect(window.scalecube.clusters[ms2SeedAddress].nodes).toHaveLength(1);
-    })
+    });
   });
 });

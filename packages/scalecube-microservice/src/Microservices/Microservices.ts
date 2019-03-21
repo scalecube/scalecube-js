@@ -6,13 +6,7 @@ import { uuidv4 } from '../helpers/utils';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
-import {
-  Endpoint,
-  Message,
-  Microservice,
-  MicroserviceOptions,
-  Microservices as MicroservicesInterface,
-} from '../api';
+import { Endpoint, Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({

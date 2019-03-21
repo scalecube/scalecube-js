@@ -20,7 +20,7 @@
     "format": "yarn run lint:fix && yarn run prettier",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
     "lint:fix": "yarn lint --fix",
-    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest",
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
