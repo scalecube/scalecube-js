@@ -1,4 +1,5 @@
 import { createDiscovery } from "../../src/Discovery/Discovery";
+import { Discovery } from '../../src/api'
 
 describe('test', () => {
   beforeEach(() => {
@@ -25,11 +26,11 @@ describe('test', () => {
   // 4. Every node that joins the cluster notifies other nodes
   // 5. Discovery.destroy will remove remove itself from the cluster, notify other nodes and complete the notifier
 
-  const createDiscoveriesWithSameSeedAddress = () => {
-    const seedAddress = 'cluster1';
-    const endPoint1 = { ...endPoint, methodName: 'methodName1' };
-    const endPoint2 = { ...endPoint, methodName: 'methodName2' };
-    const endPoint3 = { ...endPoint, methodName: 'methodName3' };
+  const createDiscoveriesWithSameSeedAddress = (index: number = 1) => {
+    const seedAddress = `cluster${index}`;
+    const endPoint1 = { ...endPoint, methodName: `methodName${index}1` };
+    const endPoint2 = { ...endPoint, methodName: `methodName${index}2` };
+    const endPoint3 = { ...endPoint, methodName: `methodName${index}3` };
     const discovery1 = createDiscovery({ address, seedAddress, endPoints: [endPoint1] });
     const discovery2 = createDiscovery({ address, seedAddress, endPoints: [endPoint2] });
     const discovery3 = createDiscovery({ address, seedAddress, endPoints: [endPoint3] });
@@ -44,6 +45,14 @@ describe('test', () => {
     }
   }
 
+  const testNotifier = (discovery: Discovery, expectations: any[]) => {
+    let updates = 0
+    discovery.notifier.subscribe((data) => {
+      expect(data).toEqual(expectations[updates]);
+      updates++;
+    });
+  }
+
   it('Every node with the same seed address joins the same cluster', () => {
     expect.assertions(3);
     const { seedAddress } = createDiscoveriesWithSameSeedAddress();
@@ -52,9 +61,8 @@ describe('test', () => {
     expect(window.scalecube.clusters[seedAddress].allEndPoints).toHaveLength(3);
   });
 
-  it('Each node from the cluster includes all the endpoints from other nodes of the cluster except its own', () => {
-    expect.assertions(9);
-    const { seedAddress, endPoint1, endPoint2, endPoint3 } = createDiscoveriesWithSameSeedAddress();
+  const testNodesContent = (index: number = 1) => {
+    const { seedAddress, endPoint1, endPoint2, endPoint3 } = createDiscoveriesWithSameSeedAddress(index);
     window.scalecube.clusters[seedAddress].nodes.forEach((node, index) => {
       expect(Object.keys(node)).toHaveLength(3);
       expect(node.address).toBe(address);
@@ -75,6 +83,13 @@ describe('test', () => {
         }
       }
     })
+  }
+
+  it('Each node from the cluster includes all the endpoints from other nodes of the cluster except its own (for one' +
+    ' cluster)', () => {
+    expect.assertions(9);
+
+    testNodesContent(1);
   });
 
   it('AllEndPoints includes all the endpoints for each node in the cluster', () => {
@@ -82,4 +97,83 @@ describe('test', () => {
     const { seedAddress, endPoint1, endPoint2, endPoint3 } = createDiscoveriesWithSameSeedAddress();
     expect(window.scalecube.clusters[seedAddress].allEndPoints).toEqual([endPoint1, endPoint2, endPoint3])
   });
+
+  it('Nodes with different seed address join different cluster', () => {
+    expect.assertions(5);
+    const { seedAddress: seedAddress1 } = createDiscoveriesWithSameSeedAddress(1);
+    const { seedAddress: seedAddress2 } = createDiscoveriesWithSameSeedAddress(2);
+    expect(Object.keys(window.scalecube.clusters)).toEqual([seedAddress1, seedAddress2]);
+    expect(window.scalecube.clusters[seedAddress1].nodes).toHaveLength(3);
+    expect(window.scalecube.clusters[seedAddress1].allEndPoints).toHaveLength(3);
+    expect(window.scalecube.clusters[seedAddress2].nodes).toHaveLength(3);
+    expect(window.scalecube.clusters[seedAddress2].allEndPoints).toHaveLength(3);
+  });
+
+  it('Each node from the cluster includes all the endpoints from other nodes of the cluster except its own (for' +
+    ' multiple cluster)', () => {
+    expect.assertions(18);
+    [1, 2].forEach(testNodesContent);
+  });
+
+  it('Every node that joins the cluster notifies other nodes', () => {
+    expect.assertions(6);
+
+    const seedAddress = 'cluster1';
+    const endPoint1 = { ...endPoint, methodName: `methodName1` };
+    const endPoint2 = { ...endPoint, methodName: `methodName2` };
+    const endPoint3 = { ...endPoint, methodName: `methodName3` };
+    const discovery1 = createDiscovery({ address, seedAddress, endPoints: [endPoint1] });
+
+    testNotifier(
+      discovery1,
+      [[], [endPoint2], [endPoint2, endPoint3]]
+    )
+
+    const discovery2 = createDiscovery({ address, seedAddress, endPoints: [endPoint2] });
+    testNotifier(
+      discovery2,
+      [[endPoint1], [endPoint1, endPoint3]]
+    )
+
+    const discovery3 = createDiscovery({ address, seedAddress, endPoints: [endPoint3] });
+    testNotifier(
+      discovery3,
+      [[endPoint1, endPoint2]]
+    )
+  });
+
+  it('Different clusters are decoupled from each other', (done) => {
+    expect.assertions(5);
+
+    const seedAddress1 = 'cluster1';
+    const seedAddress2 = 'cluster2';
+    const endPoint1 = { ...endPoint, methodName: `methodName1` };
+    const endPoint2 = { ...endPoint, methodName: `methodName2` };
+    const endPoint3 = { ...endPoint, methodName: `methodName3` };
+    const discovery1 = createDiscovery({ address, seedAddress: seedAddress1, endPoints: [endPoint1] });
+
+    let updatesForDiscovery1 = 0;
+    discovery1.notifier.subscribe((data) => {
+      expect(data).toEqual([]);
+      updatesForDiscovery1++;
+    })
+
+    const discovery2 = createDiscovery({ address, seedAddress: seedAddress2, endPoints: [endPoint2] });
+    testNotifier(
+      discovery2,
+      [[], [endPoint3]]
+    )
+
+    const discovery3 = createDiscovery({ address, seedAddress: seedAddress2, endPoints: [endPoint3] });
+    testNotifier(
+      discovery3,
+      [[endPoint2]]
+    )
+
+    setTimeout(() => {
+      expect(updatesForDiscovery1).toBe(1);
+      done();
+    }, 1000);
+  });
+
 });
