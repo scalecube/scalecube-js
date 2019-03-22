@@ -7,7 +7,7 @@ export default interface DiscoveryOptions {
   /**
    * The unique address of the Node that should be added to the Cluster
    */
-  address: string;
+  nodeAddress: string;
   /**
    * Endpoints that should be added to the Cluster
    */

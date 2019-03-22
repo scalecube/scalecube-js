@@ -34,9 +34,9 @@ export const createDiscoveriesWithSameSeedAddress = (clusterIndex: number = 1) =
   const endPoint1 = createEndpoint(1, clusterIndex);
   const endPoint2 = createEndpoint(2, clusterIndex);
   const endPoint3 = createEndpoint(3, clusterIndex);
-  const discovery1 = createDiscovery({ address: `address1${clusterIndex}`, seedAddress, endPoints: [endPoint1] });
-  const discovery2 = createDiscovery({ address: `address2${clusterIndex}`, seedAddress, endPoints: [endPoint2] });
-  const discovery3 = createDiscovery({ address: `address3${clusterIndex}`, seedAddress, endPoints: [endPoint3] });
+  const discovery1 = createDiscovery({ nodeAddress: `address1${clusterIndex}`, seedAddress, endPoints: [endPoint1] });
+  const discovery2 = createDiscovery({ nodeAddress: `address2${clusterIndex}`, seedAddress, endPoints: [endPoint2] });
+  const discovery3 = createDiscovery({ nodeAddress: `address3${clusterIndex}`, seedAddress, endPoints: [endPoint3] });
   return {
     seedAddress,
     endPoint1,

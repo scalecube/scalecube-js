@@ -18,14 +18,14 @@ export interface GetCluster {
 
 export interface AddToCluster {
   cluster: Cluster;
-  address: string;
+  nodeAddress: string;
   endPoints: Item[];
   subjectNotifier: ReplaySubject<Item[]>;
 }
 
 export interface RemoveFromCluster {
   cluster: Cluster;
-  address: string;
+  nodeAddress: string;
 }
 
 export interface Cluster {

@@ -52,9 +52,9 @@ describe('Test DiscoveryActions', () => {
 
   it('Test addToCluster({ cluster, endPoints, address, subjectNotifier }): Cluster', () => {
     expect.assertions(3);
-    const address = 'cluster';
+    const address = 'node';
     let cluster = getCluster({ seedAddress });
-    cluster = addToCluster({ cluster, endPoints: [], address, subjectNotifier: new ReplaySubject(1) });
+    cluster = addToCluster({ cluster, endPoints: [], nodeAddress: address, subjectNotifier: new ReplaySubject(1) });
     expect(cluster.nodes).toHaveLength(1);
     const nodeInCluster = cluster.nodes[0];
     expect(nodeInCluster).toEqual(

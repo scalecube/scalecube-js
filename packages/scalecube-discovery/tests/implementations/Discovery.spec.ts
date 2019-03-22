@@ -1,10 +1,15 @@
 import { createDiscovery } from '../../src/Discovery/Discovery';
 import { createDiscoveriesWithSameSeedAddress, createEndpoint, testNodesContent, testNotifier } from '../helpers/utils'
+import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const'
 
 describe('Discovery tests', () => {
   beforeEach(() => {
     window.scalecube.clusters = {};
   });
+
+  // createDiscoveriesWithSameSeedAddress creates three discoveries on the same cluster
+  // nodeAddress is 'address' + indexOfNode + indexOfCluster
+  // seedAddress is 'cluster' + indexOfCluster
 
   it('Every node with the same seed address joins the same cluster', () => {
     expect.assertions(3);
@@ -57,13 +62,13 @@ describe('Discovery tests', () => {
     const endPoint2 = createEndpoint(2);
     const endPoint3 = createEndpoint(3);
 
-    const discovery1 = createDiscovery({ address: 'address11', seedAddress, endPoints: [endPoint1] });
+    const discovery1 = createDiscovery({ nodeAddress: 'address11', seedAddress, endPoints: [endPoint1] });
     testNotifier(discovery1, [[], [endPoint2], [endPoint2, endPoint3]], done);
 
-    const discovery2 = createDiscovery({ address: 'address21', seedAddress, endPoints: [endPoint2] });
+    const discovery2 = createDiscovery({ nodeAddress: 'address21', seedAddress, endPoints: [endPoint2] });
     testNotifier(discovery2, [[endPoint1], [endPoint1, endPoint3]], done);
 
-    const discovery3 = createDiscovery({ address: 'address31', seedAddress, endPoints: [endPoint3] });
+    const discovery3 = createDiscovery({ nodeAddress: 'address31', seedAddress, endPoints: [endPoint3] });
     testNotifier(discovery3, [[endPoint1, endPoint2]], done, true);
   });
 
@@ -75,7 +80,7 @@ describe('Discovery tests', () => {
     const endPoint1 = createEndpoint(1, 1);
     const endPoint2 = createEndpoint(1, 2);
     const endPoint3 = createEndpoint(2, 2);
-    const discovery1 = createDiscovery({ address: 'address11', seedAddress: seedAddress1, endPoints: [endPoint1] });
+    const discovery1 = createDiscovery({ nodeAddress: 'address11', seedAddress: seedAddress1, endPoints: [endPoint1] });
 
     let updatesForDiscovery1 = 0;
     discovery1.notifier.subscribe((data) => {
@@ -84,9 +89,9 @@ describe('Discovery tests', () => {
     });
 
     // Check that adding new endpoints to cluster 2 doesn't affect the notifications of cluster 1
-    const discovery2 = createDiscovery({ address: 'address12', seedAddress: seedAddress2, endPoints: [endPoint2] });
+    const discovery2 = createDiscovery({ nodeAddress: 'address12', seedAddress: seedAddress2, endPoints: [endPoint2] });
     testNotifier(discovery2, [[], [endPoint3], []], done);
-    const discovery3 = createDiscovery({ address: 'address22', seedAddress: seedAddress2, endPoints: [endPoint3] });
+    const discovery3 = createDiscovery({ nodeAddress: 'address22', seedAddress: seedAddress2, endPoints: [endPoint3] });
     testNotifier(discovery3, [[endPoint2]], done);
 
     // Check that destroying discoveries related with cluster 2 doesn't affect the notifications of cluster 1
@@ -114,6 +119,14 @@ describe('Discovery tests', () => {
     expect(window.scalecube.clusters[seedAddress].allEndPoints).toHaveLength(0);
   });
 
+  it('Discovery.destroy is resolved with the correct message', async () => {
+    expect.assertions(1);
+
+    const { discovery1 } = createDiscoveriesWithSameSeedAddress();
+    return expect(discovery1.destroy()).resolves
+      .toBe(getDiscoverySuccessfullyDestroyedMessage('address11', 'cluster1'));
+  });
+
   it('Discovery.destroy will notify other nodes and complete the notifier', async (done) => {
     expect.assertions(8);
 
@@ -134,7 +147,7 @@ describe('Discovery tests', () => {
     testNotifier(discovery3, [[endPoint1, endPoint2]], done);
 
     await discovery3.destroy();
-    const discovery4 = createDiscovery({ address: 'address41', seedAddress, endPoints: [endPoint4] });
+    const discovery4 = createDiscovery({ nodeAddress: 'address41', seedAddress, endPoints: [endPoint4] });
     testNotifier(discovery4, [[endPoint1, endPoint2]], done, true);
   });
 });

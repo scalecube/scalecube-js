@@ -25,20 +25,20 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
 export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
   cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
 
-export const removeFromCluster = ({ cluster, address }: RemoveFromCluster): Cluster => {
+export const removeFromCluster = ({ cluster, nodeAddress }: RemoveFromCluster): Cluster => {
   // remove from allEndPoints[]
-  cluster.allEndPoints = cluster.allEndPoints.filter((endPoint) => endPoint.address !== address);
+  cluster.allEndPoints = cluster.allEndPoints.filter((endPoint) => endPoint.address !== nodeAddress);
   // remove from each Node endPoints[]
   cluster.nodes.forEach((node) => {
-    node.endPoints = node.endPoints.filter((endPoint) => endPoint.address !== address);
+    node.endPoints = node.endPoints.filter((endPoint) => endPoint.address !== nodeAddress);
   });
   // remove node from the cluster
-  cluster.nodes = cluster.nodes.filter((node) => node.address !== address);
+  cluster.nodes = cluster.nodes.filter((node) => node.address !== nodeAddress);
 
   return cluster;
 };
 
-export const addToCluster = ({ cluster, endPoints, address, subjectNotifier }: AddToCluster): Cluster => {
+export const addToCluster = ({ cluster, endPoints, nodeAddress, subjectNotifier }: AddToCluster): Cluster => {
   // add new endPoints[] to each node in the cluster
   cluster.nodes.forEach((node) => {
     node.endPoints = [...node.endPoints, ...endPoints];
@@ -48,7 +48,7 @@ export const addToCluster = ({ cluster, endPoints, address, subjectNotifier }: A
 
   // add new node to the cluster (node doesn't contain its own endpoints)
   cluster.nodes.push({
-    address,
+    address: nodeAddress,
     endPoints: allPreviousEndPoints,
     subjectNotifier,
   });
