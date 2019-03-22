@@ -21,7 +21,8 @@
     "lint:fix": "yarn lint --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest",
-    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
+    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
   },
   "jest": {
     "transform": {
@@ -49,6 +50,7 @@
     "parcel-plugin-bundle-visualiser": "^1.2.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.2.4"
   },
   "dependencies": {

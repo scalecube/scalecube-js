@@ -1,17 +1,19 @@
-import { Item } from '../helpers/types';
+import { Item } from '.'
 
 /**
- * DiscoveryOptions - The parameters that are required to add Node to the Cluster
- *
- * @param address - Microservice unique address.
- *
- * @param endPoints - Endpoints to share in the Cluster.
- *
- * @param seedAddress - address of the Cluster seed.
- *
+ * The parameters that are required to add Node to the Cluster
  */
 export default interface DiscoveryOptions {
+  /**
+   * The unique address of the Node that should be added to the Cluster
+   */
   address: string;
+  /**
+   * Endpoints that should be added to the Cluster
+   */
   endPoints: Item[];
+  /**
+   * The unique address of the Cluster
+   */
   seedAddress: string;
 }

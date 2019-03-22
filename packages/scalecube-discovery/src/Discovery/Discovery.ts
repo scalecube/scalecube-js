@@ -15,7 +15,7 @@ export const createDiscovery = ({ address, endPoints, seedAddress }: DiscoveryOp
       cluster = removeFromCluster({ cluster, address });
       notifyAllListeners({ cluster });
       subjectNotifier && subjectNotifier.complete();
-      return Promise.resolve(`${address} as been removed from ${seedAddress}`);
+      return Promise.resolve(`${address} has been removed from ${seedAddress}`);
     },
     notifier: subjectNotifier.asObservable(),
   });

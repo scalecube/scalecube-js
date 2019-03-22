@@ -4,25 +4,25 @@
 
 # Discovery
 
-Discovery is a tool used by [scalecube](packages/scalecube-microservice/README.md) to access available microservices on a cluster of microservices.
+Discovery provides access to a Cluster, ability to add new Node with some entrypoints, subscribe to the changes of
+entrypoints within the Cluster.
 
 ## Basic Usage
 
 ```javascript
 const discoveryConfig = {
-  seedAddress : 'namespace', // string
-  address : 'random identifier', // string
-  endPoints: [] // Endpoint[]
+  seedAddress : 'cluster1', // string
+  address : 'random-node-identifier', // string
+  endPoints: [] // Item[]
 }
 
-const node = createDiscovery(discoveryConfig);
-
-node.notifier.subscribe(console.log); // emit all remote endpoints on the cluster(seedAddress)
+const discovery = createDiscovery(discoveryConfig);
+discovery.notifier.subscribe(console.log); // emits all remote endpoints on the cluster (except endpoints that were added within the creation of Discovery)
 ```
 
-After a node join the cluster and subscribe to it, then it will be notified on all new endpoints that join the cluster.
-To remove node from the cluster use node.destroy
+After a node joins a cluster and subscribes to it, it will be notified on all the changes of endpoints within the cluster (emits each time some endpoints are added or removed from the cluster).
+To remove the node from the cluster use discovery.destroy()
 
 ```javascript
-node.end(); // remove node microservices from the cluster and unsubscribe from the cluster.
+discovery.destroy().then(console.log); // random-node-identifier has been removed from cluster1
 ```
