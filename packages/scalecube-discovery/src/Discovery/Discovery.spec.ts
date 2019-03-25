@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { ClustersMap } from '../helpers/types';
 import { createDiscovery } from './Discovery';
 import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
@@ -9,13 +8,7 @@ describe('Test Discovery', () => {
   });
 
   const itemToPublish = {
-    uri: '',
-    transport: '',
-    qualifier: 'serviceName/methodName',
-    serviceName: 'serviceName',
-    methodName: 'methodName',
-    asyncModel: 'REQUEST_RESPONSE',
-    address: '',
+    address: 'itemAddress',
   };
 
   it('Test createDiscovery add Nodes to cluster', () => {

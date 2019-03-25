@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs';
-import { Item } from '../helpers/types';
+import { Item } from '../api';
 import { joinCluster, getCluster, leaveCluster } from './DiscoveryActions';
 
 describe('Test DiscoveryActions', () => {

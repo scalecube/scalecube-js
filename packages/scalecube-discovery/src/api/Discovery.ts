@@ -7,16 +7,14 @@ import { Item } from '.'
  */
 export default interface Discovery {
   /**
-   * @method
    * An Observable sequence that describes all the items that published by **other** discoveries.
    * Emits new array of all items each time new discovery is created or destroyed.
    */
   discoveredItems$(): Observable<Item[]>;
   /**
-   * @method
    * Destroy the discovery:
-   * - Completes items$.
-   * - Notify other discoveries that this discovery's items are not available anymore.
+   * - Completes discoveredItems$.
+   * - Notifies other discoveries that this discovery's items are not available anymore.
    * - Resolves with the message, that specifies the address of the node and the address of the seed
    */
   destroy(): Promise<string>;

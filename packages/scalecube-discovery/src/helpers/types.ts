@@ -1,4 +1,5 @@
 import { ReplaySubject } from 'rxjs';
+import { Item } from '../api'
 
 declare global {
   interface Window {
@@ -12,10 +13,6 @@ export interface ScalecubeGlobal {
 
 export interface ClustersMap {
   [seedAddress: string]: Cluster;
-}
-
-export interface Item {
-  address: string
 }
 
 export interface ShareDataBetweenDiscoveries {
