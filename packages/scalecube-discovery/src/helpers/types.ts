@@ -6,6 +6,12 @@ declare global {
   }
 }
 
+declare global {
+  interface Global {
+    scalecube: ScalecubeGlobal;
+  }
+}
+
 export type Item = any;
 
 export interface NotifyAllListeners {
