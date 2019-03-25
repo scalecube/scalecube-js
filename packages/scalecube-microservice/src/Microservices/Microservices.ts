@@ -24,11 +24,11 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
     const discovery = createDiscovery({
       address,
-      itemsToPublish : endPointsToPublishInCluster,
+      itemsToPublish: endPointsToPublishInCluster,
       seedAddress,
     });
 
-    discovery.discoveredItems$().subscribe((endpoints: Endpoint[]) => serviceRegistry.add({ endpoints }));
+    discovery.discoveredItems$().subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {

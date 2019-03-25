@@ -51,8 +51,6 @@ export const joinCluster = ({ cluster, itemsToPublish, address, subjectNotifier 
     discoveredItems: allPreviousDiscoveredItems,
     subjectNotifier,
   });
-  // save current discoveredItems[] in the replaySubject cache.
-  subjectNotifier && subjectNotifier.next(allPreviousDiscoveredItems);
   // add new discoveredItems[] to the allDiscoveredItems[]
   cluster.allDiscoveredItems = [...(cluster.allDiscoveredItems || []), ...itemsToPublish];
 

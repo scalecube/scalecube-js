@@ -15,8 +15,8 @@ export default interface Discovery {
   /**
    * @method
    * Destroy the discovery:
-   * - Completes items$.
-   * - Notify other discoveries that this discovery's items are not available anymore.
+   * - Completes discoveredItems$.
+   * - Notifies other discoveries that this discovery's items are not available anymore.
    * - Resolves with the message, that specifies the address of the node and the address of the seed
    */
   destroy(): Promise<string>;
