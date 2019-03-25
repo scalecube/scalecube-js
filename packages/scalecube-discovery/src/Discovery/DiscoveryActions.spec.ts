@@ -49,7 +49,7 @@ describe('Test DiscoveryActions', () => {
   test(`When Discovery leave the cluster, the other discovery get update discoveredItems`, (done) => {
     expect.assertions(2);
 
-    let cluster = getCluster({ seedAddress });
+    const cluster = getCluster({ seedAddress });
     joinCluster({ ...createDiscoveryEntity('address1'), cluster });
     joinCluster({ ...createDiscoveryEntity('address2'), cluster });
     joinCluster({ ...createDiscoveryEntity('address3'), cluster });
