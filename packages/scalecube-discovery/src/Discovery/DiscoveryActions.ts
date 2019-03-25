@@ -1,10 +1,10 @@
 import {
-  AddToCluster,
+  JoinCluster,
   Cluster,
   ClustersMap,
   GetCluster,
-  NotifyAllListeners,
-  RemoveFromCluster,
+  ShareDataBetweenDiscoveries,
+  LeaveCluster,
   ScalecubeGlobal,
 } from '../helpers/types';
 
@@ -14,48 +14,52 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   const namespace = window.scalecube.clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
-      nodes: [],
-      allEndPoints: [],
+      discoveries: [],
+      allDiscoveredItems: [],
     };
   }
 
   return namespace[seedAddress];
 };
 
-export const notifyAllListeners = ({ cluster }: NotifyAllListeners) =>
-  cluster.nodes.forEach((node) => node && node.subjectNotifier && node.subjectNotifier.next(node.endPoints || []));
-
-export const removeFromCluster = ({ cluster, nodeAddress }: RemoveFromCluster): Cluster => {
-  // remove from allEndPoints[]
-  cluster.allEndPoints = cluster.allEndPoints.filter((endPoint) => endPoint.address !== nodeAddress);
-  // remove from each Node endPoints[]
-  cluster.nodes.forEach((node) => {
-    node.endPoints = node.endPoints.filter((endPoint) => endPoint.address !== nodeAddress);
+export const leaveCluster = ({ cluster, address }: LeaveCluster): Cluster => {
+  // remove from allDiscoveredItems[]
+  cluster.allDiscoveredItems = cluster.allDiscoveredItems.filter((item) => item.address !== address);
+  // remove from each discoveryEntity discoveredItems[]
+  cluster.discoveries.forEach((discovery) => {
+    discovery.discoveredItems = discovery.discoveredItems.filter((item) => item.address !== address);
   });
-  // remove node from the cluster
-  cluster.nodes = cluster.nodes.filter((node) => node.address !== nodeAddress);
+  // remove discoveryEntity from the cluster
+  cluster.discoveries = cluster.discoveries.filter((discovery) => discovery.address !== address);
+
+  shareDataBetweenDiscoveries({ discoveries: cluster.discoveries });
 
   return cluster;
 };
 
-export const addToCluster = ({ cluster, endPoints, nodeAddress, subjectNotifier }: AddToCluster): Cluster => {
-  // add new endPoints[] to each node in the cluster
-  cluster.nodes.forEach((node) => {
-    node.endPoints = [...node.endPoints, ...endPoints];
+export const joinCluster = ({ cluster, itemsToPublish, address, subjectNotifier }: JoinCluster): Cluster => {
+  // add new discoveredItems[] to each discoveryEntity in the cluster
+  cluster.discoveries.forEach((discovery) => {
+    discovery.discoveredItems = [...discovery.discoveredItems, ...itemsToPublish];
   });
 
-  const allPreviousEndPoints = [...(cluster.allEndPoints || [])];
+  const allPreviousDiscoveredItems = [...(cluster.allDiscoveredItems || [])];
 
-  // add new node to the cluster (node doesn't contain its own endpoints)
-  cluster.nodes.push({
-    address: nodeAddress,
-    endPoints: allPreviousEndPoints,
+  // add new discoveryEntity to the cluster (discoveryEntity doesn't contain its own discoveredItems[])
+  cluster.discoveries.push({
+    address,
+    discoveredItems: allPreviousDiscoveredItems,
     subjectNotifier,
   });
-  // save current endPoints in the replaySubject cache.
-  subjectNotifier && subjectNotifier.next(allPreviousEndPoints);
-  // add new endPoints[] to the allEndPoints[]
-  cluster.allEndPoints = [...(cluster.allEndPoints || []), ...endPoints];
+  // save current discoveredItems[] in the replaySubject cache.
+  subjectNotifier && subjectNotifier.next(allPreviousDiscoveredItems);
+  // add new discoveredItems[] to the allDiscoveredItems[]
+  cluster.allDiscoveredItems = [...(cluster.allDiscoveredItems || []), ...itemsToPublish];
+
+  shareDataBetweenDiscoveries({ discoveries: cluster.discoveries });
 
   return cluster;
 };
+
+const shareDataBetweenDiscoveries = ({ discoveries }: ShareDataBetweenDiscoveries) =>
+  discoveries.forEach((discovery) => discovery && discovery.subjectNotifier && discovery.subjectNotifier.next(discovery.discoveredItems || []));

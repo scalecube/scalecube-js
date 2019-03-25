@@ -30,7 +30,7 @@ describe('Test the creation of Microservice', () => {
   });
 
   describe('Test creating microservice from function constructor', () => {
-    it('MethodRegistry throws an error when method reference is not a function', () => {
+    test('MethodRegistry throws an error when method reference is not a function', () => {
       const greetingService: Service = {
         definition: definitionWithWrongMethodReference,
         reference: new GreetingService(),
@@ -61,7 +61,7 @@ describe('Test the creation of Microservice', () => {
         serviceDefinition: greetingServiceDefinition,
       });
 
-      it('MethodRegistry throws an error when method reference is not a function', () => {
+      test('MethodRegistry throws an error when method reference is not a function', () => {
         const greetingService: Service = {
           definition: definitionWithWrongMethodReference,
           reference: { hello, greet$, empty },
@@ -74,11 +74,11 @@ describe('Test the creation of Microservice', () => {
         }
       });
 
-      it('Test REQUEST_RESPONSE', () => {
+      test('Test REQUEST_RESPONSE', () => {
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
 
-      it('Test observable', (done) => {
+      test('Test observable', (done) => {
         greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
           done();
@@ -99,14 +99,14 @@ describe('Test the creation of Microservice', () => {
         services: [greetingService1, greetingService2],
       });
 
-      it('Test REQUEST_RESPONSE', () => {
+      test('Test REQUEST_RESPONSE', () => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionHello,
         });
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
 
-      it('Test observable', (done) => {
+      test('Test observable', (done) => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionGreet$,
         });
@@ -118,10 +118,11 @@ describe('Test the creation of Microservice', () => {
     });
   });
 
-  describe('Test using different seedAddress', () => {
-    it('Put two microservices on the first cluster and one microservice on the second cluster', () => {
+  describe('Test Discovery', () => {
+    test('Access endpoint from other discovery with remoteCall', () => {
+      expect.assertions(1);
+
       const ms1SeedAddress = 'cluster1';
-      const ms2SeedAddress = 'cluster2';
       const greetingService1: Service = {
         definition: greetingServiceDefinition,
         reference: new GreetingService(),
@@ -130,15 +131,13 @@ describe('Test the creation of Microservice', () => {
         definition: greetingServiceDefinition2,
         reference: new GreetingService2(),
       };
-      expect.assertions(3);
 
-      Microservices.create({ services: [greetingService1], seedAddress: ms1SeedAddress });
+
+      const ms1 = Microservices.create({ services: [greetingService1], seedAddress: ms1SeedAddress });
       Microservices.create({ services: [greetingService2], seedAddress: ms1SeedAddress });
-      Microservices.create({ services: [greetingService2], seedAddress: ms2SeedAddress });
 
-      expect(Object.keys(window.scalecube.clusters)).toEqual([ms1SeedAddress, ms2SeedAddress]);
-      expect(window.scalecube.clusters[ms1SeedAddress].nodes).toHaveLength(2);
-      expect(window.scalecube.clusters[ms2SeedAddress].nodes).toHaveLength(1);
+      const proxy1 = ms1.createProxy({serviceDefinition : greetingServiceDefinition2});
+      return expect(proxy1.hello(defaultUser)).resolves.toEqual({}); // will fail after implementing remoteCall
     });
   });
 });

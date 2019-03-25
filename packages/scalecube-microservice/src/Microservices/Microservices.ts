@@ -11,23 +11,24 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
-    const nodeAddress = uuidv4();
+    const address = uuidv4();
 
     let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
-    services && Array.isArray(services) && methodRegistry.add({ services, address: nodeAddress });
+    services && Array.isArray(services) && methodRegistry.add({ services, address });
 
-    const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({
+    const endPointsToPublishInCluster = services && Array.isArray(services) ? serviceRegistry.createEndPoints({
       services,
-      address: nodeAddress
+      address
     }) : [];
+
     const discovery = createDiscovery({
-      nodeAddress,
-      endPoints,
+      address,
+      itemsToPublish : endPointsToPublishInCluster,
       seedAddress,
     });
 
-    discovery.notifier.subscribe((endpoints: Endpoint[]) => serviceRegistry.add({ endpoints }));
+    discovery.discoveredItems$().subscribe((endpoints: Endpoint[]) => serviceRegistry.add({ endpoints }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {

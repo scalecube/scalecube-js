@@ -1,6 +1,6 @@
-import { Observable, ReplaySubject } from 'rxjs';
-import { Item, Node } from '../helpers/types';
-import { addToCluster, getCluster, notifyAllListeners } from './DiscoveryActions';
+import { ReplaySubject } from 'rxjs';
+import { Item } from '../helpers/types';
+import { joinCluster, getCluster, leaveCluster } from './DiscoveryActions';
 
 describe('Test DiscoveryActions', () => {
   const seedAddress = 'mockAddress';
@@ -9,61 +9,56 @@ describe('Test DiscoveryActions', () => {
     window.scalecube.clusters = {};
   });
 
-  const createNode = (address = 'address'): Node => ({
+  const createDiscoveryEntity = (address = 'address') => ({
     address,
-    endPoints: [],
+    itemsToPublish: [{address : `${address}_service`}],
     subjectNotifier: new ReplaySubject<Item[]>(1),
   });
 
-  it('Test getCluster({ seedAddress }): Cluster', () => {
+  test('getCluster create global namespace under window.scalecube.clusters[seedAddress]', () => {
     const cluster = getCluster({ seedAddress });
     expect(cluster).toMatchObject(window.scalecube.clusters[seedAddress]);
   });
 
-  it('Test notifyAllListeners({ cluster }) - one node in the cluster', (done) => {
+  test(`Discovery doesn't report on its own items`, (done) => {
     const cluster = getCluster({ seedAddress });
-    cluster.nodes = [createNode()];
+    joinCluster({ ...createDiscoveryEntity(), cluster });
 
-    notifyAllListeners({ cluster });
-
-    cluster.nodes[0].subjectNotifier.subscribe((endPoints) => {
-      expect(endPoints).toHaveLength(0);
+    cluster.discoveries[0].subjectNotifier.subscribe((items) => {
+      expect(items).toHaveLength(0);
       done();
     });
   });
 
-  it('Test notifyAllListeners({ cluster }) - multi nodes in the cluster', (done) => {
+  test(`Discovery discover other items in the cluster`, (done) => {
     expect.assertions(3);
 
     const cluster = getCluster({ seedAddress });
-    cluster.nodes = [createNode('address1'), createNode('address2'), createNode('address3')];
+    joinCluster({ ...createDiscoveryEntity('address1'), cluster });
+    joinCluster({ ...createDiscoveryEntity('address2'), cluster });
+    joinCluster({ ...createDiscoveryEntity('address3'), cluster });
 
-    notifyAllListeners({ cluster });
-
-    cluster.nodes.forEach((node) => {
-      node.subjectNotifier.subscribe((endPoints) => {
-        expect(endPoints).toHaveLength(0);
-        if (node.address === 'address3') {
-          done();
-        }
-      });
-    });
+    cluster.discoveries[0].subjectNotifier.subscribe(items => {
+      expect(items).toHaveLength(2);
+      expect(items).toContainEqual({address :'address2_service'});
+      expect(items).toContainEqual({address :'address3_service'});
+      done();
+    })
   });
 
-  it('Test addToCluster({ cluster, endPoints, address, subjectNotifier }): Cluster', () => {
-    expect.assertions(3);
-    const address = 'node';
+  test(`When Discovery leave the cluster, the other discovery get update discoveredItems`, (done) => {
+    expect.assertions(2);
+
     let cluster = getCluster({ seedAddress });
-    cluster = addToCluster({ cluster, endPoints: [], nodeAddress: address, subjectNotifier: new ReplaySubject(1) });
-    expect(cluster.nodes).toHaveLength(1);
-    const nodeInCluster = cluster.nodes[0];
-    expect(nodeInCluster).toEqual(
-      expect.objectContaining({
-        address: expect.any(String),
-        endPoints: expect.any(Array),
-        subjectNotifier: expect.any(Observable),
-      })
-    );
-    expect(nodeInCluster.address).toMatch(address);
+    joinCluster({ ...createDiscoveryEntity('address1'), cluster });
+    joinCluster({ ...createDiscoveryEntity('address2'), cluster });
+    joinCluster({ ...createDiscoveryEntity('address3'), cluster });
+    leaveCluster({address : 'address3_service', cluster });
+
+    cluster.discoveries[0].subjectNotifier.subscribe(items => {
+      expect(items).toHaveLength(1);
+      expect(items).toContainEqual({address :'address2_service'});
+      done();
+    })
   });
 });

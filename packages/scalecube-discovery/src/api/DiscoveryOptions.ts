@@ -1,18 +1,22 @@
 import { Item } from '.'
 
 /**
- * The parameters that are required to add Node to the Cluster
+ * @interface DiscoveryOptions
+ * Options for discovery creation.
  */
 export default interface DiscoveryOptions {
   /**
-   * The unique address of the Node that should be added to the Cluster
+   * @property
+   * A unique address of the Discovery.
    */
-  nodeAddress: string;
+  address: string;
   /**
-   * Endpoints that should be added to the Cluster
+   * @property
+   * The data that the discovery need to share.
    */
-  endPoints: Item[];
+  itemsToPublish: Item[];
   /**
+   * @property
    * The unique address of the Cluster
    */
   seedAddress: string;

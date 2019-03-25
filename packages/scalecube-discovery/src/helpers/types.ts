@@ -6,43 +6,50 @@ declare global {
   }
 }
 
-export type Item = any;
-
-export interface NotifyAllListeners {
-  cluster: Cluster;
-}
-
-export interface GetCluster {
-  seedAddress: string;
-}
-
-export interface AddToCluster {
-  cluster: Cluster;
-  nodeAddress: string;
-  endPoints: Item[];
-  subjectNotifier: ReplaySubject<Item[]>;
-}
-
-export interface RemoveFromCluster {
-  cluster: Cluster;
-  nodeAddress: string;
-}
-
-export interface Cluster {
-  nodes: Node[];
-  allEndPoints: Item[];
+export interface ScalecubeGlobal {
+  clusters: ClustersMap;
 }
 
 export interface ClustersMap {
   [seedAddress: string]: Cluster;
 }
 
-export interface Node {
+export interface Item {
+  address: string
+}
+
+export interface ShareDataBetweenDiscoveries {
+  discoveries: DiscoveryEntity[]
+}
+
+export interface DiscoveryEntity {
   address: string;
-  endPoints: Item[];
+  discoveredItems: Item[];
   subjectNotifier: ReplaySubject<Item[]>;
 }
 
-export interface ScalecubeGlobal {
-  clusters: ClustersMap;
+export interface GetCluster {
+  seedAddress: string;
 }
+
+export interface JoinCluster {
+  cluster: Cluster;
+  address: string;
+  itemsToPublish: Item[];
+  subjectNotifier: ReplaySubject<Item[]>;
+}
+
+export interface LeaveCluster {
+  cluster: Cluster;
+  address: string;
+}
+
+export interface Cluster {
+  discoveries: DiscoveryEntity[];
+  allDiscoveredItems: Item[];
+}
+
+
+
+
+
