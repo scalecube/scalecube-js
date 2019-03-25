@@ -1,8 +1,9 @@
+import uuidv4 from 'uuid/v4';
 import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { isNodeEnv, uuidv4 } from '../helpers/utils'
+import { isNodeEnv } from '../helpers/utils'
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
