@@ -13,7 +13,7 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   const globalNamespace = getGlobal()
   globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
   globalNamespace.scalecube.clusters = globalNamespace.scalecube.clusters || ({} as ClustersMap);
-  const namespace = window.scalecube.clusters;
+  const namespace = globalNamespace.scalecube.clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
       nodes: [],

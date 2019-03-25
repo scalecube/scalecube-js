@@ -7,8 +7,10 @@ declare global {
 }
 
 declare global {
-  interface Global {
-    scalecube: ScalecubeGlobal;
+  namespace NodeJS {
+    interface Global {
+      scalecube: ScalecubeGlobal;
+    }
   }
 }
 
