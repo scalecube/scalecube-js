@@ -1,23 +1,20 @@
 import { ReplaySubject } from 'rxjs';
-import { DiscoveryOptions, Discovery } from '../api';
-import { getCluster, notifyAllListeners, removeFromCluster, addToCluster } from './DiscoveryActions';
-import { Item } from '../helpers/types';
+import { DiscoveryOptions, Discovery, Item } from '../api';
+import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
 import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
 
-export const createDiscovery = ({ nodeAddress, endPoints, seedAddress }: DiscoveryOptions): Discovery => {
+export const createDiscovery = ({ address, itemsToPublish, seedAddress }: DiscoveryOptions): Discovery => {
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
 
-  cluster = addToCluster({ cluster, nodeAddress, endPoints, subjectNotifier });
-  notifyAllListeners({ cluster });
+  cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
 
   return Object.freeze({
     destroy: () => {
-      cluster = removeFromCluster({ cluster, nodeAddress });
-      notifyAllListeners({ cluster });
+      cluster = leaveCluster({ cluster, address });
       subjectNotifier && subjectNotifier.complete();
-      return Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(nodeAddress, seedAddress));
+      return Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
     },
-    notifier: subjectNotifier.asObservable(),
+    discoveredItems$: () => subjectNotifier.asObservable(),
   });
 };

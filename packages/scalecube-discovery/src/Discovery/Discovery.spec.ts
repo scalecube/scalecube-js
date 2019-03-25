@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { ClustersMap } from '../helpers/types';
 import { createDiscovery } from './Discovery';
 import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
@@ -8,39 +7,33 @@ describe('Test Discovery', () => {
     window.scalecube.clusters = {} as ClustersMap;
   });
 
-  const endPoint = {
-    uri: '',
-    transport: '',
-    qualifier: 'serviceName/methodName',
-    serviceName: 'serviceName',
-    methodName: 'methodName',
-    asyncModel: 'ASYNC_MODEL_TYPES.REQUEST_RESPONSE',
-    address: '',
+  const itemToPublish = {
+    address: 'itemAddress',
   };
 
   it('Test createDiscovery add Nodes to cluster', () => {
     const seedAddress = 'myNamespace';
     expect(window.scalecube.clusters[seedAddress]).toBeUndefined();
 
-    createDiscovery({ nodeAddress: 'node1', seedAddress, endPoints: [] });
-    createDiscovery({ nodeAddress: 'node2', seedAddress, endPoints: [] });
-    expect(window.scalecube.clusters[seedAddress].nodes).toHaveLength(2);
+    createDiscovery({ address: 'node1', seedAddress, itemsToPublish: [] });
+    createDiscovery({ address: 'node2', seedAddress, itemsToPublish: [] });
+    expect(window.scalecube.clusters[seedAddress].discoveries).toHaveLength(2);
     expect(Object.keys(window.scalecube.clusters)).toHaveLength(1);
   });
 
   it('Test createDiscovery add Nodes to cluster by its seedAddress', () => {
-    createDiscovery({ nodeAddress: 'node1', seedAddress: 'seedAddress1', endPoints: [] });
-    createDiscovery({ nodeAddress: 'node2', seedAddress: 'seedAddress2', endPoints: [] });
+    createDiscovery({ address: 'node1', seedAddress: 'seedAddress1', itemsToPublish: [] });
+    createDiscovery({ address: 'node2', seedAddress: 'seedAddress2', itemsToPublish: [] });
     expect(Object.keys(window.scalecube.clusters)).toHaveLength(2);
   });
 
   it('Test createDiscovery expose methods', () => {
-    const discovery = createDiscovery({ nodeAddress: 'node1', seedAddress: 'seedAddress1', endPoints: [] });
+    const discovery = createDiscovery({ address: 'node1', seedAddress: 'seedAddress1', itemsToPublish: [] });
     expect(Object.keys(discovery)).toHaveLength(2);
     expect(discovery).toEqual(
       expect.objectContaining({
         destroy: expect.any(Function),
-        notifier: expect.any(Observable),
+        discoveredItems$: expect.any(Function),
       })
     );
   });
@@ -50,27 +43,27 @@ describe('Test Discovery', () => {
     let step = 0;
 
     const discovery = createDiscovery({
-      nodeAddress: 'node1',
+      address: 'node1',
       seedAddress: 'seedAddress1',
-      endPoints: [endPoint, endPoint],
+      itemsToPublish: [itemToPublish, itemToPublish],
     });
-    discovery.notifier.subscribe((endPoints) => {
+    discovery.discoveredItems$().subscribe((discoveredItems) => {
       switch (step) {
         case 0:
-          expect(endPoints).toHaveLength(0);
+          expect(discoveredItems).toHaveLength(0);
           step++;
           break;
         case 1:
-          expect(endPoints).toHaveLength(1);
+          expect(discoveredItems).toHaveLength(1);
           step++;
           break;
       }
     });
 
-    const discovery2 = createDiscovery({ nodeAddress: 'node2', seedAddress: 'seedAddress1', endPoints: [endPoint] });
+    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish] });
 
-    discovery2.notifier.subscribe((endPoints) => {
-      expect(endPoints).toHaveLength(2);
+    discovery2.discoveredItems$().subscribe((discoveredItems) => {
+      expect(discoveredItems).toHaveLength(2);
       step++;
       if (step === 3) {
         done();
@@ -81,22 +74,22 @@ describe('Test Discovery', () => {
   it('Test end node in cluster', (done) => {
     expect.assertions(3);
     let step = 0;
-    const endpoint1 = { ...endPoint, address: 'node1' };
-    const endpoint2 = { ...endPoint, address: 'node2' };
+    const itemToPublish1 = { ...itemToPublish, address: 'node1' };
+    const itemToPublish2 = { ...itemToPublish, address: 'node2' };
     const discovery = createDiscovery({
-      nodeAddress: 'node1',
+      address: 'node1',
       seedAddress: 'seedAddress1',
-      endPoints: [endpoint1, endpoint1],
+      itemsToPublish: [itemToPublish1, itemToPublish1],
     });
-    const discovery2 = createDiscovery({ nodeAddress: 'node2', seedAddress: 'seedAddress1', endPoints: [endpoint2] });
+    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish2] });
 
-    discovery.notifier.subscribe((endPoints) => {
+    discovery.discoveredItems$().subscribe((discoveredItems) => {
       switch (step) {
         case 0:
-          expect(endPoints).toHaveLength(1);
+          expect(discoveredItems).toHaveLength(1);
           break;
         case 1:
-          expect(endPoints).toHaveLength(0);
+          expect(discoveredItems).toHaveLength(0);
           break;
       }
       step++;
