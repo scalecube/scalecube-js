@@ -21,10 +21,16 @@ export const getReferencePointer = ({
   } else {
     if (!isFunction((reference as ServiceImplementationForObject)[methodName])) {
       // Check if method is static
-      if (!isFunction((reference as { constructor: { [methodName: string]: Function } }).constructor[methodName])) {
+      if (
+        !isFunction(
+          (reference as { constructor: { [methodName: string]: (...args: any[]) => any } }).constructor[methodName]
+        )
+      ) {
         throw new Error(getInvalidMethodReferenceError(qualifier));
       } else {
-        func = (reference as { constructor: { [methodName: string]: (...args: any[]) => any }}).constructor[methodName];
+        func = (reference as { constructor: { [methodName: string]: (...args: any[]) => any } }).constructor[
+          methodName
+        ];
       }
     } else {
       func = (reference as ServiceImplementationForObject)[methodName].bind(reference);

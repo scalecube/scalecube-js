@@ -1,8 +1,19 @@
 import { Observable } from 'rxjs';
-import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
+import { ASYNC_MODEL_TYPES } from '../../src';
 
 class GreetingServiceWithStatic {
+  public static helloStatic = (name: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!name) {
+        reject(new Error('please provide user to greet'));
+      } else {
+        resolve(`Hello from static method, ${name}`);
+      }
+    });
+  };
+
   public empty: null;
+
   constructor() {
     this.empty = null;
   }
@@ -27,16 +38,6 @@ class GreetingServiceWithStatic {
       return () => {};
     });
   }
-
-  static helloStatic = (name: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!name) {
-        reject(new Error('please provide user to greet'));
-      } else {
-        resolve(`Hello from static method, ${name}`);
-      }
-    });
-  };
 }
 
 export const greetingServiceWithStaticDefinition = {

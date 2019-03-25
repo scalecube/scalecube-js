@@ -27,7 +27,7 @@
     "build": "lerna run build",
     "test": "lerna run test",
     "lint-md": "remark . --output",
-    "lint": "yarn lint-md && lerna run lint",
+    "lint": "yarn lint-md && lerna run lint:fix",
     "format": "lerna run format",
     "doc": "lerna run doc"
   },
