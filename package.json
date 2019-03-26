@@ -25,9 +25,12 @@
   ],
   "scripts": {
     "start": "http-server",
+    "start-node-example": "lerna run start-node-example",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run build",
     "test": "lerna run test",
+    "test-dom-env": "lerna run test-don-env",
+    "test-node-env": "lerna run test-node-env",
     "lint-md": "remark . --output",
     "lint": "yarn lint-md && lerna run lint",
     "format": "lerna run format",

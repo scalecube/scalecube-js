@@ -1,9 +1,12 @@
 import { createDiscoveriesWithSameSeedAddress, expectWithFailNow, } from '../helpers/utils'
 import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const'
+import { getGlobal } from '../../src/helpers/utils'
+
+const globalNamespace = getGlobal();
 
 describe('Discovery tests', () => {
   beforeEach(() => {
-    window.scalecube.clusters = {};
+    globalNamespace.scalecube.clusters = {};
   });
 
   test(`Each discovery includes all the itemsToPublish from other discoveries that share the same cluster except its own itemsToPublish)`, (done) => {

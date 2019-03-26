@@ -1,3 +1,6 @@
 import { ClustersMap } from '../../src/helpers/types';
+import { getGlobal } from '../../src/helpers/utils'
 
-window.scalecube = window.scalecube || { clusters: {} as ClustersMap };
+const globalNamespace = getGlobal();
+
+globalNamespace.scalecube = globalNamespace.scalecube || { clusters: {} as ClustersMap };
