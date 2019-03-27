@@ -10,7 +10,7 @@ import { Endpoint, Message, Microservice, MicroserviceOptions, Microservices as 
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
+  create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
