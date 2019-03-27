@@ -160,7 +160,12 @@ describe('Discovery tests', () => {
 
   });
 
-  it('Discovery.destroy is resolved with the correct message', async () => {
+  it(`Scenario: remove discovery from the cluster
+  Given seed address 
+    And no discoveries were created before
+   When creating discovery
+    And then destroy it
+   Then correct message will be received`, async () => {
     expect.assertions(1);
 
     const discovery1 = createDiscovery({
