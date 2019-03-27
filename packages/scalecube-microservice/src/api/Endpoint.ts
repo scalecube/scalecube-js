@@ -29,4 +29,8 @@ export default interface Endpoint {
    * Type of communication between a consumer and a provider
    */
   asyncModel: AsyncModel;
+  /**
+   * A unique address of an endpoint
+   */
+  address: string;
 }

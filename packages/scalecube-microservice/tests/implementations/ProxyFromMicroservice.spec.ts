@@ -1,7 +1,8 @@
 import { isObservable } from 'rxjs';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
-import Microservices, {  ASYNC_MODEL_TYPES } from '../../src';
+import GreetingServiceWithStatic, { greetingServiceWithStaticDefinition } from '../mocks/GreetingServiceWithStatic';
+import Microservices, { ASYNC_MODEL_TYPES } from '../../src';
 import { defaultRouter } from '../../src/Routers/default';
 import { ProxyOptions, Service, ServiceDefinition } from '../../src/api';
 import AsyncModel from '../../src/api/AsyncModel';
@@ -51,6 +52,11 @@ describe('Test creating proxy from microservice', () => {
   const greetingService2: Service = {
     definition: greetingServiceDefinition2,
     reference: new GreetingService2(),
+  };
+
+  const greetingServiceWithStatic: Service = {
+    definition: greetingServiceWithStaticDefinition,
+    reference: new GreetingServiceWithStatic(),
   };
 
   const prepareScalecubeForGreetingService = (
@@ -223,5 +229,12 @@ describe('Test creating proxy from microservice', () => {
 
     const greetObservable = greetingServiceProxy.greet$(defaultUser);
     expect(isObservable(greetObservable)).toBeTruthy();
+  });
+
+  it('Invokes static methods on class correctly', () => {
+    expect.assertions(1);
+    const ms = Microservices.create({ services: [greetingServiceWithStatic] });
+    const greetingServiceProxy = ms.createProxy({ serviceDefinition: greetingServiceWithStaticDefinition });
+    return expect(greetingServiceProxy.helloStatic(defaultUser)).resolves.toBe('Hello from static method, defaultUser');
   });
 });

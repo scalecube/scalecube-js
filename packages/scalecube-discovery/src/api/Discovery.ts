@@ -1,16 +1,23 @@
 import { Observable } from 'rxjs';
-import { Item } from '../helpers/types';
+import { Item } from '.';
 
 /**
- * Discovery provide functionality to receive/send information about nodes in the cluster
- * and to remove Node from the Cluster.
- *
- * `destroy: Promise<string>` - remove Microservice Node from the Cluster
- *
- * `notifier: Observable<Endpoint[]>` - notify on endpoints in the Cluster
- *
+ * @interface Discovery
+ * Provides a way to publish and discover items in distributed environment
  */
 export default interface Discovery {
-  destroy: () => Promise<string>;
-  notifier: Observable<Item[]>;
+  /**
+   * @method
+   * An Observable sequence that describes all the items that published by **other** discoveries.
+   * Emits new array of all items each time new discovery is created or destroyed.
+   */
+  discoveredItems$(): Observable<Item[]>;
+  /**
+   * @method
+   * Destroy the discovery:
+   * - Completes discoveredItems$.
+   * - Notifies other discoveries that this discovery's items are not available anymore.
+   * - Resolves with the message, that specifies the address of the node and the address of the seed
+   */
+  destroy(): Promise<string>;
 }

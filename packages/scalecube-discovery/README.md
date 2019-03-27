@@ -1,28 +1,33 @@
 [![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
+> **NOTICE** versions 0.1.x are experimental without LTS or the API and behavior might change from patch to patch
 
 # Discovery
 
-Discovery is a tool used by [scalecube](packages/scalecube-microservice/README.md) to access available microservices on a cluster of microservices.
+Discovery is used that publish and discover values in a distributed environment.
 
 ## Basic Usage
 
 ```javascript
 const discoveryConfig = {
-  seedAddress : 'namespace', // string
-  address : 'random identifier', // string
-  endPoints: [] // Endpoint[]
-}
-
-const node = createDiscovery(discoveryConfig);
-
-node.notifier.subscribe(console.log); // emit all remote endpoints on the cluster(seedAddress)
+  seedAddress: 'defaultEnvironment', // string
+  address: 'random-discovery-identifier', // string
+  itemsToPublish: [], // Item[]
+};
+const discovery = createDiscovery(discoveryConfig);
 ```
 
-After a node join the cluster and subscribe to it, then it will be notified on all new endpoints that join the cluster.
-To remove node from the cluster use node.destroy
+After the creation of the discovery, it is possible to subscribe to `discoveredItems$()`
+and then to receive information about the other discoveries that join the same environment ('seedAddress')
 
 ```javascript
-node.end(); // remove node microservices from the cluster and unsubscribe from the cluster.
+discovery.discoveredItems$().subscribe(console.log); // emits all values from the other discoveries that are joining the same 'seedAddress'
+```
+
+After the creation of the discovery, it is possible to remove it by `destroy()`
+destroy will complete the stream, remove the discovery's data from the environment
+and notify all other discoveries about the change.
+
+```javascript
+discovery.destroy().then(console.log); // random-discovery-identifier has been removed from defaultEnvironment
 ```

@@ -1,12 +1,12 @@
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import Microservices, { ASYNC_MODEL_TYPES } from '../../src';
-import { Message, Service } from '../../src/api/public';
+import { Message, Service } from '../../src/api';
 import { getQualifier } from '../../src/helpers/serviceData';
 import { expectWithFailNow } from '../helpers/utils';
 import {
   getAsyncModelMissmatch,
   getNotFoundByRouterError,
-  WRONG_DATA_FORMAT_IN_MESSAGE
+  WRONG_DATA_FORMAT_IN_MESSAGE,
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {

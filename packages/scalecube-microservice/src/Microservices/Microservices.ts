@@ -1,36 +1,39 @@
+import uuidv4 from 'uuid/v4';
 import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { uuidv4 } from '../helpers/utils';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
-import { MicroserviceContext } from '../api/private/types';
-import {
-  Endpoint,
-  Message,
-  Microservice,
-  MicroserviceOptions,
-  Microservices as MicroservicesInterface,
-} from '../api/public';
+import { MicroserviceContext } from '../helpers/types';
+import { Endpoint, Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = location.hostname }: MicroserviceOptions): Microservice => {
+  create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
-    const endPoints = services && Array.isArray(services) ? serviceRegistry.createEndPoints({ services, address }) : [];
+    const endPointsToPublishInCluster =
+      services && Array.isArray(services)
+        ? serviceRegistry.createEndPoints({
+            services,
+            address,
+          })
+        : [];
+
     const discovery = createDiscovery({
       address,
-      endPoints,
+      itemsToPublish: endPointsToPublishInCluster,
       seedAddress,
     });
 
-    discovery.notifier.subscribe((endpoints: Endpoint[]) => serviceRegistry.add({ endpoints }));
+    discovery
+      .discoveredItems$()
+      .subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {

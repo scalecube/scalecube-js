@@ -1,3 +1,4 @@
+import uuidv4 from 'uuid/v4';
 import { Reference, Service } from '../api';
 import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
@@ -8,7 +9,6 @@ import {
   getUpdatedMethodRegistry,
 } from './MethodRegistry';
 import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
-import { uuidv4 } from '../helpers/utils';
 
 describe('ServiceRegistry Testing', () => {
   const address = uuidv4();
