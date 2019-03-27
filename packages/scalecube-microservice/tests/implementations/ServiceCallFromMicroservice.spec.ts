@@ -6,7 +6,7 @@ import { expectWithFailNow } from '../helpers/utils';
 import {
   getAsyncModelMissmatch,
   getNotFoundByRouterError,
-  WRONG_DATA_FORMAT_IN_MESSAGE
+  WRONG_DATA_FORMAT_IN_MESSAGE,
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {

@@ -17,3 +17,5 @@ export const throwErrorFromServiceCall = ({
   console.warn(errorMessage);
   return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? Promise.reject(error) : throwError(error);
 };
+
+export const getGlobalNamespace = () => (typeof window === 'undefined' ? global : window);

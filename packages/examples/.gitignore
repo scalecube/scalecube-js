@@ -6,7 +6,6 @@ es-bundle/
 lib/
 dist/
 flow-typed/
-doc/
 coverage/
 .npmrc
 yarn-error.log

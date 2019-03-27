@@ -21,11 +21,14 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
       return serviceRegistryMap[qualifier] || [];
     },
-    add: ({ services = [] }) => {
+    createEndPoints: ({ services = [], address }) => {
       if (!serviceRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
-      const endpoints = getEndpointsFromServices({ services }) as Endpoint[]; // all services => endPoints[]
+
+      return getEndpointsFromServices({ services, address }) as Endpoint[]; // all services => endPoints[]
+    },
+    add: ({ endpoints = [] }: { endpoints: Endpoint[] }) => {
       serviceRegistryMap = getUpdatedServiceRegistry({
         serviceRegistryMap,
         endpoints,
@@ -41,14 +44,16 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
 // Helpers
 
-export const getEndpointsFromServices = ({ services = [] }: AvailableServices): Endpoint[] | [] =>
-  services.reduce((res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service })], []);
+export const getEndpointsFromServices = ({ services = [], address }: AvailableServices): Endpoint[] | [] =>
+  services.reduce(
+    (res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service, address })],
+    []
+  );
 
 export const getUpdatedServiceRegistry = ({
   serviceRegistryMap,
   endpoints,
 }: GetUpdatedServiceRegistryOptions): ServiceRegistryMap => ({
-  ...serviceRegistryMap,
   ...endpoints.reduce(
     (res: ServiceRegistryMap, endpoint: Endpoint) => ({
       ...res,
@@ -58,11 +63,10 @@ export const getUpdatedServiceRegistry = ({
   ),
 });
 
-export const getEndpointsFromService = ({ service }: AvailableService): Endpoint[] => {
+export const getEndpointsFromService = ({ service, address }: AvailableService): Endpoint[] => {
   let data: Endpoint[] = [];
   const { definition } = service;
   const transport = 'window:/';
-
   if (isValidServiceDefinition(definition)) {
     const { serviceName, methods } = definition;
 
@@ -73,6 +77,7 @@ export const getEndpointsFromService = ({ service }: AvailableService): Endpoint
       asyncModel: methods[methodName].asyncModel,
       transport,
       uri: `${transport}/${serviceName}/${methodName}`,
+      address,
     }));
   } else {
     throw new Error(getServiceIsNotValidError(definition.serviceName));
