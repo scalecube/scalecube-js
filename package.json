@@ -7,7 +7,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged --pattern !'**/*.md'"
+      "pre-commit": "pretty-quick --staged"
     }
   },
   "workspaces": [

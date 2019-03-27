@@ -7,7 +7,7 @@ import {
   LeaveCluster,
   ScalecubeGlobal,
 } from '../helpers/types';
-import { getGlobalNamespace, getScalecubeGlobal } from '../helpers/utils'
+import { getGlobalNamespace, getScalecubeGlobal } from '../helpers/utils';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   const globalNamespace = getGlobalNamespace();
@@ -62,4 +62,7 @@ export const joinCluster = ({ cluster, itemsToPublish, address, subjectNotifier 
 };
 
 const shareDataBetweenDiscoveries = ({ discoveries }: ShareDataBetweenDiscoveries) =>
-  discoveries.forEach((discovery) => discovery && discovery.subjectNotifier && discovery.subjectNotifier.next(discovery.discoveredItems || []));
+  discoveries.forEach(
+    (discovery) =>
+      discovery && discovery.subjectNotifier && discovery.subjectNotifier.next(discovery.discoveredItems || [])
+  );

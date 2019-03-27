@@ -11,7 +11,7 @@ import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingSer
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
 import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/src/helpers/types';
-import { getGlobalNamespace } from '../../src/helpers/utils'
+import { getGlobalNamespace } from '../../src/helpers/utils';
 
 describe('Test the creation of Microservice', () => {
   const defaultUser = 'defaultUser';
@@ -133,11 +133,10 @@ describe('Test the creation of Microservice', () => {
         reference: new GreetingService2(),
       };
 
-
       const ms1 = Microservices.create({ services: [greetingService1], seedAddress: ms1SeedAddress });
       Microservices.create({ services: [greetingService2], seedAddress: ms1SeedAddress });
 
-      const proxy1 = ms1.createProxy({serviceDefinition : greetingServiceDefinition2});
+      const proxy1 = ms1.createProxy({ serviceDefinition: greetingServiceDefinition2 });
       return expect(proxy1.hello(defaultUser)).resolves.toEqual({}); // will fail after implementing remoteCall
     });
   });

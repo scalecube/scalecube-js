@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 import { Item } from '../api';
 import { joinCluster, getCluster, leaveCluster } from './DiscoveryActions';
-import { getScalecubeGlobal } from '../helpers/utils'
+import { getScalecubeGlobal } from '../helpers/utils';
 
 const scalecubeGlobal = getScalecubeGlobal();
 
@@ -14,7 +14,7 @@ describe('Test DiscoveryActions', () => {
 
   const createDiscoveryEntity = (address = 'address') => ({
     address,
-    itemsToPublish: [{address : `${address}_service`}],
+    itemsToPublish: [{ address: `${address}_service` }],
     subjectNotifier: new ReplaySubject<Item[]>(1),
   });
 
@@ -41,12 +41,12 @@ describe('Test DiscoveryActions', () => {
     joinCluster({ ...createDiscoveryEntity('address2'), cluster });
     joinCluster({ ...createDiscoveryEntity('address3'), cluster });
 
-    cluster.discoveries[0].subjectNotifier.subscribe(items => {
+    cluster.discoveries[0].subjectNotifier.subscribe((items) => {
       expect(items).toHaveLength(2);
-      expect(items).toContainEqual({address :'address2_service'});
-      expect(items).toContainEqual({address :'address3_service'});
+      expect(items).toContainEqual({ address: 'address2_service' });
+      expect(items).toContainEqual({ address: 'address3_service' });
       done();
-    })
+    });
   });
 
   test(`When Discovery leave the cluster, the other discovery get update discoveredItems`, (done) => {
@@ -56,12 +56,12 @@ describe('Test DiscoveryActions', () => {
     joinCluster({ ...createDiscoveryEntity('address1'), cluster });
     joinCluster({ ...createDiscoveryEntity('address2'), cluster });
     joinCluster({ ...createDiscoveryEntity('address3'), cluster });
-    leaveCluster({address : 'address3_service', cluster });
+    leaveCluster({ address: 'address3_service', cluster });
 
-    cluster.discoveries[0].subjectNotifier.subscribe(items => {
+    cluster.discoveries[0].subjectNotifier.subscribe((items) => {
       expect(items).toHaveLength(1);
-      expect(items).toContainEqual({address :'address2_service'});
+      expect(items).toContainEqual({ address: 'address2_service' });
       done();
-    })
+    });
   });
 });

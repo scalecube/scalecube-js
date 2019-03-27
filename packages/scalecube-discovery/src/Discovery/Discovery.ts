@@ -1,9 +1,13 @@
 import { ReplaySubject } from 'rxjs';
-import { DiscoveryOptions, Discovery, Item , CreateDiscovery} from '../api';
+import { DiscoveryOptions, Discovery, Item, CreateDiscovery } from '../api';
 import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
+import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
 
-export const createDiscovery: CreateDiscovery = ({ address, itemsToPublish, seedAddress }: DiscoveryOptions): Discovery => {
+export const createDiscovery: CreateDiscovery = ({
+  address,
+  itemsToPublish,
+  seedAddress,
+}: DiscoveryOptions): Discovery => {
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
 

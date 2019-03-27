@@ -5,5 +5,3 @@ export default interface Item {
    */
   address: string;
 }
-
-

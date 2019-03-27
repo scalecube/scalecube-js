@@ -1,7 +1,7 @@
 import { ClustersMap } from '../helpers/types';
 import { createDiscovery } from './Discovery';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
-import { getScalecubeGlobal } from '../helpers/utils'
+import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import { getScalecubeGlobal } from '../helpers/utils';
 
 const scalecubeGlobal = getScalecubeGlobal();
 
@@ -63,7 +63,11 @@ describe('Test Discovery', () => {
       }
     });
 
-    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish] });
+    const discovery2 = createDiscovery({
+      address: 'node2',
+      seedAddress: 'seedAddress1',
+      itemsToPublish: [itemToPublish],
+    });
 
     discovery2.discoveredItems$().subscribe((discoveredItems) => {
       expect(discoveredItems).toHaveLength(2);
@@ -84,7 +88,11 @@ describe('Test Discovery', () => {
       seedAddress: 'seedAddress1',
       itemsToPublish: [itemToPublish1, itemToPublish1],
     });
-    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish2] });
+    const discovery2 = createDiscovery({
+      address: 'node2',
+      seedAddress: 'seedAddress1',
+      itemsToPublish: [itemToPublish2],
+    });
 
     discovery.discoveredItems$().subscribe((discoveredItems) => {
       switch (step) {
