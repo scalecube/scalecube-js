@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Item } from '.'
+import { Item } from '.';
 
 /**
  * @interface Discovery

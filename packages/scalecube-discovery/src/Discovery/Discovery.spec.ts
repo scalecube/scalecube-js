@@ -1,10 +1,13 @@
 import { ClustersMap } from '../helpers/types';
 import { createDiscovery } from './Discovery';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
+import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import { getScalecubeGlobal } from '../helpers/utils';
+
+const scalecubeGlobal = getScalecubeGlobal();
 
 describe('Test Discovery', () => {
   beforeEach(() => {
-    window.scalecube.clusters = {} as ClustersMap;
+    scalecubeGlobal.clusters = {} as ClustersMap;
   });
 
   const itemToPublish = {
@@ -13,18 +16,18 @@ describe('Test Discovery', () => {
 
   it('Test createDiscovery add Nodes to cluster', () => {
     const seedAddress = 'myNamespace';
-    expect(window.scalecube.clusters[seedAddress]).toBeUndefined();
+    expect(scalecubeGlobal.clusters[seedAddress]).toBeUndefined();
 
     createDiscovery({ address: 'node1', seedAddress, itemsToPublish: [] });
     createDiscovery({ address: 'node2', seedAddress, itemsToPublish: [] });
-    expect(window.scalecube.clusters[seedAddress].discoveries).toHaveLength(2);
-    expect(Object.keys(window.scalecube.clusters)).toHaveLength(1);
+    expect(scalecubeGlobal.clusters[seedAddress].discoveries).toHaveLength(2);
+    expect(Object.keys(scalecubeGlobal.clusters)).toHaveLength(1);
   });
 
   it('Test createDiscovery add Nodes to cluster by its seedAddress', () => {
     createDiscovery({ address: 'node1', seedAddress: 'seedAddress1', itemsToPublish: [] });
     createDiscovery({ address: 'node2', seedAddress: 'seedAddress2', itemsToPublish: [] });
-    expect(Object.keys(window.scalecube.clusters)).toHaveLength(2);
+    expect(Object.keys(scalecubeGlobal.clusters)).toHaveLength(2);
   });
 
   it('Test createDiscovery expose methods', () => {
@@ -60,7 +63,11 @@ describe('Test Discovery', () => {
       }
     });
 
-    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish] });
+    const discovery2 = createDiscovery({
+      address: 'node2',
+      seedAddress: 'seedAddress1',
+      itemsToPublish: [itemToPublish],
+    });
 
     discovery2.discoveredItems$().subscribe((discoveredItems) => {
       expect(discoveredItems).toHaveLength(2);
@@ -81,7 +88,11 @@ describe('Test Discovery', () => {
       seedAddress: 'seedAddress1',
       itemsToPublish: [itemToPublish1, itemToPublish1],
     });
-    const discovery2 = createDiscovery({ address: 'node2', seedAddress: 'seedAddress1', itemsToPublish: [itemToPublish2] });
+    const discovery2 = createDiscovery({
+      address: 'node2',
+      seedAddress: 'seedAddress1',
+      itemsToPublish: [itemToPublish2],
+    });
 
     discovery.discoveredItems$().subscribe((discoveredItems) => {
       switch (step) {

@@ -1,5 +1,5 @@
-import { Discovery, DiscoveryOptions } from "../api";
+import { Discovery, DiscoveryOptions } from '../api';
 
-type CreateDiscovery = (options : DiscoveryOptions) => Discovery;
+type CreateDiscovery = (options: DiscoveryOptions) => Discovery;
 
 export default CreateDiscovery;

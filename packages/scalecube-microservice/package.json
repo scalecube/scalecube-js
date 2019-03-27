@@ -21,30 +21,11 @@
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
     "lint:fix": "yarn lint --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "jest",
-    "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "test": "yarn test-dom-env && yarn test-node-env",
+    "test-dom-env": "jest --config jest.config-dom.js",
+    "test-node-env": "jest --config jest.config-node.js",
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
     "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
-  },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
-    "testRegex": "(\\.|/)spec\\.ts$",
-    "testPathIgnorePatterns": [
-      "<rootDir>/es/",
-      "<rootDir>/lib/",
-      "<rootDir>/node_modules/"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/mocks/globals.ts",
-    "moduleDirectories": [
-      "node_modules",
-      "app/src"
-    ]
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
@@ -60,6 +41,8 @@
   },
   "dependencies": {
     "@scalecube/scalecube-discovery": "0.1.0",
-    "rxjs": "^6.4.0"
+    "@types/uuid": "^3.4.4",
+    "rxjs": "^6.4.0",
+    "uuid": "^3.3.2"
   }
 }

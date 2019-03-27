@@ -1,8 +1,8 @@
+import uuidv4 from 'uuid/v4';
 import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { uuidv4 } from '../helpers/utils';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
@@ -13,14 +13,17 @@ export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
-    let microserviceContext: MicroserviceContext|null = createMicroserviceContext();
+    let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
     services && Array.isArray(services) && methodRegistry.add({ services, address });
 
-    const endPointsToPublishInCluster = services && Array.isArray(services) ? serviceRegistry.createEndPoints({
-      services,
-      address
-    }) : [];
+    const endPointsToPublishInCluster =
+      services && Array.isArray(services)
+        ? serviceRegistry.createEndPoints({
+            services,
+            address,
+          })
+        : [];
 
     const discovery = createDiscovery({
       address,
@@ -28,7 +31,9 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       seedAddress,
     });
 
-    discovery.discoveredItems$().subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
+    discovery
+      .discoveredItems$()
+      .subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
       createProxy({ router = defaultRouter, serviceDefinition }) {

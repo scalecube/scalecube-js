@@ -7,11 +7,13 @@ import {
   LeaveCluster,
   ScalecubeGlobal,
 } from '../helpers/types';
+import { getGlobalNamespace, getScalecubeGlobal } from '../helpers/utils';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
-  window.scalecube = window.scalecube || ({} as ScalecubeGlobal);
-  window.scalecube.clusters = window.scalecube.clusters || ({} as ClustersMap);
-  const namespace = window.scalecube.clusters;
+  const globalNamespace = getGlobalNamespace();
+  globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
+  globalNamespace.scalecube.clusters = globalNamespace.scalecube.clusters || ({} as ClustersMap);
+  const namespace = getScalecubeGlobal().clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
       discoveries: [],
@@ -60,4 +62,7 @@ export const joinCluster = ({ cluster, itemsToPublish, address, subjectNotifier 
 };
 
 const shareDataBetweenDiscoveries = ({ discoveries }: ShareDataBetweenDiscoveries) =>
-  discoveries.forEach((discovery) => discovery && discovery.subjectNotifier && discovery.subjectNotifier.next(discovery.discoveredItems || []));
+  discoveries.forEach(
+    (discovery) =>
+      discovery && discovery.subjectNotifier && discovery.subjectNotifier.next(discovery.discoveredItems || [])
+  );

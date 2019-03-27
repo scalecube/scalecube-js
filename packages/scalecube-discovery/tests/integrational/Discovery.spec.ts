@@ -1,11 +1,14 @@
-import { expectWithFailNow, } from '../helpers/utils'
-import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const'
-import createDiscovery from "../../src/index";
-import { Discovery } from "../../src/api";
+import { expectWithFailNow } from '../helpers/utils';
+import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
+import createDiscovery from '../../src/index';
+import { Discovery } from '../../src/api';
+import { getScalecubeGlobal } from '../../src/helpers/utils';
+
+const scalecubeGlobal = getScalecubeGlobal();
 
 describe('Discovery tests', () => {
   beforeEach(() => {
-    window.scalecube.clusters = {};
+    scalecubeGlobal.clusters = {};
   });
 
   test(`Scenario: Create 3 discoveries with the same seed
@@ -24,34 +27,38 @@ describe('Discovery tests', () => {
   `, (done) => {
     expect.assertions(6);
     let counter = 0;
-    const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}]
-      .reduce((acc: any[], v: any, i: number) => {
+    const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}].reduce(
+      (acc: any[], v: any, i: number) => {
         const itemToPublish = { address: `address${i}` };
-        acc.push(createDiscovery({
-          address: `address${i}`,
-          seedAddress: "seedAddress",
-          itemsToPublish: [itemToPublish]
-        }));
+        acc.push(
+          createDiscovery({
+            address: `address${i}`,
+            seedAddress: 'seedAddress',
+            itemsToPublish: [itemToPublish],
+          })
+        );
         acc.push(itemToPublish);
         return acc;
-      }, []) as any[];
+      },
+      []
+    ) as any[];
 
-    (discovery1 as Discovery).discoveredItems$().subscribe(items => {
-      items.forEach(item => {
+    (discovery1 as Discovery).discoveredItems$().subscribe((items) => {
+      items.forEach((item) => {
         expectWithFailNow(() => expect([itemToPublish2, itemToPublish3]).toContainEqual(item), done);
         counter++;
       });
     });
 
-    (discovery2 as Discovery).discoveredItems$().subscribe(items => {
-      items.forEach(item => {
+    (discovery2 as Discovery).discoveredItems$().subscribe((items) => {
+      items.forEach((item) => {
         expectWithFailNow(() => expect([itemToPublish1, itemToPublish3]).toContainEqual(item), done);
         counter++;
       });
     });
 
-    (discovery3 as Discovery).discoveredItems$().subscribe(items => {
-      items.forEach(item => {
+    (discovery3 as Discovery).discoveredItems$().subscribe((items) => {
+      items.forEach((item) => {
         expectWithFailNow(() => expect([itemToPublish1, itemToPublish2]).toContainEqual(item), done);
         counter++;
         if (counter === 6) {
@@ -78,38 +85,49 @@ describe('Discovery tests', () => {
    `, (done) => {
     expect.assertions(2);
     let counter = 0;
-    const [discovery11, itemToPublish11, discovery12, itemToPublish12, discovery21, itemToPublish21, discovery22, itemToPublish22] = [{}, {}, {}]
-      .reduce((acc: any[], v: any, i: number) => {
-        const itemToPublish1 = { address: `address${i}1` };
-        const itemToPublish2 = { address: `address${i}2` };
+    const [
+      discovery11,
+      itemToPublish11,
+      discovery12,
+      itemToPublish12,
+      discovery21,
+      itemToPublish21,
+      discovery22,
+      itemToPublish22,
+    ] = [{}, {}, {}].reduce((acc: any[], v: any, i: number) => {
+      const itemToPublish1 = { address: `address${i}1` };
+      const itemToPublish2 = { address: `address${i}2` };
 
-        acc.push(createDiscovery({
+      acc.push(
+        createDiscovery({
           address: `address${i}1`,
           seedAddress: `seedAddress${i}`,
-          itemsToPublish: [itemToPublish1]
-        }));
+          itemsToPublish: [itemToPublish1],
+        })
+      );
 
-        acc.push(itemToPublish1);
+      acc.push(itemToPublish1);
 
-        acc.push(createDiscovery({
+      acc.push(
+        createDiscovery({
           address: `address${i}2`,
           seedAddress: `seedAddress${i}`,
-          itemsToPublish: [itemToPublish2]
-        }));
+          itemsToPublish: [itemToPublish2],
+        })
+      );
 
-        acc.push(itemToPublish2);
+      acc.push(itemToPublish2);
 
-        return acc;
-      }, []) as any[];
+      return acc;
+    }, []) as any[];
 
-    (discovery11 as Discovery).discoveredItems$().subscribe(items => {
+    (discovery11 as Discovery).discoveredItems$().subscribe((items) => {
       expectWithFailNow(() => expect(items).toContainEqual(itemToPublish12), done);
       expectWithFailNow(() => expect(items).not.toContainEqual(itemToPublish22), done);
       counter++;
       done();
     });
   });
-
 
   it(`Scenario: remove discovery from the cluster
   Given seed address 
@@ -132,19 +150,22 @@ describe('Discovery tests', () => {
     expect.assertions(4);
 
     let destroyFlag = false;
-    const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}]
-      .reduce((acc: any[], v: any, i: number) => {
+    const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}].reduce(
+      (acc: any[], v: any, i: number) => {
         const itemToPublish = { address: `address${i}` };
-        acc.push(createDiscovery({
-          address: `address${i}`,
-          seedAddress: "seedAddress",
-          itemsToPublish: [itemToPublish]
-        }));
+        acc.push(
+          createDiscovery({
+            address: `address${i}`,
+            seedAddress: 'seedAddress',
+            itemsToPublish: [itemToPublish],
+          })
+        );
         acc.push(itemToPublish);
         return acc;
-      }, []) as any[];
-    (discovery2 as Discovery).discoveredItems$().subscribe(items => {
-
+      },
+      []
+    ) as any[];
+    (discovery2 as Discovery).discoveredItems$().subscribe((items) => {
       if (!destroyFlag) {
         expectWithFailNow(() => expect(items).toContainEqual(itemToPublish3), done);
         expectWithFailNow(() => expect(items).toContainEqual(itemToPublish1), done);
@@ -157,7 +178,6 @@ describe('Discovery tests', () => {
 
     destroyFlag = true;
     discovery1.destroy();
-
   });
 
   it(`Scenario: remove discovery from the cluster
@@ -171,10 +191,11 @@ describe('Discovery tests', () => {
     const discovery1 = createDiscovery({
       address: 'address',
       seedAddress: 'seedAddress',
-      itemsToPublish: [{ address: 'address' }]
+      itemsToPublish: [{ address: 'address' }],
     });
 
-    return expect(discovery1.destroy()).resolves
-      .toBe(getDiscoverySuccessfullyDestroyedMessage('address', 'seedAddress'));
+    return expect(discovery1.destroy()).resolves.toBe(
+      getDiscoverySuccessfullyDestroyedMessage('address', 'seedAddress')
+    );
   });
 });

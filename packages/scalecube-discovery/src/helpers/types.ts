@@ -1,9 +1,17 @@
 import { ReplaySubject } from 'rxjs';
-import { Item } from '../api'
+import { Item } from '../api';
 
 declare global {
   interface Window {
     scalecube: ScalecubeGlobal;
+  }
+}
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      scalecube: ScalecubeGlobal;
+    }
   }
 }
 
@@ -16,7 +24,7 @@ export interface ClustersMap {
 }
 
 export interface ShareDataBetweenDiscoveries {
-  discoveries: DiscoveryEntity[]
+  discoveries: DiscoveryEntity[];
 }
 
 export interface DiscoveryEntity {
@@ -45,8 +53,3 @@ export interface Cluster {
   discoveries: DiscoveryEntity[];
   allDiscoveredItems: Item[];
 }
-
-
-
-
-
