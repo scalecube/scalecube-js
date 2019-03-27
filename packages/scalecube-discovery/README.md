@@ -17,7 +17,7 @@ const discoveryConfig = {
 const discovery = createDiscovery(discoveryConfig);
 ```
 
-After the creation of the discovery, it is possible to subscribe to discoveredItems\$
+After the creation of the discovery, it is possible to subscribe to it
 and then to receive information about the other discoveries that join the same environment ('seedAddress')
 
 ```javascript
