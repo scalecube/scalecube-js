@@ -3,7 +3,6 @@ import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { isNodeEnv } from '../helpers/utils'
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
@@ -11,7 +10,7 @@ import { Endpoint, Message, Microservice, MicroserviceOptions, Microservices as 
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = isNodeEnv() ? 'clusterAddress' : location.hostname }: MicroserviceOptions): Microservice => {
+  create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     let microserviceContext: MicroserviceContext|null = createMicroserviceContext();

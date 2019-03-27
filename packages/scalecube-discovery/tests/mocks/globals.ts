@@ -1,6 +1,5 @@
 import { ClustersMap } from '../../src/helpers/types';
-import { getGlobal } from '../../src/helpers/utils'
+import { getGlobalNamespace } from '../../src/helpers/utils'
 
-const globalNamespace = getGlobal();
-
+const globalNamespace = getGlobalNamespace();
 globalNamespace.scalecube = globalNamespace.scalecube || { clusters: {} as ClustersMap };

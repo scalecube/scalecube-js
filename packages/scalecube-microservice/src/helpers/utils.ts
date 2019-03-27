@@ -18,6 +18,8 @@ export const throwErrorFromServiceCall = ({
   return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? Promise.reject(error) : throwError(error);
 };
 
-export const isNodeEnv = () => typeof window === 'undefined';
+export const getGlobalNamespace = () => typeof window === 'undefined' ? global : window;
 
-export const getGlobal = () => isNodeEnv() ? global : window;
+export const getScalecubeGlobal = () => {
+  return getGlobalNamespace().scalecube || {};
+};

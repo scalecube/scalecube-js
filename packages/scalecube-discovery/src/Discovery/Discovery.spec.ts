@@ -1,13 +1,13 @@
 import { ClustersMap } from '../helpers/types';
 import { createDiscovery } from './Discovery';
 import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const'
-import { getGlobal } from '../helpers/utils'
+import { getScalecubeGlobal } from '../helpers/utils'
 
-const globalNamespace = getGlobal();
+const scalecubeGlobal = getScalecubeGlobal();
 
 describe('Test Discovery', () => {
   beforeEach(() => {
-    globalNamespace.scalecube.clusters = {} as ClustersMap;
+    scalecubeGlobal.clusters = {} as ClustersMap;
   });
 
   const itemToPublish = {
@@ -16,18 +16,18 @@ describe('Test Discovery', () => {
 
   it('Test createDiscovery add Nodes to cluster', () => {
     const seedAddress = 'myNamespace';
-    expect(globalNamespace.scalecube.clusters[seedAddress]).toBeUndefined();
+    expect(scalecubeGlobal.clusters[seedAddress]).toBeUndefined();
 
     createDiscovery({ address: 'node1', seedAddress, itemsToPublish: [] });
     createDiscovery({ address: 'node2', seedAddress, itemsToPublish: [] });
-    expect(globalNamespace.scalecube.clusters[seedAddress].discoveries).toHaveLength(2);
-    expect(Object.keys(globalNamespace.scalecube.clusters)).toHaveLength(1);
+    expect(scalecubeGlobal.clusters[seedAddress].discoveries).toHaveLength(2);
+    expect(Object.keys(scalecubeGlobal.clusters)).toHaveLength(1);
   });
 
   it('Test createDiscovery add Nodes to cluster by its seedAddress', () => {
     createDiscovery({ address: 'node1', seedAddress: 'seedAddress1', itemsToPublish: [] });
     createDiscovery({ address: 'node2', seedAddress: 'seedAddress2', itemsToPublish: [] });
-    expect(Object.keys(globalNamespace.scalecube.clusters)).toHaveLength(2);
+    expect(Object.keys(scalecubeGlobal.clusters)).toHaveLength(2);
   });
 
   it('Test createDiscovery expose methods', () => {

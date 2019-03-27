@@ -1,15 +1,15 @@
 import { ReplaySubject } from 'rxjs';
 import { Item } from '../api';
 import { joinCluster, getCluster, leaveCluster } from './DiscoveryActions';
-import { getGlobal } from '../helpers/utils'
+import { getScalecubeGlobal } from '../helpers/utils'
 
-const globalNamespace = getGlobal();
+const scalecubeGlobal = getScalecubeGlobal();
 
 describe('Test DiscoveryActions', () => {
   const seedAddress = 'mockAddress';
 
   beforeEach(() => {
-    globalNamespace.scalecube.clusters = {};
+    scalecubeGlobal.clusters = {};
   });
 
   const createDiscoveryEntity = (address = 'address') => ({
@@ -18,9 +18,9 @@ describe('Test DiscoveryActions', () => {
     subjectNotifier: new ReplaySubject<Item[]>(1),
   });
 
-  test('getCluster create global namespace under globalNamespace.scalecube.clusters[seedAddress]', () => {
+  test('getCluster create global namespace under scalecubeGlobal.clusters[seedAddress]', () => {
     const cluster = getCluster({ seedAddress });
-    expect(cluster).toMatchObject(globalNamespace.scalecube.clusters[seedAddress]);
+    expect(cluster).toMatchObject(scalecubeGlobal.clusters[seedAddress]);
   });
 
   test(`Discovery doesn't report on its own items`, (done) => {

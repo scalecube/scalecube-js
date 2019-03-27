@@ -11,7 +11,7 @@ import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingSer
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
 import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/src/helpers/types';
-import { getGlobal } from '../../src/helpers/utils'
+import { getGlobalNamespace } from '../../src/helpers/utils'
 
 describe('Test the creation of Microservice', () => {
   const defaultUser = 'defaultUser';
@@ -27,7 +27,7 @@ describe('Test the creation of Microservice', () => {
   };
 
   beforeEach(() => {
-    getGlobal().scalecube = {} as ScalecubeGlobal;
+    getGlobalNamespace().scalecube = {} as ScalecubeGlobal;
   });
 
   describe('Test creating microservice from function constructor', () => {

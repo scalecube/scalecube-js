@@ -1,3 +1,5 @@
-export const isNodeEnv = () => typeof window === 'undefined';
+export const getGlobalNamespace = () => typeof window === 'undefined' ? global : window;
 
-export const getGlobal = () => isNodeEnv() ? global : window;
+export const getScalecubeGlobal = () => {
+  return getGlobalNamespace().scalecube || { clusters: {} };
+};

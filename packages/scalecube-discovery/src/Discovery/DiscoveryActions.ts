@@ -7,13 +7,13 @@ import {
   LeaveCluster,
   ScalecubeGlobal,
 } from '../helpers/types';
-import { getGlobal } from '../helpers/utils'
+import { getGlobalNamespace, getScalecubeGlobal } from '../helpers/utils'
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
-  const globalNamespace = getGlobal()
+  const globalNamespace = getGlobalNamespace();
   globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
   globalNamespace.scalecube.clusters = globalNamespace.scalecube.clusters || ({} as ClustersMap);
-  const namespace = globalNamespace.scalecube.clusters;
+  const namespace = getScalecubeGlobal().clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {
       discoveries: [],
