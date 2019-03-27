@@ -17,14 +17,14 @@ const discoveryConfig = {
 const discovery = createDiscovery(discoveryConfig);
 ```
 
-After the creation of the discovery, it is possible to subscribe to it
+After the creation of the discovery, it is possible to subscribe to `discoveredItems$()`
 and then to receive information about the other discoveries that join the same environment ('seedAddress')
 
 ```javascript
 discovery.discoveredItems$().subscribe(console.log); // emits all values from the other discoveries that are joining the same 'seedAddress'
 ```
 
-After the creation of the discovery, it is possible to remove it by destroy
+After the creation of the discovery, it is possible to remove it by `destroy()`
 destroy will complete the stream, remove the discovery's data from the environment
 and notify all other discoveries about the change.
 
