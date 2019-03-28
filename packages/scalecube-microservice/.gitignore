@@ -1,3 +1,7 @@
 .cache
 node_modules
 
+lib/
+es-module/
+es-bundle-min/
+es-bundle/

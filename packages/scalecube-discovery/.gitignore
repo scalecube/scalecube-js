@@ -6,3 +6,8 @@ coverage/
 .npmrc
 yarn-error.log
 .DS_Store
+
+lib/
+es-module/
+es-bundle-min/
+es-bundle/
