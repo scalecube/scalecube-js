@@ -1,4 +1,3 @@
-
 // @ts-ignore
 window.crypto = window.crypto || {};
 
