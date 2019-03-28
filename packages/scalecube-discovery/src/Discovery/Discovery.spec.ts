@@ -15,11 +15,17 @@ describe('Test Discovery', () => {
   };
 
   it('Test createDiscovery add Nodes to cluster', () => {
+    const clusterWorker = new SharedWorker('../clusterWorker.js');
+    clusterWorker.port.start();
+
     const seedAddress = 'myNamespace';
     expect(scalecubeGlobal.clusters[seedAddress]).toBeUndefined();
 
     createDiscovery({ address: 'node1', seedAddress, itemsToPublish: [] });
     createDiscovery({ address: 'node2', seedAddress, itemsToPublish: [] });
+
+    clusterWorker.port.postMessage('in test');
+
     expect(scalecubeGlobal.clusters[seedAddress].discoveries).toHaveLength(2);
     expect(Object.keys(scalecubeGlobal.clusters)).toHaveLength(1);
   });

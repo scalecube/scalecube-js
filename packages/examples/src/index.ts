@@ -13,3 +13,8 @@ greetingServiceProxy.hello('User').then((result: string) => {
 });
 
 console.info('Microservices from @scalecube/scalecube-microservice', Microservices);
+
+const clusterWorker = new SharedWorker('../../scalecube-discovery/src/clustersWorker.js');
+clusterWorker.port.start();
+
+clusterWorker.port.postMessage('in test');

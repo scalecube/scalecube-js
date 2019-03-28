@@ -13,6 +13,11 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
   const globalNamespace = getGlobalNamespace();
   globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
   globalNamespace.scalecube.clusters = globalNamespace.scalecube.clusters || ({} as ClustersMap);
+
+  const clusterWorker = new SharedWorker('/clustersWorker.js');
+  clusterWorker.port.start();
+  clusterWorker.port.postMessage(seedAddress);
+
   const namespace = getScalecubeGlobal().clusters;
   if (!namespace[seedAddress]) {
     namespace[seedAddress] = {

@@ -39,6 +39,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@types/sharedworker": "^0.0.28",
     "rxjs": "^6.4.0"
   }
 }
