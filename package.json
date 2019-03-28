@@ -7,7 +7,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn lint-md"
+      "pre-commit": "pretty-quick --staged && yarn run lint-md"
     }
   },
   "workspaces": [
