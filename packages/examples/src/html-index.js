@@ -4,15 +4,12 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-
   var removeBtn = document.getElementById('removeCustomEl');
-  removeBtn.addEventListener('click', function (ev) {
+  removeBtn.addEventListener('click', function(ev) {
     document.body.remove();
   });
 
-
-  (function (Microservices, ASYNC_MODEL_TYPES) {
-
+  (function(Microservices, ASYNC_MODEL_TYPES) {
     function MyEl() {
       return Reflect.construct(HTMLElement, [], this.constructor);
     }
@@ -21,22 +18,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
     MyEl.prototype.constructor = MyEl;
     Object.setPrototypeOf(MyEl, HTMLElement);
 
-    var alertFunc = function () {
+    var alertFunc = function() {
       alert('Clicked!');
     };
 
-    MyEl.prototype.connectedCallback = function () {
+    MyEl.prototype.connectedCallback = function() {
       console.log('connect custom element');
       this.innerHTML = 'Hello world';
-      this.addEventListener('click', alertFunc)
+      this.addEventListener('click', alertFunc);
     };
 
-    MyEl.prototype.disconnectedCallback = function () {
+    MyEl.prototype.disconnectedCallback = function() {
       console.log('disconnect custom element');
       this.removeEventListener('click', alertFunc);
     };
 
-    var render = function () {
+    var render = function() {
       customElements.define('my-el', MyEl);
       return Promise.resolve();
     };
@@ -45,9 +42,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
       serviceName: 'customEl',
       methods: {
         render: {
-          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE
-        }
-      }
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+        },
+      },
     };
 
     var proxy = Microservices.create({
@@ -55,16 +52,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
         {
           definition: definition,
           reference: {
-            render
-          }
-        }
-      ]
+            render,
+          },
+        },
+      ],
     }).createProxy({
-      serviceDefinition: definition
+      serviceDefinition: definition,
     });
 
     proxy.render();
-
-
-  })(window.sc.default, window.sc.ASYNC_MODEL_TYPES);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES);
 });

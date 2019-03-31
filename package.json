@@ -7,7 +7,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn run lint-md"
+      "pre-commit": "pretty-quick --staged && yarn lint-md"
     }
   },
   "workspaces": [
@@ -24,7 +24,7 @@
     "cluster"
   ],
   "scripts": {
-    "updateScalecube": "lerna clean --yes && rm -rf node_modules/@scalecube && yarn install && lerna bootstrap",
+    "update-scalecube": "lerna clean --yes && rm -rf node_modules/@scalecube && yarn install && yarn bootstrap",
     "start": "http-server -a localhost -p 8000",
     "start-node-example": "lerna run start-node-example",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
