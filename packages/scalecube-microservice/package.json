@@ -15,14 +15,12 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf node_modules && rm -rf lib && rm -rf es && rm -rf dist && rm -rf dist-min",
-    "build": "rm -rf .cache && npm-run-all build:commonJS build:es build:dist build:dist-min",
+    "build": "rm -rf .cache && npm-run-all build:commonJS build:es build:umd build:umd-min",
     "build:commonJS": "rm -rf lib && tsc --module commonjs --target es5 --outDir lib",
     "build:es": "rm -rf es && tsc --module esnext --target es5 --outDir es",
-    "build:dist": "rm -rf dist && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist dist --global sc",
-    "build:dist-min": "rm -rf dist-min && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist-min dist --global sc",
-    "format": "yarn run lint:fix && yarn run prettier",
-    "lint": "tslint '{src,tests}/**/*.{ts,tsx}'",
-    "lint:fix": "yarn lint --fix",
+    "build:umd": "rm -rf dist && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist dist --global sc",
+    "build:umd-min": "rm -rf dist-min && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist-min dist --global sc",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env && yarn test-node-env",
     "test-dom-env": "jest --config jest.config-dom.js",
@@ -43,7 +41,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/scalecube-discovery": "snapshot",
+    "@scalecube/scalecube-discovery": "^0.1.1-alpha",
     "@types/uuid": "^3.4.4",
     "rxjs": "^6.4.0",
     "uuid": "^3.3.2"
