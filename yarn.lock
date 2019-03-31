@@ -1357,12 +1357,29 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
+"@scalecube/scalecube-discovery@0.1.1-snapshot.1554022676.153":
+  version "0.1.1-snapshot.1554022676.153"
+  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-discovery/-/scalecube-discovery-0.1.1-snapshot.1554022676.153.tgz#6862131714124142eadc3a2ea3304c75dd660947"
+  integrity sha512-TH+0Jp/zPyZ2dv9VBzO8EuguliQYdyDwcR565M0/n3UyHOz263vl9HITKHXtfkV0SwSGcEPlg2t0PH3P5TPpUQ==
+  dependencies:
+    rxjs "^6.4.0"
+
 "@scalecube/scalecube-discovery@next":
   version "0.1.1-alpha.0"
   resolved "https://registry.yarnpkg.com/@scalecube/scalecube-discovery/-/scalecube-discovery-0.1.1-alpha.0.tgz#2443b827e9900f9dca9a7ab6852b30d8623434e5"
   integrity sha512-V0fdAnvcU6RmDHOZX0yZyCadmc5kQoe3FykMWK7ezIFrXvgdNs1ipZDzN21cG4M11zwq23XhxdXY1qNww0QAjQ==
   dependencies:
     rxjs "^6.4.0"
+
+"@scalecube/scalecube-microservice@0.1.3-snapshot.1554022676.153":
+  version "0.1.3-snapshot.1554022676.153"
+  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-microservice/-/scalecube-microservice-0.1.3-snapshot.1554022676.153.tgz#d8c2171c805c64f41a8c805857a6927910eab46c"
+  integrity sha512-WJKlp8+c53REr7b5T1pJrYGKN3j8jAdv/iBI/8Qar5r8bDaTJLL9WjjbRMgTvbNqfCbkaClDAEeuWIxqMVp52Q==
+  dependencies:
+    "@scalecube/scalecube-discovery" next
+    "@types/uuid" "^3.4.4"
+    rxjs "^6.4.0"
+    uuid "^3.3.2"
 
 "@types/events@*":
   version "3.0.0"
