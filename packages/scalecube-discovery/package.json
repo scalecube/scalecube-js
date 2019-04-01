@@ -4,7 +4,7 @@
   "private": false,
   "main": "lib/index.js",
   "unpkg": "dist-min/index.js",
-  "module": "es/index.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "dist-min",
