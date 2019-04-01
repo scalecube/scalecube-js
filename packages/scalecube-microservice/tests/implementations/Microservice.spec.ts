@@ -34,7 +34,7 @@ describe('Test the creation of Microservice', () => {
     test(`
       Scenario: Fail to register a service
       Given     a service with definition and reference
-      And       definiton has a method that is not contained in the reference
+      And       definition has a method that is not contained in the reference
       When      creating a Microservice with the service
       Then      exception will occur
       And       a relevant message will be received`, () => {
@@ -71,7 +71,7 @@ describe('Test the creation of Microservice', () => {
       test(`
       Scenario: Fail to register a service
       Given     a service with definition and reference
-      And       definiton and reference comply with each other
+      And       definition and reference comply with each other
       But       reference has a method that is not a function
       When      creating a Microservice with the service
       Then      exception will occur
@@ -88,11 +88,27 @@ describe('Test the creation of Microservice', () => {
         }
       });
 
-      test('Test REQUEST_RESPONSE', () => {
+      test(`
+      Scenario: Invoke registered service from proxy (RequestResponse)
+      Given     a service with definition and reference
+      And       definition and reference comply with each other
+      When      Microservice is created
+      And       Proxy is created from the Microservice
+      And       proxy invokes the method
+      Then      valid response is received
+      `, () => {
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
 
-      test('Test observable', (done) => {
+      test(`
+      Scenario: Invoke registered service from proxy (RequestStream)
+      Given     a service with definition and reference
+      And       definition and reference comply with each other
+      When      Microservice is created
+      And       Proxy is created from the Microservice
+      And       subscribe to proxy method
+      Then      valid response is emitted
+      `, (done) => {
         greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
           done();
@@ -113,14 +129,30 @@ describe('Test the creation of Microservice', () => {
         services: [greetingService1, greetingService2],
       });
 
-      test('Test REQUEST_RESPONSE', () => {
+      test(`
+      Scenario: Invoke registered service from proxy (RequestResponse)
+      Given     a service with definition and reference
+      And       definition and reference comply with each other
+      When      Microservice is created
+      And       Proxy is created from the Microservice
+      And       proxy invokes the method
+      Then      valid response is received
+      `, () => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionHello,
         });
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
 
-      test('Test observable', (done) => {
+      test(`
+      Scenario: Invoke registered service from proxy (RequestStream)
+      Given     a service with definition and reference
+      And       definition and reference comply with each other
+      When      Microservice is created
+      And       Proxy is created from the Microservice
+      And       subscribe to proxy method
+      Then      valid response is emitted
+      `, (done) => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionGreet$,
         });
