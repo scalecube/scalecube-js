@@ -1,12 +1,13 @@
 .cache
 .idea/
 node_modules/
-es/
-es-bundle/
-lib/
-dist/
 flow-typed/
 coverage/
 .npmrc
 yarn-error.log
 .DS_Store
+
+lib/
+es/
+dist-min/
+dist/
