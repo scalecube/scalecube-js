@@ -2,7 +2,6 @@
 # scalecube-js microservices #
 ##############################
 
-#noinspection CucumberUndefinedStep
 Feature: Tests for the general flow of Microservices in scalecube-js
 
 Scenario: Successfully create Microservice using htmlServiceDefinition, htmlService & ASYNC_MODEL_TYPES
@@ -14,8 +13,8 @@ Scenario: Successfully create Microservice using htmlServiceDefinition, htmlServ
 
 Scenario: Test the creation of Microservice and getting an error from htmlServiceDefinition
 	Given 	htmlService
-	And 		htmlServiceDefinition 
-	When 		user imports htmlServiceDefinition with htmlService 
+	And 		htmlServiceDefinition
+	When 		user imports htmlServiceDefinition with htmlService
 	And 		htmlServiceDefinition returns an error
 	Then 		ASYNC_MODEL_TYPES will NOT render it
 	And 		htmlServiceProxy is NOT created
