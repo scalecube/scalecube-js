@@ -51,7 +51,7 @@ export const greetingServiceWithStaticDefinition = {
     },
     helloStatic: {
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-    }
+    },
   },
 };
 

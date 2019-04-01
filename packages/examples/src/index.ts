@@ -1,4 +1,4 @@
-import { Microservices } from '@scalecube/scalecube-microservice';
+import Microservices from '@scalecube/scalecube-microservice';
 import GreetingService, { greetingServiceDefinition } from './service/GreetingService';
 
 const greetingService = {
