@@ -20,3 +20,5 @@ Scenario: Test the creation of Microservice and getting an error from htmlServic
 	Then 		ASYNC_MODEL_TYPES will NOT render it
 	And 		htmlServiceProxy is NOT created
 	And 		relevant log message will be written
+
+Scenario: Test creating microservice from function constructor
