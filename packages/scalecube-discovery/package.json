@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.1-alpha.0",
+  "version": "0.1.1-alpha.1",
   "private": false,
   "main": "lib/index.js",
   "unpkg": "dist-min/index.js",
