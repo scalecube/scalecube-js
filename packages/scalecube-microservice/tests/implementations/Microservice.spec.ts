@@ -165,7 +165,16 @@ describe('Test the creation of Microservice', () => {
   });
 
   describe('Test Discovery', () => {
-    test('Access endpoint from other discovery with remoteCall', () => {
+    test(`
+      Scenario: Invoke remote service 
+      Given     two valid Microservices under the same seedAddress
+      | Microservice | reference| definition  |
+      | ms1          | s1       |d1           |
+      | ms2          | s2       |d2           | 
+      When      creating a proxy to ms1 with definition of d2
+      And       proxy invokes s2
+      Then      valid response is received
+    `, () => {
       expect.assertions(1);
 
       const ms1SeedAddress = 'cluster1';
@@ -183,6 +192,20 @@ describe('Test the creation of Microservice', () => {
 
       const proxy1 = ms1.createProxy({ serviceDefinition: greetingServiceDefinition2 });
       return expect(proxy1.hello(defaultUser)).resolves.toEqual({}); // will fail after implementing remoteCall
+    });
+
+    test(`
+      Scenario: Fail to invoke a remote service 
+      Given     two valid Microservices under the same seedAddress
+      | Microservice | reference| definition  |
+      | ms1          | s1       |d1           |
+      | ms2          | s2       |d2           | 
+      When      creating a proxy to ms1 with definition of d3
+      And       proxy tries to invoke s2
+      Then      exception will occur
+      And       a relevant message will be received
+    `, () => {
+      expect(true).toBe(false);
     });
   });
 });
