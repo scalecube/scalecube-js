@@ -34,10 +34,12 @@ describe('Test the creation of Microservice', () => {
     test(`
       Scenario: Fail to register a service
       Given     a service with definition and reference
-      And       definition has a method that is not contained in the reference
+      |service          |definition |reference  |
+      |greetingService  |d1         |r2         |
+      # definition has a method that is not contained in the reference
       When      creating a Microservice with the service
       Then      exception will occur
-      And       a relevant message will be received`, () => {
+      And       a 'GreetingService/empty' message will be received`, () => {
       const greetingService: Service = {
         definition: definitionWithWrongMethodReference,
         reference: new GreetingService(),
