@@ -23,8 +23,8 @@ describe('Test creating proxy from microservice', () => {
       |service          |definition            |reference  |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
       |                 |greet$: RequestStream |greet$: RequestStream | 
-      When      creating a Microservice with the service
-      Then      greetingServiceProxy is created from the Microservice
+      When    creating a Microservice with the service
+      Then    greetingServiceProxy is created from the Microservice
       `, () => {
     expect(true).toBe(false);
   });
@@ -112,7 +112,18 @@ describe('Test creating proxy from microservice', () => {
     }, 1000);
   });
 
-  it('Throw error message when creating proxy with missing serviceDefinition', () => {
+  test(`
+    Scenario: Fail to create proxy, missing serviceDefinition
+      Given   a service with definition and reference
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |                 |empty: null           |                      |
+      When    proxy is created by a Microservice
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     serviceDefinition is not defined for createProxy
+      `, () => {
     const ms = Microservices.create({ services: [greetingService] });
     try {
       // @ts-ignore-next-line
