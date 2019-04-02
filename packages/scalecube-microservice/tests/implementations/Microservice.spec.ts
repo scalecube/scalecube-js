@@ -33,13 +33,11 @@ describe('Test the creation of Microservice', () => {
   describe('Test creating microservice from function constructor', () => {
     test(`
       Scenario: Fail to register a service
-      Given     a service with definition definitionWithWrongMethodReference
-      And       reference GreetingService
+      Given     a service with definition and reference
       And       definition has a method that is not contained in the reference
-      When      creating a Microservice with service greetingService
+      When      creating a Microservice with the service
       Then      exception will occur
-      And       a "GreetingService/empty" message will be received
-      `, () => {
+      And       a relevant message will be received`, () => {
       const greetingService: Service = {
         definition: definitionWithWrongMethodReference,
         reference: new GreetingService(),
@@ -77,8 +75,7 @@ describe('Test the creation of Microservice', () => {
       But       reference has a method that is not a function
       When      creating a Microservice with the service
       Then      exception will occur
-      And       a relevant message will be received
-      `, () => {
+      And       a relevant message will be received`, () => {
         const greetingService: Service = {
           definition: definitionWithWrongMethodReference,
           reference: { hello, greet$, empty },
