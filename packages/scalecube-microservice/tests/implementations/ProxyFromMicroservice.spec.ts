@@ -16,6 +16,18 @@ import {
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
+  test(`
+    Scenario: Create a proxy from Microservice 
+      Given   a service with definition and reference
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream | 
+      When      creating a Microservice with the service
+      Then      greetingServiceProxy is created from the Microservice
+      `, () => {
+    expect(true).toBe(false);
+  });
   console.warn = jest.fn(); // disable validation logs while doing this test
   console.error = jest.fn(); // disable validation logs while doing this test
 
