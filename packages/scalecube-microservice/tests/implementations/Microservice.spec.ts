@@ -34,12 +34,15 @@ describe('Test the creation of Microservice', () => {
     test(`
       Scenario: Fail to register a service
       Given     a service with definition and reference
-      |service          |definition |reference  |
-      |greetingService  |d1         |r2         |
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |                 |                      |empty : null          |
       # definition has a method that is not contained in the reference
       When      creating a Microservice with the service
       Then      exception will occur
-      And       a 'GreetingService/empty' message will be received`, () => {
+      And       Invalid method reference for GreetingService/empty
+      `, () => {
       const greetingService: Service = {
         definition: definitionWithWrongMethodReference,
         reference: new GreetingService(),
@@ -74,10 +77,15 @@ describe('Test the creation of Microservice', () => {
       Scenario: Fail to register a service
       Given     a service with definition and reference
       And       definition and reference comply with each other
-      But       reference has a method that is not a function
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |                 |                      |empty: null           |
+      # reference has a method that is not a function
       When      creating a Microservice with the service
       Then      exception will occur
-      And       a relevant message will be received`, () => {
+      And       Invalid method reference for GreetingService/empty
+      `, () => {
         const greetingService: Service = {
           definition: definitionWithWrongMethodReference,
           reference: { hello, greet$, empty },
@@ -94,10 +102,13 @@ describe('Test the creation of Microservice', () => {
       Scenario: Invoke registered service from proxy (RequestResponse)
       Given     a service with definition and reference
       And       definition and reference comply with each other
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream | 
       When      Microservice is created
-      And       Proxy is created from the Microservice
-      And       proxy invokes the method
-      Then      valid response is received
+      And       greetingServiceProxy is created from the Microservice
+      And       greetingServiceProxy invokes the method
+      Then      valid method reference for greetingServiceProxy is received \`Hello ${name}\`
       `, () => {
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
@@ -106,10 +117,14 @@ describe('Test the creation of Microservice', () => {
       Scenario: Invoke registered service from proxy (RequestStream)
       Given     a service with definition and reference
       And       definition and reference comply with each other
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |      
       When      Microservice is created
-      And       Proxy is created from the Microservice
-      And       subscribe to proxy method
+      And       greetingServiceProxy is created from the Microservice
+      And       subscribe to greetingServiceProxy method
       Then      valid response is emitted
+      And       response: string
       `, (done) => {
         greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
