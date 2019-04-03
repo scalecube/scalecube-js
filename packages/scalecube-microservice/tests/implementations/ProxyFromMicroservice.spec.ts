@@ -115,14 +115,15 @@ describe('Test creating proxy from microservice', () => {
   test(`
     Scenario: Fail to create proxy, missing serviceDefinition
       Given   a service with definition and reference
-      And     definition and reference comply with each other
-      |service          |definition            |reference  |
+      And     definition and reference do NOT comply with each other
+      |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
       |                 |greet$: RequestStream |greet$: RequestStream |
       |                 |empty: null           |                      |
       When    proxy is created by a Microservice
-      Then    greetingServiceProxy will NOT be created from the Microservice
       And     serviceDefinition is not defined for createProxy
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error (serviceDefinition) is not defined
       `, () => {
     const ms = Microservices.create({ services: [greetingService] });
     try {
@@ -133,7 +134,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with missing serviceName in serviceDefinition', () => {
+  test(`
+    Scenario: Fail to create a proxy, missing serviceName in serviceDefinition
+      Given   a service with definition and reference
+      And     definition and reference do NOT comply with each other
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |                 |empty: null           |                      |
+      When    proxy is created by a Microservice
+      And     serviceDefinition is missing for createProxy
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error (serviceDefinition.serviceName) is not defined 
+    # Throw error message when creating proxy with missing serviceName in serviceDefinition
+    `, () => {
     try {
       // @ts-ignore-next-line
       prepareScalecubeForGreetingService({ serviceDefinition: { methods: { ...greetingServiceDefinition.methods } } });
