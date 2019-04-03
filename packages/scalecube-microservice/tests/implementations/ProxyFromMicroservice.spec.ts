@@ -135,6 +135,7 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
+    # Throw error message when creating proxy with missing serviceName in serviceDefinition
     Scenario: Fail to create a proxy, missing serviceName in serviceDefinition
       Given   a service with definition and reference
       And     definition and reference do NOT comply with each other
@@ -146,7 +147,6 @@ describe('Test creating proxy from microservice', () => {
       And     serviceDefinition is missing for createProxy
       Then    greetingServiceProxy will NOT be created from the Microservice
       And     invalid error (serviceDefinition.serviceName) is not defined 
-    # Throw error message when creating proxy with missing serviceName in serviceDefinition
     `, () => {
     try {
       // @ts-ignore-next-line
@@ -156,7 +156,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with missing methods in serviceDefinition', () => {
+  test(`
+    # Throw error message when creating proxy with missing methods in serviceDefinition
+    Scenario: Fail to create a proxy, missing a method in serviceDefinition
+      Given   a service with definition and reference
+      And     definition and reference do NOT comply with each other
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |                 |empty: null           |                      |
+      When    proxy is created by a Microservice
+      And     RequestResponse is missing for createProxy
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error service (serviceName) is not valid.   
+    `, () => {
     try {
       // @ts-ignore-next-line
       prepareScalecubeForGreetingService({ serviceDefinition: { serviceName: greetingServiceDefinition.serviceName } });
