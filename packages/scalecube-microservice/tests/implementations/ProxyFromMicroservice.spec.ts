@@ -294,7 +294,6 @@ describe('Test creating proxy from microservice', () => {
       When    Proxy tries to invoke a method from serviceDefinition
       |method: RequestResponse |
       Then    greetingServiceProxy is created from the Microservice
-    
     `, () => {
     expect.assertions(2);
     const ms = Microservices.create({ services: [greetingService, greetingService2] });
@@ -316,13 +315,38 @@ describe('Test creating proxy from microservice', () => {
       );
   });
 
-  it('The inner logic of throwing errors in method implementation is saved (requestResponse asyncModel)', () => {
+  test(`
+    # The inner logic of throwing errors in method implementation is saved (requestResponse asyncModel)
+    Scenario: An error occurs after method 'requestResponse asyncModel' invokes, error received.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |hello: RequestResponse|
+      When    greetingService reject method 'requestResponse'
+      Then    invalid response is received Error('please provide user to greet')
+  
+  `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(1);
     return expect(greetingServiceProxy.hello()).rejects.toEqual(new Error('please provide user to greet'));
   });
 
-  it('The inner logic of throwing errors in method implementation is saved (requestStream asyncModel)', (done) => {
+  test(`
+    # The inner logic of throwing errors in method implementation is saved (requestStream asyncModel)
+    Scenario: An error occurs after method 'requestStream asyncModel' invokes, error received.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |greet$: RequestStream |
+      When    greetingService reject method 'requestStream'
+      Then    invalid response is received Error('please provide Array of greetings')
+    `, (done) => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(1);
     greetingServiceProxy.greet$().subscribe(
