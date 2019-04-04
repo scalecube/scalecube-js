@@ -195,7 +195,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with invalid serviceDefinition', () => {
+  test(`
+    # Throw error message when creating proxy with invalid serviceDefinition
+    Scenario: Proxy failed to invoke a method, invalid serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |hello: RequestResponse|
+      When    Proxy tries to invoke an invalid method from serviceDefinition
+      |method: getServiceIsNotValidError |
+      Then    an error will occur service 'getServiceIsNotValidError' is not valid
+    `, () => {
     const ms = Microservices.create({ services: [greetingService] });
     try {
       ms.createProxy({
@@ -208,7 +221,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable', (done) => {
+  test(`
+  # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable
+    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |greet$: RequestStream2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestStream2 |
+      Then    an error will occur asyncModel miss match, expect (RequestStream), but received (RequestStream2)  
+  `, (done) => {
     const greetingServiceMissMatchAsyncModel = prepareScalecubeForGreetingService({
       serviceDefinition: missMatchDefinition,
     });
