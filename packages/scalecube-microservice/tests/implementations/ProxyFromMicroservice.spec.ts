@@ -222,8 +222,8 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
-  # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable
-    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch
+    # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable
+    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - observable
       Given   a Microservice
       |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
@@ -250,7 +250,20 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE', (done) => {
+  test(`
+    # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE
+    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - REQUEST_RESPONSE
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods                |
+      |greetingService  |hello: RequestResponse2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestResponse2 |
+      Then    an error will occur asyncModel miss match, expect (RequestResponse), but received (RequestResponse2)
+  `, (done) => {
     const greetingServiceMissMatchAsyncModel = prepareScalecubeForGreetingService({
       serviceDefinition: missMatchDefinition,
     });
