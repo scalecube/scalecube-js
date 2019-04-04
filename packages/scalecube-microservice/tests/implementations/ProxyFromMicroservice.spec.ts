@@ -358,7 +358,19 @@ describe('Test creating proxy from microservice', () => {
     );
   });
 
-  it('Proxy does not convert the asyncModel to some other type', () => {
+  test(`
+    # Proxy does not convert the asyncModel to some other type
+    Scenario: Proxy does not convert type in the asyncModel, promise getting response.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |greet$: RequestStream |
+      When    greetingServiceProxy invokes helloPromise
+      Then    greetObservable is received
+  `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(3);
 
@@ -370,7 +382,20 @@ describe('Test creating proxy from microservice', () => {
     expect(isObservable(greetObservable)).toBeTruthy();
   });
 
-  it('Invokes static methods on class correctly', () => {
+  test(`
+    # Invokes static methods on class correctly
+    Scenario: Proxy invokes a static method successfully 
+      Given   a Microservice
+      And     static property for method 'RequestResponse'
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |hello: RequestResponse|
+      When    greetingServiceProxy invokes helloStatic
+      Then    valid response received 'Hello from static method, defaultUser' 
+    `, () => {
     expect.assertions(1);
     const ms = Microservices.create({ services: [greetingServiceWithStatic] });
     const greetingServiceProxy = ms.createProxy({ serviceDefinition: greetingServiceWithStaticDefinition });
