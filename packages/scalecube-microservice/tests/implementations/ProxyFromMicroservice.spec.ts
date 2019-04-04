@@ -114,14 +114,12 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     Scenario: Fail to create proxy, missing serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
+      Given   a Microservice
       |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
       |                 |greet$: RequestStream |greet$: RequestStream |
-      |                 |empty: null           |                      |
-      When    proxy is created by a Microservice
-      And     serviceDefinition is not defined for createProxy
+      When    proxy is created from the Microservice
+      And     Definition is not defined for createProxy
       Then    greetingServiceProxy will NOT be created from the Microservice
       And     invalid error (serviceDefinition) is not defined
       `, () => {
@@ -135,16 +133,15 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
-    # Throw error message when creating proxy with missing serviceName in serviceDefinition
     Scenario: Fail to create a proxy, missing serviceName in serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
+      Given   a Microservice
       |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
       |                 |greet$: RequestStream |greet$: RequestStream |
-      |                 |empty: null           |                      |
       When    proxy is created by a Microservice
-      And     serviceDefinition is missing for createProxy
+      And     serviceName is missing in the serviceDefinition
+      |serviceName      |methods               |
+      |                 |hello: RequestResponse|
       Then    greetingServiceProxy will NOT be created from the Microservice
       And     invalid error (serviceDefinition.serviceName) is not defined 
     `, () => {
@@ -157,28 +154,17 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
-    # Throw error message when creating proxy with missing methods in serviceDefinition
-    Scenario: Fail to create a proxy, missing a method RequestResponse in serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
-      |service          |definition            |reference             |
-      |greetingService  |hello: null           |hello: RequestResponse|
-      |                 |greet$: RequestStream |greet$: RequestStream |
-      When    proxy is created by a Microservice
-      And     RequestResponse is missing for createProxy
-      Then    greetingServiceProxy will NOT be created from the Microservice
-      And     invalid error service (serviceName) is not valid.   
-      
-    Scenario: Fail to create a proxy, missing a method RequestStream in serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
+    Scenario: Fail to create a proxy, missing a methods serviceDefinition
+      Given   a Microservice
       |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
-      |                 |greet$: null          |greet$: RequestStream |
+      |                 |greet$: RequestStream |greet$: RequestStream |
       When    proxy is created by a Microservice
-      And     RequestStream is missing for createProxy
+      And     methods are missing in the serviceDefinition
+      |serviceName      |methods               |
+      |greetingService  |                      |
       Then    greetingServiceProxy will NOT be created from the Microservice
-      And     invalid error service (serviceName) is not valid.   
+      And     invalid error service (serviceName) is not valid.      
     `, () => {
     try {
       // @ts-ignore-next-line
@@ -189,30 +175,17 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
-    # Throw error message if method is not defined in the serviceDefinition
-    Scenario: Fail to create a Microservice, missing a method RequestResponse in serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
-      |service          |definition            |reference             |
-      |greetingService  |hello: null           |hello: RequestResponse|
-      |                 |greet$: RequestStream |greet$: RequestStream |
-      When    creating a Microservice with the service
-      And     RequestResponse is missing for createProxy
-      Then    exception will occur
-      And     invalid error []
-      # I COULDN'T FIND THE ERROR it's still missing
-      
-    Scenario: Fail to create a Microservice, missing a method RequestStream in serviceDefinition
-      Given   a service with definition and reference
-      And     definition and reference do NOT comply with each other
+    Scenario: Proxy failed to invoke a method, missing a method serviceDefinition
+      Given   a Microservice
       |service          |definition            |reference             |
       |greetingService  |hello: RequestResponse|hello: RequestResponse|
-      |                 |greet$: null          |greet$: RequestStream |
-      When    creating a Microservice with the service
-      And     RequestStream is missing for createProxy
-      Then    exception will occur
-      And     invalid error []
-      # I COULDN'T FIND THE ERROR it's still missing       
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |hello: RequestResponse|
+      When    Proxy tries to invoke method that does not exist in the serviceDefinition
+      |method: fakeHello |
+      Then    an error will occur service method 'fakeHello' missing in the serviceDefinition
     `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     try {
