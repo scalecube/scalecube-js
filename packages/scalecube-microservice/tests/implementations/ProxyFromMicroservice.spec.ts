@@ -277,7 +277,25 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Proxies for two different services work correctly', () => {
+  test(`
+    # Proxies for two different services work correctly
+    Scenario: Proxy created with two different services will work
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |greetingService2 |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods                |
+      |greetingService  |hello: RequestResponse |
+      |                 |greet$: RequestStream
+      |greetingService2 |hello: RequestResponse2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestResponse |
+      Then    greetingServiceProxy is created from the Microservice
+    
+    `, () => {
     expect.assertions(2);
     const ms = Microservices.create({ services: [greetingService, greetingService2] });
     const greetingServiceProxy = ms.createProxy({
