@@ -78,12 +78,34 @@ describe('Test creating proxy from microservice', () => {
     return ms.createProxy({ serviceDefinition });
   };
 
-  it('Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)', () => {
+  test(`
+    # Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)
+    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+      Given:  Given a Microservice
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created from the Microservice
+      And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
+      Then    greetingServiceProxy will be invoked from the Microservice
+    `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
-  it('Invoke method that is defined in the serviceDefinition (requestStream asyncModel)', (done) => {
+  test(`
+    # Invoke method that is defined in the serviceDefinition (requestStream asyncModel)
+    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+      Given:  Given a Microservice
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created from the Microservice
+      And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
+      Then    greetingServiceProxy will be invoked from the Microservice
+    `, (done) => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
 
     expect.assertions(4);
