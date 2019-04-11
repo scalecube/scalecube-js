@@ -29,7 +29,18 @@ describe('Test creating proxy from microservice', () => {
     greetingServiceCall = ms.createServiceCall({});
   });
 
-  it('Test requestResponse(message):ServiceCallOptions', () => {
+  test(`
+    # Test requestResponse(message):ServiceCallOptions
+    Scenario: Successful requestResponse(message):ServiceCallOptions
+      Given:  a Microservice with serviceDefinition and reference
+      |serviceName  |method |asyncModel       |
+      |greeting     |hello  |requestResponse  |
+      When    creating a serviceCall
+      And     message is created
+      |qualifier  |greeting/hello  |
+      And     invoking the serviceCall's requestResponse with the message
+      Then    serviceCall's requestResponse will be invoked succesfuly
+    `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
@@ -41,7 +52,11 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestResponse(message):ServiceCallOptions - asyncModel miss match', () => {
+  test(`
+    # Test requestResponse(message):ServiceCallOptions - asyncModel miss match
+    Scenario: Fail to connect to get requestResponse, asyncModel miss match
+      Given   a Microservice
+  `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
