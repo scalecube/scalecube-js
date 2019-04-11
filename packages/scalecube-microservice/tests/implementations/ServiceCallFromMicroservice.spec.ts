@@ -33,11 +33,11 @@ describe('Test creating proxy from microservice', () => {
     # Test requestResponse(message):ServiceCallOptions
     Scenario: Successful requestResponse(message):ServiceCallOptions
       Given:  a Microservice with serviceDefinition and reference
-      |serviceName  |method |asyncModel       |
-      |greeting     |hello  |requestResponse  |
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
       When    creating a serviceCall
       And     message is created
-      |qualifier  |greeting/hello  |
+              |qualifier  |greeting/hello  |
       And     invoking the serviceCall's requestResponse with the message
       Then    serviceCall's requestResponse will be invoked succesfuly
     `, () => {
@@ -54,8 +54,14 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Test requestResponse(message):ServiceCallOptions - asyncModel miss match
-    Scenario: Fail to connect to get requestResponse, asyncModel miss match
-      Given   a Microservice
+    Scenario: Fail to connect to get requestResponse, asyncModel mismatch
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/greet$  |
+      Then    invalid error getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM)
   `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
