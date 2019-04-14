@@ -75,7 +75,17 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestStream(message):ServiceCallOptions', (done) => {
+  test(`
+    # Test requestStream(message):ServiceCallOptions
+    Scenario: Success to connect to requestStream
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestStream  |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/greet$  |
+      Then    serviceCall's requestResponse will be invoked succesfuly
+  `, (done) => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
