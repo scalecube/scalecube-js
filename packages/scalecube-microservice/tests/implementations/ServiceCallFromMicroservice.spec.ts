@@ -40,7 +40,7 @@ describe('Test creating proxy from microservice', () => {
               |qualifier  |greeting/hello  |
       And     invoking the serviceCall's requestResponse with the message
       Then    serviceCall's requestResponse will be invoked succesfuly
-    `, () => {
+      `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
@@ -62,7 +62,7 @@ describe('Test creating proxy from microservice', () => {
       And     message is created with qualifier and methodName
               |qualifier  |greeting/greet$  |
       Then    invalid error getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM)
-  `, () => {
+      `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
@@ -80,12 +80,12 @@ describe('Test creating proxy from microservice', () => {
     Scenario: Success to connect to requestStream
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
-              |greeting     |hello  |requestStream  |
+              |greeting     |hello  |requestStream    |
       When    creating a service call
       And     message is created with qualifier and methodName
               |qualifier  |greeting/greet$  |
       Then    serviceCall's requestResponse will be invoked succesfuly
-  `, (done) => {
+      `, (done) => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
@@ -104,7 +104,17 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestStream(message):ServiceCallOptions - asyncModel miss match', (done) => {
+  test(`
+    # Test requestStream(message):ServiceCallOptions - asyncModel miss match
+    Scenario: Fail to connect to get requestStream, asyncModel mismatch
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestStream    |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/hello  |
+      Then    invalid error getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_STREAM, ASYNC_MODEL_TYPES.REQUEST_RESPONSE)
+      `, (done) => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
