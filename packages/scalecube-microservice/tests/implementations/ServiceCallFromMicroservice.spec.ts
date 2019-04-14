@@ -144,6 +144,7 @@ describe('Test creating proxy from microservice', () => {
       And     message is created with qualifier and data
               |qualifier  |greeting/hello  |
               |data       |hello: string   |
+      And     invoking the serviceCall's requestResponse with the message
       Then    invalid error?
       
     Scenario: Massage data is an integer NOT an array, ServiceCall fails
@@ -154,6 +155,7 @@ describe('Test creating proxy from microservice', () => {
       And     message is created with qualifier and data
               |qualifier  |greeting/hello  |
               |data       |hello: integer  |
+      And     invoking the serviceCall's requestResponse with the message
       Then    invalid (error.message).toMatch(WRONG_DATA_FORMAT_IN_MESSAGE)
       `, () => {
     expect.assertions(1);
@@ -177,6 +179,7 @@ describe('Test creating proxy from microservice', () => {
               |greeting     |hello  |requestResponse  |
       When    creating a ServiceCall
       And     |qualifier  |greeting/fakeHello |
+      And     invoking the serviceCall's requestResponse with the message
       Then    invalid (error.message).toMatch(getNotFoundByRouterError(message.qualifier) 
       `, () => {
     expect.assertions(1);
