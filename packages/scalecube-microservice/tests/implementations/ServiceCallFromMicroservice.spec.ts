@@ -133,7 +133,29 @@ describe('Test creating proxy from microservice', () => {
     );
   });
 
-  it('ServiceCall should fail if message data is not Array', () => {
+  test(`
+    # ServiceCall should fail if message data is not Array
+    
+    Scenario: Massage data is a string and NOT an array, ServiceCall fails
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     message is created with qualifier and data
+              |qualifier  |greeting/hello  |
+              |data       |hello: string   |
+      Then    invalid error?
+      
+    Scenario: Massage data is an integer NOT an array, ServiceCall fails
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     message is created with qualifier and data
+              |qualifier  |greeting/hello  |
+              |data       |hello: integer  |
+      Then    invalid (error.message).toMatch(WRONG_DATA_FORMAT_IN_MESSAGE)
+      `, () => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
