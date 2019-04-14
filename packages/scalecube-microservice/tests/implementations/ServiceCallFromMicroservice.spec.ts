@@ -169,7 +169,16 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('ServiceCall should fail with service not found error', () => {
+  test(`
+    # ServiceCall should fail with service not found error
+    Scenario: ServiceCall fail, service not found
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     |qualifier  |greeting/fakeHello |
+      Then    invalid (error.message).toMatch(getNotFoundByRouterError(message.qualifier) 
+      `, () => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'fakeHello' });
