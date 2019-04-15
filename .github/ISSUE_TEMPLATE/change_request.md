@@ -1,10 +1,20 @@
+---
+name: Change Request/New Feature Request
+about: Suggest a change in exist feature or the creation of a new feature
+title: ''
+labels: 'feature'
+assignees: ''
+---
+
 ## General description
+
+The general description of the change/feature, that will explain the core value.
 
 #### Prerequisites
 
 Links to any external dependency for this feature
 
-- [ ] [Link]
+[Link]
 
 ## API
 
@@ -70,9 +80,11 @@ A clear target that can be measured by the change.
 
 _**Example:** reduce bundle size by X%._
 
-## Definition of Done
+## Ready for implementation
 
--[ ] Product owner review
+-[ ] External dependencies have been resolved -[ ] API has been approved -[ ] Test cases have been prepared -[ ] Discussed with Technical lead
+
+## Definition of Done
 
 -[ ] Technical lead review
 

@@ -1,3 +1,11 @@
+---
+name: Bug report
+about: Create a report to help us fix the bug
+title: ''
+labels: 'Bug'
+assignees: ''
+---
+
 ## Describe the bug
 
 A clear and concise description of what the bug is.
@@ -31,16 +39,6 @@ Screenshots, videos, documents, localStorage and cookies data etc..
 - OS & Version: [e.g. iOS:11.10...]
 - Browser & Version [e.g. chrome:x..., safari:y..]
 - Device (the full name of the device)
-- SDK [LINK] & [Version]
-- Tenant (string that was used to initialize SDK with)
-
-#### Credentials
-
-All the data that is required to get authorized as the specific user.
-
-#### Approximate time when the bug has happened
-
-Some bugs might be specific to a trading platform, so the timing may be useful.
 
 #### Additional context
 

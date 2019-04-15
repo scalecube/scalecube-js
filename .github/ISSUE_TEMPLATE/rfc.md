@@ -1,3 +1,12 @@
+---
+name: rfc
+about: Suggest a POC proposition
+title: ''
+labels: ''
+labels: 'rfc'
+assignees: ''
+---
+
 ## Proposition
 
 A clear and concise description of the RFC proposition.
