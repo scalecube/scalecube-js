@@ -23,8 +23,11 @@ Links to any external dependency for this feature
 A clear and concise description of the design proposition.
 
 - [ ] Is backward compatible
+
 - [ ] Adds new API
+
 - [ ] Changes existing API
+
 - [ ] Removes existing API
 
 #### Pull Request
