@@ -199,7 +199,7 @@ describe('Test the creation of Microservice', () => {
         | ms2          | s2       |d2           | 
         When    creating a proxy to ms1 with definition of d2
         And     proxy invokes s2
-        Then    valid response is received
+        Then    remoteCall is performed and valid response is received
     `, () => {
       expect.assertions(1);
 
