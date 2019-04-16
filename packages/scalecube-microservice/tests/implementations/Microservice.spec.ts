@@ -37,7 +37,7 @@ describe('Test the creation of Microservice', () => {
         |service          |definition            |reference  |
         |greetingService  |hello: RequestResponse|hello: RequestResponse|
         |                 |greet$: RequestStream |greet$: RequestStream |
-        |                 |empty : null          |                      |
+        |                 |hello2 : RequestResponse |                      |
         # definition has a method that is not contained in the reference
         When    creating a Microservice with the service
         Then    exception will occur
