@@ -227,7 +227,7 @@ describe('Test the creation of Microservice', () => {
         | ms1          | s1       |d1           |
         | ms2          | s2       |d2           | 
         When    creating a proxy to ms1 with definition of d3
-        And     proxy tries to invoke s2
+        And     remoteCall is performed and proxy tries to invoke s2
         Then    exception will occur
         And     a relevant message will be received
     `, () => {
