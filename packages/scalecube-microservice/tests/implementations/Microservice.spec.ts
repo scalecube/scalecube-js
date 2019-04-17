@@ -117,7 +117,7 @@ describe('Test the creation of Microservice', () => {
         Then    a Microservice will not be created
         And     exception will occur with service greetingService is not valid.
       
-      Scenario: Fail to register a service,  (silence failing)
+      Scenario: Fail to register a service, (silent failing)
         Given   a service with definition and reference
         |service          |definition            |reference  |
         |greetingService  |             |hello: RequestResponse|
