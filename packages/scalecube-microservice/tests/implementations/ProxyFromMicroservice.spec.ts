@@ -17,6 +17,7 @@ import {
 
 describe('Test creating proxy from microservice', () => {
   test(`
+    // move to 'successful-invoke-proxy.spec.ts'
     Scenario: Create a proxy from Microservice 
       Given   a service with definition and reference
       And     definition and reference comply with each other
@@ -80,6 +81,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)
+    // move to 'successful-invoke-proxy.spec.ts'
     Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
       Given:  Given a Microservice
       And     definition and reference comply with each other
@@ -96,6 +98,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Invoke method that is defined in the serviceDefinition (requestStream asyncModel)
+    //// move to 'successful-invoke-proxy.spec.ts'
     Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
       Given:  Given a Microservice
       And     definition and reference comply with each other
@@ -135,6 +138,7 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Fail to create proxy, missing serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
@@ -155,6 +159,7 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Fail to create a proxy, missing serviceName in serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
@@ -176,6 +181,7 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Fail to create a proxy, missing a methods serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
@@ -197,6 +203,7 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Proxy failed to invoke a method, missing a method serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
@@ -219,6 +226,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Throw error message when creating proxy with invalid serviceDefinition
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Proxy failed to invoke a method, invalid serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
@@ -245,6 +253,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - observable
       Given   a Microservice
       |service          |definition            |reference             |
@@ -274,6 +283,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE
+    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - REQUEST_RESPONSE
       Given   a Microservice
       |service          |definition            |reference             |
@@ -301,6 +311,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Proxies for two different services work correctly
+    // move to 'successful-invoke-proxy.spec.ts'
     Scenario: Proxy created with two different services will work
       Given   a Microservice
       |service          |definition            |reference             |
@@ -339,6 +350,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # The inner logic of throwing errors in method implementation is saved (requestResponse asyncModel)
+    // move to 'failed-async-model.spec.ts'
     Scenario: An error occurs after method 'requestResponse asyncModel' invokes, error received.
       Given   a Microservice
       |service              |definition            |reference             |
@@ -358,6 +370,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # The inner logic of throwing errors in method implementation is saved (requestStream asyncModel)
+    // move to 'failed-async-model.spec.ts'
     Scenario: An error occurs after method 'requestStream asyncModel' invokes, error received.
       Given   a Microservice
       |service              |definition            |reference             |
@@ -382,6 +395,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Proxy does not convert the asyncModel to some other type
+    // move to 'successful-async-model.spec.ts'
     Scenario: Proxy does not convert type in the asyncModel, promise getting response.
       Given   a Microservice
       |service              |definition            |reference             |
@@ -406,6 +420,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Invokes static methods on class correctly
+    // move to 'successful-invoke-proxy.spec.ts'
     Scenario: Proxy invokes a static method successfully 
       Given   a Microservice
       And     static property for method 'RequestResponse'

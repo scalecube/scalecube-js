@@ -31,6 +31,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Test requestResponse(message):ServiceCallOptions
+    // move to 'successful-serviceCall.spec.ts'
     Scenario: Successful requestResponse(message):ServiceCallOptions
       Given:  a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -54,6 +55,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Test requestResponse(message):ServiceCallOptions - asyncModel miss match
+    // move to 'failed-serviceCall.spec.ts'
     Scenario: Fail to connect to get requestResponse, asyncModel mismatch
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -77,6 +79,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Test requestStream(message):ServiceCallOptions
+    // move to 'successful-serviceCall.spec.ts'
     Scenario: Success to connect to requestStream
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -106,6 +109,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Test requestStream(message):ServiceCallOptions - asyncModel miss match
+    // move to 'failed-serviceCall.spec.ts'
     Scenario: Fail to connect to get requestStream, asyncModel mismatch
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -136,6 +140,7 @@ describe('Test creating proxy from microservice', () => {
   test(`
     # ServiceCall should fail if message data is not Array
     
+    // move to 'failed-serviceCall.spec.ts'
     Scenario: Massage data is a string and NOT an array, ServiceCall fails
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -146,7 +151,8 @@ describe('Test creating proxy from microservice', () => {
               |data       |hello: string   |
       And     invoking the serviceCall's requestResponse with the message
       Then    invalid error?
-      
+    
+    // move to 'failed-serviceCall.spec.ts'  
     Scenario: Massage data is an integer NOT an array, ServiceCall fails
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
@@ -173,6 +179,7 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # ServiceCall should fail with service not found error
+    // move to 'failed-serviceCall.spec.ts'
     Scenario: ServiceCall fail, service not found
       Given   a Microservice with serviceDefinition and reference
               |serviceName  |method |asyncModel       |
