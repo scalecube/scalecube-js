@@ -9,7 +9,7 @@ import Microservices, { ASYNC_MODEL_TYPES } from '../../src';
 import { Service, ServiceDefinition } from '../../src/api';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
 import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
-import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
+import { getInvalidMethodReferenceError, getServiceIsNotValidError } from '../../src/helpers/constants';
 import { getGlobalNamespace } from '../../src/helpers/utils';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
 
@@ -34,23 +34,28 @@ describe('Test the creation of Microservice', () => {
     test(`
       Scenario: Fail to register a service, reference does not match definition
         Given   a service with definition and reference
-        |service          |definition            |reference  |
-        |greetingService  |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |
-        |                 |hello2 : RequestResponse |                      |
+        |service          |definition               |reference  |
+        |greetingService  |hello : RequestResponse  |           |
         # definition has a method that is not contained in the reference
         When    creating a Microservice with the service
         Then    exception will occur
-        And     service method  ‘empty’ missing in the serviceDefinition`, () => {
+        And     Invalid method reference for GreetingService/hello`, () => {
       const greetingService: Service = {
-        definition: definitionWithWrongMethodReference,
-        reference: new GreetingService(),
+        definition: {
+          serviceName: 'GreetingService',
+          methods: {
+            hello: {
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+            },
+          },
+        },
+        reference: {},
       };
       expect.assertions(1);
       try {
         Microservices.create({ services: [greetingService] });
       } catch (error) {
-        expect(error.message).toMatch(getInvalidMethodReferenceError('GreetingService/empty'));
+        expect(error.message).toMatch(getInvalidMethodReferenceError('GreetingService/hello'));
       }
     });
   });
@@ -73,27 +78,62 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
-      Scenario: Fail to register a service, reference method is not a function
+      Scenario: Fail to register a service, method definition is a primitive
         Given   a service with definition and reference
         And     definition and reference comply with each other
         |service          |definition            |reference             |
-        |greetingService  |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |
-        |                 |empty: null           |empty: null           |
+        |greetingService  |hello: null           |                      |
         # reference has a method that is not a function
         When    creating a Microservice with the service
         Then    a Microservice will not be created
-        And     exception will occur with invalid method reference for GreetingService/empty
+        And     exception will occur with service greetingService is not valid.
       `, () => {
         const greetingService: Service = {
-          definition: definitionWithWrongMethodReference,
-          reference: { hello, greet$, empty },
+          definition: {
+            serviceName: 'greetingService',
+            methods: {
+              // @ts-ignore
+              hello: null,
+            },
+          },
+          reference: {},
         };
         expect.assertions(1);
         try {
           Microservices.create({ services: [greetingService] });
         } catch (error) {
-          expect(error.message).toMatch(getInvalidMethodReferenceError('GreetingService/empty'));
+          expect(error.message).toMatch(getServiceIsNotValidError(greetingService.definition.serviceName));
+        }
+      });
+
+      test(`
+      Scenario: Fail to register a service, asyncModel invalid
+        Given   a service with definition and reference
+        And     definition and reference comply with each other
+        |service          |definition            |reference             |
+        |greetingService  |hello: null           |                      |
+        # reference has a method that is not a function
+        When    creating a Microservice with the service
+        Then    a Microservice will not be created
+        And     exception will occur with service greetingService is not valid.
+      `, () => {
+        const greetingService: Service = {
+          definition: {
+            serviceName: 'greetingService',
+            methods: {
+              hello: {
+                // @ts-ignore
+                asyncModel: null,
+              },
+            },
+          },
+          reference: {},
+        };
+        expect.assertions(1);
+        try {
+          Microservices.create({ services: [greetingService] });
+        } catch (error) {
+          expect(error.message).toMatch(getServiceIsNotValidError(greetingService.definition.serviceName));
         }
       });
 
