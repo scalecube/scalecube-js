@@ -32,6 +32,7 @@ describe('Test the creation of Microservice', () => {
 
   describe('Test creating microservice from function constructor', () => {
     test(`
+      // move to 'register-service-tests.spec.ts'
       Scenario: Fail to register a service, reference does not match definition
         Given   a service with definition and reference
         |service          |definition               |reference  |
@@ -78,6 +79,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'register-service-tests.spec.ts'
       Scenario: Fail to register a service, method definition is a primitive
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -107,6 +109,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'register-service-tests.spec.ts'
       Scenario: Fail to register a service, asyncModel invalid
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -117,6 +120,7 @@ describe('Test the creation of Microservice', () => {
         Then    a Microservice will not be created
         And     exception will occur with service greetingService is not valid.
       
+      // move to 'register-service-tests.spec.ts'
       Scenario: Fail to register a service, (silent failing)
         Given   a service with definition and reference
         |service          |definition            |reference  |
@@ -148,6 +152,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'proxy-tests.spec.ts'
       Scenario: Invoke registered service from proxy (RequestResponse)
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -163,6 +168,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'proxy-tests.spec.ts'
       Scenario: Invoke registered service from proxy (RequestStream)
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -195,6 +201,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'proxy-tests.spec.ts'
       Scenario: Invoke registered serviceS from proxy (RequestResponse)
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -213,6 +220,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
+      // move to 'proxy-tests.spec.ts'
       Scenario: Subscribe to a service from proxy (RequestStream)
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -237,6 +245,7 @@ describe('Test the creation of Microservice', () => {
 
   describe('Test Discovery', () => {
     test(`
+      // move to 'discovery-tests.spec.ts'
       Scenario: Invoke remote service 
         Given   two valid Microservices under the same seedAddress
         | Microservice | reference| definition  |
@@ -266,6 +275,7 @@ describe('Test the creation of Microservice', () => {
     });
 
     test(`
+      // move to 'proxy-tests.spec.ts'
       Scenario: Fail to invoke a remote service 
         Given   two valid Microservices under the same seedAddress
         | Microservice | reference| definition  |
