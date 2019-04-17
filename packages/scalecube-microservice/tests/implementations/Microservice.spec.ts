@@ -116,6 +116,16 @@ describe('Test the creation of Microservice', () => {
         When    creating a Microservice with the service
         Then    a Microservice will not be created
         And     exception will occur with service greetingService is not valid.
+      
+      Scenario: Fail to register a service,  (silence failing)
+        Given   a service with definition and reference
+        |service          |definition            |reference  |
+        |greetingService  |             |hello: RequestResponse|
+        |                 |greet$: RequestStream |greet$: RequestStream |
+        # reference has a method that is not contained in the definition
+        When    creating a Microservice with the service
+        Then    Microservice will successfully created
+        But Microservice instance won't contain hello method
       `, () => {
         const greetingService: Service = {
           definition: {
