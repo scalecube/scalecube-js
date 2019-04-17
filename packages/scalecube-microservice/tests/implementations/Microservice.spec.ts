@@ -41,8 +41,7 @@ describe('Test the creation of Microservice', () => {
         # definition has a method that is not contained in the reference
         When    creating a Microservice with the service
         Then    exception will occur
-        And     service method  ‘empty’ missing in the serviceDefinition`
-      `, () => {
+        And     service method  ‘empty’ missing in the serviceDefinition`, () => {
       const greetingService: Service = {
         definition: definitionWithWrongMethodReference,
         reference: new GreetingService(),
