@@ -83,8 +83,8 @@ describe('Test the creation of Microservice', () => {
         |                 |empty: null           |empty: null           |
         # reference has a method that is not a function
         When    creating a Microservice with the service
-        Then    exception will occur
-        And     Invalid method reference for GreetingService/empty
+        Then    a Microservice will not be created
+        And     exception will occur with invalid method reference for GreetingService/empty
       `, () => {
         const greetingService: Service = {
           definition: definitionWithWrongMethodReference,
@@ -150,10 +150,8 @@ describe('Test the creation of Microservice', () => {
         Given   a service with definition and reference
         And     definition and reference comply with each other
         |service          |definition            |reference             |
-        |greetingService1 |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |
+        |greetingService1 |greet$: RequestStream |greet$: RequestStream |
         |greetingService2 |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |      
         When    Microservice is created
         And     Proxy is created from the Microservice
         And     proxy invokes a RequestResponse method
@@ -170,10 +168,8 @@ describe('Test the creation of Microservice', () => {
         Given   a service with definition and reference
         And     definition and reference comply with each other
         |service          |definition            |reference             |
-        |greetingService1 |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |
-        |greetingService2 |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |      
+        |greetingService1 |greet$: RequestStream |greet$: RequestStream |
+        |greetingService2 |hello: RequestResponse|hello: RequestResponse|      
         When    Microservice is created
         And     Proxy is created from the Microservice
         And     subscribe to proxy RequestStream method
