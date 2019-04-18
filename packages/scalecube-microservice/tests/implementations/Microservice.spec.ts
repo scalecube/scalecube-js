@@ -109,7 +109,7 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
-      // move to 'failed-create-service.spec.ts'
+      // move to 'failed-create-microservice.spec.ts'
       Scenario: Fail to register a service, asyncModel invalid
         Given   a service with definition and reference
         And     definition and reference comply with each other
@@ -120,7 +120,7 @@ describe('Test the creation of Microservice', () => {
         Then    a Microservice will not be created
         And     exception will occur with service greetingService is not valid.
       
-      // move to 'failed-create-service.spec.ts'
+      // move to 'failed-create-microservice.spec.ts'
       Scenario: Fail to register a service, (silent failing)
         Given   a service with definition and reference
         |service          |definition            |reference  |
