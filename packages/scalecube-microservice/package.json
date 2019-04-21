@@ -18,7 +18,7 @@
     "build": "rimraf .cache && npm-run-all build:commonJS build:es build:umd build:umd-min",
     "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
     "build:es": "rimraf es && tsc --module esnext --target es5 --outDir es",
-    "build:umd": "rimraf dist && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist dist --global sc",
+    "build:umd": "rimraf dist && parcel build src/index.ts --no-minify  --out-dir dist dist --global sc",
     "build:umd-min": "rimraf dist-min && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist-min dist --global sc",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
@@ -43,6 +43,9 @@
   "dependencies": {
     "@scalecube/scalecube-discovery": "^0.1.1-alpha.2",
     "@types/uuid": "^3.4.4",
+    "rsocket-events-client": "^0.0.12",
+    "rsocket-events-server": "^0.0.12",
+    "rsocket-flowable": "^0.0.10",
     "rxjs": "^6.4.0",
     "uuid": "^3.3.2"
   }

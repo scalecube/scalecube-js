@@ -109,3 +109,8 @@ export interface MicroserviceContext {
   serviceRegistry: ServiceRegistry;
   methodRegistry: MethodRegistry;
 }
+
+export interface RsocketEventsPayload {
+  data: string;
+  metadata: string;
+}

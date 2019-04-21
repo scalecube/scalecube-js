@@ -20,6 +20,6 @@ export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
   REQUEST_RESPONSE: RequestResponseAsyncModel;
 } = {
-  REQUEST_RESPONSE: 'RequestResponse',
-  REQUEST_STREAM: 'RequestStream',
+  REQUEST_RESPONSE: 'requestResponse',
+  REQUEST_STREAM: 'requestStream',
 };

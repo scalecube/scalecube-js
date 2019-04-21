@@ -4,6 +4,7 @@ import { throwErrorFromServiceCall } from '../helpers/utils';
 import { MESSAGE_NOT_PROVIDED, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
+import { take } from 'rxjs/operators';
 
 export const getServiceCall = ({ router, microserviceContext }: CreateServiceCallOptions): ServiceCall => {
   return ({ message, asyncModel, includeMessage }: ServiceCallOptions): ServiceCallResponse => {
@@ -16,6 +17,6 @@ export const getServiceCall = ({ router, microserviceContext }: CreateServiceCal
       ? localCall({ localService, asyncModel, includeMessage, message })
       : remoteCall({ router, microserviceContext, message, asyncModel });
 
-    return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.toPromise() : res$;
+    return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.pipe(take(1)).toPromise() : res$;
   };
 };
