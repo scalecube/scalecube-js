@@ -8,7 +8,6 @@ import {
 import Microservices, { ASYNC_MODEL_TYPES } from '../../src';
 import { Service, ServiceDefinition } from '../../src/api';
 import GreetingService, { greetingServiceDefinition } from '../mocks/GreetingService';
-import GreetingService2, { greetingServiceDefinition2 } from '../mocks/GreetingService2';
 import { getInvalidMethodReferenceError } from '../../src/helpers/constants';
 import { getGlobalNamespace } from '../../src/helpers/utils';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
@@ -116,28 +115,6 @@ describe('Test the creation of Microservice', () => {
           done();
         });
       });
-    });
-  });
-
-  describe('Test Discovery', () => {
-    test('Access endpoint from other discovery with remoteCall', () => {
-      expect.assertions(1);
-
-      const ms1SeedAddress = 'cluster1';
-      const greetingService1: Service = {
-        definition: greetingServiceDefinition,
-        reference: new GreetingService(),
-      };
-      const greetingService2: Service = {
-        definition: greetingServiceDefinition2,
-        reference: new GreetingService2(),
-      };
-
-      const ms1 = Microservices.create({ services: [greetingService1], seedAddress: ms1SeedAddress });
-      Microservices.create({ services: [greetingService2], seedAddress: ms1SeedAddress });
-
-      const proxy1 = ms1.createProxy({ serviceDefinition: greetingServiceDefinition2 });
-      return expect(proxy1.hello(defaultUser)).resolves.toEqual({}); // will fail after implementing remoteCall
     });
   });
 });

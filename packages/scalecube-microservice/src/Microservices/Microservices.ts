@@ -134,15 +134,17 @@ const requestResponse = ({
   serviceCall: ServiceCall;
 }) => {
   return new Single((subscriber: any) => {
+    subscriber.onSubscribe();
     const message = JSON.parse(data);
     (serviceCall({
       message,
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
       includeMessage: true,
-    }) as Promise<any>).then((response: any) => {
-      subscriber.onSubscribe();
-      subscriber.onComplete({ data: JSON.stringify(response), metadata: '' });
-    });
+    }) as Promise<any>)
+      .then((response: any) => {
+        subscriber.onComplete({ data: JSON.stringify(response), metadata: '' });
+      })
+      .catch(subscriber.onError);
   });
 };
 
@@ -162,8 +164,12 @@ const requestStream = ({
       message,
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       includeMessage: true,
-    }) as Observable<any>).subscribe((response: any) => {
-      subscriber.onNext({ data: JSON.stringify(response), metadata: '' });
-    });
+    }) as Observable<any>).subscribe(
+      (response: any) => {
+        subscriber.onNext({ data: JSON.stringify(response), metadata: '' });
+      },
+      (error) => subscriber.onError(error),
+      () => subscriber.onComplete()
+    );
   });
 };
