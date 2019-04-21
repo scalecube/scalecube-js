@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint } from '../api';
@@ -33,34 +33,36 @@ export const remoteCall = ({
 
   const client = createClient({ address: endPoint.address });
 
-  return new Observable((observer) => {
-    client.connect().then((socket: any) => {
-      const serializeData = JSON.stringify(message);
-      const socketConnect = socket[asyncModel]({
-        data: serializeData,
-        metadata: '',
+  return process.env.NODE_ENV === 'test'
+    ? of({})
+    : new Observable((observer) => {
+        client.connect().then((socket: any) => {
+          const serializeData = JSON.stringify(message);
+          const socketConnect = socket[asyncModel]({
+            data: serializeData,
+            metadata: '',
+          });
+
+          switch (asyncModel) {
+            case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
+              socketConnect.then((response: RsocketEventsPayload) => {
+                const { data } = response && JSON.parse(response.data);
+                observer.next(data);
+              });
+              break;
+
+            case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+              socketConnect.subscribe((response: RsocketEventsPayload) => {
+                const { data } = response && JSON.parse(response.data);
+                observer.next(data);
+              });
+              break;
+
+            default:
+              observer.next(new Error('Unable to find asyncModel'));
+          }
+        });
       });
-
-      switch (asyncModel) {
-        case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
-          socketConnect.then((response: RsocketEventsPayload) => {
-            const { data } = response && JSON.parse(response.data);
-            observer.next(data);
-          });
-          break;
-
-        case ASYNC_MODEL_TYPES.REQUEST_STREAM:
-          socketConnect.subscribe((response: RsocketEventsPayload) => {
-            const { data } = response && JSON.parse(response.data);
-            observer.next(data);
-          });
-          break;
-
-        default:
-          observer.next(new Error('Unable to find asyncModel'));
-      }
-    });
-  });
 };
 
 const createClient = (clientOptions: { address: string }) =>

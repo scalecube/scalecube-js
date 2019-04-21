@@ -158,7 +158,10 @@ describe('Test creating proxy from microservice', () => {
     greetingServiceMissMatchAsyncModel.hello(defaultUser).subscribe({
       error: (error: Error) => {
         expectWithFailNow(
-          () => expect(error.message).toMatch(getAsyncModelMissmatch('RequestStream', 'RequestResponse')),
+          () =>
+            expect(error.message).toMatch(
+              getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_STREAM, ASYNC_MODEL_TYPES.REQUEST_RESPONSE)
+            ),
           done
         );
         done();
@@ -173,7 +176,10 @@ describe('Test creating proxy from microservice', () => {
 
     greetingServiceMissMatchAsyncModel.greet$([defaultUser]).catch((error: any) => {
       expectWithFailNow(
-        () => expect(error.message).toMatch(getAsyncModelMissmatch('RequestResponse', 'RequestStream')),
+        () =>
+          expect(error.message).toMatch(
+            getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM)
+          ),
         done
       );
       done();
