@@ -3,11 +3,7 @@ import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint, Message } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
-
-// @ts-ignore
-import RSocketEventsClient from 'rsocket-events-client';
-// @ts-ignore
-import { RSocketClient } from 'rsocket-core';
+import { CreateClient } from '../TransportProviders/MicroserviceClient';
 
 export const remoteCall = ({
   router,
@@ -43,7 +39,7 @@ const remoteResponse = ({
   asyncModel: string;
   message: Message;
 }) => {
-  const client = createClient({ address });
+  const client = CreateClient({ address });
 
   return new Observable((observer) => {
     client.connect().then((socket: any) => {
@@ -74,14 +70,3 @@ const remoteResponse = ({
     });
   });
 };
-
-const createClient = (clientOptions: { address: string }) =>
-  new RSocketClient({
-    setup: {
-      dataMimeType: 'text/plain',
-      keepAlive: 1000000,
-      lifetime: 100000,
-      metadataMimeType: 'text/plain',
-    },
-    transport: new RSocketEventsClient(clientOptions),
-  });
