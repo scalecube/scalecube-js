@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
-import { Endpoint } from '../api';
+import { Endpoint, Message } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 // @ts-ignore
@@ -31,7 +31,19 @@ export const remoteCall = ({
     }) as Observable<any>;
   }
 
-  const client = createClient({ address: endPoint.address });
+  return remoteResponse({ address: endPoint.address, asyncModel, message });
+};
+
+const remoteResponse = ({
+  address,
+  asyncModel,
+  message,
+}: {
+  address: string;
+  asyncModel: string;
+  message: Message;
+}) => {
+  const client = createClient({ address });
 
   return new Observable((observer) => {
     client.connect().then((socket: any) => {
