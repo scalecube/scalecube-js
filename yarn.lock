@@ -8637,7 +8637,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rsocket-core@^0.0.11:
+rsocket-core@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/rsocket-core/-/rsocket-core-0.0.10.tgz#937b2d1e562e80e86e20fea445be37e0e2f88962"
   integrity sha512-u7PolLWw2yP2l/xLUegfr0YhfYorbw+gk98QeKSb8c8Qe+1/jTuwgKI/hfFvkHkx9ByrX8FFNv64EsPDcbcfvA==
@@ -8646,35 +8646,35 @@ rsocket-core@^0.0.11:
     rsocket-flowable "^0.0.10"
     rsocket-types "^0.0.10"
 
-rsocket-events-client@^0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/rsocket-events-client/-/rsocket-events-client-0.0.12.tgz#2d24ae62be5da4d61a1d0265c8ea8635453e731c"
-  integrity sha512-aFxG8IT5x0vRm+bgc+vmWwHNZCd8Vezaf2XBe2S8BkxqJTNbUVRREf1jVzYelWJqSz1c+nDpEN14/qOGXwa4Gw==
+rsocket-events-client@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/rsocket-events-client/-/rsocket-events-client-0.0.14.tgz#251cbf42d5b502c2f3114080749c1d1b071b7f6a"
+  integrity sha512-fHZ9Jrmmg4yhcLYTlzuhCc5XzoYMTtDCSRz8Efob1w4PJ55P7HG10tsaV21kEKMFWPCVJj9rXisqz9Mpo1FKhA==
   dependencies:
     fbjs "^0.8.12"
-    rsocket-core "^0.0.11"
-    rsocket-flowable "^0.0.11"
-    rsocket-types "^0.0.11"
+    rsocket-core "^0.0.10"
+    rsocket-flowable "^0.0.10"
+    rsocket-types "^0.0.10"
 
-rsocket-events-server@^0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/rsocket-events-server/-/rsocket-events-server-0.0.12.tgz#56b97d3a4515108832b29bcb6597a1ea647e866a"
-  integrity sha512-uaer7eurUOCBFsjbfGk01yBirGGVET4ff90Jeott2XGlazbMjwLK0O89K/A8R/KaaoSdyIe4QSpc22U6Y71kHQ==
+rsocket-events-server@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/rsocket-events-server/-/rsocket-events-server-0.0.14.tgz#694b3900686f576bc73355376a0cf465b0ed9196"
+  integrity sha512-j6QXoRbRSPQ1XVYADn2TTGeFROkAkB8wMnK7KUilVwPRk+MOlXQh4BqRleEsxoj2zPFwOrPqs96zBjOyJNC1oA==
   dependencies:
     fbjs "^0.8.12"
-    rsocket-core "^0.0.11"
-    rsocket-events-client "^0.0.12"
-    rsocket-flowable "^0.0.11"
-    rsocket-types "^0.0.11"
+    rsocket-core "^0.0.10"
+    rsocket-events-client "^0.0.14"
+    rsocket-flowable "^0.0.10"
+    rsocket-types "^0.0.10"
 
-rsocket-flowable@^0.0.10, rsocket-flowable@^0.0.11:
+rsocket-flowable@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/rsocket-flowable/-/rsocket-flowable-0.0.10.tgz#6e02f87145fde0d73b165f37b98bd39e7a95b50d"
   integrity sha512-H8DWjne8atb1wtQ7cFhQV1Rq6MmRGniqaP6x8zM1avx2qt4SfyQDC9BlKRMDcwxkqt03MHz9MzYKsWfV44lUDg==
   dependencies:
     fbjs "^0.8.12"
 
-rsocket-types@^0.0.10, rsocket-types@^0.0.11:
+rsocket-types@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/rsocket-types/-/rsocket-types-0.0.10.tgz#5065fc0d8d7531fbf71aad330370b6adbbc7a97b"
   integrity sha512-EO0iSSt5AOvEysUtA0Fm0i+pNWNcPIDLPAD0kP8Tk/IwYGyr303USF+1n2H9wuLMqqBQwWSv5E/VG46TztZJdg==

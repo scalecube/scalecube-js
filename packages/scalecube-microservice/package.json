@@ -43,8 +43,8 @@
   "dependencies": {
     "@scalecube/scalecube-discovery": "^0.1.1-alpha.2",
     "@types/uuid": "^3.4.4",
-    "rsocket-events-client": "^0.0.12",
-    "rsocket-events-server": "^0.0.12",
+    "rsocket-events-client": "^0.0.14",
+    "rsocket-events-server": "^0.0.14",
     "rsocket-flowable": "^0.0.10",
     "rxjs": "^6.4.0",
     "uuid": "^3.3.2"
