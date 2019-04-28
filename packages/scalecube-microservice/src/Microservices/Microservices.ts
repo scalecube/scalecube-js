@@ -53,17 +53,17 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
         const serviceCall = getServiceCall({ router, microserviceContext });
         return Object.freeze({
-          requestStream: (message: Message) =>
+          requestStream: (message: Message, messageFormat: boolean = false) =>
             serviceCall({
               message,
               asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-              includeMessage: true,
+              includeMessage: messageFormat,
             }),
-          requestResponse: (message: Message) =>
+          requestResponse: (message: Message, messageFormat: boolean = false) =>
             serviceCall({
               message,
               asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-              includeMessage: true,
+              includeMessage: messageFormat,
             }),
         });
       },
