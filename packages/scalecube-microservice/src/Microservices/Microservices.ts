@@ -90,13 +90,13 @@ const createServiceCall = ({
 
   const serviceCall = getServiceCall({ router, microserviceContext });
   return Object.freeze({
-    requestStream: (message: Message) =>
+    requestStream: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
         includeMessage: true,
       }),
-    requestResponse: (message: Message) =>
+    requestResponse: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,

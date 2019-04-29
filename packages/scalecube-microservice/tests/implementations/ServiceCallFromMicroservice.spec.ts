@@ -29,7 +29,19 @@ describe('Test creating proxy from microservice', () => {
     greetingServiceCall = ms.createServiceCall({});
   });
 
-  it('Test requestResponse(message):ServiceCallOptions', () => {
+  test(`
+    # Test requestResponse(message):ServiceCallOptions
+    // move to 'successful-serviceCall.spec.ts'
+    Scenario: Successful requestResponse(message):ServiceCallOptions
+      Given:  a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a serviceCall
+      And     message is created
+              |qualifier  |greeting/hello  |
+      And     invoking the serviceCall's requestResponse with the message
+      Then    serviceCall's requestResponse will be invoked succesfuly
+      `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
     const message: Message = {
       qualifier,
@@ -41,7 +53,18 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestResponse(message):ServiceCallOptions - asyncModel miss match', () => {
+  test(`
+    # Test requestResponse(message):ServiceCallOptions - asyncModel miss match
+    // move to 'failed-serviceCall.spec.ts'
+    Scenario: Fail to connect to get requestResponse, asyncModel mismatch
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/greet$  |
+      Then    invalid error getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM)
+      `, () => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
@@ -54,7 +77,18 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestStream(message):ServiceCallOptions', (done) => {
+  test(`
+    # Test requestStream(message):ServiceCallOptions
+    // move to 'successful-serviceCall.spec.ts'
+    Scenario: Success to connect to requestStream
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestStream    |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/greet$  |
+      Then    serviceCall's requestResponse will be invoked succesfuly
+      `, (done) => {
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'greet$' });
     const message: Message = {
       qualifier,
@@ -73,7 +107,18 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Test requestStream(message):ServiceCallOptions - asyncModel miss match', (done) => {
+  test(`
+    # Test requestStream(message):ServiceCallOptions - asyncModel miss match
+    // move to 'failed-serviceCall.spec.ts'
+    Scenario: Fail to connect to get requestStream, asyncModel mismatch
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestStream    |
+      When    creating a service call
+      And     message is created with qualifier and methodName
+              |qualifier  |greeting/hello  |
+      Then    invalid error getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_STREAM, ASYNC_MODEL_TYPES.REQUEST_RESPONSE)
+      `, (done) => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
@@ -92,7 +137,33 @@ describe('Test creating proxy from microservice', () => {
     );
   });
 
-  it('ServiceCall should fail if message data is not Array', () => {
+  test(`
+    # ServiceCall should fail if message data is not Array
+    
+    // move to 'failed-serviceCall.spec.ts'
+    Scenario: Massage data is a string and NOT an array, ServiceCall fails
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     message is created with qualifier and data
+              |qualifier  |greeting/hello  |
+              |data       |hello: string   |
+      And     invoking the serviceCall's requestResponse with the message
+      Then    invalid error?
+    
+    // move to 'failed-serviceCall.spec.ts'  
+    Scenario: Massage data is an integer NOT an array, ServiceCall fails
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     message is created with qualifier and data
+              |qualifier  |greeting/hello  |
+              |data       |hello: integer  |
+      And     invoking the serviceCall's requestResponse with the message
+      Then    invalid (error.message).toMatch(WRONG_DATA_FORMAT_IN_MESSAGE)
+      `, () => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'hello' });
@@ -106,7 +177,18 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('ServiceCall should fail with service not found error', () => {
+  test(`
+    # ServiceCall should fail with service not found error
+    // move to 'failed-serviceCall.spec.ts'
+    Scenario: ServiceCall fail, service not found
+      Given   a Microservice with serviceDefinition and reference
+              |serviceName  |method |asyncModel       |
+              |greeting     |hello  |requestResponse  |
+      When    creating a ServiceCall
+      And     |qualifier  |greeting/fakeHello |
+      And     invoking the serviceCall's requestResponse with the message
+      Then    invalid (error.message).toMatch(getNotFoundByRouterError(message.qualifier) 
+      `, () => {
     expect.assertions(1);
 
     const qualifier = getQualifier({ serviceName: greetingServiceDefinition.serviceName, methodName: 'fakeHello' });

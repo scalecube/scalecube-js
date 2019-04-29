@@ -16,6 +16,19 @@ import {
 } from '../../src/helpers/constants';
 
 describe('Test creating proxy from microservice', () => {
+  test(`
+    // move to 'successful-invoke-proxy.spec.ts'
+    Scenario: Create a proxy from Microservice 
+      Given   a service with definition and reference
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream | 
+      When    creating a Microservice with the service
+      Then    greetingServiceProxy is created from the Microservice
+      `, () => {
+    expect(true).toBe(false);
+  });
   console.warn = jest.fn(); // disable validation logs while doing this test
   console.error = jest.fn(); // disable validation logs while doing this test
 
@@ -66,12 +79,36 @@ describe('Test creating proxy from microservice', () => {
     return ms.createProxy({ serviceDefinition });
   };
 
-  it('Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)', () => {
+  test(`
+    # Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)
+    // move to 'successful-invoke-proxy.spec.ts'
+    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+      Given:  Given a Microservice
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created from the Microservice
+      And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
+      Then    greetingServiceProxy will be invoked from the Microservice
+    `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
   });
 
-  it('Invoke method that is defined in the serviceDefinition (requestStream asyncModel)', (done) => {
+  test(`
+    # Invoke method that is defined in the serviceDefinition (requestStream asyncModel)
+    //// move to 'successful-invoke-proxy.spec.ts'
+    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+      Given:  Given a Microservice
+      And     definition and reference comply with each other
+      |service          |definition            |reference  |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created from the Microservice
+      And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
+      Then    greetingServiceProxy will be invoked from the Microservice
+    `, (done) => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
 
     expect.assertions(4);
@@ -100,7 +137,18 @@ describe('Test creating proxy from microservice', () => {
     }, 1000);
   });
 
-  it('Throw error message when creating proxy with missing serviceDefinition', () => {
+  test(`
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Fail to create proxy, missing serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created from the Microservice
+      And     Definition is not defined for createProxy
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error (serviceDefinition) is not defined
+      `, () => {
     const ms = Microservices.create({ services: [greetingService] });
     try {
       // @ts-ignore-next-line
@@ -110,7 +158,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with missing serviceName in serviceDefinition', () => {
+  test(`
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Fail to create a proxy, missing serviceName in serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created by a Microservice
+      And     serviceName is missing in the serviceDefinition
+      |serviceName      |methods               |
+      |                 |hello: RequestResponse|
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error (serviceDefinition.serviceName) is not defined 
+    `, () => {
     try {
       // @ts-ignore-next-line
       prepareScalecubeForGreetingService({ serviceDefinition: { methods: { ...greetingServiceDefinition.methods } } });
@@ -119,7 +180,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with missing methods in serviceDefinition', () => {
+  test(`
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Fail to create a proxy, missing a methods serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      When    proxy is created by a Microservice
+      And     methods are missing in the serviceDefinition
+      |serviceName      |methods               |
+      |greetingService  |                      |
+      Then    greetingServiceProxy will NOT be created from the Microservice
+      And     invalid error service (serviceName) is not valid.      
+    `, () => {
     try {
       // @ts-ignore-next-line
       prepareScalecubeForGreetingService({ serviceDefinition: { serviceName: greetingServiceDefinition.serviceName } });
@@ -128,7 +202,20 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message if method is not defined in the serviceDefinition', () => {
+  test(`
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Proxy failed to invoke a method, missing a method serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |hello: RequestResponse|
+      When    Proxy tries to invoke method that does not exist in the serviceDefinition
+      |method: fakeHello |
+      Then    an error will occur service method 'fakeHello' missing in the serviceDefinition
+    `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     try {
       greetingServiceProxy.fakeHello();
@@ -137,7 +224,21 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when creating proxy with invalid serviceDefinition', () => {
+  test(`
+    # Throw error message when creating proxy with invalid serviceDefinition
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Proxy failed to invoke a method, invalid serviceDefinition
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |hello: RequestResponse|
+      When    Proxy tries to invoke an invalid method from serviceDefinition
+      |method: getServiceIsNotValidError |
+      Then    an error will occur service 'getServiceIsNotValidError' is not valid
+    `, () => {
     const ms = Microservices.create({ services: [greetingService] });
     try {
       ms.createProxy({
@@ -150,7 +251,21 @@ describe('Test creating proxy from microservice', () => {
     }
   });
 
-  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable', (done) => {
+  test(`
+    # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - observable
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - observable
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods               |
+      |greetingService  |greet$: RequestStream2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestStream2 |
+      Then    an error will occur asyncModel miss match, expect (RequestStream), but received (RequestStream2)  
+  `, (done) => {
     const greetingServiceMissMatchAsyncModel = prepareScalecubeForGreetingService({
       serviceDefinition: missMatchDefinition,
     });
@@ -169,7 +284,21 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE', (done) => {
+  test(`
+    # Throw error message when proxy serviceDefinition does not match microservice serviceDefinition - REQUEST_RESPONSE
+    // move to 'failed-invoke-proxy.spec.ts'
+    Scenario: Proxy failed to invoke a method, microService and proxy serviceDefinition mismatch - REQUEST_RESPONSE
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods                |
+      |greetingService  |hello: RequestResponse2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestResponse2 |
+      Then    an error will occur asyncModel miss match, expect (RequestResponse), but received (RequestResponse2)
+  `, (done) => {
     const greetingServiceMissMatchAsyncModel = prepareScalecubeForGreetingService({
       serviceDefinition: missMatchDefinition,
     });
@@ -186,7 +315,25 @@ describe('Test creating proxy from microservice', () => {
     });
   });
 
-  it('Proxies for two different services work correctly', () => {
+  test(`
+    # Proxies for two different services work correctly
+    // move to 'successful-invoke-proxy.spec.ts'
+    Scenario: Proxy created with two different services will work
+      Given   a Microservice
+      |service          |definition            |reference             |
+      |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      |greetingService2 |hello: RequestResponse|hello: RequestResponse|
+      |                 |greet$: RequestStream |greet$: RequestStream |
+      And     proxy created by a Microservice
+      |serviceName      |methods                |
+      |greetingService  |hello: RequestResponse |
+      |                 |greet$: RequestStream
+      |greetingService2 |hello: RequestResponse2|
+      When    Proxy tries to invoke a method from serviceDefinition
+      |method: RequestResponse |
+      Then    greetingServiceProxy is created from the Microservice
+    `, () => {
     expect.assertions(2);
     const ms = Microservices.create({ services: [greetingService, greetingService2] });
     const greetingServiceProxy = ms.createProxy({
@@ -207,13 +354,40 @@ describe('Test creating proxy from microservice', () => {
       );
   });
 
-  it('The inner logic of throwing errors in method implementation is saved (requestResponse asyncModel)', () => {
+  test(`
+    # The inner logic of throwing errors in method implementation is saved (requestResponse asyncModel)
+    // move to 'failed-async-model.spec.ts'
+    Scenario: An error occurs after method 'requestResponse asyncModel' invokes, error received.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |hello: RequestResponse|
+      When    greetingService reject method 'requestResponse'
+      Then    invalid response is received Error('please provide user to greet')
+  
+  `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(1);
     return expect(greetingServiceProxy.hello()).rejects.toEqual(new Error('please provide user to greet'));
   });
 
-  it('The inner logic of throwing errors in method implementation is saved (requestStream asyncModel)', (done) => {
+  test(`
+    # The inner logic of throwing errors in method implementation is saved (requestStream asyncModel)
+    // move to 'failed-async-model.spec.ts'
+    Scenario: An error occurs after method 'requestStream asyncModel' invokes, error received.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |greet$: RequestStream |
+      When    greetingService reject method 'requestStream'
+      Then    invalid response is received Error('please provide Array of greetings')
+    `, (done) => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(1);
     greetingServiceProxy.greet$().subscribe(
@@ -225,7 +399,20 @@ describe('Test creating proxy from microservice', () => {
     );
   });
 
-  it('Proxy does not convert the asyncModel to some other type', () => {
+  test(`
+    # Proxy does not convert the asyncModel to some other type
+    // move to 'successful-async-model.spec.ts'
+    Scenario: Proxy does not convert type in the asyncModel, promise getting response.
+      Given   a Microservice
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |greet$: RequestStream |
+      When    greetingServiceProxy invokes helloPromise
+      Then    greetObservable is received
+  `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     expect.assertions(3);
 
@@ -237,7 +424,21 @@ describe('Test creating proxy from microservice', () => {
     expect(isObservable(greetObservable)).toBeTruthy();
   });
 
-  it('Invokes static methods on class correctly', () => {
+  test(`
+    # Invokes static methods on class correctly
+    // move to 'successful-invoke-proxy.spec.ts'
+    Scenario: Proxy invokes a static method successfully 
+      Given   a Microservice
+      And     static property for method 'RequestResponse'
+      |service              |definition            |reference             |
+      |greetingService      |hello: RequestResponse|hello: RequestResponse|
+      |                     |greet$: RequestStream |greet$: RequestStream |
+      And     proxy is created by a Microservice
+      |serviceName          |methods               |
+      |greetingServiceProxy |hello: RequestResponse|
+      When    greetingServiceProxy invokes helloStatic
+      Then    valid response received 'Hello from static method, defaultUser' 
+    `, () => {
     expect.assertions(1);
     const ms = Microservices.create({ services: [greetingServiceWithStatic] });
     const greetingServiceProxy = ms.createProxy({ serviceDefinition: greetingServiceWithStaticDefinition });

@@ -19,7 +19,9 @@ export const isValidMethods = (methods: { [methodName: string]: { asyncModel: As
     console.error(new Error('Service missing methods:object'));
     return false;
   }
-  return Object.keys(methods).every((methodName) => isValidMethod({ methodData: methods[methodName], methodName }));
+  return Object.keys(methods).every((methodName) =>
+    methods[methodName] ? isValidMethod({ methodData: methods[methodName], methodName }) : false
+  );
 };
 
 export const isValidMethod = ({
