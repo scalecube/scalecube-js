@@ -14,6 +14,7 @@ describe(`Test LocalCall - a microservice instance use its own services.
           # 4. receive response
 `, () => {
   const defaultUser = 'defaultUser';
+  const seedAddress = 'defaultSeedAddress';
   const GreetingServiceObject = { hello, greet$ };
 
   describe.each([
@@ -36,75 +37,91 @@ describe(`Test LocalCall - a microservice instance use its own services.
                | static class| # class not object with static methods
                | Plan Object | # Object format is [key]: function
         And    serviceDefinition that define the contract of the service
-        And    creating proxy and serviceCall
 		`,
     (service) => {
-      const microservice = Microservices.create({
+      const microserviceWithServices = Microservices.create({
         services: [service],
+        seedAddress,
       });
 
-      /*test.each([
-          {
-            eachMethod: proxy.hello,
-            eachData: [defaultUser],
-          },
-          {
-            eachMethod: serviceCall.requestResponse,
-            eachData: {
-              qualifier: `${greetingServiceDefinition.serviceName}/hello`,
-              data: [defaultUser],
-            },
-          },
-        ])*/
-      test(`
+      const microserviceWithoutServices = Microservices.create({
+        seedAddress,
+      });
+
+      describe.each([
+        // ################# LocalCall ######################
+        {
+          sender: microserviceWithServices,
+          receiverServiceDefinition: greetingServiceDefinition,
+        },
+        // ################# RemoteCall ######################
+        // {
+        //   sender: microserviceWithoutServices,
+        //   receiverServiceDefinition: greetingServiceDefinition,
+        // }
+      ])(
+        `
+        Given  'sender' and a 'receiverServiceDefinition' (receiver)
+               sender (microservice)       | receiverServiceDefinition (receiver)    |
+               microserviceWithServices    | greetingServiceDefinition               | # LocalCall
+               microserviceWithoutServices | greetingServiceDefinition               | # RemoteCallCall
+
+        `,
+        (connect) => {
+          const { sender, receiverServiceDefinition } = connect;
+
+          test(`
         # Testing proxy for a successful response.
         When  invoking requestResponse's method with valid data
         Then  successful RequestResponse is received
-        			`, () => {
-        const proxy = microservice.createProxy({ serviceDefinition: greetingServiceDefinition });
-        return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
-      });
+              `, () => {
+            const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
+            return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
+          });
 
-      test(`
-        # Testing serviceCall for a successful response.
-        When  invoking serviceCall's requestResponse method with valid message
-        Then  successful RequestResponse is received
-        `, () => {
-        const message: Message = {
-          qualifier: `${greetingServiceDefinition.serviceName}/hello`,
-          data: [`${defaultUser}`],
-        };
-        const serviceCall = microservice.createServiceCall({});
-        return expect(serviceCall.requestResponse(message)).resolves.toEqual(`Hello ${defaultUser}`);
-      });
+          test(`
+            # Testing proxy for a successful subscription (array).
+            When  subscribe to RequestStream's method with valid data/message
+            Then  successful RequestStream is emitted
+            `, (done) => {
+            const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
+            proxy.greet$([defaultUser]).subscribe((response: any) => {
+              expect(response).toEqual(`greetings ${defaultUser}`);
+              done();
+            });
+          });
 
-      test(`
-        # Testing serviceCall for a successful subscription (array).
-        When  subscribe to RequestStream's method with valid data/message
-        Then  successful RequestStream is emitted
-        			`, (done) => {
-        const message: Message = {
-          qualifier: `${greetingServiceDefinition.serviceName}/greet$`,
-          data: [[`${defaultUser}`]],
-        };
-        const serviceCall = microservice.createServiceCall({});
+          test(`
+            # Testing serviceCall for a successful response.
+            When  invoking serviceCall's requestResponse method with valid message
+            Then  successful RequestResponse is received
+            `, () => {
+            const message: Message = {
+              qualifier: `${receiverServiceDefinition.serviceName}/hello`,
+              data: [`${defaultUser}`],
+            };
+            const serviceCall = sender.createServiceCall({});
+            return expect(serviceCall.requestResponse(message)).resolves.toEqual(`Hello ${defaultUser}`);
+          });
 
-        serviceCall.requestStream(message).subscribe((response: any) => {
-          expect(response).toEqual(`greetings ${defaultUser}`);
-          done();
-        });
-      });
-      test(`
-        # Testing serviceCall for a successful subscription (array).
-        When  subscribe to RequestStream's method with valid data/message
-        Then  successful RequestStream is emitted
-        `, (done) => {
-        const proxy = microservice.createProxy({ serviceDefinition: greetingServiceDefinition });
-        proxy.greet$([defaultUser]).subscribe((response: any) => {
-          expect(response).toEqual(`greetings ${defaultUser}`);
-          done();
-        });
-      });
+          test(`
+            # Testing serviceCall for a successful subscription (array).
+            When  subscribe to RequestStream's method with valid data/message
+            Then  successful RequestStream is emitted
+                  `, (done) => {
+            const message: Message = {
+              qualifier: `${receiverServiceDefinition.serviceName}/greet$`,
+              data: [[`${defaultUser}`]],
+            };
+            const serviceCall = sender.createServiceCall({});
+
+            serviceCall.requestStream(message).subscribe((response: any) => {
+              expect(response).toEqual(`greetings ${defaultUser}`);
+              done();
+            });
+          });
+        }
+      );
     }
   );
 });
