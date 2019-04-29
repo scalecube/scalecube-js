@@ -7,7 +7,7 @@ describe('Validation tests for services', () => {
     `
       Scenario: Validating services received values
         Given   serviceDefinition 
-				When		creating a microService with <serviceName>
+				When		creating a microService with 'serviceName'
         				|serviceName			|
         				|256  		   			|
         				|null       			|
@@ -30,7 +30,7 @@ describe('Validation tests for methods', () => {
     	Scenario: Validating methods received values
         Given   microService
 				When		creating a serviceCall
-				And			serviceCall created with <serviceName>
+				And			serviceCall created with 'serviceName'
         				|serviceName			|
         				|256  		   			|
         				|null       			|
