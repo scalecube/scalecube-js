@@ -54,7 +54,7 @@ describe(`Test LocalCall - a microservice instance use its own services.
           sender: microserviceWithServices,
           receiverServiceDefinition: greetingServiceDefinition,
         },
-        // ################# RemoteCall #################
+        // ################# RemoteCall ################
         // {
         //   sender: microserviceWithoutServices,
         //   receiverServiceDefinition: greetingServiceDefinition,
