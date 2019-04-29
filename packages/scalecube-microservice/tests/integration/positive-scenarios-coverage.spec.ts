@@ -12,6 +12,14 @@ describe(`Test LocalCall - a microservice instance use its own services.
           # 2. creating a proxy || serviceCall from the microservice instance.
           # 3. invoke || subscribe to a method successfully.
           # 4. receive response
+          
+          Test RemoteCall - a microservice instance use other microservice's services.
+          # 1. creating a microservice (remote) with service & serviceDefinition and with seedAddress='defaultSeedAddress'.
+          # 2. creating a microservice (local) without services but with seedAddress='defaultSeedAddress'.
+          # 3. discoveries discover other microservices under the same seed.
+          # 4. creating a proxy || serviceCall from the local microservice instance.
+          # 5. invoke || subscribe to a method successfully.
+          # 6. receive response
 `, () => {
   const defaultUser = 'defaultUser';
   const seedAddress = 'defaultSeedAddress';
