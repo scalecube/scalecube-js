@@ -49,12 +49,12 @@ describe(`Test LocalCall - a microservice instance use its own services.
       });
 
       describe.each([
-        // ################# LocalCall ######################
+        // ################# LocalCall #################
         {
           sender: microserviceWithServices,
           receiverServiceDefinition: greetingServiceDefinition,
         },
-        // ################# RemoteCall ######################
+        // ################# RemoteCall #################
         // {
         //   sender: microserviceWithoutServices,
         //   receiverServiceDefinition: greetingServiceDefinition,
