@@ -7,8 +7,8 @@ export const CreateClient = (clientOptions: { address: string }) =>
   new RSocketClient({
     setup: {
       dataMimeType: 'text/plain',
-      keepAlive: 1000000,
-      lifetime: 100000,
+      keepAlive: process.env.dev ? 1000 : 1000000,
+      lifetime: process.env.dev ? 1000 : 1000000,
       metadataMimeType: 'text/plain',
     },
     transport: new RSocketEventsClient(clientOptions),
