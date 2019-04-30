@@ -2,6 +2,7 @@
  * This file contains scenarios for failed attempts to create a microService is created.
  * 1. All tests result in the same 'getServiceIsNotValidError' error message, detailed below.
  * 2. microService contains definition + reference. We include here scenarios for various validation of both.
+ * 3. Included also validation tests for asyncModel.
  *****/
 
 import { getGlobalNamespace } from '../../../src/helpers/utils';
@@ -131,10 +132,41 @@ describe('Test the creation of Microservice', () => {
                 |{}         |
                 |[]         |
                 |undefined  |
-                |null       |        
+                |null       |
+
+      Feature:  Validation testing for a proxy created from a Microservice
+
+      Scenario: Create a proxy from Microservice successfuly.
+        Given    a service with definition and reference
+        And      'definition' and 'reference' comply with each other
+                |service          |definition              |reference              |
+                |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
+                |                 |greet$: RequestStream   |greet$: RequestStream   |
+        When    creating a Microservice with the service
+        Then    greetingServiceProxy is created from the Microservice
+
+      Background:
+        Given   a Microservice
+        And      definition and reference
+        And      definition comply with reference
+                |service          |definition              |reference              |
+                |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
+                |                 |greet$: RequestStream   |greet$: RequestStream   |  
+
+      Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+        When    proxy is created from the Microservice
+        And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
+        Then    greetingServiceProxy will be invoked from the Microservice   
+
+      Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+        When    proxy is created from the Microservice
+        And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
+        Then    greetingServiceProxy will be invoked from the Microservice
+
+                  
     `;
 });
 
 // TODO : silent failing scenario
-// #3. definition: method invalid format      | greetingService | hello: null                                   |           |
-// #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null }                     |           |
+// #3. definition: method invalid format          | greetingService | hello: null               |           |
+// #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null } |           |

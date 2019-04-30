@@ -17,15 +17,14 @@ import {
 
 describe('Test creating proxy from microservice', () => {
   test(`
-    // move to 'successful-invoke-proxy.spec.ts'
-    Scenario: Create a proxy from Microservice 
-      Given   a service with definition and reference
-      And     definition and reference comply with each other
-      |service          |definition            |reference  |
-      |greetingService  |hello: RequestResponse|hello: RequestResponse|
-      |                 |greet$: RequestStream |greet$: RequestStream | 
-      When    creating a Microservice with the service
-      Then    greetingServiceProxy is created from the Microservice
+    // Scenario: Create a proxy from Microservice 
+    //   Given   a service with definition and reference
+    //   And     definition and reference comply with each other
+    //   |service          |definition            |reference  |
+    //   |greetingService  |hello: RequestResponse|hello: RequestResponse|
+    //   |                 |greet$: RequestStream |greet$: RequestStream | 
+    //   When    creating a Microservice with the service
+    //   Then    greetingServiceProxy is created from the Microservice
       `, () => {
     expect(true).toBe(false);
   });
@@ -81,16 +80,15 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Invoke method that is defined in the serviceDefinition (requestResponse asyncModel)
-    // move to 'successful-invoke-proxy.spec.ts'
-    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
-      Given:  Given a Microservice
-      And     definition and reference comply with each other
-      |service          |definition            |reference  |
-      |greetingService  |hello: RequestResponse|hello: RequestResponse|
-      |                 |greet$: RequestStream |greet$: RequestStream |
-      When    proxy is created from the Microservice
-      And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
-      Then    greetingServiceProxy will be invoked from the Microservice
+    // Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+    //   Given:  Given a Microservice
+    //   And     definition and reference comply with each other
+    //   |service          |definition            |reference  |
+    //   |greetingService  |hello: RequestResponse|hello: RequestResponse|
+    //   |                 |greet$: RequestStream |greet$: RequestStream |
+    //   When    proxy is created from the Microservice
+    //   And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
+    //   Then    greetingServiceProxy will be invoked from the Microservice
     `, () => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
     return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
@@ -98,16 +96,15 @@ describe('Test creating proxy from microservice', () => {
 
   test(`
     # Invoke method that is defined in the serviceDefinition (requestStream asyncModel)
-    //// move to 'successful-invoke-proxy.spec.ts'
-    Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
-      Given:  Given a Microservice
-      And     definition and reference comply with each other
-      |service          |definition            |reference  |
-      |greetingService  |hello: RequestResponse|hello: RequestResponse|
-      |                 |greet$: RequestStream |greet$: RequestStream |
-      When    proxy is created from the Microservice
-      And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
-      Then    greetingServiceProxy will be invoked from the Microservice
+    // Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
+    //   Given:  Given a Microservice
+    //   And     definition and reference comply with each other
+    //   |service          |definition            |reference  |
+    //   |greetingService  |hello: RequestResponse|hello: RequestResponse|
+    //   |                 |greet$: RequestStream |greet$: RequestStream |
+    //   When    proxy is created from the Microservice
+    //   And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
+    //   Then    greetingServiceProxy will be invoked from the Microservice
     `, (done) => {
     const greetingServiceProxy = prepareScalecubeForGreetingService();
 
@@ -138,7 +135,6 @@ describe('Test creating proxy from microservice', () => {
   });
 
   test(`
-    // move to 'failed-invoke-proxy.spec.ts'
     Scenario: Fail to create proxy, missing serviceDefinition
       Given   a Microservice
       |service          |definition            |reference             |
