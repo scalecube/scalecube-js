@@ -25,8 +25,12 @@ describe(`Test positive-scenarios of usage
           # 5. invoke || subscribe to a method successfully.
           # 6. receive response
 `, () => {
-  applyPostMessagePolyfill();
-  applyMessageChannelPolyfill();
+  // @ts-ignore
+  if (!global.isNodeEvn) {
+    applyPostMessagePolyfill();
+    applyMessageChannelPolyfill();
+  }
+
   const defaultUser = 'defaultUser';
   const seedAddress = 'defaultSeedAddress';
   const GreetingServiceObject = { hello, greet$ };
@@ -67,11 +71,13 @@ describe(`Test positive-scenarios of usage
         {
           sender: microserviceWithServices,
           receiverServiceDefinition: greetingServiceDefinition,
+          isRemote: false,
         },
         // ################# RemoteCall ################
         {
           sender: microserviceWithoutServices,
           receiverServiceDefinition: greetingServiceDefinition,
+          isRemote: true,
         },
       ])(
         `
@@ -82,7 +88,12 @@ describe(`Test positive-scenarios of usage
 
         `,
         (connect) => {
-          const { sender, receiverServiceDefinition } = connect;
+          const { sender, receiverServiceDefinition, isRemote } = connect;
+
+          // @ts-ignore
+          if (isRemote && global.isNodeEvn) {
+            return; // TODO: RFC - remoteCall nodejs
+          }
 
           test(`
         # Testing proxy for a successful response.

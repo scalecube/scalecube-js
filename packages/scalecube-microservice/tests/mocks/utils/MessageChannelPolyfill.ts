@@ -109,6 +109,7 @@ export class MessageChannelPolyfill implements IMessageChannelPolyfill {
   }
 }
 
+// @ts-ignore
 /**
  * https://github.com/zloirock/core-js/blob/master/packages/core-js/internals/global.js
  */

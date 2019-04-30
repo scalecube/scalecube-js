@@ -6,4 +6,7 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/es/', '<rootDir>/lib/', '<rootDir>/node_modules/'],
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   moduleDirectories: ['node_modules', 'app/src'],
+  globals: {
+    isNodeEvn: false,
+  },
 };
