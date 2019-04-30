@@ -1,3 +1,9 @@
+/*****
+ * This file contains scenarios for failed attempts to create a microService is created.
+ * 1. All tests result in the same 'getServiceIsNotValidError' error message, detailed below.
+ * 2. microService contains definition + reference. We include here scenarios for various validation of both.
+ *****/
+
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
@@ -13,7 +19,7 @@ describe('Test the creation of Microservice', () => {
   const baseServiceDefinition = {
     serviceName: 'GreetingService',
   };
-  //           #1 - definition has a method that is not contained in the reference.
+  // #1 - definition has a method that is not contained in the reference.
   const scenario1service = {
     definition: {
       ...baseServiceDefinition,
@@ -23,7 +29,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-  //           #2 - definition has a method that is not contained in the reference.
+  // #2 - definition has a method that is not contained in the reference.
   const scenario2service = {
     definition: {
       ...baseServiceDefinition,
@@ -33,7 +39,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-  //           #3 - method is not object with a key 'asyncModel'
+  // #3 - method is not object with a key 'asyncModel'
   const scenario3service = {
     definition: {
       ...baseServiceDefinition,
@@ -41,7 +47,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-  //           #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
+  // #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
   const scenario4service = {
     definition: {
       ...baseServiceDefinition,
@@ -72,12 +78,10 @@ describe('Test the creation of Microservice', () => {
   ])(
     `
       Scenario: Fail to register a service, 
-        Given  'serviceData' with 'service' and 'exceptionMsg'
-          scenario                                   | service         | definition                                    | reference |
-          #1. definition does not match reference    | greetingService | hello : REQUEST_RESPONSE |           |
-          #2. definition does not match reference    | greetingService | hello : REQUEST_STREAM  |           |
-          #3. definition: method invalid format      | greetingService | hello: null                                   |           |
-          #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null }                     |           |
+        Given   'serviceData' with 'service' and 'exceptionMsg'
+          scenario                                 |service         |definition               | reference |
+          #1. definition does not match reference  |greetingService |hello : REQUEST_RESPONSE |           |
+          #2. definition does not match reference  |greetingService |hello : REQUEST_STREAM   |           |
         
         When creating microservice with a given 'service'
         Then an exception will occur.
@@ -93,6 +97,44 @@ describe('Test the creation of Microservice', () => {
       }
     }
   );
+  `
+      Background:
+        Given   a service with definition and reference
+        And     definition and reference comply with each other
+
+      Scenario: Fail to register a service, invalid definition
+        When    microService is called with 'definition' values
+                |definition  |
+                |string     |
+                |-100       |
+                |0          |
+                |1          |
+                |100.1      |
+                |1 10       |
+                |test       |
+                |{}         |
+                |[]         |
+                |undefined  |
+                |null       |
+      
+      Scenario: Fail to register a service, invalid async model
+        When    definition includes AsyncModel
+        And     'AsyncModel' includes RequestResponse|RequestStream
+                |AsyncModel  |
+                |string     |
+                |-100       |
+                |0          |
+                |1          |
+                |100.1      |
+                |1 10       |
+                |test       |
+                |{}         |
+                |[]         |
+                |undefined  |
+                |null       |        
+    `;
 });
 
 // TODO : silent failing scenario
+// #3. definition: method invalid format      | greetingService | hello: null                                   |           |
+// #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null }                     |           |
