@@ -13,7 +13,7 @@ describe('Test the creation of Microservice', () => {
   const baseServiceDefinition = {
     serviceName: 'GreetingService',
   };
-
+  //           #1 - definition has a method that is not contained in the reference.
   const scenario1service = {
     definition: {
       ...baseServiceDefinition,
@@ -23,7 +23,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-
+  //           #2 - definition has a method that is not contained in the reference.
   const scenario2service = {
     definition: {
       ...baseServiceDefinition,
@@ -33,7 +33,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-
+  //           #3 - method is not object with a key 'asyncModel'
   const scenario3service = {
     definition: {
       ...baseServiceDefinition,
@@ -41,7 +41,7 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-
+  //           #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
   const scenario4service = {
     definition: {
       ...baseServiceDefinition,
@@ -52,7 +52,7 @@ describe('Test the creation of Microservice', () => {
     reference: {},
   };
 
-  describe.each([
+  test.each([
     {
       service: scenario1service,
       exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
@@ -71,40 +71,26 @@ describe('Test the creation of Microservice', () => {
     },
   ])(
     `
-      Background: Fail to register a service, 
+      Scenario: Fail to register a service, 
         Given  'serviceData' with 'service' and 'exceptionMsg'
+          scenario                                   | service         | definition                                    | reference |
+          #1. definition does not match reference    | greetingService | hello : REQUEST_RESPONSE |           |
+          #2. definition does not match reference    | greetingService | hello : REQUEST_STREAM  |           |
+          #3. definition: method invalid format      | greetingService | hello: null                                   |           |
+          #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null }                     |           |
         
-        scenario                                   | service         | definition                                    | reference |
-        #1. definition does not match reference    | greetingService | hello : ${
-          ASYNC_MODEL_TYPES.REQUEST_RESPONSE
-        } |           |
-        #2. definition does not match reference    | greetingService | hello : ${
-          ASYNC_MODEL_TYPES.REQUEST_STREAM
-        }   |           |
-        #3. definition: method invalid format      | greetingService | hello: null                                   |           |
-        #4. definition: asyncModel invalid format  | greetingService | hello:{asyncModel: null }                     |           |
-        
-        
-        #1 - definition has a method that is not contained in the reference.
-        #2 - definition has a method that is not contained in the reference.
-        #3 - method is not object with a key 'asyncModel'
-        #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
-        
+        When creating microservice with a given 'service'
+        Then an exception will occur.
         `,
     (serviceData) => {
-      test(`
-      When creating microservice with a given 'service'
-      Then an exception will occur.
-    `, () => {
-        const { service, exceptionMsg } = serviceData;
+      const { service, exceptionMsg } = serviceData;
 
-        expect.assertions(1);
-        try {
-          Microservices.create({ services: [service] });
-        } catch (error) {
-          expect(error.message).toMatch(exceptionMsg);
-        }
-      });
+      expect.assertions(1);
+      try {
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(exceptionMsg);
+      }
     }
   );
 });
