@@ -1,60 +1,10 @@
 import { Observable } from 'rxjs';
-import { ASYNC_MODEL_TYPES } from '../../src/helpers/constants';
+import { ASYNC_MODEL_TYPES } from '../../src';
 
 /* tslint:disable */
 
-class GreetingService {
-  public empty: null;
-  constructor() {
-    this.empty = null;
-  }
-
-  public hello = (name: any): any => {
-    return new Promise((resolve, reject) => {
-      if (!name) {
-        reject(new Error('please provide user to greet'));
-      } else {
-        resolve(`Hello ${name}`);
-      }
-    });
-  };
-
-  public greet$(greetings: string[]): Observable<string> {
-    return new Observable((observer) => {
-      if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
-        observer.error(new Error('please provide Array of greetings'));
-        return () => {};
-      }
-      greetings.map((i) => observer.next(`greetings ${i}`));
-      return () => {};
-    });
-  }
-}
-
-export const GreetingServiceWithStatic = class {
-  public static hello = (name: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!name) {
-        reject(new Error('please provide user to greet'));
-      } else {
-        resolve(`Hello ${name}`);
-      }
-    });
-  };
-
-  public static greet$(greetings: string[]): Observable<string> {
-    return new Observable((observer) => {
-      if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
-        observer.error(new Error('please provide Array of greetings'));
-        return () => {};
-      }
-      greetings.map((i) => observer.next(`greetings ${i}`));
-      return () => {};
-    });
-  }
-};
-
 export const hello = (name: string): Promise<string> => {
+  // @ts-ignore
   return new Promise((resolve, reject) => {
     if (!name) {
       reject(new Error('please provide user to greet'));
@@ -75,6 +25,18 @@ export const greet$ = (greetings: string[]): Observable<string> => {
   });
 };
 
+export class GreetingService {
+  public hello = hello;
+
+  public greet$ = greet$;
+}
+
+export class GreetingServiceWithStatic {
+  public static hello = hello;
+
+  public static greet$ = greet$;
+}
+
 export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
   methods: {
@@ -86,5 +48,3 @@ export const greetingServiceDefinition = {
     },
   },
 };
-
-export default GreetingService;

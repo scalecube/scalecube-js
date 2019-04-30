@@ -1,6 +1,7 @@
+// @ts-ignore
 import uuidv4 from 'uuid/v4';
 import { Reference, Service } from '../api';
-import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
+import { GreetingService, greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
 import {
   createMethodRegistry,

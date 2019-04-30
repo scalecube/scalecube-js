@@ -1,4 +1,5 @@
-import GreetingService, {
+import {
+  GreetingService,
   GreetingServiceWithStatic,
   greetingServiceDefinition,
   hello,
@@ -6,14 +7,17 @@ import GreetingService, {
 } from '../mocks/GreetingService';
 import { Microservices } from '../../src';
 import { Message } from '../../src/api';
+import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
+import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
 
-describe(`Test LocalCall - a microservice instance use its own services.
+describe(`Test positive-scenarios of usage
+          LocalCall - a microservice instance use its own services.
           # 1. creating a microservice with service & serviceDefinition.
           # 2. creating a proxy || serviceCall from the microservice instance.
           # 3. invoke || subscribe to a method successfully.
           # 4. receive response
           
-          Test RemoteCall - a microservice instance use other microservice's services.
+          RemoteCall - a microservice instance use other microservice's services.
           # 1. creating a microservice (remote) with service & serviceDefinition and with seedAddress='defaultSeedAddress'.
           # 2. creating a microservice (local) without services but with seedAddress='defaultSeedAddress'.
           # 3. discoveries discover other microservices under the same seed.
@@ -21,6 +25,8 @@ describe(`Test LocalCall - a microservice instance use its own services.
           # 5. invoke || subscribe to a method successfully.
           # 6. receive response
 `, () => {
+  applyPostMessagePolyfill();
+  applyMessageChannelPolyfill();
   const defaultUser = 'defaultUser';
   const seedAddress = 'defaultSeedAddress';
   const GreetingServiceObject = { hello, greet$ };
@@ -63,10 +69,10 @@ describe(`Test LocalCall - a microservice instance use its own services.
           receiverServiceDefinition: greetingServiceDefinition,
         },
         // ################# RemoteCall ################
-        // {
-        //   sender: microserviceWithoutServices,
-        //   receiverServiceDefinition: greetingServiceDefinition,
-        // }
+        {
+          sender: microserviceWithoutServices,
+          receiverServiceDefinition: greetingServiceDefinition,
+        },
       ])(
         `
         Given  'sender' and a 'receiverServiceDefinition' (receiver)

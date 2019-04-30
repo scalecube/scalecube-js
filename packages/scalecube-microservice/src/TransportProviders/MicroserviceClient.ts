@@ -4,6 +4,7 @@ import RSocketEventsClient from 'rsocket-events-client';
 import { RSocketClient } from 'rsocket-core';
 
 export const CreateClient = (clientOptions: { address: string }) =>
+  // TODO pick RSocketClient base on transport type <PM || WS>
   new RSocketClient({
     setup: {
       dataMimeType: 'text/plain',
@@ -12,4 +13,4 @@ export const CreateClient = (clientOptions: { address: string }) =>
       metadataMimeType: 'text/plain',
     },
     transport: new RSocketEventsClient(clientOptions),
-  });
+  }).connect();

@@ -68,6 +68,7 @@ export interface RemoteCallOptions {
   microserviceContext: MicroserviceContext;
   message: Message;
   asyncModel: AsyncModel;
+  openConnections: { [key: string]: any };
 }
 
 export interface InvokeMethodOptions {
@@ -111,6 +112,6 @@ export interface MicroserviceContext {
 }
 
 export interface RsocketEventsPayload {
-  data: string;
-  metadata: string;
+  data: any;
+  metadata: any;
 }

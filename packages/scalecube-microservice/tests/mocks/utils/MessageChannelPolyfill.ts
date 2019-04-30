@@ -6,7 +6,7 @@ interface IMessagePortPolyfill {
   start: () => void;
   close: () => void;
   startSending: () => void;
-
+  stopSending: () => void;
   otherPort: IMessagePortPolyfill | null;
 }
 
@@ -82,12 +82,17 @@ export class MessagePortPolyfill implements IMessagePortPolyfill {
   }
 
   public close() {
-    // do nothing at this moment
+    setTimeout(() => this.otherPort && this.otherPort.stopSending.apply(this.otherPort, []), 0);
   }
 
   public startSending() {
     this.otherSideStart = true;
     this.queue.forEach((message: any) => this.otherPort && this.otherPort.dispatchEvent({ data: message }));
+  }
+
+  public stopSending() {
+    this.otherSideStart = false;
+    this.queue.length = 0;
   }
 }
 
@@ -107,8 +112,8 @@ export class MessageChannelPolyfill implements IMessageChannelPolyfill {
 /**
  * https://github.com/zloirock/core-js/blob/master/packages/core-js/internals/global.js
  */
-// @ts-ignore
 const globalObj =
+  // @ts-ignore
   typeof window !== 'undefined' && window.Math === Math
     ? window
     : // @ts-ignore

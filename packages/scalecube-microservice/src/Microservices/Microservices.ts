@@ -94,13 +94,13 @@ const createServiceCall = ({
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        includeMessage: true,
+        includeMessage: messageFormat,
       }),
     requestResponse: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-        includeMessage: true,
+        includeMessage: messageFormat,
       }),
   });
 };

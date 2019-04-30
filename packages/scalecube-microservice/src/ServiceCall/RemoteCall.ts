@@ -1,15 +1,17 @@
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint, Message } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { CreateClient } from '../TransportProviders/MicroserviceClient';
+import { cat } from 'shelljs';
 
 export const remoteCall = ({
   router,
   microserviceContext,
   message,
   asyncModel,
+  openConnections,
 }: RemoteCallOptions): Observable<any> => {
   const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
   if (!endPoint) {
@@ -27,46 +29,59 @@ export const remoteCall = ({
     }) as Observable<any>;
   }
 
-  return remoteResponse({ address: endPoint.address, asyncModel, message });
+  return remoteResponse({ address: endPoint.address, asyncModel, message, openConnections });
 };
 
 const remoteResponse = ({
   address,
   asyncModel,
   message,
+  openConnections,
 }: {
   address: string;
   asyncModel: string;
   message: Message;
+  openConnections: { [key: string]: any };
 }) => {
-  const client = CreateClient({ address });
+  let connection: any;
+  if (!openConnections[address]) {
+    connection = CreateClient({ address });
+    openConnections[address] = connection;
+  } else {
+    connection = openConnections[address];
+  }
 
   return new Observable((observer) => {
-    client.connect().then((socket: any) => {
-      const serializeData = JSON.stringify(message);
-      const socketConnect = socket[asyncModel]({
-        data: serializeData,
-        metadata: '',
+    try {
+      connection.then((socket: any) => {
+        const serializeData = JSON.stringify(message);
+        const socketConnect = socket[asyncModel]({
+          data: serializeData,
+          metadata: '',
+        });
+
+        switch (asyncModel) {
+          case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
+            socketConnect.then((response: RsocketEventsPayload) => {
+              const { data } = response && JSON.parse(response.data);
+              observer.next(data);
+            });
+            break;
+
+          case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+            socketConnect.subscribe((response: RsocketEventsPayload) => {
+              const { data } = response && JSON.parse(response.data);
+              observer.next(data);
+            });
+            break;
+
+          default:
+            observer.error(new Error('Unable to find asyncModel'));
+        }
       });
-
-      switch (asyncModel) {
-        case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
-          socketConnect.then((response: RsocketEventsPayload) => {
-            const { data } = response && JSON.parse(response.data);
-            observer.next(data);
-          });
-          break;
-
-        case ASYNC_MODEL_TYPES.REQUEST_STREAM:
-          socketConnect.subscribe((response: RsocketEventsPayload) => {
-            const { data } = response && JSON.parse(response.data);
-            observer.next(data);
-          });
-          break;
-
-        default:
-          observer.next(new Error('Unable to find asyncModel'));
-      }
-    });
+    } catch (error) {
+      openConnections[address] = null;
+      observer.error(error);
+    }
   });
 };
