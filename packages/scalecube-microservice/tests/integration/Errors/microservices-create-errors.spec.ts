@@ -105,7 +105,7 @@ describe('Test the creation of Microservice', () => {
 
       Scenario: Fail to register a service, invalid definition
         When    microService is called with 'definition' values
-                |definition  |
+                |definition |
                 |string     |
                 |-100       |
                 |0          |
@@ -121,7 +121,7 @@ describe('Test the creation of Microservice', () => {
       Scenario: Fail to register a service, invalid async model
         When    definition includes AsyncModel
         And     'AsyncModel' includes RequestResponse|RequestStream
-                |AsyncModel  |
+                |AsyncModel |
                 |string     |
                 |-100       |
                 |0          |
@@ -139,7 +139,7 @@ describe('Test the creation of Microservice', () => {
       Scenario: Create a proxy from Microservice successfuly.
         Given    a service with definition and reference
         And      'definition' and 'reference' comply with each other
-                |service          |definition              |reference              |
+                |service          |definition              |reference               |
                 |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
                 |                 |greet$: RequestStream   |greet$: RequestStream   |
         When    creating a Microservice with the service
@@ -149,7 +149,7 @@ describe('Test the creation of Microservice', () => {
         Given   a Microservice
         And      definition and reference
         And      definition comply with reference
-                |service          |definition              |reference              |
+                |service          |definition              |reference               |
                 |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
                 |                 |greet$: RequestStream   |greet$: RequestStream   |  
 
