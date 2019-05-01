@@ -23,3 +23,11 @@ export const ASYNC_MODEL_TYPES: {
   REQUEST_RESPONSE: 'requestResponse',
   REQUEST_STREAM: 'requestStream',
 };
+
+export const RSocketConnectionStatus = {
+  NOT_CONNECTED: 'NOT_CONNECTED',
+  CONNECTING: 'CONNECTING',
+  CONNECTED: 'CONNECTED',
+  CLOSED: 'CLOSED',
+  ERROR: 'ERROR',
+};

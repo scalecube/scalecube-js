@@ -13,4 +13,4 @@ export const CreateClient = (clientOptions: { address: string }) =>
       metadataMimeType: 'text/plain',
     },
     transport: new RSocketEventsClient(clientOptions),
-  }).connect();
+  });

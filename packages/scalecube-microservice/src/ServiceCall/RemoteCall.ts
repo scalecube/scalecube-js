@@ -2,9 +2,8 @@ import { Observable } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint, Message } from '../api';
-import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
+import { getNotFoundByRouterError, ASYNC_MODEL_TYPES, RSocketConnectionStatus } from '../helpers/constants';
 import { CreateClient } from '../TransportProviders/MicroserviceClient';
-import { cat } from 'shelljs';
 
 export const remoteCall = ({
   router,
@@ -45,7 +44,8 @@ const remoteResponse = ({
 }) => {
   let connection: any;
   if (!openConnections[address]) {
-    connection = CreateClient({ address });
+    let client = CreateClient({ address });
+    connection = client.connect();
     openConnections[address] = connection;
   } else {
     connection = openConnections[address];
@@ -78,6 +78,17 @@ const remoteResponse = ({
           default:
             observer.error(new Error('Unable to find asyncModel'));
         }
+
+        socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
+          if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
+            openConnections[address] = null;
+            observer.error(error);
+          }
+
+          if (kind.toUpperCase() === RSocketConnectionStatus.CLOSED) {
+            openConnections[address] = null;
+          }
+        });
       });
     } catch (error) {
       openConnections[address] = null;

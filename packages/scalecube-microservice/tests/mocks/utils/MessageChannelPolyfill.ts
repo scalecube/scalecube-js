@@ -113,12 +113,17 @@ export class MessageChannelPolyfill implements IMessageChannelPolyfill {
 /**
  * https://github.com/zloirock/core-js/blob/master/packages/core-js/internals/global.js
  */
+
+declare global {
+  interface Window {
+    Math: any;
+  }
+}
+
 const globalObj =
-  // @ts-ignore
   typeof window !== 'undefined' && window.Math === Math
     ? window
-    : // @ts-ignore
-    typeof self !== 'undefined' && self.Math === Math
+    : typeof self !== 'undefined' && self.Math === Math
     ? self
     : Function('return this')();
 
