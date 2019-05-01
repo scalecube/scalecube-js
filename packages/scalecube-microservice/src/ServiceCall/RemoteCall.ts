@@ -44,7 +44,7 @@ const remoteResponse = ({
 }) => {
   let connection: any;
   if (!openConnections[address]) {
-    let client = CreateClient({ address });
+    const client = CreateClient({ address });
     connection = client.connect();
     openConnections[address] = connection;
   } else {
