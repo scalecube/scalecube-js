@@ -66,6 +66,7 @@ const remoteResponse = ({
               const { data } = response && JSON.parse(response.data);
               observer.next(data);
             });
+            // TODO Add catch
             break;
 
           case ASYNC_MODEL_TYPES.REQUEST_STREAM:
@@ -73,6 +74,7 @@ const remoteResponse = ({
               const { data } = response && JSON.parse(response.data);
               observer.next(data);
             });
+            // TODO Add onError and onComplete
             break;
 
           default:
