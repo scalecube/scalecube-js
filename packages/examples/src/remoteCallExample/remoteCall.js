@@ -1,5 +1,5 @@
 /**
- * Simple example of creating custom-element and consuming it with scalecube
+ * Simple example of provisioning services from remote microservice by using RSocket transport
  *
  */
 
@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       .then((response) => {
         createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
       })
-      .catch((ex) => console.log('error', ex));
+      .catch(console.log);
 
     proxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
       createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });

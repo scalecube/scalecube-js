@@ -17,7 +17,7 @@ import {
   ServiceDefinition,
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { CreateServer } from '../TransportProviders/MicroserviceServer';
+import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
@@ -42,7 +42,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       seedAddress,
     });
 
-    const server = CreateServer({ address, microserviceContext });
+    const server = createServer({ address, microserviceContext });
     server.start();
 
     discovery

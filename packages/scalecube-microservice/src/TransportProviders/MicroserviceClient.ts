@@ -3,7 +3,7 @@ import RSocketEventsClient from 'rsocket-events-client';
 // @ts-ignore
 import { RSocketClient } from 'rsocket-core';
 
-export const CreateClient = (clientOptions: { address: string }) =>
+export const createClient = (clientOptions: { address: string }) =>
   // TODO pick RSocketClient base on transport type <PM || WS>
   new RSocketClient({
     setup: {

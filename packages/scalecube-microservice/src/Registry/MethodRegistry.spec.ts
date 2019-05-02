@@ -1,5 +1,3 @@
-// @ts-ignore
-import uuidv4 from 'uuid/v4';
 import { Reference, Service } from '../api';
 import { GreetingService, greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { getQualifier } from '../helpers/serviceData';
@@ -12,7 +10,7 @@ import {
 import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
-  const address = uuidv4();
+  const address = 'address';
   describe('Test ServiceRegistry factory', () => {
     let registry: any;
 

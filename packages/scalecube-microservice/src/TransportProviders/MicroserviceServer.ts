@@ -11,7 +11,7 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { defaultRouter } from '../Routers/default';
 import { ASYNC_MODEL_TYPES } from '..';
 
-export const CreateServer = ({
+export const createServer = ({
   address,
   microserviceContext,
 }: {

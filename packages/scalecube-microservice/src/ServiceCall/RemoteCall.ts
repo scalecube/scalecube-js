@@ -3,7 +3,9 @@ import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { Endpoint, Message } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES, RSocketConnectionStatus } from '../helpers/constants';
-import { CreateClient } from '../TransportProviders/MicroserviceClient';
+import { createClient } from '../TransportProviders/MicroserviceClient';
+// @ts-ignore
+import { Flowable, Single } from 'rsocket-flowable';
 
 export const remoteCall = ({
   router,
@@ -42,59 +44,58 @@ const remoteResponse = ({
   message: Message;
   openConnections: { [key: string]: any };
 }) => {
-  let connection: any;
-  if (!openConnections[address]) {
-    const client = CreateClient({ address });
-    connection = client.connect();
-    openConnections[address] = connection;
-  } else {
-    connection = openConnections[address];
-  }
-
   return new Observable((observer) => {
-    try {
-      connection.then((socket: any) => {
-        const serializeData = JSON.stringify(message);
-        const socketConnect = socket[asyncModel]({
-          data: serializeData,
-          metadata: '',
-        });
+    let connection: any;
+    if (!openConnections[address]) {
+      const client = createClient({ address });
+      connection = new Promise((resolve, reject) => {
+        client.connect().then(resolve, reject);
+      });
+      openConnections[address] = connection;
+    } else {
+      connection = openConnections[address];
+    }
 
-        switch (asyncModel) {
-          case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
-            socketConnect.then((response: RsocketEventsPayload) => {
-              const { data } = response && JSON.parse(response.data);
-              observer.next(data);
-            });
-            // TODO Add catch
-            break;
+    connection.then((socket: any) => {
+      const serializeData = JSON.stringify(message);
+      const socketConnect: Single | Flowable = socket[asyncModel]({
+        data: serializeData,
+        metadata: '',
+      });
 
-          case ASYNC_MODEL_TYPES.REQUEST_STREAM:
-            socketConnect.subscribe((response: RsocketEventsPayload) => {
-              const { data } = response && JSON.parse(response.data);
-              observer.next(data);
-            });
-            // TODO Add onError and onComplete
-            break;
+      const flowableNext = (response: RsocketEventsPayload) => {
+        try {
+          const { data } = JSON.parse(response && response.data);
+          observer.next(data);
+        } catch (parseError) {
+          observer.error(new Error(`RemoteCall ${asyncModel} response, parsing error: ${parseError}`));
+        }
+      };
+      const flowableError = (err: Error) => observer.error(err);
 
-          default:
-            observer.error(new Error('Unable to find asyncModel'));
+      switch (asyncModel) {
+        case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
+          socketConnect.then(flowableNext, flowableError); // Single type
+          break;
+
+        case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+          socketConnect.subscribe(flowableNext, flowableError, () => observer.complete()); // Flowable type
+          break;
+
+        default:
+          observer.error(new Error('Unable to find asyncModel'));
+      }
+
+      socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
+        if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
+          openConnections[address] = null;
+          observer.error(error);
         }
 
-        socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
-          if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
-            openConnections[address] = null;
-            observer.error(error);
-          }
-
-          if (kind.toUpperCase() === RSocketConnectionStatus.CLOSED) {
-            openConnections[address] = null;
-          }
-        });
+        if (kind.toUpperCase() === RSocketConnectionStatus.CLOSED) {
+          openConnections[address] = null;
+        }
       });
-    } catch (error) {
-      openConnections[address] = null;
-      observer.error(error);
-    }
+    });
   });
 };
