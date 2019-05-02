@@ -85,23 +85,25 @@ _**Example:** reduce bundle size by X%._
 
 ## Ready for implementation
 
--[ ] External dependencies have been resolved -[ ] API has been approved -[ ] Test cases have been prepared -[ ] Discussed with Technical lead
+- [ ] External dependencies have been resolved
+
+- [ ] API has been approved
+
+- [ ] Test cases have been prepared
+
+- [ ] Discussed with Technical lead
 
 ## Definition of Done
 
--[ ] Technical lead review
+- [ ] Technical review
 
--[ ] Architect review
+- [ ] All tests are implemented <!-- automatic testing -->
 
--[ ] All tests are implemented <!-- automatic testing -->
+- [ ] Documentation
 
--[ ] Manual QA
+- [ ] Release notes
 
--[ ] Documentation
-
--[ ] Release notes
-
--[ ] KPI has been reached
+- [ ] KPI has been reached
 
 ## RoadMap
 
