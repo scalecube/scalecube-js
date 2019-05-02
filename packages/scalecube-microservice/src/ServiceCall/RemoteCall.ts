@@ -6,6 +6,8 @@ import { getNotFoundByRouterError, ASYNC_MODEL_TYPES, RSocketConnectionStatus } 
 import { createClient } from '../TransportProviders/MicroserviceClient';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
+// @ts-ignore
+import { RSocketClientSocket } from 'rsocket-core';
 
 export const remoteCall = ({
   router,
@@ -45,7 +47,7 @@ const remoteResponse = ({
   openConnections: { [key: string]: any };
 }) => {
   return new Observable((observer) => {
-    let connection: any;
+    let connection: Promise<RSocketClientSocket>;
     if (!openConnections[address]) {
       const client = createClient({ address });
       connection = new Promise((resolve, reject) => {
@@ -56,7 +58,7 @@ const remoteResponse = ({
       connection = openConnections[address];
     }
 
-    connection.then((socket: any) => {
+    connection.then((socket: RSocketClientSocket) => {
       const serializeData = JSON.stringify(message);
       const socketConnect: Single | Flowable = socket[asyncModel]({
         data: serializeData,
