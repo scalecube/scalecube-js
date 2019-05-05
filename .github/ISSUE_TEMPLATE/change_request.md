@@ -85,6 +85,8 @@ _**Example:** reduce bundle size by X%._
 
 ## Ready for implementation
 
+####
+
 - [ ] External dependencies have been resolved
 
 - [ ] API has been approved
@@ -94,6 +96,8 @@ _**Example:** reduce bundle size by X%._
 - [ ] Discussed with Technical lead
 
 ## Definition of Done
+
+####
 
 - [ ] Technical review
 
