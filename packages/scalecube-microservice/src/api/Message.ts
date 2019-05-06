@@ -9,5 +9,5 @@ export default interface Message {
   /**
    * Arguments of the invoked function
    */
-  data: any;
+  data: any[];
 }
