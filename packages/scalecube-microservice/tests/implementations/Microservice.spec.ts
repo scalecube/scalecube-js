@@ -33,14 +33,14 @@ describe('Test the creation of Microservice', () => {
   describe('Test creating microservice from function constructor', () => {
     test(`
       // move to 'failed-create-service.spec.ts'
-      Scenario: Fail to register a service, reference does not match definition
-        Given   a service with definition and reference
-        |service          |definition               |reference  |
-        |greetingService  |hello : RequestResponse  |           |
-        # definition has a method that is not contained in the reference
-        When    creating a Microservice with the service
-        Then    exception will occur
-        And     Invalid method reference for GreetingService/hello`, () => {
+      // Scenario: Fail to register a service, reference does not match definition
+      //   Given   a service with definition and reference
+      //   |service          |definition               |reference  |
+      //   |greetingService  |hello : RequestResponse  |           |
+      //   # definition has a method that is not contained in the reference
+      //   When    creating a Microservice with the service
+      //   Then    exception will occur
+      //   And     Invalid method reference for GreetingService/hello`, () => {
       const greetingService: Service = {
         definition: {
           serviceName: 'GreetingService',
@@ -80,15 +80,15 @@ describe('Test the creation of Microservice', () => {
 
       test(`
       // move to 'failed-create-service.spec.ts'
-      Scenario: Fail to register a service, method definition is a primitive
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService  |hello: null           |                      |
-        # reference has a method that is not a function
-        When    creating a Microservice with the service
-        Then    a Microservice will not be created
-        And     exception will occur with service greetingService is not valid.
+      // Scenario: Fail to register a service, method definition is a primitive
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService  |hello: null           |                      |
+      //   # reference has a method that is not a function
+      //   When    creating a Microservice with the service
+      //   Then    a Microservice will not be created
+      //   And     exception will occur with service greetingService is not valid.
       `, () => {
         const greetingService: Service = {
           definition: {
@@ -109,27 +109,27 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
-      // move to 'failed-create-microservice.spec.ts'
-      Scenario: Fail to register a service, asyncModel invalid
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService  |hello: null           |                      |
-        # reference has a method that is not a function
-        When    creating a Microservice with the service
-        Then    a Microservice will not be created
-        And     exception will occur with service greetingService is not valid.
+      // Place it in a new test file for asyncModel
+      // Scenario: Fail to register a service, asyncModel invalid
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService  |hello: null           |                      |
+      //   # reference has a method that is not a function
+      //   When    creating a Microservice with the service
+      //   Then    a Microservice will not be created
+      //   And     exception will occur with service greetingService is not valid.
       
-      // move to 'failed-create-microservice.spec.ts'
-      Scenario: Fail to register a service, (silent failing)
-        Given   a service with definition and reference
-        |service          |definition            |reference  |
-        |greetingService  |             |hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |
-        # reference has a method that is not contained in the definition
-        When    creating a Microservice with the service
-        Then    Microservice will successfully created
-        But Microservice instance won't contain hello method
+      // TODO later (already added as a task).
+      // Scenario: Fail to register a service, (silent failing)
+      //   Given   a service with definition and reference
+      //   |service          |definition            |reference  |
+      //   |greetingService  |             |hello: RequestResponse|
+      //   |                 |greet$: RequestStream |greet$: RequestStream |
+      //   # reference has a method that is not contained in the definition
+      //   When    creating a Microservice with the service
+      //   Then    Microservice will successfully created
+      //   But Microservice instance won't contain hello method
       `, () => {
         const greetingService: Service = {
           definition: {
@@ -152,33 +152,33 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
-      // move to 'successful-invoke-proxy.spec.ts'
-      Scenario: Invoke registered service from proxy (RequestResponse)
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService  |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream | 
-        When    Microservice is created
-        And     greetingServiceProxy is created from the Microservice
-        And     greetingServiceProxy invokes a RequestResponse method
-        Then    successful RequestResponse is received
+      // Done as part of positive-scenarios-coverage.spec.ts
+      // Scenario: Invoke registered service from proxy (RequestResponse)
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      //   |                 |greet$: RequestStream |greet$: RequestStream | 
+      //   When    Microservice is created
+      //   And     greetingServiceProxy is created from the Microservice
+      //   And     greetingServiceProxy invokes a RequestResponse method
+      //   Then    successful RequestResponse is received
       `, () => {
         return expect(greetingServiceProxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
       });
 
       test(`
-      // move to 'successful-invoke-proxy.spec.ts'
-      Scenario: Invoke registered service from proxy (RequestStream)
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService  |hello: RequestResponse|hello: RequestResponse|
-        |                 |greet$: RequestStream |greet$: RequestStream |      
-        When    Microservice is created
-        And     greetingServiceProxy is created from the Microservice
-        And     subscribe to greetingServiceProxy RequestStream's method
-        Then    successful RequestStream is emitted 
+      // Done as part of positive-scenarios-coverage.spec.ts
+      // Scenario: Invoke registered service from proxy (RequestStream)
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService  |hello: RequestResponse|hello: RequestResponse|
+      //   |                 |greet$: RequestStream |greet$: RequestStream |      
+      //   When    Microservice is created
+      //   And     greetingServiceProxy is created from the Microservice
+      //   And     subscribe to greetingServiceProxy RequestStream's method
+      //   Then    successful RequestStream is emitted 
       `, (done) => {
         greetingServiceProxy.greet$([defaultUser]).subscribe((response: string) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
@@ -201,17 +201,17 @@ describe('Test the creation of Microservice', () => {
       });
 
       test(`
-      // move to 'successful-invoke-proxy.spec.ts'
-      Scenario: Invoke registered serviceS from proxy (RequestResponse)
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService1 |greet$: RequestStream |greet$: RequestStream |
-        |greetingService2 |hello: RequestResponse|hello: RequestResponse|
-        When    Microservice is created
-        And     Proxy is created from the Microservice
-        And     proxy invokes a RequestResponse method
-        Then    successful RequestResponse is received
+      // Done as part of positive-scenarios-coverage.spec.ts
+      // Scenario: Invoke registered serviceS from proxy (RequestResponse)
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService1 |greet$: RequestStream |greet$: RequestStream |
+      //   |greetingService2 |hello: RequestResponse|hello: RequestResponse|
+      //   When    Microservice is created
+      //   And     Proxy is created from the Microservice
+      //   And     proxy invokes a RequestResponse method
+      //   Then    successful RequestResponse is received
       `, () => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionHello,
@@ -221,16 +221,16 @@ describe('Test the creation of Microservice', () => {
 
       test(`
       // move to 'successful-invoke-proxy.spec.ts'
-      Scenario: Subscribe to a service from proxy (RequestStream)
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
-        |service          |definition            |reference             |
-        |greetingService1 |greet$: RequestStream |greet$: RequestStream |
-        |greetingService2 |hello: RequestResponse|hello: RequestResponse|      
-        When    Microservice is created
-        And     Proxy is created from the Microservice
-        And     subscribe to proxy RequestStream method
-        Then    successful RequestStream is emitted 
+      // Scenario: Subscribe to a service from proxy (RequestStream)
+      //   Given   a service with definition and reference
+      //   And     definition and reference comply with each other
+      //   |service          |definition            |reference             |
+      //   |greetingService1 |greet$: RequestStream |greet$: RequestStream |
+      //   |greetingService2 |hello: RequestResponse|hello: RequestResponse|      
+      //   When    Microservice is created
+      //   And     Proxy is created from the Microservice
+      //   And     subscribe to proxy RequestStream method
+      //   Then    successful RequestStream is emitted 
       `, (done) => {
         const greetingServiceProxy = ms.createProxy({
           serviceDefinition: greetingServiceDefinitionGreet$,
@@ -246,14 +246,14 @@ describe('Test the creation of Microservice', () => {
   describe('Test Discovery', () => {
     test(`
       // move to 'successful-discovery.spec.ts'
-      Scenario: Invoke remote service 
-        Given   two valid Microservices under the same seedAddress
-        | Microservice | reference| definition  |
-        | ms1          | s1       |d1           |
-        | ms2          | s2       |d2           | 
-        When    creating a proxy to ms1 with definition of d2
-        And     proxy invokes s2
-        Then    remoteCall is performed and valid response is received
+      // Scenario: Invoke remote service 
+      //   Given   two valid Microservices under the same seedAddress
+      //   | Microservice | reference| definition  |
+      //   | ms1          | s1       |d1           |
+      //   | ms2          | s2       |d2           | 
+      //   When    creating a proxy to ms1 with definition of d2
+      //   And     proxy invokes s2
+      //   Then    remoteCall is performed and valid response is received
     `, () => {
       expect.assertions(1);
 
@@ -275,7 +275,7 @@ describe('Test the creation of Microservice', () => {
     });
 
     test(`
-      // move to 'proxy-tests.spec.ts'
+      // will be re writtennd moved to another file
       Scenario: Fail to invoke a remote service 
         Given   two valid Microservices under the same seedAddress
         | Microservice | reference| definition  |
