@@ -8,7 +8,8 @@
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
-import { getServiceIsNotValidError } from '../../../src/helpers/constants';
+import { getInvalidMethodReferenceError, getServiceIsNotValidError } from '../../../src/helpers/constants';
+import { getQualifier } from '../../../src/helpers/serviceData';
 
 describe('Test the creation of Microservice', () => {
   console.error = jest.fn(); // disable validation logs while doing this test
@@ -24,8 +25,10 @@ describe('Test the creation of Microservice', () => {
   const scenario1service = {
     definition: {
       ...baseServiceDefinition,
-      hello: {
-        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+      methods: {
+        hello: {
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+        },
       },
     },
     reference: {},
@@ -34,21 +37,25 @@ describe('Test the creation of Microservice', () => {
   const scenario2service = {
     definition: {
       ...baseServiceDefinition,
-      hello: {
-        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      methods: {
+        hello: {
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+        },
       },
     },
     reference: {},
   };
 
+  const qualifier = getQualifier({ serviceName: baseServiceDefinition.serviceName, methodName: 'hello' });
+
   test.each([
     {
       service: scenario1service,
-      exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
+      exceptionMsg: getInvalidMethodReferenceError(qualifier),
     },
     {
       service: scenario2service,
-      exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
+      exceptionMsg: getInvalidMethodReferenceError(qualifier),
     },
   ])(
     `
@@ -75,8 +82,10 @@ describe('Test the creation of Microservice', () => {
 
   test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
     `
-     Scenario: Fail to register a service, invalid definition
-        When    serviceDefinition is created with invalid 'method' values
+     Scenario: serviceDefinition with invalid 'method' value
+        Given invalid 'method' value
+        When    creating a microservice 
+          And   serviceDefinition has invalid 'method' values
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
@@ -87,13 +96,15 @@ describe('Test the creation of Microservice', () => {
                 |object          | {}
                 |undefined       | undefined
                 |null            | null
+        Then    invalid service error will occur
       `,
     (methodValue) => {
-      // #3 - method is not object with a key 'asyncModel'
       const scenario3service = {
         definition: {
           ...baseServiceDefinition,
-          hello: methodValue,
+          methods: {
+            hello: methodValue,
+          },
         },
         reference: {},
       };
@@ -110,8 +121,10 @@ describe('Test the creation of Microservice', () => {
 
   test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
     `
-     Scenario: Fail to register a service, invalid definition
-        When    serviceDefinition is created with invalid 'asyncModel' values
+     Scenario: serviceDefinition with invalid 'asyncModel' values
+        Given invalid 'asyncModel' value
+        When    creating a microservice 
+          And   serviceDefinition has invalid 'asyncModel' values
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
@@ -122,14 +135,16 @@ describe('Test the creation of Microservice', () => {
                 |object          | {}
                 |undefined       | undefined
                 |null            | null
+        Then    invalid service error will occur
       `,
     (asyncModel) => {
-      // #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
       const service = {
         definition: {
           ...baseServiceDefinition,
-          hello: {
-            asyncModel,
+          methods: {
+            hello: {
+              asyncModel,
+            },
           },
         },
         reference: {},
