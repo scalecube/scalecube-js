@@ -1,6 +1,6 @@
 import { Microservices } from './Microservices';
 import { Message, Service } from '../api';
-import GreetingService, { greetingServiceDefinition } from '../../tests/mocks/GreetingService';
+import { GreetingService, greetingServiceDefinition } from '../../tests/mocks/GreetingService';
 import { defaultRouter } from '../Routers/default';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { getQualifier } from '../helpers/serviceData';
@@ -49,7 +49,7 @@ describe('Microservices Testing', () => {
           qualifier,
         };
         serviceCall.requestStream(message).subscribe((response: any) => {
-          expect(response.data).toMatch(`greetings ${message.data}`);
+          expect(response).toMatch(`greetings ${message.data}`);
           done();
         });
       });
@@ -61,7 +61,7 @@ describe('Microservices Testing', () => {
           qualifier,
         };
         serviceCall.requestResponse(message).then((response: any) => {
-          expect(response.data).toMatch(`Hello ${message.data}`);
+          expect(response).toMatch(`Hello ${message.data}`);
           done();
         });
       });

@@ -6,13 +6,24 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
-import { Endpoint, Message, Microservice, MicroserviceOptions, Microservices as MicroservicesInterface } from '../api';
+import {
+  Endpoint,
+  Message,
+  Microservice,
+  MicroserviceOptions,
+  Microservices as MicroservicesInterface,
+  ProxyOptions,
+  Router,
+  ServiceDefinition,
+} from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
+    // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
     services && Array.isArray(services) && methodRegistry.add({ services, address });
@@ -31,61 +42,91 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       seedAddress,
     });
 
+    const server = createServer({ address, microserviceContext });
+    server.start();
+
     discovery
       .discoveredItems$()
       .subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
-      createProxy({ router = defaultRouter, serviceDefinition }) {
-        if (!microserviceContext) {
-          throw new Error(MICROSERVICE_NOT_EXISTS);
-        }
-
-        return getProxy({
-          serviceCall: getServiceCall({ router, microserviceContext }),
-          serviceDefinition,
-        });
-      },
-      createServiceCall({ router = defaultRouter }) {
-        if (!microserviceContext) {
-          throw new Error(MICROSERVICE_NOT_EXISTS);
-        }
-
-        const serviceCall = getServiceCall({ router, microserviceContext });
-        return Object.freeze({
-          requestStream: (message: Message) =>
-            serviceCall({
-              message,
-              asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-              includeMessage: true,
-            }),
-          requestResponse: (message: Message) =>
-            serviceCall({
-              message,
-              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-              includeMessage: true,
-            }),
-        });
-      },
-      destroy(): null {
-        if (!microserviceContext) {
-          throw new Error(MICROSERVICE_NOT_EXISTS);
-        }
-
-        discovery && discovery.destroy();
-
-        Object.values(microserviceContext).forEach(
-          (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
-        );
-        microserviceContext = null;
-
-        return microserviceContext;
-      },
+      createProxy: ({ router = defaultRouter, serviceDefinition }: ProxyOptions) =>
+        createProxy({ router, serviceDefinition, microserviceContext }),
+      createServiceCall: ({ router = defaultRouter }) => createServiceCall({ router, microserviceContext }),
+      destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
   },
 });
 
-export const createMicroserviceContext = () => {
+const createProxy = ({
+  router,
+  serviceDefinition,
+  microserviceContext,
+}: {
+  router: Router;
+  serviceDefinition: ServiceDefinition;
+  microserviceContext: MicroserviceContext | null;
+}) => {
+  if (!microserviceContext) {
+    throw new Error(MICROSERVICE_NOT_EXISTS);
+  }
+
+  return getProxy({
+    serviceCall: getServiceCall({ router, microserviceContext }),
+    serviceDefinition,
+  });
+};
+
+const createServiceCall = ({
+  router,
+  microserviceContext,
+}: {
+  router: Router;
+  microserviceContext: MicroserviceContext | null;
+}) => {
+  if (!microserviceContext) {
+    throw new Error(MICROSERVICE_NOT_EXISTS);
+  }
+
+  const serviceCall = getServiceCall({ router, microserviceContext });
+  return Object.freeze({
+    requestStream: (message: Message, messageFormat: boolean = false) =>
+      serviceCall({
+        message,
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+        includeMessage: messageFormat,
+      }),
+    requestResponse: (message: Message, messageFormat: boolean = false) =>
+      serviceCall({
+        message,
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+        includeMessage: messageFormat,
+      }),
+  });
+};
+
+const destroy = ({
+  microserviceContext,
+  discovery,
+}: {
+  microserviceContext: MicroserviceContext | null;
+  discovery: any;
+}) => {
+  if (!microserviceContext) {
+    throw new Error(MICROSERVICE_NOT_EXISTS);
+  }
+
+  discovery && discovery.destroy();
+
+  Object.values(microserviceContext).forEach(
+    (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
+  );
+  microserviceContext = null;
+
+  return microserviceContext;
+};
+
+const createMicroserviceContext = () => {
   const serviceRegistry = createServiceRegistry();
   const methodRegistry = createMethodRegistry();
   return {

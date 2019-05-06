@@ -1,12 +1,12 @@
 /**
  * Defines Observable in scalecube asyncModel
  */
-export type RequestStreamAsyncModel = 'RequestStream';
+export type RequestStreamAsyncModel = 'requestStream';
 
 /**
  * Defines Promise in scalecube asyncModel
  */
-export type RequestResponseAsyncModel = 'RequestResponse';
+export type RequestResponseAsyncModel = 'requestResponse';
 
 /**
  * Type of communication between a consumer and a provider
