@@ -1,8 +1,8 @@
 /*****
- * This file contains scenarios for failed attempts to create a microService is created.
+ * This file contains scenarios for failed attempts to create a microservice.
  * 1. All tests result in the same 'getServiceIsNotValidError' error message, detailed below.
- * 2. microService contains definition + reference. We include here scenarios for various validation of both.
- * 3. Included also validation tests for asyncModel.
+ * 2. microservice create from a service, service contains definition + reference.
+ * 3. We include here scenarios for various validation for definition.
  *****/
 
 import { getGlobalNamespace } from '../../../src/helpers/utils';
@@ -40,24 +40,6 @@ describe('Test the creation of Microservice', () => {
     },
     reference: {},
   };
-  // #3 - method is not object with a key 'asyncModel'
-  const scenario3service = {
-    definition: {
-      ...baseServiceDefinition,
-      hello: null,
-    },
-    reference: {},
-  };
-  // #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
-  const scenario4service = {
-    definition: {
-      ...baseServiceDefinition,
-      hello: {
-        asyncModel: null,
-      },
-    },
-    reference: {},
-  };
 
   test.each([
     {
@@ -66,14 +48,6 @@ describe('Test the creation of Microservice', () => {
     },
     {
       service: scenario2service,
-      exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
-    },
-    {
-      service: scenario3service,
-      exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
-    },
-    {
-      service: scenario4service,
       exceptionMsg: getServiceIsNotValidError(baseServiceDefinition.serviceName),
     },
   ])(
@@ -98,75 +72,78 @@ describe('Test the creation of Microservice', () => {
       }
     }
   );
-  `
-      Background:
-        Given   a service with definition and reference
-        And     definition and reference comply with each other
 
-      Scenario: Fail to register a service, invalid definition
-        When    microService is called with 'definition' values
-                |definition |
-                |string     |
-                |-100       |
-                |0          |
-                |1          |
-                |100.1      |
-                |1 10       |
-                |test       |
-                |{}         |
-                |[]         |
-                |undefined  |
-                |null       |
-      
-      Scenario: Fail to register a service, invalid async model
-        When    definition includes AsyncModel
-        And     'AsyncModel' includes RequestResponse|RequestStream
-                |AsyncModel |
-                |string     |
-                |-100       |
-                |0          |
-                |1          |
-                |100.1      |
-                |1 10       |
-                |test       |
-                |{}         |
-                |[]         |
-                |undefined  |
-                |null       |
+  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
+    `
+     Scenario: Fail to register a service, invalid definition
+        When    serviceDefinition is created with invalid 'method' values
+                |definition      | value
+                |string          | 'string'
+                |negative number | -100
+                |false convert   | 0
+                |true convert    | 1
+                |double          | 10.1
+                |array           | []
+                |object          | {}
+                |undefined       | undefined
+                |null            | null
+      `,
+    (methodValue) => {
+      // #3 - method is not object with a key 'asyncModel'
+      const scenario3service = {
+        definition: {
+          ...baseServiceDefinition,
+          hello: methodValue,
+        },
+        reference: {},
+      };
 
-      Feature:  Validation testing for a proxy created from a Microservice
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [scenario3service] });
+      } catch (error) {
+        expect(error.message).toMatch(getServiceIsNotValidError(baseServiceDefinition.serviceName));
+      }
+    }
+  );
 
-      Scenario: Create a proxy from Microservice successfuly.
-        Given    a service with definition and reference
-        And      'definition' and 'reference' comply with each other
-                |service          |definition              |reference               |
-                |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
-                |                 |greet$: RequestStream   |greet$: RequestStream   |
-        When    creating a Microservice with the service
-        Then    greetingServiceProxy is created from the Microservice
+  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
+    `
+     Scenario: Fail to register a service, invalid definition
+        When    serviceDefinition is created with invalid 'asyncModel' values
+                |definition      | value
+                |string          | 'string'
+                |negative number | -100
+                |false convert   | 0
+                |true convert    | 1
+                |double          | 10.1
+                |array           | []
+                |object          | {}
+                |undefined       | undefined
+                |null            | null
+      `,
+    (asyncModel) => {
+      // #4 - asyncModel is not ${ASYNC_MODEL_TYPES.REQUEST_RESPONSE} or ${ASYNC_MODEL_TYPES.REQUEST_STREAM}
+      const service = {
+        definition: {
+          ...baseServiceDefinition,
+          hello: {
+            asyncModel,
+          },
+        },
+        reference: {},
+      };
 
-      Background:
-        Given   a Microservice
-        And      definition and reference
-        And      definition comply with reference
-                |service          |definition              |reference               |
-                |greetingService  |hello: RequestResponse  |hello: RequestResponse  |
-                |                 |greet$: RequestStream   |greet$: RequestStream   |  
-
-      Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
-        When    proxy is created from the Microservice
-        And     proxy tries to invoke method 'hello: RequestResponse' from serviceDefinition
-        Then    greetingServiceProxy will be invoked from the Microservice   
-
-      Scenario: Invoke a method that is defined in the serviceDefinition (requestResponse)
-        When    proxy is created from the Microservice
-        And     proxy tries to invoke method 'hello: RequestStream' from serviceDefinition
-        Then    greetingServiceProxy will be invoked from the Microservice
-
-                  
-    `;
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(getServiceIsNotValidError(baseServiceDefinition.serviceName));
+      }
+    }
+  );
 });
 
 // TODO : silent failing scenario
-// #3. definition: method invalid format          | greetingService | hello: null               |           |
-// #4. definition: asyncModel unsupported format  | greetingService | hello:{asyncModel: null } |           |
