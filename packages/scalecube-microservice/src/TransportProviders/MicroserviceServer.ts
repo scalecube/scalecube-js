@@ -50,7 +50,9 @@ const requestResponse = ({
       .then((response: any) => {
         subscriber.onComplete({ data: JSON.stringify(response), metadata: '' });
       })
-      .catch(subscriber.onError);
+      .catch((error: Error) => {
+        subscriber.onError(error);
+      });
   });
 };
 
