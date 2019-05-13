@@ -1,8 +1,7 @@
-import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
+import { Observable, of } from 'rxjs';
 import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
 import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
-import { catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 
 const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
@@ -101,16 +100,13 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         expect.assertions(1);
 
         const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
-        proxy
-          .greet$(['Me'])
-          .pipe(
-            catchError((error: any) => {
-              expect(error).toMatchObject(new Error(errorMessage));
-              done();
-              return [];
-            })
-          )
-          .subscribe();
+        proxy.greet$(['Me']).subscribe(
+          (response: any) => {},
+          (error: string) => {
+            expect(error).toMatchObject(new Error(errorMessage));
+            done();
+          }
+        );
       });
 
       test(`

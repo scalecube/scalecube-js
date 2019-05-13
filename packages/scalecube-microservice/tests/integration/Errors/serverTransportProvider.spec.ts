@@ -4,7 +4,6 @@ import RSocketEventsServer from 'rsocket-events-server';
 import { RSocketServer } from 'rsocket-core';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
-import { catchError } from 'rxjs/operators';
 import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingService';
 import { Microservices } from '../../../src';
 import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
@@ -81,15 +80,12 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
   `, (done) => {
     expect.assertions(1);
 
-    proxy
-      .greet$(['Me'])
-      .pipe(
-        catchError((error: any) => {
-          expect(error).toMatchObject(new Error(errorMessage));
-          done();
-          return [];
-        })
-      )
-      .subscribe();
+    proxy.greet$(['Me']).subscribe(
+      (res: any) => {},
+      (error: any) => {
+        expect(error).toMatchObject(new Error(errorMessage));
+        done();
+      }
+    );
   });
 });

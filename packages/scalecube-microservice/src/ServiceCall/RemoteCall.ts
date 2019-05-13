@@ -78,7 +78,7 @@ const remoteResponse = ({
           observer.error(new Error(`RemoteCall ${asyncModel} response, parsing error: ${parseError}`));
         }
       };
-      const flowableError = (err: any) =>
+      const flowableError = (err: { source: { message: string } }) =>
         observer.error(
           err ? (err.source ? new Error(err.source.message) : err) : new Error('RemoteCall exception occur.')
         );
