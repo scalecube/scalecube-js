@@ -65,10 +65,10 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     },
   ])(
     `
-        Given  'sender' and a 'receiverServiceDefinition' (receiver)
-               sender (microservice)       | receiverServiceDefinition (receiver)    |
-               microserviceWithServices    | greetingServiceDefinition               | # LocalCall
-               microserviceWithoutServices | greetingServiceDefinition               | # RemoteCallCall
+    Given     'sender' and a 'receiverServiceDefinition' (receiver)
+              sender (microservice)       | receiverServiceDefinition (receiver)    |
+              microserviceWithServices    | greetingServiceDefinition               | # LocalCall
+              microserviceWithoutServices | greetingServiceDefinition               | # RemoteCall
 
         `,
     (connect) => {
