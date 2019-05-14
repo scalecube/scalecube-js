@@ -8,12 +8,10 @@
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
-import { getInvalidMethodReferenceError, getServiceIsNotValidError } from '../../../src/helpers/constants';
+import { getInvalidMethodReferenceError, getMethodsAreNotDefinedProperly } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
 describe('Test the creation of Microservice', () => {
-  console.error = jest.fn(); // disable validation logs while doing this test
-
   beforeEach(() => {
     getGlobalNamespace().scalecube = {} as ScalecubeGlobal;
   });
@@ -59,12 +57,12 @@ describe('Test the creation of Microservice', () => {
     },
   ])(
     `
-      Scenario: Fail to register a service, 
+      Scenario: Fail to register a service,
         Given   'serviceData' with 'service' and 'exceptionMsg'
           scenario                                 |service         |definition               | reference |
           #1. definition does not match reference  |greetingService |hello : REQUEST_RESPONSE |           |
           #2. definition does not match reference  |greetingService |hello : REQUEST_STREAM   |           |
-        
+
         When creating microservice with a given 'service'
         Then an exception will occur.
         `,
@@ -99,7 +97,7 @@ describe('Test the creation of Microservice', () => {
         Then    invalid service error will occur
       `,
     (methodValue) => {
-      const scenario3service = {
+      const service = {
         definition: {
           ...baseServiceDefinition,
           methods: {
@@ -112,9 +110,11 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        Microservices.create({ services: [scenario3service] });
+        Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(getServiceIsNotValidError(baseServiceDefinition.serviceName));
+        expect(error.message).toMatch(
+          getMethodsAreNotDefinedProperly(baseServiceDefinition.serviceName, Object.keys(service.definition.methods))
+        );
       }
     }
   );
@@ -123,7 +123,7 @@ describe('Test the creation of Microservice', () => {
     `
      Scenario: serviceDefinition with invalid 'asyncModel' values
         Given invalid 'asyncModel' value
-        When    creating a microservice 
+        When    creating a microservice
           And   serviceDefinition has invalid 'asyncModel' values
                 |definition      | value
                 |string          | 'string'
@@ -155,7 +155,9 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(getServiceIsNotValidError(baseServiceDefinition.serviceName));
+        expect(error.message).toMatch(
+          getMethodsAreNotDefinedProperly(baseServiceDefinition.serviceName, Object.keys(service.definition.methods))
+        );
       }
     }
   );

@@ -115,3 +115,8 @@ export interface RsocketEventsPayload {
   data: any;
   metadata: any;
 }
+
+export interface IsValid {
+  isValid: boolean;
+  exception: Error | null;
+}
