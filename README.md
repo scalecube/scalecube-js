@@ -6,6 +6,8 @@
 
 Microservices library inspired by the java scalecube-services. scalecube provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupling between service implementation and technology.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
+
 ## Project Status
 
 currently we are working on version 0.2.x
