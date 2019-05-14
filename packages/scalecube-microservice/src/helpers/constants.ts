@@ -13,8 +13,6 @@ export const SERVICE_NAME_NOT_PROVIDED = '(serviceDefinition.serviceName) is not
 export const WRONG_DATA_FORMAT_IN_MESSAGE = 'Message format error: data must be Array';
 export const DEFINITION_MISSING_METHODS = 'Definition missing methods:object';
 
-export const getServiceIsNotValidError = (serviceName: PrimitiveTypesNoSymbol) =>
-  `service ${serviceName} is not valid.`;
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `service method '${methodName}' missing in the serviceDefinition`;
 export const getNotFoundByRouterError = (qualifier: string) =>

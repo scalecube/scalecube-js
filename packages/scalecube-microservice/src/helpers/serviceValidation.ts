@@ -1,4 +1,4 @@
-import { isObject, isPrimitive } from './utils';
+import { isObject, isPrimitiveNoSymbol } from './utils';
 import {
   ASYNC_MODEL_TYPES,
   DEFINITION_MISSING_METHODS,
@@ -36,7 +36,7 @@ export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid
 };
 
 export const isValidServiceName = (serviceName: PrimitiveTypesNoSymbol): IsValid => {
-  if (!isPrimitive(serviceName)) {
+  if (!isPrimitiveNoSymbol(serviceName)) {
     return {
       isValid: false,
       exception: new Error(getServiceNameInvalid()),

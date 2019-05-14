@@ -7,7 +7,7 @@ import {
   getReferenceFromServices,
   getUpdatedMethodRegistry,
 } from './MethodRegistry';
-import { ASYNC_MODEL_TYPES, DEFINITION_MISSING_METHODS, getServiceIsNotValidError } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, DEFINITION_MISSING_METHODS } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   const address = 'address';
