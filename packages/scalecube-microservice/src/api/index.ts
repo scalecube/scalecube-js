@@ -20,10 +20,10 @@ import Endpoint from './Endpoint';
 import Reference from './Reference';
 import { LookUp } from './LookUp';
 
-type PrimitiveTypes = string | boolean | number | string | void | symbol;
+type PrimitiveTypesNoSymbol = string | boolean | number | string | void;
 
 export {
-  PrimitiveTypes,
+  PrimitiveTypesNoSymbol,
   AsyncModel,
   RequestStreamAsyncModel,
   RequestResponseAsyncModel,

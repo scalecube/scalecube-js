@@ -6,7 +6,7 @@ import {
   getServiceNameInvalid,
   SERVICE_DEFINITION_NOT_PROVIDED,
 } from './constants';
-import { AsyncModel, ServiceDefinition } from '../api';
+import { AsyncModel, PrimitiveTypesNoSymbol, ServiceDefinition } from '../api';
 import { IsValid } from './types';
 
 export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid => {
@@ -35,11 +35,11 @@ export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid
   };
 };
 
-export const isValidServiceName = (serviceName: string): IsValid => {
+export const isValidServiceName = (serviceName: PrimitiveTypesNoSymbol): IsValid => {
   if (!isPrimitive(serviceName)) {
     return {
       isValid: false,
-      exception: new Error(getServiceNameInvalid(serviceName)),
+      exception: new Error(getServiceNameInvalid()),
     };
   }
   return {
@@ -50,7 +50,7 @@ export const isValidServiceName = (serviceName: string): IsValid => {
 
 export const isValidMethods = (
   methods: { [methodName: string]: { asyncModel: AsyncModel } },
-  serviceName: string
+  serviceName: PrimitiveTypesNoSymbol
 ): IsValid => {
   if (!isObject(methods)) {
     return {

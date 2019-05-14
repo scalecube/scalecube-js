@@ -7,7 +7,7 @@ import {
   getEndpointsFromServices,
   getUpdatedServiceRegistry,
 } from './ServiceRegistry';
-import { ASYNC_MODEL_TYPES, getServiceIsNotValidError } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, DEFINITION_MISSING_METHODS, getServiceIsNotValidError } from '../helpers/constants';
 
 describe('ServiceRegistry Testing', () => {
   const address = 'address';
@@ -198,7 +198,7 @@ describe('ServiceRegistry Testing', () => {
           },
         });
       } catch (e) {
-        expect(e.message).toMatch(getServiceIsNotValidError(fakeServiceName));
+        expect(e.message).toMatch(DEFINITION_MISSING_METHODS);
       }
     });
   });

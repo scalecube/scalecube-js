@@ -67,7 +67,9 @@ export const getEndpointsFromService = ({ service, address }: AvailableService):
   let data: Endpoint[] = [];
   const { definition } = service;
   const transport = 'window:/';
-  if (isValidServiceDefinition(definition)) {
+  const validation = isValidServiceDefinition(definition);
+
+  if (validation.isValid) {
     const { serviceName, methods } = definition;
 
     data = Object.keys(methods).map((methodName: string) => ({
@@ -80,7 +82,7 @@ export const getEndpointsFromService = ({ service, address }: AvailableService):
       address,
     }));
   } else {
-    throw new Error(getServiceIsNotValidError(definition.serviceName));
+    throw validation.exception;
   }
 
   return data;
