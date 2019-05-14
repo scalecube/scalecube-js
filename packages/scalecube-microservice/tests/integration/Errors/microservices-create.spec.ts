@@ -8,7 +8,11 @@
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
-import { getInvalidMethodReferenceError, getMethodsAreNotDefinedProperly } from '../../../src/helpers/constants';
+import {
+  getInvalidMethodReferenceError,
+  getMethodsAreNotDefinedProperly,
+  getServiceNameInvalid,
+} from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
 describe('Test the creation of Microservice', () => {
@@ -78,15 +82,50 @@ describe('Test the creation of Microservice', () => {
     }
   );
 
-  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
+  // @ts-ignore
+  test.each([[], {}])(
+    `
+     Scenario: serviceDefinition with invalid 'serviceName' value
+        Given invalid 'serviceName' value
+        When    creating a microservice 
+          And   serviceDefinition has invalid 'serviceName' values
+                
+                |definition      | value            
+                |array           | []
+                |object          | {}
+
+        Then    invalid service error will occur
+      `,
+    (serviceName) => {
+      const service = {
+        definition: {
+          serviceName,
+        },
+        reference: {},
+      };
+
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(getServiceNameInvalid(service.definition.serviceName));
+      }
+    }
+  );
+
+  // @ts-ignore
+  test.each(['string', -100, 10, 0, 1, 10.1, [], {}, undefined, null, Symbol('10')])(
     `
      Scenario: serviceDefinition with invalid 'method' value
         Given invalid 'method' value
         When    creating a microservice 
           And   serviceDefinition has invalid 'method' values
+          
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
+                |number          | 10
                 |false convert   | 0
                 |true convert    | 1
                 |double          | 10.1
@@ -94,6 +133,8 @@ describe('Test the creation of Microservice', () => {
                 |object          | {}
                 |undefined       | undefined
                 |null            | null
+                |symbol          | Symbol('10')
+                
         Then    invalid service error will occur
       `,
     (methodValue) => {
@@ -113,18 +154,20 @@ describe('Test the creation of Microservice', () => {
         Microservices.create({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(
-          getMethodsAreNotDefinedProperly(baseServiceDefinition.serviceName, Object.keys(service.definition.methods))
+          getMethodsAreNotDefinedProperly(service.definition.serviceName, Object.keys(service.definition.methods))
         );
       }
     }
   );
 
-  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null])(
+  // @ts-ignore
+  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null, Symbol()])(
     `
      Scenario: serviceDefinition with invalid 'asyncModel' values
         Given invalid 'asyncModel' value
         When    creating a microservice
           And   serviceDefinition has invalid 'asyncModel' values
+          
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
@@ -135,6 +178,8 @@ describe('Test the creation of Microservice', () => {
                 |object          | {}
                 |undefined       | undefined
                 |null            | null
+                |Symbol          | Symbol()
+                
         Then    invalid service error will occur
       `,
     (asyncModel) => {
@@ -156,7 +201,7 @@ describe('Test the creation of Microservice', () => {
         Microservices.create({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(
-          getMethodsAreNotDefinedProperly(baseServiceDefinition.serviceName, Object.keys(service.definition.methods))
+          getMethodsAreNotDefinedProperly(service.definition.serviceName, Object.keys(service.definition.methods))
         );
       }
     }
