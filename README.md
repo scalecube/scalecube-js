@@ -17,7 +17,11 @@ for more details about 0.2.x go to <https://github.com/scalecube/scalecube-js/is
 
 yarn add @scalecube/scalecube-microservice
 
-import Microservices from '@scalecube/scalecube-microservice'
+or
+
+npm install @scalecube/scalecube-microservice
+
+import Microservices, { Microservices, ASYNC_MODEL_TYPES, Api } from '@scalecube/scalecube-microservice'
 
 ## Basic Usage
 
@@ -33,16 +37,16 @@ Run test `npm test`
 
 To run/debug jest tests:
 
--   jest options: --runInBand --no-cache --env=jsdom
+- jest options: --runInBand --no-cache --env=jsdom
 
--   env variables: BABEL_ENV=commonjs
+- env variables: BABEL_ENV=commonjs
 
--   you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
-    ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
+- you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
+  ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
 ## Version
 
--   [semver format](http://semver.org/)
+- [semver format](http://semver.org/)
 
 **MAJOR** version when you make incompatible API changes,
 
