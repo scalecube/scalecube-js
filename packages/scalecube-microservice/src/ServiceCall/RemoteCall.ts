@@ -8,6 +8,8 @@ import { createClient } from '../TransportProviders/MicroserviceClient';
 import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
 import { RSocketClientSocket } from 'rsocket-core';
+// @ts-ignore
+import { ISubscription } from 'rsocket-types';
 
 export const remoteCall = ({
   router,
@@ -51,7 +53,10 @@ const remoteResponse = ({
     if (!openConnections[address]) {
       const client = createClient({ address });
       connection = new Promise((resolve, reject) => {
-        client.connect().then(resolve, reject);
+        client.connect().subscribe({
+          onComplete: (socket: RSocketClientSocket) => resolve(socket),
+          onError: (error: Error) => observer.error(error),
+        });
       });
       openConnections[address] = connection;
     } else {
@@ -73,15 +78,29 @@ const remoteResponse = ({
           observer.error(new Error(`RemoteCall ${asyncModel} response, parsing error: ${parseError}`));
         }
       };
-      const flowableError = (err: Error) => observer.error(err);
+      const flowableError = (err: { source: { message: string } }) =>
+        observer.error(
+          err ? (err.source ? new Error(err.source.message) : err) : new Error('RemoteCall exception occur.')
+        );
 
       switch (asyncModel) {
         case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
-          socketConnect.then(flowableNext, flowableError); // Single type
+          socketConnect.subscribe({
+            onComplete: flowableNext,
+            onError: flowableError,
+          }); // Single type
           break;
 
         case ASYNC_MODEL_TYPES.REQUEST_STREAM:
-          socketConnect.subscribe(flowableNext, flowableError, () => observer.complete()); // Flowable type
+          const max = socketConnect._max;
+          socketConnect.subscribe({
+            onNext: flowableNext,
+            onError: flowableError,
+            onComplete: () => observer.complete(),
+            onSubscribe(subscription: ISubscription) {
+              subscription.request(max);
+            },
+          }); // Flowable type
           break;
 
         default:

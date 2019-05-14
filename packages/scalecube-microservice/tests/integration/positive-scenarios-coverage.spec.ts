@@ -96,16 +96,16 @@ describe(`Test positive-scenarios of usage
           }
 
           test(`
-        # Testing proxy for a successful response.
-        When  invoking requestResponse's method with valid data
-        Then  successful RequestResponse is received
+          Scenario: Testing proxy for a successful response.
+            When  invoking requestResponse's method with valid data
+            Then  successful RequestResponse is received
               `, () => {
             const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
             return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
           });
 
           test(`
-            # Testing proxy for a successful subscription (array).
+          Scenario: Testing proxy for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
             `, (done) => {
@@ -117,7 +117,7 @@ describe(`Test positive-scenarios of usage
           });
 
           test(`
-            # Testing serviceCall for a successful response.
+          Scenario: Testing serviceCall for a successful response.
             When  invoking serviceCall's requestResponse method with valid message
             Then  successful RequestResponse is received
             `, () => {
@@ -130,7 +130,7 @@ describe(`Test positive-scenarios of usage
           });
 
           test(`
-            # Testing serviceCall for a successful subscription (array).
+          Scenario: Testing serviceCall for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
                   `, (done) => {
