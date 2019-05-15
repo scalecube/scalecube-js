@@ -26,7 +26,7 @@ export const getInvalidMethodReferenceError = (qualifier: string) =>
 export const getMethodsAreNotDefinedProperly = (serviceName: PrimitiveTypesNoSymbol, methods: string[]) =>
   `All of the following methods in ${serviceName} are not defined properly: ${methods.concat(', ')}`;
 export const getServiceNameInvalid = () =>
-  `serviceName is not valid, must be primitive type : string | number | null | undefined`;
+  `serviceName is not valid, must be primitive type : string | boolean | number | null | undefined`;
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
   REQUEST_RESPONSE: RequestResponseAsyncModel;
