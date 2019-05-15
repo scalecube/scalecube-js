@@ -6,7 +6,7 @@ import {
   greet$,
 } from '../mocks/GreetingService';
 import { Microservices } from '../../src';
-import { Message } from '../../src/api';
+import { Message, ServiceReference } from '../../src/api';
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
 

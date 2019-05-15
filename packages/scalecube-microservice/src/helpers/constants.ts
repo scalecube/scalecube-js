@@ -14,7 +14,8 @@ export const getNotFoundByRouterError = (qualifier: string) =>
 export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
-export const getInvalidMethodReferenceError = (qualifier: string) => `Invalid method reference for ${qualifier}`;
+export const getInvalidMethodReferenceError = (qualifier: string) =>
+  `${qualifier} has valid definition but reference is not a function.`;
 
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
