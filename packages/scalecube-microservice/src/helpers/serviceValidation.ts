@@ -1,41 +1,77 @@
-import { isObject } from './utils';
-import { ASYNC_MODEL_TYPES } from './constants';
-import { ServiceDefinition, AsyncModel } from '../api';
+import { isObject, isPrimitiveNoSymbol } from './utils';
+import {
+  ASYNC_MODEL_TYPES,
+  DEFINITION_MISSING_METHODS,
+  getMethodsAreNotDefinedProperly,
+  getServiceNameInvalid,
+  SERVICE_DEFINITION_NOT_PROVIDED,
+} from './constants';
+import { AsyncModel, PrimitiveTypesNoSymbol, ServiceDefinition } from '../api';
+import { IsValid } from './types';
 
-export const isValidServiceDefinition = (definition: ServiceDefinition) => {
-  return definition ? isValidServiceName(definition.serviceName) && isValidMethods(definition.methods) : false;
-};
-
-export const isValidServiceName = (serviceName: string) => {
-  if (typeof serviceName !== 'string') {
-    console.error(new Error('Service missing serviceName:string'));
-    return false;
+export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid => {
+  if (!definition) {
+    return {
+      isValid: false,
+      exception: new Error(SERVICE_DEFINITION_NOT_PROVIDED),
+    };
   }
-  return true;
+
+  const { serviceName, methods } = definition;
+
+  const serviceNameValidation = isValidServiceName(serviceName);
+  if (!serviceNameValidation.isValid) {
+    return serviceNameValidation;
+  }
+
+  const methodsValidation = isValidMethods(methods, serviceName);
+  if (!methodsValidation.isValid) {
+    return methodsValidation;
+  }
+
+  return {
+    isValid: true,
+    exception: null,
+  };
 };
 
-export const isValidMethods = (methods: { [methodName: string]: { asyncModel: AsyncModel } }) => {
+export const isValidServiceName = (serviceName: PrimitiveTypesNoSymbol): IsValid => {
+  if (!isPrimitiveNoSymbol(serviceName)) {
+    return {
+      isValid: false,
+      exception: new Error(getServiceNameInvalid()),
+    };
+  }
+  return {
+    isValid: true,
+    exception: null,
+  };
+};
+
+export const isValidMethods = (
+  methods: { [methodName: string]: { asyncModel: AsyncModel } },
+  serviceName: PrimitiveTypesNoSymbol
+): IsValid => {
   if (!isObject(methods)) {
-    console.error(new Error('Service missing methods:object'));
-    return false;
+    return {
+      isValid: false,
+      exception: new Error(DEFINITION_MISSING_METHODS),
+    };
   }
-  return Object.keys(methods).every((methodName) =>
-    methods[methodName] ? isValidMethod({ methodData: methods[methodName], methodName }) : false
+
+  const notValidMethods = Object.keys(methods).filter((methodName) =>
+    methods[methodName] ? !isValidMethod({ methodData: methods[methodName] }) : true
   );
+
+  return {
+    isValid: notValidMethods.length === 0,
+    exception:
+      notValidMethods.length === 0 ? null : new Error(getMethodsAreNotDefinedProperly(serviceName, notValidMethods)),
+  };
 };
 
-export const isValidMethod = ({
-  methodData,
-  methodName,
-}: {
-  methodData: { asyncModel: string };
-  methodName: string;
-}) => {
-  if (!isValidAsyncModel({ asyncModel: methodData.asyncModel as AsyncModel })) {
-    console.error(new Error(`method ${methodName} doesn't contain valid  type (asyncModel)`));
-    return false;
-  }
-  return true;
+export const isValidMethod = ({ methodData }: { methodData: { asyncModel: string } }) => {
+  return isObject(methodData) ? isValidAsyncModel({ asyncModel: methodData.asyncModel as AsyncModel }) : false;
 };
 
 export const isValidAsyncModel = ({ asyncModel }: { asyncModel: AsyncModel }) =>

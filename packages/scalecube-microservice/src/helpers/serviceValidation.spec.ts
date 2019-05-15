@@ -7,26 +7,29 @@ describe('Unit testing serviceValidations', () => {
 
   it('Test isValidMethods(methods) - invalid methods - invoke with invalid value type', () => {
     // @ts-ignore
-    expect(isValidMethods('')).toBe(false);
+    expect(isValidMethods('').isValid).toBe(false);
     // @ts-ignore
-    expect(isValidMethods(true)).toBe(false);
+    expect(isValidMethods(true).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidMethods(1)).toBe(false);
+    expect(isValidMethods(1).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidMethods([])).toBe(false);
+    expect(isValidMethods([]).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidMethods(null)).toBe(false);
+    expect(isValidMethods(null).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidMethods(undefined)).toBe(false);
+    expect(isValidMethods(undefined).isValid).toBe(false);
   });
 
   it('Test isValidMethods(methods) - valid methods', () => {
     expect(
-      isValidMethods({
-        hello: {
-          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+      isValidMethods(
+        {
+          hello: {
+            asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+          },
         },
-      })
+        'greet'
+      ).isValid
     ).toBe(true);
   });
 
@@ -36,46 +39,42 @@ describe('Unit testing serviceValidations', () => {
   });
 
   it('Test isValidMethod({methodData, methodName}) - invalid - methodProp.type !== Promise | Observable', () => {
-    expect(isValidMethod({ methodData: { asyncModel: 'something' }, methodName: 'testMethod' })).toBe(false);
+    expect(isValidMethod({ methodData: { asyncModel: 'something' } })).toBe(false);
   });
 
   it('Test isValidMethod({methodData, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(
-      isValidMethod({ methodData: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE }, methodName: 'testMethod' })
-    ).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE } })).toBe(true);
   });
 
   it('Test isValidMethod({methodProp, methodName}) - valid - methodProp.type === Promise | Observable', () => {
-    expect(
-      isValidMethod({ methodData: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM }, methodName: 'testMethod' })
-    ).toBe(true);
+    expect(isValidMethod({ methodData: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM } })).toBe(true);
   });
 
   it('Test isValidServiceName(serviceName) - invalid value type', () => {
     // @ts-ignore
-    expect(isValidServiceName(1)).toBe(false);
+    expect(isValidServiceName(1).isValid).toBe(true);
     // @ts-ignore
-    expect(isValidServiceName(true)).toBe(false);
+    expect(isValidServiceName(true).isValid).toBe(true);
     // @ts-ignore
-    expect(isValidServiceName({})).toBe(false);
+    expect(isValidServiceName({}).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidServiceName([])).toBe(false);
+    expect(isValidServiceName([]).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidServiceName(null)).toBe(false);
+    expect(isValidServiceName(null).isValid).toBe(true);
     // @ts-ignore
-    expect(isValidServiceName(undefined)).toBe(false);
+    expect(isValidServiceName(undefined).isValid).toBe(true);
   });
 
   it('Test isValidServiceName(serviceName) - valid value type ', () => {
-    expect(isValidServiceName('serviceName')).toBe(true);
+    expect(isValidServiceName('serviceName').isValid).toBe(true);
   });
 
   it('Test isValidService(service) - invalid - no meta data', () => {
     // @ts-ignore
-    expect(isValidServiceDefinition({})).toBe(false);
+    expect(isValidServiceDefinition({}).isValid).toBe(false);
   });
 
   it('Test isValidService(service) - valid - meta data', () => {
-    expect(isValidServiceDefinition(greetingServiceDefinition)).toBe(true);
+    expect(isValidServiceDefinition(greetingServiceDefinition).isValid).toBe(true);
   });
 });

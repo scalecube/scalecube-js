@@ -9,6 +9,7 @@ import {
   Reference,
   LookupOptions,
   LookUp,
+  PrimitiveTypesNoSymbol,
 } from '../api';
 
 export interface ServiceCallOptions {
@@ -42,7 +43,7 @@ export interface GetProxyOptions {
 }
 
 export interface Qualifier {
-  serviceName: string;
+  serviceName: PrimitiveTypesNoSymbol;
   methodName: string;
 }
 
@@ -114,4 +115,9 @@ export interface MicroserviceContext {
 export interface RsocketEventsPayload {
   data: any;
   metadata: any;
+}
+
+export interface IsValid {
+  isValid: boolean;
+  exception: Error | null;
 }
