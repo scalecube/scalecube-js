@@ -8,7 +8,7 @@ import {
 import { Service, Reference } from '../api';
 import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier, getReferencePointer } from '../helpers/serviceData';
-import { MICROSERVICE_NOT_EXISTS, getServiceIsNotValidError } from '../helpers/constants';
+import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const createMethodRegistry = (): MethodRegistry => {
   let methodRegistryMap: MethodRegistryMap | null = {};
@@ -72,7 +72,9 @@ export const getReferenceFromService = ({ service, address }: AvailableService):
   const data: Reference[] = [];
   const { definition, reference } = service;
 
-  if (isValidServiceDefinition(definition)) {
+  const validation = isValidServiceDefinition(definition);
+
+  if (validation.isValid) {
     const { serviceName, methods } = definition;
     Object.keys(methods).forEach((methodName: string) => {
       const qualifier = getQualifier({ serviceName, methodName });
@@ -87,7 +89,7 @@ export const getReferenceFromService = ({ service, address }: AvailableService):
       });
     });
   } else {
-    throw new Error(getServiceIsNotValidError(definition.serviceName));
+    throw validation.exception;
   }
 
   return data;

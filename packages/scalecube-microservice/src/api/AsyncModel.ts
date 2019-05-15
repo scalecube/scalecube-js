@@ -1,15 +1,15 @@
 /**
- * Defines Observable in scalecube asyncModel
+ * Defines Stream asyncModel ( Observable, Flowable , etc.. )
  */
 export type RequestStreamAsyncModel = 'requestStream';
 
 /**
- * Defines Promise in scalecube asyncModel
+ * Defines Async asyncModel ( Promise )
  */
 export type RequestResponseAsyncModel = 'requestResponse';
 
 /**
- * Type of communication between a consumer and a provider
+ * Property that defines the response type of the method.
  */
 type AsyncModel = RequestStreamAsyncModel | RequestResponseAsyncModel;
 
