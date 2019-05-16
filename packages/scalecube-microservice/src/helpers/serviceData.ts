@@ -1,7 +1,6 @@
 import { Qualifier } from './types';
 import { isFunction } from './utils';
-import { ServiceImplementationForModule, ServiceImplementationForObject } from '../api';
-import ServiceImplementation from '../api/ServiceImplementation';
+import { ServiceReference } from '../api';
 import { getInvalidMethodReferenceError } from './constants';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
@@ -11,29 +10,24 @@ export const getReferencePointer = ({
   methodName,
   qualifier,
 }: {
-  reference: ServiceImplementation;
+  reference: ServiceReference;
   methodName: string;
   qualifier: string;
 }): ((...args: any[]) => any) => {
   let func: (...args: any[]) => any;
-  if (isFunction(reference)) {
-    func = reference as ServiceImplementationForModule;
+
+  if (typeof reference !== 'object' || reference === null) {
+    throw new Error(getInvalidMethodReferenceError(qualifier));
   } else {
-    if (!isFunction((reference as ServiceImplementationForObject)[methodName])) {
+    if (!isFunction(reference[methodName])) {
       // Check if method is static
-      if (
-        !isFunction(
-          (reference as { constructor: { [methodName: string]: (...args: any[]) => any } }).constructor[methodName]
-        )
-      ) {
+      if (!isFunction(reference.constructor[methodName])) {
         throw new Error(getInvalidMethodReferenceError(qualifier));
       } else {
-        func = (reference as { constructor: { [methodName: string]: (...args: any[]) => any } }).constructor[
-          methodName
-        ];
+        func = reference.constructor[methodName];
       }
     } else {
-      func = (reference as ServiceImplementationForObject)[methodName].bind(reference);
+      func = reference[methodName].bind(reference);
     }
   }
 

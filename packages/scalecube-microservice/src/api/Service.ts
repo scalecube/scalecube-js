@@ -1,4 +1,4 @@
-import { ServiceImplementation, ServiceDefinition } from '.';
+import { ServiceReference, ServiceDefinition } from '.';
 
 /**
  * Definition and implementation of a service
@@ -12,5 +12,5 @@ export default interface Service {
   /**
    * The implementation of a service, that can be an object with methods or a module with a function being exported
    */
-  reference: ServiceImplementation;
+  reference: ServiceReference;
 }

@@ -5,9 +5,9 @@
  * 3. We include here scenarios for various validation for definition.
  *****/
 
+import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
-import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
 import {
   getInvalidMethodReferenceError,
   getMethodsAreNotDefinedProperly,
@@ -120,7 +120,7 @@ describe('Test the creation of Microservice', () => {
     `
      Scenario: serviceDefinition with invalid 'method' value
         Given invalid 'method' value
-        When    creating a microservice 
+        When    creating a microservice
           And   serviceDefinition has invalid 'method' values
           
                 |definition      | value
@@ -203,6 +203,52 @@ describe('Test the creation of Microservice', () => {
       } catch (error) {
         expect(error.message).toMatch(
           getMethodsAreNotDefinedProperly(service.definition.serviceName, Object.keys(service.definition.methods))
+        );
+      }
+    }
+  );
+
+  test.each([() => {}, null, undefined, 'hello', 3, true, false, []])(
+    `
+    Scenario: Testing reference format
+    
+        type      |	value                   |
+        function  |	const hello = ()=>{}	  |
+        null	    | const hello = null	    |
+        undefined |	const hello = undefined	|
+        string    | const hello = 'hello'   |
+        number    | const hello = 3         |
+        boolean   | const hello = true      |
+        boolean   | const hello = false     |
+        array     | const hello = []        |
+        
+      Given a reference for 'hello service' of  type 'value'
+      And a definition with 'hello service'
+      When creating a microservice 
+      Then exception will occur: definition has a method but the reference is not a function.
+      `,
+    (helloService) => {
+      const service = {
+        definition: {
+          ...baseServiceDefinition,
+          methods: {
+            hello: {
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+            },
+          },
+        },
+        reference: helloService,
+      };
+
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(
+          getInvalidMethodReferenceError(
+            getQualifier({ serviceName: baseServiceDefinition.serviceName, methodName: 'hello' })
+          )
         );
       }
     }

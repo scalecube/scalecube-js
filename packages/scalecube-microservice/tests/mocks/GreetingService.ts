@@ -18,23 +18,29 @@ export const greet$ = (greetings: string[]): Observable<string> => {
   return new Observable((observer) => {
     if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
       observer.error(new Error('please provide Array of greetings'));
-      return () => {};
     }
     greetings.map((i) => observer.next(`greetings ${i}`));
-    return () => {};
   });
 };
 
 export class GreetingService {
-  public hello = hello;
+  public hello(name: string): Promise<string> {
+    return hello(name);
+  }
 
-  public greet$ = greet$;
+  public greet$(greetings: string[]): Observable<string> {
+    return greet$(greetings);
+  }
 }
 
 export class GreetingServiceWithStatic {
-  public static hello = hello;
+  public static hello(name: string): Promise<string> {
+    return hello(name);
+  }
 
-  public static greet$ = greet$;
+  public static greet$(greetings: string[]): Observable<string> {
+    return greet$(greetings);
+  }
 }
 
 export const greetingServiceDefinition = {

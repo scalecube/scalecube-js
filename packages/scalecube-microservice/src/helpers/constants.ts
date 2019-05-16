@@ -20,12 +20,13 @@ export const getNotFoundByRouterError = (qualifier: string) =>
 export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
   `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
-export const getInvalidMethodReferenceError = (qualifier: string) => `Invalid method reference for ${qualifier}`;
+export const getInvalidMethodReferenceError = (qualifier: string) =>
+  `${qualifier} has valid definition but reference is not a function.`;
 
 export const getMethodsAreNotDefinedProperly = (serviceName: PrimitiveTypesNoSymbol, methods: string[]) =>
   `All of the following methods in ${serviceName} are not defined properly: ${methods.concat(', ')}`;
 export const getServiceNameInvalid = () =>
-  `serviceName is not valid, must be primitive type : string | number | null | undefined`;
+  `serviceName is not valid, must be primitive type : string | boolean | number | null | undefined`;
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
   REQUEST_RESPONSE: RequestResponseAsyncModel;

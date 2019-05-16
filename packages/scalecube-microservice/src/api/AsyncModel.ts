@@ -9,7 +9,7 @@ export type RequestStreamAsyncModel = 'requestStream';
 export type RequestResponseAsyncModel = 'requestResponse';
 
 /**
- * Property that defines the response type of the method.
+ * Definition of the method's response type
  */
 type AsyncModel = RequestStreamAsyncModel | RequestResponseAsyncModel;
 
