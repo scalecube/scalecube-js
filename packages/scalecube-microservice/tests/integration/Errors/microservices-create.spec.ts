@@ -12,6 +12,7 @@ import {
   getInvalidMethodReferenceError,
   getMethodsAreNotDefinedProperly,
   getServiceNameInvalid,
+  SERVICES_IS_NOT_ARRAY,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
@@ -87,10 +88,10 @@ describe('Test the creation of Microservice', () => {
     `
      Scenario: serviceDefinition with invalid 'serviceName' value
         Given invalid 'serviceName' value
-        When    creating a microservice 
+        When    creating a microservice
           And   serviceDefinition has invalid 'serviceName' values
-                
-                |definition      | value            
+
+                |definition      | value
                 |array           | []
                 |object          | {}
                 |symbol          | Symbol()
@@ -122,7 +123,7 @@ describe('Test the creation of Microservice', () => {
         Given invalid 'method' value
         When    creating a microservice
           And   serviceDefinition has invalid 'method' values
-          
+
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
@@ -135,7 +136,7 @@ describe('Test the creation of Microservice', () => {
                 |undefined       | undefined
                 |null            | null
                 |symbol          | Symbol('10')
-                
+
         Then    invalid service error will occur
       `,
     (methodValue) => {
@@ -168,7 +169,7 @@ describe('Test the creation of Microservice', () => {
         Given invalid 'asyncModel' value
         When    creating a microservice
           And   serviceDefinition has invalid 'asyncModel' values
-          
+
                 |definition      | value
                 |string          | 'string'
                 |negative number | -100
@@ -180,7 +181,7 @@ describe('Test the creation of Microservice', () => {
                 |undefined       | undefined
                 |null            | null
                 |Symbol          | Symbol()
-                
+
         Then    invalid service error will occur
       `,
     (asyncModel) => {
@@ -211,7 +212,7 @@ describe('Test the creation of Microservice', () => {
   test.each([() => {}, null, undefined, 'hello', 3, true, false, []])(
     `
     Scenario: Testing reference format
-    
+
         type      |	value                   |
         function  |	const hello = ()=>{}	  |
         null	    | const hello = null	    |
@@ -221,10 +222,10 @@ describe('Test the creation of Microservice', () => {
         boolean   | const hello = true      |
         boolean   | const hello = false     |
         array     | const hello = []        |
-        
+
       Given a reference for 'hello service' of  type 'value'
       And a definition with 'hello service'
-      When creating a microservice 
+      When creating a microservice
       Then exception will occur: definition has a method but the reference is not a function.
       `,
     (helloService) => {
@@ -250,6 +251,41 @@ describe('Test the creation of Microservice', () => {
             getQualifier({ serviceName: baseServiceDefinition.serviceName, methodName: 'hello' })
           )
         );
+      }
+    }
+  );
+
+  // @ts-ignore
+  test.each(['test', '', 0, 1, true, false, -100, 10, 10.1, {}, null])(
+    `
+     Scenario:  service not of type array
+        Given   a 'service'
+        And     using it as 'service'.
+        When    creating a Microservice from the 'service'
+        Then    exception will occur.
+          
+                |definition      | value
+                |string          | 'test'
+                |empty string    | ''
+                |number false    | 0
+                |number true     | 1
+                |boolean         | true
+                |boolean         | false
+                |negative number | -100
+                |positive number | 10
+                |double          | 10.1
+                |object          | {}
+                |null            | null
+                
+        Then    invalid service error will occur
+      `,
+    (services) => {
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services });
+      } catch (error) {
+        expect(error.message).toMatch(SERVICES_IS_NOT_ARRAY);
       }
     }
   );

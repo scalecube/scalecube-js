@@ -14,27 +14,31 @@ import {
   Microservices as MicroservicesInterface,
   ProxyOptions,
   Router,
+  Service,
   ServiceDefinition,
 } from '../api';
-import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
+  create: ({ services = [], seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
-    services && Array.isArray(services) && methodRegistry.add({ services, address });
+
+    if (!isServicesValid(services)) {
+      throw new Error(SERVICES_IS_NOT_ARRAY);
+    }
+
+    methodRegistry.add({ services, address });
 
     const endPointsToPublishInCluster =
-      services && Array.isArray(services)
-        ? serviceRegistry.createEndPoints({
-            services,
-            address,
-          })
-        : [];
+      serviceRegistry.createEndPoints({
+        services,
+        address,
+      }) || [];
 
     const discovery = createDiscovery({
       address,
@@ -47,7 +51,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
     discovery
       .discoveredItems$()
-      .subscribe((discoveryEndpoints) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
+      .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
       createProxy: ({ router = defaultRouter, serviceDefinition }: ProxyOptions) =>
@@ -134,3 +138,5 @@ const createMicroserviceContext = () => {
     methodRegistry,
   };
 };
+
+const isServicesValid = (services: Service[]) => services && Array.isArray(services);
