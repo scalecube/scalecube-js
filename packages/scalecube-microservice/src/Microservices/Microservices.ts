@@ -16,17 +16,21 @@ import {
   Router,
   ServiceDefinition,
 } from '../api';
-import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services, seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
+  create: ({ services = [], seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
     const address = uuidv4();
 
     // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
-    services && Array.isArray(services) && methodRegistry.add({ services, address });
+    if (services && Array.isArray(services)) {
+      methodRegistry.add({ services, address });
+    } else {
+      throw new Error(SERVICES_IS_NOT_ARRAY);
+    }
 
     const endPointsToPublishInCluster =
       services && Array.isArray(services)
