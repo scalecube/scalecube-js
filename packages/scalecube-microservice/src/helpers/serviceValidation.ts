@@ -1,4 +1,4 @@
-import { isObject, isPrimitiveNoSymbol } from './utils';
+import { isObject, isString } from './utils';
 import {
   ASYNC_MODEL_TYPES,
   DEFINITION_MISSING_METHODS,
@@ -6,7 +6,7 @@ import {
   getServiceNameInvalid,
   SERVICE_DEFINITION_NOT_PROVIDED,
 } from './constants';
-import { AsyncModel, PrimitiveTypesNoSymbol, ServiceDefinition } from '../api';
+import { AsyncModel, ServiceDefinition } from '../api';
 import { IsValid } from './types';
 
 export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid => {
@@ -35,11 +35,11 @@ export const isValidServiceDefinition = (definition: ServiceDefinition): IsValid
   };
 };
 
-export const isValidServiceName = (serviceName: PrimitiveTypesNoSymbol): IsValid => {
-  if (!isPrimitiveNoSymbol(serviceName)) {
+export const isValidServiceName = (serviceName: string): IsValid => {
+  if (!isString(serviceName)) {
     return {
       isValid: false,
-      exception: new Error(getServiceNameInvalid()),
+      exception: new Error(getServiceNameInvalid(serviceName)),
     };
   }
   return {
@@ -50,7 +50,7 @@ export const isValidServiceName = (serviceName: PrimitiveTypesNoSymbol): IsValid
 
 export const isValidMethods = (
   methods: { [methodName: string]: { asyncModel: AsyncModel } },
-  serviceName: PrimitiveTypesNoSymbol
+  serviceName: string
 ): IsValid => {
   if (!isObject(methods)) {
     return {

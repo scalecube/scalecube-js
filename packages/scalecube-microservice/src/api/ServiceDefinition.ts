@@ -1,4 +1,4 @@
-import { AsyncModel, PrimitiveTypesNoSymbol } from '.';
+import { AsyncModel } from '.';
 
 /**
  * Service metadata
@@ -7,7 +7,7 @@ export default interface ServiceDefinition {
   /**
    * The name of a service
    */
-  serviceName: PrimitiveTypesNoSymbol;
+  serviceName: string;
   /**
    * The map of methods, that exist in the service, with the corresponding asyncModel of each of them
    */

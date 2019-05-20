@@ -1,10 +1,4 @@
-import {
-  AsyncModel,
-  Message,
-  PrimitiveTypesNoSymbol,
-  RequestResponseAsyncModel,
-  RequestStreamAsyncModel,
-} from '../api';
+import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel } from '../api';
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
@@ -24,10 +18,10 @@ export const getMethodNotFoundError = (message: Message) => `Can't find method $
 export const getInvalidMethodReferenceError = (qualifier: string) =>
   `${qualifier} has valid definition but reference is not a function.`;
 
-export const getMethodsAreNotDefinedProperly = (serviceName: PrimitiveTypesNoSymbol, methods: string[]) =>
+export const getMethodsAreNotDefinedProperly = (serviceName: string, methods: string[]) =>
   `All of the following methods in ${serviceName} are not defined properly: ${methods.concat(', ')}`;
-export const getServiceNameInvalid = () =>
-  `serviceName is not valid, must be primitive type : string | boolean | number | null | undefined`;
+export const getServiceNameInvalid = (serviceName: any) =>
+  `serviceName is not valid, must be type string but received type ${typeof serviceName}`;
 export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: RequestStreamAsyncModel;
   REQUEST_RESPONSE: RequestResponseAsyncModel;

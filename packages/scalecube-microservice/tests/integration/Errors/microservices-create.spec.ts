@@ -84,7 +84,7 @@ describe('Test the creation of Microservice', () => {
   );
 
   // @ts-ignore
-  test.each([[], {}, Symbol()])(
+  test.each([[], {}, false, true, 10, null, undefined, Symbol()])(
     `
      Scenario: serviceDefinition with invalid 'serviceName' value
         Given invalid 'serviceName' value
@@ -92,9 +92,14 @@ describe('Test the creation of Microservice', () => {
           And   serviceDefinition has invalid 'serviceName' values
 
                 |definition      | value
-                |array           | []
-                |object          | {}
-                |symbol          | Symbol()
+                |array	         | []
+                |object	         | {}
+                |boolean	       | false
+                |boolean	       | true
+                |number	         | 10
+                |null	           | null
+                |undefined	     | undefined
+                |symbol	         | Symbol()
 
         Then    invalid service error will occur
       `,
@@ -111,7 +116,7 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(getServiceNameInvalid());
+        expect(error.message).toMatch(getServiceNameInvalid(serviceName));
       }
     }
   );
