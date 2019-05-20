@@ -101,7 +101,6 @@ describe('Test the creation of Microservice', () => {
                 |undefined	     | undefined
                 |symbol	         | Symbol()
 
-
         Then    invalid service error will occur
       `,
     (serviceName) => {
