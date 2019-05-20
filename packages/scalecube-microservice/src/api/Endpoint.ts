@@ -1,5 +1,4 @@
 import AsyncModel from './AsyncModel';
-import { PrimitiveTypesNoSymbol } from './index';
 
 /**
  * Defines remote service data
@@ -21,7 +20,7 @@ export default interface Endpoint {
   /**
    * The name of a service, that is provided in serviceDefinition
    */
-  serviceName: PrimitiveTypesNoSymbol;
+  serviceName: string;
   /**
    * The name of a method, that is provided in the methods map in serviceDefinition
    */

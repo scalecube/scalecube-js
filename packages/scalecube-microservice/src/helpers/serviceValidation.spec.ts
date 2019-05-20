@@ -52,17 +52,17 @@ describe('Unit testing serviceValidations', () => {
 
   it('Test isValidServiceName(serviceName) - invalid value type', () => {
     // @ts-ignore
-    expect(isValidServiceName(1).isValid).toBe(true);
+    expect(isValidServiceName(1).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidServiceName(true).isValid).toBe(true);
+    expect(isValidServiceName(true).isValid).toBe(false);
     // @ts-ignore
     expect(isValidServiceName({}).isValid).toBe(false);
     // @ts-ignore
     expect(isValidServiceName([]).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidServiceName(null).isValid).toBe(true);
+    expect(isValidServiceName(null).isValid).toBe(false);
     // @ts-ignore
-    expect(isValidServiceName(undefined).isValid).toBe(true);
+    expect(isValidServiceName(undefined).isValid).toBe(false);
   });
 
   it('Test isValidServiceName(serviceName) - valid value type ', () => {

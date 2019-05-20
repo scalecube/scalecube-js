@@ -9,7 +9,6 @@ import {
   Reference,
   LookupOptions,
   LookUp,
-  PrimitiveTypesNoSymbol,
 } from '../api';
 
 export interface ServiceCallOptions {
@@ -43,7 +42,7 @@ export interface GetProxyOptions {
 }
 
 export interface Qualifier {
-  serviceName: PrimitiveTypesNoSymbol;
+  serviceName: string;
   methodName: string;
 }
 

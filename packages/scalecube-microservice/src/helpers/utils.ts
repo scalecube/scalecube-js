@@ -6,8 +6,7 @@ export const isObject = (obj: object) => obj && typeof obj === 'object' && obj.c
 
 export const isFunction = (obj: object) => obj && obj instanceof Function;
 
-export const isPrimitiveNoSymbol = (value: any) =>
-  (typeof value !== 'object' || value === null) && typeof value !== 'symbol';
+export const isString = (str: string) => str && typeof str === 'string';
 
 export const throwErrorFromServiceCall = ({
   asyncModel,

@@ -17,10 +17,7 @@ import Endpoint from './Endpoint';
 import Reference from './Reference';
 import { LookUp } from './LookUp';
 
-type PrimitiveTypesNoSymbol = string | boolean | number | void;
-
 export {
-  PrimitiveTypesNoSymbol,
   AsyncModel,
   RequestStreamAsyncModel,
   RequestResponseAsyncModel,
