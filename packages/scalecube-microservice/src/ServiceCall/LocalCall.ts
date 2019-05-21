@@ -1,13 +1,8 @@
-import { from, throwError, Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { throwErrorFromServiceCall } from '../helpers/utils';
 import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../helpers/types';
-import {
-  getAsyncModelMissmatch,
-  getMethodNotFoundError,
-  WRONG_DATA_FORMAT_IN_MESSAGE,
-  ASYNC_MODEL_TYPES,
-} from '../helpers/constants';
+import { getAsyncModelMissmatch, getMethodNotFoundError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 export const localCall = ({ localService, asyncModel, includeMessage, message }: LocalCallOptions): Observable<any> => {
   const { reference, asyncModel: asyncModelProvider } = localService;
@@ -18,10 +13,6 @@ export const localCall = ({ localService, asyncModel, includeMessage, message }:
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
     }) as Observable<any>;
-  }
-
-  if (!message.data || !Array.isArray(message.data)) {
-    return throwError(new Error(WRONG_DATA_FORMAT_IN_MESSAGE));
   }
 
   return method

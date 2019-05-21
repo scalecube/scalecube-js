@@ -7,6 +7,7 @@ export const SERVICE_NAME_NOT_PROVIDED = '(serviceDefinition.serviceName) is not
 export const WRONG_DATA_FORMAT_IN_MESSAGE = 'Message format error: data must be Array';
 export const DEFINITION_MISSING_METHODS = 'Definition missing methods:object';
 export const SERVICES_IS_NOT_ARRAY = 'services is not array';
+export const QUALIFIER_IS_NOT_STRING = 'qualifier not of type string';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `service method '${methodName}' missing in the serviceDefinition`;
