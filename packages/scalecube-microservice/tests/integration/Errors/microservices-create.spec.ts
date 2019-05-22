@@ -13,6 +13,7 @@ import {
   getMethodsAreNotDefinedProperly,
   getServiceNameInvalid,
   SERVICES_IS_NOT_ARRAY,
+  SERVICE_IS_NOT_OBJECT,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
@@ -292,6 +293,51 @@ describe('Test the creation of Microservice', () => {
       } catch (error) {
         expect(error.message).toMatch(SERVICES_IS_NOT_ARRAY);
       }
+    }
+  );
+  // @ts-ignore
+  test.each([null, undefined])(
+    `
+     Scenario:  service is null or undefined
+        Given   a 'service'
+        And     using it as 'service'.
+        When    creating a Microservice from the 'service'
+        Then    exception will occur.
+          
+                |service     | value
+                |null        | null
+                |undefined   | undefined
+                
+        Then    invalid service error will occur
+      `,
+    (service) => {
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(SERVICE_IS_NOT_OBJECT);
+      }
+    }
+  );
+  // @ts-ignore
+  test.each([null, undefined])(
+    `
+     Scenario:  microservice options is null or undefined
+        Given   a 'microserviceOptions'
+        And     using it as 'microserviceOptions'.
+        When    creating a Microservice from the 'microserviceOptions'
+        Then    no error thrown and microservice instantiates with default options
+          
+                |microserviceOptions     | value
+                |null                    | null
+                |undefined               | undefined
+                
+        Then    invalid service error will occur
+      `,
+    (microserviceOptions) => {
+      expect.assertions(1);
+      expect(() => Microservices.create(microserviceOptions)).not.toThrow();
     }
   );
 });

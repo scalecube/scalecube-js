@@ -6,6 +6,7 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
+import { validateMicroserviceOptions } from '../helpers/validation';
 import {
   Endpoint,
   Message,
@@ -21,7 +22,10 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } fro
 import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services = [], seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
+  create: (options: MicroserviceOptions): Microservice => {
+    const microserviceOptions = { services: [], seedAddress: 'defaultSeedAddress', ...options };
+    validateMicroserviceOptions(microserviceOptions);
+    const { services, seedAddress } = microserviceOptions;
     const address = uuidv4();
 
     // tslint:disable-next-line
