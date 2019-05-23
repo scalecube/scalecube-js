@@ -1,4 +1,4 @@
-type Collection<T> = Array<T> | { [key: string]: T };
+type Collection<T> = T[] | { [key: string]: T };
 
 export const assert = (predicate: boolean, msg: string): void | never => {
   if (!predicate) {

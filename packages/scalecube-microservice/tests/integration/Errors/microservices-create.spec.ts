@@ -11,9 +11,15 @@ import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import {
   getInvalidMethodReferenceError,
   getMethodsAreNotDefinedProperly,
+  getIncorrectMethodValueError,
+  getInvalidAsyncModelError,
   getServiceNameInvalid,
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
+  SERVICE_NAME_NOT_PROVIDED,
+  getAsynModelNotProvidedError,
+  getInvalidServiceReferenceError,
+  getServiceReferenceNotProvidedError,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
@@ -84,8 +90,34 @@ describe('Test the creation of Microservice', () => {
     }
   );
 
+  test(`
+    Scenario: Service name is not provided in service definition
+
+      Given Service definition without serviceName
+      And a definition with 'hello service'
+      When creating a microservice
+      Then exception will occur: serviceDefinition.serviceName is not defined
+`, () => {
+    expect.assertions(1);
+    const service = {
+      definition: {
+        methods: {
+          hello: {
+            asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+          },
+        },
+      },
+      reference: {},
+    };
+    try {
+      // @ts-ignore
+      Microservices.create({ services: [service] });
+    } catch (error) {
+      expect(error.message).toMatch(SERVICE_NAME_NOT_PROVIDED);
+    }
+  });
   // @ts-ignore
-  test.each([[], {}, false, true, 10, null, undefined, Symbol()])(
+  test.each([[], {}, false, true, 10, null, Symbol()])(
     `
      Scenario: serviceDefinition with invalid 'serviceName' value
         Given invalid 'serviceName' value
@@ -95,11 +127,10 @@ describe('Test the creation of Microservice', () => {
                 |definition      | value
                 |array	         | []
                 |object	         | {}
-                |boolean	       | false
-                |boolean	       | true
+                |boolean	 | false
+                |boolean	 | true
                 |number	         | 10
-                |null	           | null
-                |undefined	     | undefined
+                |null	         | null
                 |symbol	         | Symbol()
 
         Then    invalid service error will occur
@@ -161,15 +192,40 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(
-          getMethodsAreNotDefinedProperly(service.definition.serviceName, Object.keys(service.definition.methods))
-        );
+        expect(error.message).toMatch(getIncorrectMethodValueError(qualifier));
       }
     }
   );
 
+  test(`
+    Scenario: Async model not provided
+
+      Given Service definition
+      And no async model provided for hello method
+      When creating a microservice
+      Then exception will occur: Async model is not provided in service definition for service/method.
+`, () => {
+    expect.assertions(1);
+    const service = {
+      definition: {
+        ...baseServiceDefinition,
+        methods: {
+          hello: {
+            noAsyncModel: 'xxx',
+          },
+        },
+      },
+      reference: {},
+    };
+    try {
+      // @ts-ignore
+      Microservices.create({ services: [service] });
+    } catch (error) {
+      expect(error.message).toMatch(getAsynModelNotProvidedError(qualifier));
+    }
+  });
   // @ts-ignore
-  test.each(['string', -100, 0, 1, 10.1, [], {}, undefined, null, Symbol()])(
+  test.each(['string', -100, 0, 1, 10.1, [], {}, null, Symbol()])(
     `
      Scenario: serviceDefinition with invalid 'asyncModel' values
         Given invalid 'asyncModel' value
@@ -184,11 +240,10 @@ describe('Test the creation of Microservice', () => {
                 |double          | 10.1
                 |array           | []
                 |object          | {}
-                |undefined       | undefined
                 |null            | null
                 |Symbol          | Symbol()
 
-        Then    invalid service error will occur
+        Then    exeption will occur: Invalid async model in service definition for ${qualifier}
       `,
     (asyncModel) => {
       const service = {
@@ -208,21 +263,45 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(
-          getMethodsAreNotDefinedProperly(service.definition.serviceName, Object.keys(service.definition.methods))
-        );
+        expect(error.message).toMatch(getInvalidAsyncModelError(qualifier));
       }
     }
   );
 
-  test.each([() => {}, null, undefined, 'hello', 3, true, false, []])(
+  test(`
+    Scenario: Service reference not provided
+
+      Given Service reference is not provided
+      And a definition with 'hello service'
+      When creating a microservice
+      Then exception will occur: service reference is not defined.
+`, () => {
+    expect.assertions(1);
+    const service = {
+      definition: {
+        ...baseServiceDefinition,
+        methods: {
+          hello: {
+            asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+          },
+        },
+      },
+      // no reference
+    };
+    try {
+      // @ts-ignore
+      Microservices.create({ services: [service] });
+    } catch (error) {
+      expect(error.message).toMatch(getServiceReferenceNotProvidedError(baseServiceDefinition.serviceName));
+    }
+  });
+  test.each([() => {}, null, 'hello', 3, true, false, []])(
     `
     Scenario: Testing reference format
 
-        type      |	value                   |
-        function  |	const hello = ()=>{}	  |
-        null	    | const hello = null	    |
-        undefined |	const hello = undefined	|
+        type      |	value               |
+        function  | const hello = ()=>{}    |
+        null	  | const hello = null	    |
         string    | const hello = 'hello'   |
         number    | const hello = 3         |
         boolean   | const hello = true      |
@@ -252,19 +331,55 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [service] });
       } catch (error) {
-        expect(error.message).toMatch(
-          getInvalidMethodReferenceError(
-            getQualifier({ serviceName: baseServiceDefinition.serviceName, methodName: 'hello' })
-          )
-        );
+        expect(error.message).toMatch(getInvalidServiceReferenceError(baseServiceDefinition.serviceName));
       }
     }
   );
 
+  test.each([null, 'hello', 3, true, false, []])(
+    `
+    Scenario: Testing service reference method format
+
+        type      |	value               |
+        null	  | const hello = null	    |
+        undefined |const hello = undefined  |
+        string    | const hello = 'hello'   |
+        number    | const hello = 3         |
+        boolean   | const hello = true      |
+        boolean   | const hello = false     |
+        array     | const hello = []        |
+
+      Given a reference  for 'hello service' with hello method of  type 'value'
+      And a definition with 'hello service'
+      When creating a microservice
+      Then exception will occur: definition has a method but the reference is not a function.
+      `,
+    (hello) => {
+      const service = {
+        definition: {
+          ...baseServiceDefinition,
+          methods: {
+            hello: {
+              asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+            },
+          },
+        },
+        reference: { hello },
+      };
+
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [service] });
+      } catch (error) {
+        expect(error.message).toMatch(getInvalidMethodReferenceError(qualifier));
+      }
+    }
+  );
   // @ts-ignore
   test.each(['test', '', 0, 1, true, false, -100, 10, 10.1, {}, null])(
     `
-     Scenario:  service not of type array
+     Scenario:  services not of type array
         Given   a 'service'
         And     using it as 'service'.
         When    creating a Microservice from the 'service'
