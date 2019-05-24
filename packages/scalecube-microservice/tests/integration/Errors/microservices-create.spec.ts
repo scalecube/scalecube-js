@@ -10,9 +10,9 @@ import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import {
   getInvalidMethodReferenceError,
-  getMethodsAreNotDefinedProperly,
   getIncorrectMethodValueError,
   getInvalidAsyncModelError,
+  DEFINITION_MISSING_METHODS,
   getServiceNameInvalid,
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
@@ -95,7 +95,6 @@ describe('Test the creation of Microservice', () => {
     Scenario: Service name is not provided in service definition
 
       Given Service definition without serviceName
-      And a definition with 'hello service'
       When creating a microservice
       Then exception will occur: serviceDefinition.serviceName is not defined
 `, () => {
@@ -154,6 +153,28 @@ describe('Test the creation of Microservice', () => {
     }
   );
 
+  test(`
+    Scenario: serviceDefinition without  'methods' key
+    Given     a serviceDefinition without a 'methods' key
+    When creating a microservice
+    Then exception will occur:  Definition missing methods:object`, () => {
+    expect.assertions(1);
+
+    const service = {
+      definition: {
+        serviceName: 'service',
+        // no methods key
+      },
+      reference: {},
+    };
+
+    try {
+      // @ts-ignore
+      Microservices.create({ services: [service] });
+    } catch (e) {
+      expect(e.message).toBe(DEFINITION_MISSING_METHODS);
+    }
+  });
   // @ts-ignore
   test.each(['string', -100, 10, 0, 1, 10.1, [], {}, undefined, null, Symbol('10')])(
     `

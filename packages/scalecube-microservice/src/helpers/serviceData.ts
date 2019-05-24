@@ -14,6 +14,6 @@ export const getReferencePointer = ({
   if (methodRef) {
     return methodRef.bind(reference);
   }
-  //static method
+  // static method
   return reference.constructor && reference.constructor[methodName];
 };

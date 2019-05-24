@@ -6,7 +6,7 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
-import { validateMicroserviceOptions } from '../helpers/validation';
+import { validateMicroserviceOptions, validateServiceDefinition } from '../helpers/validation';
 import {
   Endpoint,
   Message,
@@ -74,6 +74,7 @@ const createProxy = ({
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
+  validateServiceDefinition(serviceDefinition);
 
   return getProxy({
     serviceCall: getServiceCall({ router, microserviceContext }),
