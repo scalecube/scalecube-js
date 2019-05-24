@@ -176,22 +176,5 @@ describe('ServiceRegistry Testing', () => {
         })
       );
     });
-
-    it('Test getReferenceFromService({ service }) : Reference[] - fail', () => {
-      const serviceName = 'fakeService';
-      try {
-        getReferenceFromService({
-          service: {
-            // @ts-ignore
-            definition: {
-              serviceName,
-            },
-            reference: new GreetingService(),
-          },
-        });
-      } catch (e) {
-        expect(e.message).toMatch(DEFINITION_MISSING_METHODS);
-      }
-    });
   });
 });

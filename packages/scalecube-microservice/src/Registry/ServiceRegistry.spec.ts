@@ -184,22 +184,5 @@ describe('ServiceRegistry Testing', () => {
         })
       );
     });
-
-    it('Test getEndpointsFromService({ service }) : Endpoint[] - fail', () => {
-      const fakeServiceName = 'fakeService';
-      try {
-        getEndpointsFromService({
-          service: {
-            // @ts-ignore
-            definition: {
-              serviceName: fakeServiceName,
-            },
-            reference: new GreetingService(),
-          },
-        });
-      } catch (e) {
-        expect(e.message).toMatch(DEFINITION_MISSING_METHODS);
-      }
-    });
   });
 });

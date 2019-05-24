@@ -18,7 +18,7 @@ import {
   Service,
   ServiceDefinition,
 } from '../api';
-import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
@@ -31,10 +31,6 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
-
-    if (!isServicesValid(services)) {
-      throw new Error(SERVICES_IS_NOT_ARRAY);
-    }
 
     methodRegistry.add({ services, address });
 
@@ -142,5 +138,3 @@ const createMicroserviceContext = () => {
     methodRegistry,
   };
 };
-
-const isServicesValid = (services: Service[]) => services && Array.isArray(services);

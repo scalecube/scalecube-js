@@ -6,7 +6,6 @@ import {
   ServiceRegistryMap,
 } from '../helpers/types';
 import { Service, Endpoint } from '../api';
-import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
@@ -67,23 +66,16 @@ export const getEndpointsFromService = ({ service, address }: AvailableService):
   let data: Endpoint[] = [];
   const { definition } = service;
   const transport = 'window:/';
-  const validation = isValidServiceDefinition(definition);
-
-  if (validation.isValid) {
-    const { serviceName, methods } = definition;
-
-    data = Object.keys(methods).map((methodName: string) => ({
-      qualifier: getQualifier({ serviceName, methodName }),
-      serviceName,
-      methodName,
-      asyncModel: methods[methodName].asyncModel,
-      transport,
-      uri: `${transport}/${serviceName}/${methodName}`,
-      address,
-    }));
-  } else {
-    throw validation.exception;
-  }
+  const { serviceName, methods } = definition;
+  data = Object.keys(methods).map((methodName: string) => ({
+    qualifier: getQualifier({ serviceName, methodName }),
+    serviceName,
+    methodName,
+    asyncModel: methods[methodName].asyncModel,
+    transport,
+    uri: `${transport}/${serviceName}/${methodName}`,
+    address,
+  }));
 
   return data;
 };
