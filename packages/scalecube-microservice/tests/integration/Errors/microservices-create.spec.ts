@@ -17,6 +17,7 @@ import {
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
   SERVICE_NAME_NOT_PROVIDED,
+  SEED_ADDRESS_IS_NOT_STRING,
   getAsynModelNotProvidedError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
@@ -453,6 +454,35 @@ describe('Test the creation of Microservice', () => {
     (microserviceOptions) => {
       expect.assertions(1);
       expect(() => Microservices.create(microserviceOptions)).not.toThrow();
+    }
+  );
+  test.each([[], {}, false, true, 10, null, Symbol(), new class {}()])(
+    `
+     Scenario: microservise option  with invalid seedAddress value
+        Given   a 'microserviceOptions'
+        And     seedAddress has invalid value
+
+                |definition      | value
+                |array	         | []
+                |object	         | {}
+                |boolean	 | false
+                |boolean	 | true
+                |number	         | 10
+                |null	         | null
+                |symbol	         | Symbol()
+                |new class       | new class{}
+
+        When    creating a microservice
+        Then    exception will occur: seed address should be non empty string
+      `,
+    (seedAddress) => {
+      expect.assertions(1);
+      try {
+        // @ts-ignore
+        Microservices.create({ services: [], seedAddress });
+      } catch (error) {
+        expect(error.message).toMatch(SEED_ADDRESS_IS_NOT_STRING);
+      }
     }
   );
 });
