@@ -2,6 +2,10 @@ import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
+export const MESSAGE_DATA_NOT_PROVIDED = 'Message data has not been provided';
+export const MESSAGE_QUALIFIER_NOT_PROVIDED = 'Message qualifier has not been provided';
+export const INVALID_MESSAGE = 'Message expected to be non empty object';
+export const INVALID_QUALIFIER = 'Qualifier expected to be service/method fomat';
 export const SERVICE_DEFINITION_NOT_PROVIDED = '(serviceDefinition) is not defined';
 export const SERVICE_NAME_NOT_PROVIDED = '(serviceDefinition.serviceName) is not defined';
 export const WRONG_DATA_FORMAT_IN_MESSAGE = 'Message format error: data must be Array';
