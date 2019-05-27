@@ -89,7 +89,7 @@ export const validateMessage = (message: any) => {
 export const validateQualifier = (value: any) => {
   check.assertNonEmptyString(value, QUALIFIER_IS_NOT_STRING);
   const parts = value.split('/');
-  check.assert(parts.length == 2, INVALID_QUALIFIER);
+  check.assert(parts.length === 2, INVALID_QUALIFIER);
   check.assertNonEmptyString(parts[0], INVALID_QUALIFIER);
   check.assertNonEmptyString(parts[1], INVALID_QUALIFIER);
 };
