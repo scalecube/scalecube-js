@@ -9,15 +9,38 @@
 import { Microservices } from '../../../src';
 import {
   DEFINITION_MISSING_METHODS,
+  INVALID_METHODS,
+  SERVICE_NAME_NOT_PROVIDED,
   getMethodsAreNotDefinedProperly,
+  getIncorrectMethodValueError,
   getServiceNameInvalid,
 } from '../../../src/helpers/constants';
 
 describe('validation test for create proxy from microservice', () => {
   const ms = Microservices.create({});
 
+  test(`
+    Scenario: Service name is not provided in service definition
+
+      Given Service definition without serviceName
+      And     a microservice instance
+      When creating a proxy from the microservice with the serviceDefinition
+      Then exception will occur: serviceDefinition.serviceName is not defined
+`, () => {
+    expect.assertions(1);
+    const serviceDefinition = {
+      // no serviceName
+      methods: {},
+    };
+    try {
+      // @ts-ignore
+      ms.createProxy({ serviceDefinition });
+    } catch (error) {
+      expect(error.message).toMatch(SERVICE_NAME_NOT_PROVIDED);
+    }
+  });
   // @ts-ignore
-  test.each([[], {}, true, false, 10, null, undefined, Symbol()])(
+  test.each([[], {}, true, false, 10, null, Symbol()])(
     `
     Scenario: serviceDefinition with invalid 'serviceName' value
     Given     a 'serviceName'
@@ -51,7 +74,27 @@ describe('validation test for create proxy from microservice', () => {
   );
 
   // @ts-ignore
-  test.each([[], 'methods', true, false, 10, null, undefined, Symbol()])(
+  test(`
+    Scenario: serviceDefinition without  'methods' 
+    Given     a serviceDefinition without a 'methods' key
+      And     a microservice instance
+    When       creating a proxy from the microservice with the serviceDefinition
+    Then      exception will occur: Definition missing methods:object`, () => {
+    expect.assertions(1);
+
+    const serviceDefinition = {
+      serviceName: 'service',
+      // no methods key
+    };
+
+    try {
+      // @ts-ignore
+      ms.createProxy({ serviceDefinition });
+    } catch (e) {
+      expect(e.message).toBe(DEFINITION_MISSING_METHODS);
+    }
+  });
+  test.each([[], 'methods', true, false, 10, null, Symbol()])(
     `
     Scenario: serviceDefinition with invalid 'methods' value  
     Given     a 'methods'
@@ -64,7 +107,6 @@ describe('validation test for create proxy from microservice', () => {
               | boolean	   | false         |
               | number	   | 10            |
               | null	     | null          |
-              | undefined	 | undefined     |
               | symbol	   | Symbol()      |
     And       creating a proxy from the microservice with the serviceDefinition
     Then      exception will occur.`,
@@ -80,7 +122,7 @@ describe('validation test for create proxy from microservice', () => {
         // @ts-ignore
         ms.createProxy({ serviceDefinition });
       } catch (e) {
-        expect(e.message).toBe(DEFINITION_MISSING_METHODS);
+        expect(e.message).toBe(INVALID_METHODS);
       }
     }
   );
@@ -119,9 +161,7 @@ describe('validation test for create proxy from microservice', () => {
         // @ts-ignore
         ms.createProxy({ serviceDefinition });
       } catch (e) {
-        expect(e.message).toBe(
-          getMethodsAreNotDefinedProperly(serviceDefinition.serviceName, Object.keys(serviceDefinition.methods))
-        );
+        expect(e.message).toBe(getIncorrectMethodValueError('service/hello'));
       }
     }
   );

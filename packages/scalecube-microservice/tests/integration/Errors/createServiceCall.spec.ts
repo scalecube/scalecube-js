@@ -9,6 +9,9 @@
 import { Microservices } from '../../../src';
 import {
   MESSAGE_NOT_PROVIDED,
+  MESSAGE_DATA_NOT_PROVIDED,
+  MESSAGE_QUALIFIER_NOT_PROVIDED,
+  INVALID_MESSAGE,
   QUALIFIER_IS_NOT_STRING,
   WRONG_DATA_FORMAT_IN_MESSAGE,
 } from '../../../src/helpers/constants';
@@ -17,8 +20,25 @@ describe('validation test for create proxy from microservice', () => {
   const ms = Microservices.create({});
   const serviceCall = ms.createServiceCall({});
 
-  // @ts-ignore
-  describe.each([[], 'test', 10, null, undefined, Symbol(), true, false])(
+  test(`
+      Given     a serviceCall instance
+      When      invoking a requestResponse without message
+      Then      the requestResponse will reject with error message
+    `, (done) => {
+    expect.assertions(2);
+    // @ts-ignore
+    expect(serviceCall.requestResponse()).rejects.toMatchObject(new Error(MESSAGE_NOT_PROVIDED));
+    // @ts-ignore
+    serviceCall.requestStream().subscribe(
+      () => {},
+      (error: Error) => {
+        expect(error.message).toMatch(MESSAGE_NOT_PROVIDED);
+        done();
+      }
+    );
+  });
+
+  describe.each([[], 'test', 10, null, Symbol(), true, false])(
     `
       Scenario: serviceCall invalid message
       Given     invalid message
@@ -27,7 +47,6 @@ describe('validation test for create proxy from microservice', () => {
                 | string    | 'test'    |
                 | number    | 10        |
                 | null      | null      |
-                | undefined | undefined |
                 | symbol    | Symbol()  |
                 | boolean   | true      |
                 | boolean   | false     |
@@ -41,7 +60,7 @@ describe('validation test for create proxy from microservice', () => {
     `, () => {
         expect.assertions(1);
         // @ts-ignore
-        return expect(serviceCall.requestResponse(message)).rejects.toMatchObject(new Error(MESSAGE_NOT_PROVIDED));
+        return expect(serviceCall.requestResponse(message)).rejects.toMatchObject(new Error(INVALID_MESSAGE));
       });
 
       test(`
@@ -55,7 +74,7 @@ describe('validation test for create proxy from microservice', () => {
         serviceCall.requestStream(message).subscribe(
           () => {},
           (error: Error) => {
-            expect(error.message).toMatch(MESSAGE_NOT_PROVIDED);
+            expect(error.message).toMatch(INVALID_MESSAGE);
             done();
           }
         );
@@ -63,8 +82,26 @@ describe('validation test for create proxy from microservice', () => {
     }
   );
 
+  test(`
+      Given     a serviceCall instance
+      When      invoking a requestResponse with message without data
+      Then      the requestResponse will reject with error message
+    `, (done) => {
+    expect.assertions(2);
+    const message = { qualifier: 'service/method' };
+    // @ts-ignore
+    expect(serviceCall.requestResponse(message)).rejects.toMatchObject(new Error(MESSAGE_DATA_NOT_PROVIDED));
+    // @ts-ignore
+    serviceCall.requestStream(message).subscribe(
+      () => {},
+      (error: Error) => {
+        expect(error.message).toMatch(MESSAGE_DATA_NOT_PROVIDED);
+        done();
+      }
+    );
+  });
   // @ts-ignore
-  describe.each(['test', '', 10, {}, null, undefined, Symbol(), true, false])(
+  describe.each(['test', '', 10, {}, null, Symbol(), true, false])(
     `
       Scenario: serviceCall invalid message - data is not array
       Given     invalid message
@@ -81,7 +118,7 @@ describe('validation test for create proxy from microservice', () => {
       `,
     (data) => {
       const message = {
-        qualifier: 'temp',
+        qualifier: 'service/method',
         data,
       };
 
@@ -117,8 +154,26 @@ describe('validation test for create proxy from microservice', () => {
     }
   );
 
+  test(`
+      Given     a serviceCall instance
+      When      invoking a requestResponse with message without qualifier
+      Then      the requestResponse will reject with error message
+    `, (done) => {
+    expect.assertions(2);
+    const message = { data: [] };
+    // @ts-ignore
+    expect(serviceCall.requestResponse(message)).rejects.toMatchObject(new Error(MESSAGE_QUALIFIER_NOT_PROVIDED));
+    // @ts-ignore
+    serviceCall.requestStream(message).subscribe(
+      () => {},
+      (error: Error) => {
+        expect(error.message).toMatch(MESSAGE_QUALIFIER_NOT_PROVIDED);
+        done();
+      }
+    );
+  });
   // @ts-ignore
-  describe.each([[], 10, {}, null, undefined, Symbol(), true, false])(
+  describe.each([[], 10, {}, null, Symbol(), true, false])(
     `
       Scenario: serviceCall invalid message - qualifier is not string
       Given     invalid message 
