@@ -33,8 +33,6 @@ export const getMethodNotFoundError = (message: Message) => `Can't find method $
 export const getInvalidMethodReferenceError = (qualifier: string) =>
   `${qualifier} has valid definition but reference is not a function.`;
 
-export const getMethodsAreNotDefinedProperly = (serviceName: string, methods: string[]) =>
-  `All of the following methods in ${serviceName} are not defined properly: ${methods.concat(', ')}`;
 export const getServiceNameInvalid = (serviceName: any) =>
   `serviceName is not valid, must be type string but received type ${typeof serviceName}`;
 export const getServiceReferenceNotProvidedError = (serviceName: string) => `${serviceName} reference is not provided`;

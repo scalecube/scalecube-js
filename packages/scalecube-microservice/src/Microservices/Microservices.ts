@@ -74,15 +74,17 @@ const requestProxies = ({
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
-  validateServiceDefinition(serviceDefinition);
 
   return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
     proxies[proxyName] = new Promise((resolve, reject) => {
       // TODO callback when all services are available proxyOptions[proxyName]
       try {
+        const serviceDefinition = proxyOptions[proxyName];
+        validateServiceDefinition(serviceDefinition);
+
         const proxy = getProxy({
           serviceCall: getServiceCall({ router, microserviceContext }),
-          serviceDefinition: proxyOptions[proxyName],
+          serviceDefinition,
         });
         resolve({ proxy });
       } catch (e) {

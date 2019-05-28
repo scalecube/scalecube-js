@@ -24,7 +24,7 @@ import {
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
 } from './constants';
-import { getQualifier } from '../helpers/serviceData';
+import { getQualifier } from './serviceData';
 import ServiceDefinition from '../api/ServiceDefinition';
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {

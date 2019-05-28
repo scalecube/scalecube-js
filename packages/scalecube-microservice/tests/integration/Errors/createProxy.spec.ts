@@ -11,7 +11,6 @@ import {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
   SERVICE_NAME_NOT_PROVIDED,
-  getMethodsAreNotDefinedProperly,
   getIncorrectMethodValueError,
   getServiceNameInvalid,
 } from '../../../src/helpers/constants';
@@ -32,12 +31,10 @@ describe('validation test for create proxy from microservice', () => {
       // no serviceName
       methods: {},
     };
-    try {
-      // @ts-ignore
-      ms.createProxy({ serviceDefinition });
-    } catch (error) {
-      expect(error.message).toMatch(SERVICE_NAME_NOT_PROVIDED);
-    }
+
+    // @ts-ignore
+    const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+    return expect(awaitProxy).rejects.toMatchObject(new Error(SERVICE_NAME_NOT_PROVIDED));
   });
   // @ts-ignore
   test.each([[], {}, true, false, 10, null, Symbol()])(
@@ -83,13 +80,12 @@ describe('validation test for create proxy from microservice', () => {
       // no methods key
     };
 
-    try {
-      // @ts-ignore
-      ms.createProxy({ serviceDefinition });
-    } catch (e) {
-      expect(e.message).toBe(DEFINITION_MISSING_METHODS);
-    }
+    // @ts-ignore
+    const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+    return expect(awaitProxy).rejects.toMatchObject(new Error(DEFINITION_MISSING_METHODS));
   });
+
+  // @ts-ignore
   test.each([[], 'methods', true, false, 10, null, Symbol()])(
     `
     Scenario: serviceDefinition with invalid 'methods' value
@@ -152,9 +148,7 @@ describe('validation test for create proxy from microservice', () => {
 
       // @ts-ignore
       const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
-      return expect(awaitProxy).rejects.toMatchObject(
-        new Error(getMethodsAreNotDefinedProperly(getIncorrectMethodValueError('service/hello')))
-      );
+      return expect(awaitProxy).rejects.toMatchObject(new Error(getIncorrectMethodValueError('service/hello')));
     }
   );
 });
