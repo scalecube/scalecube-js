@@ -81,10 +81,11 @@ const microserviceContainer = Microservices.create({
 
 ```javascript
 // the consumer of the service creates a proxy from the microserviceContainer
-const greetingServiceProxy = microserviceContainer.createProxy({
-  serviceDefinition: greetingServiceDefinition,
+const greetingServiceProxy = microserviceContainer.requestProxy({
+  greetingServiceAwaitProxy: greetingServiceDefinition,
 });
 
+const { greetingServiceProxy } = await greetingServiceAwaitProxy;
 // then the consumer can invoke the method from GreetingService using the proxy
 greetingServiceProxy.hello('someone').then((response) => console.log(response)); // hello someone
 greetingServiceProxy.greet$(['someone1','someone2'])

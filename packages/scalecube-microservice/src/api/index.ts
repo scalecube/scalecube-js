@@ -16,12 +16,14 @@ import LookupOptions from './LookupOptions';
 import Endpoint from './Endpoint';
 import Reference from './Reference';
 import { LookUp } from './LookUp';
+import ProxiesMap from './ProxiesMap';
 
 export {
   AsyncModel,
   RequestStreamAsyncModel,
   RequestResponseAsyncModel,
   ProxyOptions,
+  ProxiesMap,
   ServiceCall,
   Message,
   Microservice,

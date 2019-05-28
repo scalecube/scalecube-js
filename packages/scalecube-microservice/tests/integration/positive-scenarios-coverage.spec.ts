@@ -6,7 +6,7 @@ import {
   greet$,
 } from '../mocks/GreetingService';
 import { Microservices } from '../../src';
-import { Message, ServiceReference } from '../../src/api';
+import { Message } from '../../src/api';
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
 
@@ -99,8 +99,9 @@ describe(`Test positive-scenarios of usage
           Scenario: Testing proxy for a successful response.
             When  invoking requestResponse's method with valid data
             Then  successful RequestResponse is received
-              `, () => {
-            const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
+              `, async () => {
+            const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+            const { proxy } = await awaitProxy;
             return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
           });
 
@@ -109,10 +110,12 @@ describe(`Test positive-scenarios of usage
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
             `, (done) => {
-            const proxy = sender.createProxy({ serviceDefinition: receiverServiceDefinition });
-            proxy.greet$([defaultUser]).subscribe((response: any) => {
-              expect(response).toEqual(`greetings ${defaultUser}`);
-              done();
+            const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+            awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
+              proxy.greet$([defaultUser]).subscribe((response: any) => {
+                expect(response).toEqual(`greetings ${defaultUser}`);
+                done();
+              });
             });
           });
 

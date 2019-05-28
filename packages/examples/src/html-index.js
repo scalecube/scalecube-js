@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       },
     };
 
-    var proxy = Microservices.create({
+    var { proxyName } = Microservices.create({
       services: [
         {
           definition: definition,
@@ -56,10 +56,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
           },
         },
       ],
-    }).createProxy({
-      serviceDefinition: definition,
+    }).requestProxies({
+      proxyName: definition,
     });
 
-    proxy.render();
+    proxyName.render();
   })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES);
 });

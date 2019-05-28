@@ -40,20 +40,16 @@ describe('validation test for create proxy from microservice', () => {
       const serviceDefinition = {
         serviceName,
       };
-
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(getServiceNameInvalid(serviceDefinition.serviceName));
-      }
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(new Error(getServiceNameInvalid(serviceDefinition.serviceName)));
     }
   );
 
   // @ts-ignore
   test.each([[], 'methods', true, false, 10, null, undefined, Symbol()])(
     `
-    Scenario: serviceDefinition with invalid 'methods' value  
+    Scenario: serviceDefinition with invalid 'methods' value
     Given     a 'methods'
       And     a microservice instance
     When      creating a serviceDefinition with the 'methods'
@@ -76,19 +72,16 @@ describe('validation test for create proxy from microservice', () => {
         methods,
       };
 
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(DEFINITION_MISSING_METHODS);
-      }
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(new Error(DEFINITION_MISSING_METHODS));
     }
   );
 
   // @ts-ignore
   test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new class {}()])(
     `
-    Scenario: serviceDefinition with invalid 'asyncModel' value  
+    Scenario: serviceDefinition with invalid 'asyncModel' value
     Given     a 'asyncModel'
       And     a microservice instance
     When      creating a serviceDefinition with the 'asyncModel'
@@ -115,14 +108,13 @@ describe('validation test for create proxy from microservice', () => {
         },
       };
 
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(
+        new Error(
           getMethodsAreNotDefinedProperly(serviceDefinition.serviceName, Object.keys(serviceDefinition.methods))
-        );
-      }
+        )
+      );
     }
   );
 });

@@ -12,10 +12,10 @@ import {
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
+  ProxiesMap,
   ProxyOptions,
   Router,
   Service,
-  ServiceDefinition,
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
@@ -54,31 +54,43 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
     return Object.freeze({
-      createProxy: ({ router = defaultRouter, serviceDefinition }: ProxyOptions) =>
-        createProxy({ router, serviceDefinition, microserviceContext }),
+      requestProxies: (proxyOptions: ProxyOptions, router = defaultRouter) =>
+        requestProxies({ router, proxyOptions, microserviceContext }),
       createServiceCall: ({ router = defaultRouter }) => createServiceCall({ router, microserviceContext }),
       destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
   },
 });
 
-const createProxy = ({
+const requestProxies = ({
   router,
-  serviceDefinition,
+  proxyOptions,
   microserviceContext,
 }: {
   router: Router;
-  serviceDefinition: ServiceDefinition;
+  proxyOptions: ProxyOptions;
   microserviceContext: MicroserviceContext | null;
-}) => {
+}): ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
-  return getProxy({
-    serviceCall: getServiceCall({ router, microserviceContext }),
-    serviceDefinition,
-  });
+  return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
+    proxies[proxyName] = new Promise((resolve, reject) => {
+      // TODO callback when all services are available proxyOptions[proxyName]
+      try {
+        const proxy = getProxy({
+          serviceCall: getServiceCall({ router, microserviceContext }),
+          serviceDefinition: proxyOptions[proxyName],
+        });
+        resolve({ proxy });
+      } catch (e) {
+        reject(e);
+      }
+    });
+
+    return proxies;
+  }, {});
 };
 
 const createServiceCall = ({

@@ -48,19 +48,21 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
     var localMS = Microservices.create({ services: [] });
-    var proxy = localMS.createProxy({
-      serviceDefinition: remoteServiceDefinition,
+    var { awaitProxyName } = localMS.requestProxies({
+      awaitProxyName: remoteServiceDefinition,
     });
 
-    proxy
-      .hello('ME!!!')
-      .then((response) => {
-        createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
-      })
-      .catch(console.log);
+    awaitProxyName.then(({ proxy: serviceNameProxy }) => {
+      serviceNameProxy
+        .hello('ME!!!')
+        .then((response) => {
+          createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
+        })
+        .catch(console.log);
 
-    proxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
-      createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
+      serviceNameProxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
+        createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
+      });
     });
 
     var root = document.getElementById('root');
