@@ -85,7 +85,6 @@ const requestProxies = ({
       try {
         const serviceDefinition = proxyOptions[proxyName];
         validateServiceDefinition(serviceDefinition);
-        // TODO callback when all services are available proxyOptions[proxyName]
 
         const proxy = getProxy({
           serviceCall: getServiceCall({ router, microserviceContext }),
