@@ -6,7 +6,6 @@ import {
   MethodRegistryMap,
 } from '../helpers/types';
 import { Service, Reference } from '../api';
-import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getQualifier, getReferencePointer } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
@@ -72,25 +71,18 @@ export const getReferenceFromService = ({ service, address }: AvailableService):
   const data: Reference[] = [];
   const { definition, reference } = service;
 
-  const validation = isValidServiceDefinition(definition);
-
-  if (validation.isValid) {
-    const { serviceName, methods } = definition;
-    Object.keys(methods).forEach((methodName: string) => {
-      const qualifier = getQualifier({ serviceName, methodName });
-      data.push({
-        qualifier,
-        serviceName,
-        methodName,
-        asyncModel: methods[methodName].asyncModel,
-        reference: {
-          [methodName]: getReferencePointer({ reference, methodName, qualifier }),
-        },
-      });
+  const { serviceName, methods } = definition;
+  Object.keys(methods).forEach((methodName: string) => {
+    const qualifier = getQualifier({ serviceName, methodName });
+    data.push({
+      qualifier,
+      serviceName,
+      methodName,
+      asyncModel: methods[methodName].asyncModel,
+      reference: {
+        [methodName]: getReferencePointer({ reference, methodName }),
+      },
     });
-  } else {
-    throw validation.exception;
-  }
-
+  });
   return data;
 };

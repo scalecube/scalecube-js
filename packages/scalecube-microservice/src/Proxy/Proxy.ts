@@ -1,15 +1,9 @@
 import { Message } from '../api';
 import { GetProxyOptions } from '../helpers/types';
 import { getQualifier } from '../helpers/serviceData';
-import { isValidServiceDefinition } from '../helpers/serviceValidation';
 import { getServiceMethodIsMissingError } from '../helpers/constants';
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
-  const validation = isValidServiceDefinition(serviceDefinition);
-  if (!validation.isValid) {
-    throw validation.exception;
-  }
-
   return new Proxy(
     {},
     {

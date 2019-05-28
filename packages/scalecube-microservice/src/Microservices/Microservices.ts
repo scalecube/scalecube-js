@@ -6,6 +6,7 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
+import { validateMicroserviceOptions, validateServiceDefinition } from '../helpers/validation';
 import {
   Endpoint,
   Message,
@@ -17,20 +18,19 @@ import {
   Router,
   Service,
 } from '../api';
-import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS, SERVICES_IS_NOT_ARRAY } from '../helpers/constants';
+import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
-  create: ({ services = [], seedAddress = 'defaultSeedAddress' }: MicroserviceOptions): Microservice => {
+  create: (options: MicroserviceOptions): Microservice => {
+    const microserviceOptions = { services: [], seedAddress: 'defaultSeedAddress', ...options };
+    validateMicroserviceOptions(microserviceOptions);
+    const { services, seedAddress } = microserviceOptions;
     const address = uuidv4();
 
     // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
     const { methodRegistry, serviceRegistry } = microserviceContext;
-
-    if (!isServicesValid(services)) {
-      throw new Error(SERVICES_IS_NOT_ARRAY);
-    }
 
     methodRegistry.add({ services, address });
 
@@ -74,6 +74,7 @@ const requestProxies = ({
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
+  validateServiceDefinition(serviceDefinition);
 
   return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
     proxies[proxyName] = new Promise((resolve, reject) => {
@@ -150,5 +151,3 @@ const createMicroserviceContext = () => {
     methodRegistry,
   };
 };
-
-const isServicesValid = (services: Service[]) => services && Array.isArray(services);
