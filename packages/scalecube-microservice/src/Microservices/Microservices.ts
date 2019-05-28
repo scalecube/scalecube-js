@@ -16,10 +16,11 @@ import {
   ProxiesMap,
   ProxyOptions,
   Router,
-  Service,
+  ServiceDefinition,
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
+import { Observable } from 'rxjs';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
@@ -53,9 +54,11 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       .discoveredItems$()
       .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
+    const isServiceAvailable = checkServiceStatus(endPointsToPublishInCluster, discovery);
+
     return Object.freeze({
       requestProxies: (proxyOptions: ProxyOptions, router = defaultRouter) =>
-        requestProxies({ router, proxyOptions, microserviceContext }),
+        requestProxies({ router, proxyOptions, microserviceContext, isServiceAvailable }),
       createServiceCall: ({ router = defaultRouter }) => createServiceCall({ router, microserviceContext }),
       destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
@@ -66,10 +69,12 @@ const requestProxies = ({
   router,
   proxyOptions,
   microserviceContext,
+  isServiceAvailable,
 }: {
   router: Router;
   proxyOptions: ProxyOptions;
   microserviceContext: MicroserviceContext | null;
+  isServiceAvailable: (serviceDefinition: ServiceDefinition) => Promise<boolean>;
 }): ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -77,16 +82,17 @@ const requestProxies = ({
 
   return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
     proxies[proxyName] = new Promise((resolve, reject) => {
-      // TODO callback when all services are available proxyOptions[proxyName]
       try {
         const serviceDefinition = proxyOptions[proxyName];
         validateServiceDefinition(serviceDefinition);
+        // TODO callback when all services are available proxyOptions[proxyName]
 
         const proxy = getProxy({
           serviceCall: getServiceCall({ router, microserviceContext }),
           serviceDefinition,
         });
-        resolve({ proxy });
+
+        isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
       } catch (e) {
         reject(e);
       }
@@ -151,5 +157,40 @@ const createMicroserviceContext = () => {
   return {
     serviceRegistry,
     methodRegistry,
+  };
+};
+
+const checkServiceStatus = (
+  endPointsToPublishInCluster: Endpoint[],
+  discovery: { discoveredItems$: () => Observable<any> }
+) => {
+  return (serviceDefinition: ServiceDefinition): Promise<boolean> => {
+    const methods = Object.keys(serviceDefinition.methods);
+
+    const checkEndPoints = (endPoints: Endpoint[]) => {
+      endPoints.forEach((endPoint: Endpoint) => {
+        if (endPoint.serviceName === serviceDefinition.serviceName) {
+          const removeAt = methods.indexOf(endPoint.methodName);
+          if (removeAt !== -1) {
+            methods.splice(removeAt, 1);
+          }
+        }
+      });
+    };
+
+    return new Promise((resolve, reject) => {
+      checkEndPoints(endPointsToPublishInCluster);
+      if (methods.length === 0) {
+        resolve(true);
+      }
+
+      discovery.discoveredItems$().subscribe((discoveryEndpoints: any[]) => {
+        checkEndPoints(discoveryEndpoints as Endpoint[]);
+
+        if (methods.length === 0) {
+          resolve(true);
+        }
+      });
+    });
   };
 };
