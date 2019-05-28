@@ -20,7 +20,7 @@ import {
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
-import { Observable } from 'rxjs';
+import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
@@ -54,7 +54,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       .discoveredItems$()
       .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
-    const isServiceAvailable = checkServiceStatus(endPointsToPublishInCluster, discovery);
+    const isServiceAvailable = isServiceAvailableInRegistry(endPointsToPublishInCluster, discovery);
 
     return Object.freeze({
       requestProxies: (proxyOptions: ProxyOptions, router = defaultRouter) =>
@@ -156,40 +156,5 @@ const createMicroserviceContext = () => {
   return {
     serviceRegistry,
     methodRegistry,
-  };
-};
-
-const checkServiceStatus = (
-  endPointsToPublishInCluster: Endpoint[],
-  discovery: { discoveredItems$: () => Observable<any> }
-) => {
-  return (serviceDefinition: ServiceDefinition): Promise<boolean> => {
-    const methods = Object.keys(serviceDefinition.methods);
-
-    const checkEndPoints = (endPoints: Endpoint[]) => {
-      endPoints.forEach((endPoint: Endpoint) => {
-        if (endPoint.serviceName === serviceDefinition.serviceName) {
-          const removeAt = methods.indexOf(endPoint.methodName);
-          if (removeAt !== -1) {
-            methods.splice(removeAt, 1);
-          }
-        }
-      });
-    };
-
-    return new Promise((resolve, reject) => {
-      checkEndPoints(endPointsToPublishInCluster);
-      if (methods.length === 0) {
-        resolve(true);
-      }
-
-      discovery.discoveredItems$().subscribe((discoveryEndpoints: any[]) => {
-        checkEndPoints(discoveryEndpoints as Endpoint[]);
-
-        if (methods.length === 0) {
-          resolve(true);
-        }
-      });
-    });
   };
 };
