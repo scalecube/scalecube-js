@@ -85,7 +85,7 @@ const greetingServiceProxy = microserviceContainer.requestProxy({
   greetingServiceAwaitProxy: greetingServiceDefinition,
 });
 
-const { greetingServiceProxy } = await greetingServiceAwaitProxy;
+const { proxy : greetingServiceProxy } : {greetingServiceProxy : GreetingService} = await greetingServiceAwaitProxy;
 // then the consumer can invoke the method from GreetingService using the proxy
 greetingServiceProxy.hello('someone').then((response) => console.log(response)); // hello someone
 greetingServiceProxy.greet$(['someone1','someone2'])
