@@ -17,6 +17,7 @@ import Endpoint from './Endpoint';
 import Reference from './Reference';
 import { LookUp } from './LookUp';
 import ProxiesMap from './ProxiesMap';
+import MultipleProxyOptions from './MultipleProxyOptions';
 
 export {
   AsyncModel,
@@ -29,6 +30,7 @@ export {
   Microservice,
   MicroserviceOptions,
   Microservices,
+  MultipleProxyOptions,
   Router,
   RouteOptions,
   Service,

@@ -1,4 +1,4 @@
-import { ProxyOptions, ServiceCall, CreateServiceCallOptions, Router, ProxiesMap } from '.';
+import { ProxyOptions, ServiceCall, CreateServiceCallOptions, Router, ProxiesMap, MultipleProxyOptions } from '.';
 
 /**
  * Provides the functionality of a microservice container
@@ -12,8 +12,12 @@ export default interface Microservice {
   /**
    * Create a map of Promises to proxy.
    */
-  requestProxies(proxyOptions: ProxyOptions, router?: Router): ProxiesMap;
+  requestProxies(proxyOptions: MultipleProxyOptions, router?: Router): ProxiesMap;
 
+  /**
+   * Creates a proxy to a method and provides extra logic when is invoked
+   */
+  createProxy<T = any>(proxyOptions: ProxyOptions): T;
   /**
    * Exposes serviceCall to a user (not via Proxy)
    */

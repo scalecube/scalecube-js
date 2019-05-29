@@ -31,12 +31,10 @@ describe('validation test for create proxy from microservice', () => {
       // no serviceName
       methods: {},
     };
-    try {
-      // @ts-ignore
-      ms.createProxy({ serviceDefinition });
-    } catch (error) {
-      expect(error.message).toMatch(SERVICE_NAME_NOT_PROVIDED);
-    }
+
+    // @ts-ignore
+    const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+    return expect(awaitProxy).rejects.toMatchObject(new Error(SERVICE_NAME_NOT_PROVIDED));
   });
   // @ts-ignore
   test.each([[], {}, true, false, 10, null, Symbol()])(
@@ -62,13 +60,9 @@ describe('validation test for create proxy from microservice', () => {
       const serviceDefinition = {
         serviceName,
       };
-
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(getServiceNameInvalid(serviceDefinition.serviceName));
-      }
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(new Error(getServiceNameInvalid(serviceDefinition.serviceName)));
     }
   );
 
@@ -86,12 +80,9 @@ describe('validation test for create proxy from microservice', () => {
       // no methods key
     };
 
-    try {
-      // @ts-ignore
-      ms.createProxy({ serviceDefinition });
-    } catch (e) {
-      expect(e.message).toBe(DEFINITION_MISSING_METHODS);
-    }
+    // @ts-ignore
+    const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+    return expect(awaitProxy).rejects.toMatchObject(new Error(DEFINITION_MISSING_METHODS));
   });
 
   // @ts-ignore
@@ -119,12 +110,9 @@ describe('validation test for create proxy from microservice', () => {
         methods,
       };
 
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(INVALID_METHODS);
-      }
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(new Error(INVALID_METHODS));
     }
   );
 
@@ -158,12 +146,9 @@ describe('validation test for create proxy from microservice', () => {
         },
       };
 
-      try {
-        // @ts-ignore
-        ms.createProxy({ serviceDefinition });
-      } catch (e) {
-        expect(e.message).toBe(getIncorrectMethodValueError('service/hello'));
-      }
+      // @ts-ignore
+      const { awaitProxy } = ms.requestProxies({ awaitProxy: serviceDefinition });
+      return expect(awaitProxy).rejects.toMatchObject(new Error(getIncorrectMethodValueError('service/hello')));
     }
   );
 });

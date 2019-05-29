@@ -22,11 +22,12 @@ describe('Microservices Testing', () => {
     const microservice = Microservices.create(microserviceOptions);
 
     it('Test Microservice.create({ services }: MicroserviceOptions): Microservice', () => {
-      const NUMBER_OF_MICROSERVICE_PROPERTIES = 3;
+      const NUMBER_OF_MICROSERVICE_PROPERTIES = 4;
 
       expect(Object.keys(microservice)).toHaveLength(NUMBER_OF_MICROSERVICE_PROPERTIES);
 
       expect(microservice.requestProxies).toBeDefined();
+      expect(microservice.createProxy).toBeDefined();
       expect(microservice.createServiceCall).toBeDefined();
       expect(microservice.destroy).toBeDefined();
     });

@@ -477,6 +477,8 @@ describe('Test the creation of Microservice', () => {
       expect(() => Microservices.create(microserviceOptions)).not.toThrow();
     }
   );
+
+  // @ts-ignore
   test.each([[], {}, false, true, 10, null, Symbol(), new class {}()])(
     `
      Scenario: microservise option  with invalid seedAddress value

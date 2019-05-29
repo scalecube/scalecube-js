@@ -13,6 +13,7 @@ import {
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
+  MultipleProxyOptions,
   ProxiesMap,
   ProxyOptions,
   Router,
@@ -57,13 +58,35 @@ export const Microservices: MicroservicesInterface = Object.freeze({
     const isServiceAvailable = isServiceAvailableInRegistry(endPointsToPublishInCluster, discovery);
 
     return Object.freeze({
-      requestProxies: (proxyOptions: ProxyOptions, router = defaultRouter) =>
+      requestProxies: (proxyOptions: MultipleProxyOptions, router = defaultRouter) =>
         requestProxies({ router, proxyOptions, microserviceContext, isServiceAvailable }),
+      createProxy: ({ router = defaultRouter, serviceDefinition }: ProxyOptions) =>
+        createProxy({ router, serviceDefinition, microserviceContext }),
       createServiceCall: ({ router = defaultRouter }) => createServiceCall({ router, microserviceContext }),
       destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
   },
 });
+
+const createProxy = ({
+  router,
+  serviceDefinition,
+  microserviceContext,
+}: {
+  router: Router;
+  serviceDefinition: ServiceDefinition;
+  microserviceContext: MicroserviceContext | null;
+}) => {
+  if (!microserviceContext) {
+    throw new Error(MICROSERVICE_NOT_EXISTS);
+  }
+  validateServiceDefinition(serviceDefinition);
+
+  return getProxy({
+    serviceCall: getServiceCall({ router, microserviceContext }),
+    serviceDefinition,
+  });
+};
 
 const requestProxies = ({
   router,
@@ -72,31 +95,20 @@ const requestProxies = ({
   isServiceAvailable,
 }: {
   router: Router;
-  proxyOptions: ProxyOptions;
+  proxyOptions: MultipleProxyOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: (serviceDefinition: ServiceDefinition) => Promise<boolean>;
 }): ProxiesMap => {
-  if (!microserviceContext) {
-    throw new Error(MICROSERVICE_NOT_EXISTS);
-  }
-
   return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
     proxies[proxyName] = new Promise((resolve, reject) => {
       try {
         const serviceDefinition = proxyOptions[proxyName];
-        validateServiceDefinition(serviceDefinition);
-
-        const proxy = getProxy({
-          serviceCall: getServiceCall({ router, microserviceContext }),
-          serviceDefinition,
-        });
-
+        const proxy = createProxy({ serviceDefinition, router, microserviceContext });
         isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
       } catch (e) {
         reject(e);
       }
     });
-
     return proxies;
   }, {});
 };
