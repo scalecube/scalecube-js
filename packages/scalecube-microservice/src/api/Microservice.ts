@@ -10,7 +10,7 @@ export default interface Microservice {
   destroy(): null;
 
   /**
-   * Creates a proxy to a method and provides extra logic when is invoked
+   * Create a map of Promises to proxy.
    */
   requestProxies(proxyOptions: ProxyOptions, router?: Router): ProxiesMap;
 
