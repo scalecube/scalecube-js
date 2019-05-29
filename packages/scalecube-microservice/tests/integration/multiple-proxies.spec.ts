@@ -3,6 +3,7 @@ import { hello, greet$ } from '../mocks/GreetingService';
 import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { Observable } from 'rxjs';
+import { getServiceNameInvalid } from '../../src/helpers/constants';
 
 // @ts-ignore
 if (!global.isNodeEvn) {
@@ -98,6 +99,30 @@ describe(`
         expect(proxy2.greet$).toBeDefined();
 
         return expect(proxy1.hello(defaultUser)).resolves.toBe(`Hello ${defaultUser}`);
+      });
+
+      test(`
+           Scenario: creating multiple proxies 
+           But       one of the serviceDefinition is invalid
+           Given     microservice instance and serviceDefinitions
+           When      requesting a Proxies from the microservice
+           Then      a map of proxies by proxyName will be created
+                     | proxy          | method                  | valid
+                     | service1Proxy  | hello : requestResponse | yes
+                     | service2Proxy  | greet$ : requestStream  | no
+           
+  `, async () => {
+        expect.assertions(2);
+        const { service1Proxy, service2Proxy } = sender.requestProxies({
+          service1Proxy: service1Definition,
+          service2Proxy: { serviceName: {} },
+        });
+
+        const { proxy: proxy1 }: { proxy: { hello: (data: any) => Promise<any> } } = await service1Proxy;
+
+        expect(proxy1.hello).toBeDefined();
+
+        return expect(service2Proxy).rejects.toMatchObject(new Error(getServiceNameInvalid({})));
       });
     }
   );
