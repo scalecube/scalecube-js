@@ -81,8 +81,13 @@ const microserviceContainer = Microservices.create({
 
 ```javascript
 // the consumer of the service creates a proxy from the microserviceContainer
-const greetingServiceProxy = microserviceContainer.requestProxy({
-  greetingServiceAwaitProxy: greetingServiceDefinition,
+const greetingServiceProxy = microserviceContainer.createProxies({
+proxies : [{
+  serviceDefinition: greetingServiceDefinition,
+  proxyName : 'greetingServiceAwaitProxy'
+}],
+isAsync : true, // optional ( default false)
+router : defaultRouter // optional
 });
 
 const { proxy : greetingServiceProxy } : {greetingServiceProxy : GreetingService} = await greetingServiceAwaitProxy;

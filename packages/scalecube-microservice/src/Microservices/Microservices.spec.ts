@@ -26,7 +26,7 @@ describe('Microservices Testing', () => {
 
       expect(Object.keys(microservice)).toHaveLength(NUMBER_OF_MICROSERVICE_PROPERTIES);
 
-      expect(microservice.requestProxies).toBeDefined();
+      expect(microservice.createProxies).toBeDefined();
       expect(microservice.createProxy).toBeDefined();
       expect(microservice.createServiceCall).toBeDefined();
       expect(microservice.destroy).toBeDefined();
@@ -79,12 +79,16 @@ describe('Microservices Testing', () => {
 
     it('Test requestProxies after microservice.destroy', () => {
       try {
-        microservice.requestProxies(
-          {
-            proxyName: greetingServiceDefinition,
-          },
-          defaultRouter
-        );
+        microservice.createProxies({
+          proxies: [
+            {
+              serviceDefinition: greetingServiceDefinition,
+              proxyName: 'proxy',
+            },
+          ],
+          isAsync: false,
+          router: defaultRouter,
+        });
       } catch (e) {
         expect(e.message).toMatch(MICROSERVICE_NOT_EXISTS);
       }

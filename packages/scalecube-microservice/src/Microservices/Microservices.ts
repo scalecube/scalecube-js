@@ -1,27 +1,25 @@
 import uuidv4 from 'uuid/v4';
 import createDiscovery from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
-import { getProxy } from '../Proxy/Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
-import { validateMicroserviceOptions, validateServiceDefinition } from '../helpers/validation';
+import { validateMicroserviceOptions } from '../helpers/validation';
 import {
   Endpoint,
   Message,
   Microservice,
   MicroserviceOptions,
   Microservices as MicroservicesInterface,
-  MultipleProxyOptions,
-  ProxiesMap,
   ProxyOptions,
   Router,
-  ServiceDefinition,
+  CreateProxiesOptions,
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { createServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
+import { createProxies, createProxy } from '../Proxy/createProxy';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
@@ -55,69 +53,23 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       .discoveredItems$()
       .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
-    const isServiceAvailable = isServiceAvailableInRegistry(endPointsToPublishInCluster, discovery);
+    const isServiceAvailable = isServiceAvailableInRegistry(endPointsToPublishInCluster, serviceRegistry, discovery);
 
     return Object.freeze({
-      requestProxies: (proxyOptions: MultipleProxyOptions, router = defaultRouter) =>
-        requestProxies({ router, proxyOptions, microserviceContext, isServiceAvailable }),
-      createProxy: ({ router = defaultRouter, serviceDefinition }: ProxyOptions) =>
-        createProxy({ router, serviceDefinition, microserviceContext }),
-      createServiceCall: ({ router = defaultRouter }) => createServiceCall({ router, microserviceContext }),
+      createProxies: (createProxiesOptions: CreateProxiesOptions) =>
+        createProxies({ createProxiesOptions, microserviceContext, isServiceAvailable }),
+      createProxy: (proxyOptions: ProxyOptions) => createProxy({ ...proxyOptions, microserviceContext }),
+      createServiceCall: ({ router }) => createServiceCall({ router, microserviceContext }),
       destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
   },
 });
 
-const createProxy = ({
-  router,
-  serviceDefinition,
-  microserviceContext,
-}: {
-  router: Router;
-  serviceDefinition: ServiceDefinition;
-  microserviceContext: MicroserviceContext | null;
-}) => {
-  if (!microserviceContext) {
-    throw new Error(MICROSERVICE_NOT_EXISTS);
-  }
-  validateServiceDefinition(serviceDefinition);
-
-  return getProxy({
-    serviceCall: getServiceCall({ router, microserviceContext }),
-    serviceDefinition,
-  });
-};
-
-const requestProxies = ({
-  router,
-  proxyOptions,
-  microserviceContext,
-  isServiceAvailable,
-}: {
-  router: Router;
-  proxyOptions: MultipleProxyOptions;
-  microserviceContext: MicroserviceContext | null;
-  isServiceAvailable: (serviceDefinition: ServiceDefinition) => Promise<boolean>;
-}): ProxiesMap => {
-  return Object.keys(proxyOptions).reduce((proxies: ProxiesMap, proxyName: string) => {
-    proxies[proxyName] = new Promise((resolve, reject) => {
-      try {
-        const serviceDefinition = proxyOptions[proxyName];
-        const proxy = createProxy({ serviceDefinition, router, microserviceContext });
-        isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
-      } catch (e) {
-        reject(e);
-      }
-    });
-    return proxies;
-  }, {});
-};
-
 const createServiceCall = ({
-  router,
+  router = defaultRouter,
   microserviceContext,
 }: {
-  router: Router;
+  router?: Router;
   microserviceContext: MicroserviceContext | null;
 }) => {
   if (!microserviceContext) {

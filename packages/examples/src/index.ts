@@ -9,7 +9,15 @@ const greetingService: Api.Service = {
 };
 
 const ms = Microservices.create({ services: [greetingService] });
-const { awaitProxy } = ms.requestProxies({ awaitProxy: greetingServiceDefinition });
+const { awaitProxy } = ms.createProxies({
+  proxies: [
+    {
+      serviceDefinition: greetingServiceDefinition,
+      proxyName: 'awaitProxy',
+    },
+  ],
+  isAsync: true,
+});
 
 awaitProxy.then(({ greetingServiceProxy }: { greetingServiceProxy: GreetingService }) => {
   greetingServiceProxy.hello('User').then((result: string) => {

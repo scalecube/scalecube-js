@@ -9,6 +9,7 @@ import { Microservices } from '../../../src';
 import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
 import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
 import { MicroserviceContext } from '../../../src/helpers/types';
+import { Observable } from 'rxjs';
 
 const errorMessage = 'mockError';
 
@@ -53,7 +54,15 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
     ],
   });
   const localMicroservice = Microservices.create({});
-  const { awaitProxy } = localMicroservice.requestProxies({ awaitProxy: greetingServiceDefinition });
+  const { awaitProxy } = localMicroservice.createProxies({
+    proxies: [
+      {
+        serviceDefinition: greetingServiceDefinition,
+        proxyName: 'awaitProxy',
+      },
+    ],
+    isAsync: true,
+  });
 
   test(`
     Scenario RSocketEventsServer send Single.error for requestResponse request
@@ -79,7 +88,7 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
     And      bubble it to the proxy
   `, (done) => {
     expect.assertions(1);
-    awaitProxy.then(({ proxy }) => {
+    awaitProxy.then(({ proxy }: { proxy: { greet$: (...data: any[]) => Observable<any> } }) => {
       proxy.greet$(['Me']).subscribe(
         (res: any) => {},
         (error: any) => {

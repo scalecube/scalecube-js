@@ -31,17 +31,20 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       },
     },
   };
+
   const microserviceWithServices = Microservices.create({
     services: [
       {
         definition: greetingServiceDefinition,
         reference: {
+          // @ts-ignore
           hello: () => Promise.reject(new Error(errorMessage)),
           greet$: () =>
             new Observable((obs) => {
               obs.error(new Error(errorMessage));
             }),
           incorrectAsyncModel: () => of({ emptyMessage }),
+          // @ts-ignore
           incorrectAsyncModel$: () => Promise.resolve({ emptyMessage }),
         },
       },
@@ -87,7 +90,15 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
 
   `, async () => {
         expect.assertions(1);
-        const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+        const { awaitProxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: receiverServiceDefinition,
+              proxyName: 'awaitProxy',
+            },
+          ],
+          isAsync: true,
+        });
         const { proxy: service } = await awaitProxy;
 
         return expect(service.hello('Me')).rejects.toMatchObject(new Error(errorMessage));
@@ -101,7 +112,16 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
   `, (done) => {
         expect.assertions(1);
 
-        const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+        const { awaitProxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: receiverServiceDefinition,
+              proxyName: 'awaitProxy',
+            },
+          ],
+          isAsync: true,
+        });
+
         awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
           proxy.greet$(['Me']).subscribe(
             (response: any) => {},
@@ -123,7 +143,16 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     Then      proxy receive only first emit
   `, async () => {
         expect.assertions(1);
-        const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+        const { awaitProxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: receiverServiceDefinition,
+              proxyName: 'awaitProxy',
+            },
+          ],
+          isAsync: true,
+        });
+
         const { proxy } = await awaitProxy;
         return expect(proxy.incorrectAsyncModel('Me')).resolves.toMatchObject({ emptyMessage });
       });
@@ -138,7 +167,16 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     Then      proxy receive the value
   `, (done) => {
         expect.assertions(1);
-        const { awaitProxy } = sender.requestProxies({ awaitProxy: receiverServiceDefinition });
+        const { awaitProxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: receiverServiceDefinition,
+              proxyName: 'awaitProxy',
+            },
+          ],
+          isAsync: true,
+        });
+
         awaitProxy.then(({ proxy }: any) => {
           proxy.incorrectAsyncModel$().subscribe((res: any) => {
             expect(res).toMatchObject({ emptyMessage });

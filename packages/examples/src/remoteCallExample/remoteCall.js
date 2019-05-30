@@ -59,8 +59,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
     waitMessage.innerText = 'Wait for service ~ 2s';
 
     var localMS = Microservices.create({ services: [] });
-    var { awaitProxyName } = localMS.requestProxies({
-      awaitProxyName: remoteServiceDefinition,
+
+    var { awaitProxyName } = localMS.createProxies({
+      proxies: [
+        {
+          serviceDefinition: remoteServiceDefinition,
+          proxyName: 'awaitProxyName',
+        },
+      ],
+      isAsync: true,
     });
 
     awaitProxyName.then(({ proxy: serviceNameProxy }) => {

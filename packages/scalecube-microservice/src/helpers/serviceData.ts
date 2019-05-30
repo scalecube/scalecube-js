@@ -1,6 +1,7 @@
-import { Qualifier } from './types';
+import { Qualifier, ServiceRegistry } from './types';
 import { Endpoint, ServiceDefinition, ServiceReference } from '../api';
 import { Observable } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
 
@@ -30,9 +31,28 @@ const confirmMethods = (endPoints: Endpoint[], serviceDefinition: ServiceDefinit
   });
 };
 
+const confirmInRegistry = (
+  serviceDefinition: ServiceDefinition,
+  unConfirmedMethods: string[],
+  serviceRegistry: ServiceRegistry
+) => {
+  unConfirmedMethods.forEach((methodName) => {
+    const qualifier = getQualifier({ serviceName: serviceDefinition.serviceName, methodName });
+    if (serviceRegistry.lookUp({ qualifier }).length > 0) {
+      const removeAt = unConfirmedMethods.indexOf(methodName);
+      if (removeAt !== -1) {
+        unConfirmedMethods.splice(removeAt, 1);
+      }
+    }
+  });
+};
+
 export const isServiceAvailableInRegistry = (
   endPointsToPublishInCluster: Endpoint[],
-  discovery: { discoveredItems$: () => Observable<any> }
+  serviceRegistry: ServiceRegistry,
+  discovery: {
+    discoveredItems$: () => Observable<any>;
+  }
 ) => {
   return (serviceDefinition: ServiceDefinition): Promise<boolean> => {
     const unConfirmedMethods = Object.keys(serviceDefinition.methods);
@@ -43,13 +63,25 @@ export const isServiceAvailableInRegistry = (
         resolve(true);
       }
 
-      discovery.discoveredItems$().subscribe((discoveryEndpoints: any[]) => {
-        confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
+      confirmInRegistry(serviceDefinition, unConfirmedMethods, serviceRegistry);
+      if (unConfirmedMethods.length === 0) {
+        resolve(true);
+      }
 
-        if (unConfirmedMethods.length === 0) {
-          resolve(true);
-        }
-      });
+      discovery
+        .discoveredItems$()
+        .pipe(
+          takeWhile((discoveryEndpoints: any[]) => {
+            confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
+
+            if (unConfirmedMethods.length === 0) {
+              resolve(true);
+            }
+
+            return unConfirmedMethods.length > 0;
+          })
+        )
+        .subscribe();
     });
   };
 };

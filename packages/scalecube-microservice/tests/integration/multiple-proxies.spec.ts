@@ -84,16 +84,56 @@ describe(`
                      | proxy          | method                  |
                      | service1Proxy  | hello : requestResponse |
                      | service2Proxy  | greet$ : requestStream  |
-           And       The methods of the service will be available to use from the proxy
+           And       The proxy will resolve only when all the methods of the service will be available
   `, async () => {
         expect.assertions(3);
-        const { service1Proxy, service2Proxy } = sender.requestProxies({
-          service1Proxy: service1Definition,
-          service2Proxy: service2Definition,
+        const { service1Proxy, service2Proxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: service1Definition,
+              proxyName: 'service1Proxy',
+            },
+            {
+              serviceDefinition: service2Definition,
+              proxyName: 'service2Proxy',
+            },
+          ],
+          isAsync: true,
         });
 
         const { proxy: proxy1 }: { proxy: { hello: (data: any) => Promise<any> } } = await service1Proxy;
         const { proxy: proxy2 }: { proxy: { greet$: (...arr: any[]) => Observable<any> } } = await service2Proxy;
+
+        expect(proxy1.hello).toBeDefined();
+        expect(proxy2.greet$).toBeDefined();
+
+        return expect(proxy1.hello(defaultUser)).resolves.toBe(`Hello ${defaultUser}`);
+      });
+
+      test(`
+           Scenario: Creating multiple proxies from the same microservice instance
+           Given     microservice instance and valid serviceDefinitions
+           When      requesting a Proxies from the microservice
+           Then      a map of proxies by proxyName will be created
+                     | proxy          | method                  |
+                     | service1Proxy  | hello : requestResponse |
+                     | service2Proxy  | greet$ : requestStream  |
+           And       The proxy will resolve immediately
+  `, () => {
+        expect.assertions(3);
+        const { service1Proxy: proxy1, service2Proxy: proxy2 } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: service1Definition,
+              proxyName: 'service1Proxy',
+            },
+            {
+              serviceDefinition: service2Definition,
+              proxyName: 'service2Proxy',
+            },
+          ],
+          isAsync: false,
+        });
 
         expect(proxy1.hello).toBeDefined();
         expect(proxy2.greet$).toBeDefined();
@@ -113,9 +153,19 @@ describe(`
            
   `, async () => {
         expect.assertions(2);
-        const { service1Proxy, service2Proxy } = sender.requestProxies({
-          service1Proxy: service1Definition,
-          service2Proxy: { serviceName: {} },
+
+        const { service1Proxy, service2Proxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: service1Definition,
+              proxyName: 'service1Proxy',
+            },
+            {
+              serviceDefinition: { serviceName: {} },
+              proxyName: 'service2Proxy',
+            },
+          ],
+          isAsync: true,
         });
 
         const { proxy: proxy1 }: { proxy: { hello: (data: any) => Promise<any> } } = await service1Proxy;
@@ -123,6 +173,37 @@ describe(`
         expect(proxy1.hello).toBeDefined();
 
         return expect(service2Proxy).rejects.toMatchObject(new Error(getServiceNameInvalid({})));
+      });
+
+      test(`
+           Scenario: creating multiple proxies 
+           But       one of the serviceDefinition is invalid
+           Given     microservice instance and serviceDefinitions
+           When      requesting a Proxies from the microservice
+           Then      a map of proxies by proxyName will be created
+                     | proxy          | method                  | valid
+                     | service1Proxy  | hello : requestResponse | yes
+                     | service2Proxy  | greet$ : requestStream  | no
+           
+  `, () => {
+        expect.assertions(2);
+
+        const { service1Proxy: proxy1, service2Proxy } = sender.createProxies({
+          proxies: [
+            {
+              serviceDefinition: service1Definition,
+              proxyName: 'service1Proxy',
+            },
+            {
+              serviceDefinition: { serviceName: {} },
+              proxyName: 'service2Proxy',
+            },
+          ],
+          isAsync: false,
+        });
+
+        expect(proxy1.hello).toBeDefined();
+        expect(service2Proxy).toMatchObject(new Error(getServiceNameInvalid({})));
       });
     }
   );
