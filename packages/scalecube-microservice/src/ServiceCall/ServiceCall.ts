@@ -1,13 +1,8 @@
 import { Observable } from 'rxjs';
 import { ServiceCall, CreateServiceCallOptions, ServiceCallResponse, ServiceCallOptions } from '../helpers/types';
-import { isObject, isString, throwErrorFromServiceCall } from '../helpers/utils';
+import { throwErrorFromServiceCall } from '../helpers/utils';
 import { validateMessage } from '../helpers/validation';
-import {
-  MESSAGE_NOT_PROVIDED,
-  ASYNC_MODEL_TYPES,
-  WRONG_DATA_FORMAT_IN_MESSAGE,
-  QUALIFIER_IS_NOT_STRING,
-} from '../helpers/constants';
+import { ASYNC_MODEL_TYPES } from '..';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { take } from 'rxjs/operators';

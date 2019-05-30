@@ -117,7 +117,7 @@ describe('Test the creation of Microservice', () => {
     }
   });
   // @ts-ignore
-  test.each([[], {}, false, true, 10, null, Symbol()])(
+  test.each(['', [], {}, false, true, 10, null, Symbol()])(
     `
      Scenario: serviceDefinition with invalid 'serviceName' value
         Given invalid 'serviceName' value
@@ -125,12 +125,13 @@ describe('Test the creation of Microservice', () => {
           And   serviceDefinition has invalid 'serviceName' values
 
                 |definition      | value
+                |empty string	   | []
                 |array	         | []
                 |object	         | {}
-                |boolean	 | false
-                |boolean	 | true
+                |boolean	       | false
+                |boolean	       | true
                 |number	         | 10
-                |null	         | null
+                |null	           | null
                 |symbol	         | Symbol()
 
         Then    invalid service error will occur
@@ -477,7 +478,7 @@ describe('Test the creation of Microservice', () => {
       expect(() => Microservices.create(microserviceOptions)).not.toThrow();
     }
   );
-  test.each([[], {}, false, true, 10, null, Symbol(), new class {}()])(
+  test.each(['', [], {}, false, true, 10, null, Symbol(), new class {}()])(
     `
      Scenario: microservise option  with invalid seedAddress value
         Given   a 'microserviceOptions'
@@ -486,10 +487,10 @@ describe('Test the creation of Microservice', () => {
                 |definition      | value
                 |array	         | []
                 |object	         | {}
-                |boolean	 | false
-                |boolean	 | true
+                |boolean	       | false
+                |boolean	       | true
                 |number	         | 10
-                |null	         | null
+                |null	           | null
                 |symbol	         | Symbol()
                 |new class       | new class{}
 

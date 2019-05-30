@@ -11,7 +11,6 @@ import {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
   SERVICE_NAME_NOT_PROVIDED,
-  getMethodsAreNotDefinedProperly,
   getIncorrectMethodValueError,
   getServiceNameInvalid,
 } from '../../../src/helpers/constants';
@@ -40,21 +39,22 @@ describe('validation test for create proxy from microservice', () => {
     }
   });
   // @ts-ignore
-  test.each([[], {}, true, false, 10, null, Symbol()])(
+  test.each(['', [], {}, true, false, 10, null, Symbol()])(
     `
     Scenario: serviceDefinition with invalid 'serviceName' value
     Given     a 'serviceName'
       And     a microservice instance
     When      creating a serviceDefinition with the 'serviceName'
-              | type       | 'serviceName' |
-              | array	     | []            |
-              | object	   | {}            |
-              | boolean	   | true          |
-              | boolean	   | false         |
-              | number	   | 10            |
-              | null	     | null          |
-              | undefined	 | undefined     |
-              | symbol	   | Symbol()      |
+              | type         | 'serviceName' |
+              | empty string | ''            |
+              | array	       | []            |
+              | object	     | {}            |
+              | boolean	     | true          |
+              | boolean	     | false         |
+              | number	     | 10            |
+              | null	       | null          |
+              | undefined	   | undefined     |
+              | symbol	     | Symbol()      |
     And       creating a proxy from the microservice with the serviceDefinition
     Then      exception will occur.`,
     (serviceName) => {

@@ -173,19 +173,20 @@ describe('validation test for create proxy from microservice', () => {
     );
   });
   // @ts-ignore
-  describe.each([[], 10, {}, null, Symbol(), true, false])(
+  describe.each(['', [], 10, {}, null, Symbol(), true, false])(
     `
       Scenario: serviceCall invalid message - qualifier is not string
       Given     invalid message 
-                | type      | value     |
-                | array     | []        |
-                | number    | 10        |
-                | null      | null      |
-                | object    | {}        |
-                | undefined | undefined |
-                | symbol    | Symbol()  |
-                | boolean   | true      |
-                | boolean   | false     |
+                | type         | value     |
+                | empty string | ''        |
+                | array        | []        |
+                | number       | 10        |
+                | null         | null      |
+                | object       | {}        |
+                | undefined    | undefined |
+                | symbol       | Symbol()  |
+                | boolean      | true      |
+                | boolean      | false     |
       `,
     (qualifier) => {
       const message = {

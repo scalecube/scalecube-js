@@ -14,7 +14,7 @@ export const SERVICES_IS_NOT_ARRAY = 'services is not array';
 export const SERVICE_IS_NOT_OBJECT = 'service is not object';
 export const INVALID_METHODS = 'service definition methods should be non empty object';
 export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'microservice options is not object';
-export const QUALIFIER_IS_NOT_STRING = 'qualifier not of type string';
+export const QUALIFIER_IS_NOT_STRING = 'qualifier should be none empty string';
 export const SEED_ADDRESS_IS_NOT_STRING = 'seed address should be non empty string';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
@@ -36,7 +36,7 @@ export const getInvalidMethodReferenceError = (qualifier: string) =>
 export const getMethodsAreNotDefinedProperly = (serviceName: string, methods: string[]) =>
   `All of the following methods in ${serviceName} are not defined properly: ${methods.concat(', ')}`;
 export const getServiceNameInvalid = (serviceName: any) =>
-  `serviceName is not valid, must be type string but received type ${typeof serviceName}`;
+  `serviceName is not valid, must be none empty string but received type ${typeof serviceName}`;
 export const getServiceReferenceNotProvidedError = (serviceName: string) => `${serviceName} reference is not provided`;
 export const getInvalidServiceReferenceError = (serviceName: string) =>
   `${serviceName} reference expected to be an object`;
