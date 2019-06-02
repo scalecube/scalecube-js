@@ -1,6 +1,6 @@
 import { CreateProxiesOptions, ProxiesMap, ProxiesOptions, Router, ServiceDefinition } from '../api';
 import { MicroserviceContext } from '../helpers/types';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '../helpers/validation';
 import { getProxy } from './Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
@@ -43,6 +43,10 @@ export const createProxies = ({
 
   return proxies.reduce((proxiesMap: ProxiesMap, proxyOption: ProxiesOptions) => {
     const { proxyName, serviceDefinition } = proxyOption;
+
+    if (proxiesMap[proxyName]) {
+      throw new Error(DUPLICATE_PROXY_NAME);
+    }
 
     if (isAsync) {
       proxiesMap[proxyName] = new Promise((resolve, reject) => {

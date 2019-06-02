@@ -5,48 +5,48 @@ import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfi
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
 
-// @ts-ignore
-if (!global.isNodeEvn) {
-  applyPostMessagePolyfill();
-  applyMessageChannelPolyfill();
-}
-
-const service1Definition = {
-  serviceName: 'service1',
-  methods: {
-    hello: {
-      asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-    },
-  },
-};
-const service1: Api.Service = {
-  definition: service1Definition,
-  reference: { hello },
-};
-
-const service2Definition = {
-  serviceName: 'service2',
-  methods: {
-    greet$: {
-      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-    },
-  },
-};
-
-const service2: Api.Service = {
-  definition: service2Definition,
-  reference: { greet$ },
-};
-
-const defaultUser = 'Me';
-
 describe(`
-     Background: Resolve requestProxies ONLY when the service available in the registry
+     Background: Resolve createProxies ONLY when the service available in the registry
      Given two valid services:  & service2
                      | service   | definition           | method                  |
                      | service1  | service1Definition   | greet : requestResponse |
                      | service2  | service2Definition   | hello : requestStream   |
      `, () => {
+  // @ts-ignore
+  if (!global.isNodeEvn) {
+    applyPostMessagePolyfill();
+    applyMessageChannelPolyfill();
+  }
+
+  const service1Definition = {
+    serviceName: 'service1',
+    methods: {
+      hello: {
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+      },
+    },
+  };
+  const service1: Api.Service = {
+    definition: service1Definition,
+    reference: { hello },
+  };
+
+  const service2Definition = {
+    serviceName: 'service2',
+    methods: {
+      greet$: {
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      },
+    },
+  };
+
+  const service2: Api.Service = {
+    definition: service2Definition,
+    reference: { greet$ },
+  };
+
+  const defaultUser = 'Me';
+
   const microserviceWithServices = Microservices.create({ services: [service1, service2] });
   const microserviceWithoutSerrvices = Microservices.create({});
   describe.each([

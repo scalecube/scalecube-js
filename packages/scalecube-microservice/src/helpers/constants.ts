@@ -16,6 +16,7 @@ export const INVALID_METHODS = 'service definition methods should be non empty o
 export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'microservice options is not object';
 export const QUALIFIER_IS_NOT_STRING = 'qualifier should be none empty string';
 export const SEED_ADDRESS_IS_NOT_STRING = 'seed address should be non empty string';
+export const DUPLICATE_PROXY_NAME = 'When createProxies, proxyName must be unique';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `service method '${methodName}' missing in the serviceDefinition`;

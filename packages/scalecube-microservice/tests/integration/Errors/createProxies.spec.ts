@@ -13,7 +13,9 @@ import {
   SERVICE_NAME_NOT_PROVIDED,
   getIncorrectMethodValueError,
   getServiceNameInvalid,
+  DUPLICATE_PROXY_NAME,
 } from '../../../src/helpers/constants';
+import { ProxiesOptions } from '../../../src/api';
 
 describe('validation test for create proxy from microservice', () => {
   const ms = Microservices.create({});
@@ -195,4 +197,37 @@ describe('validation test for create proxy from microservice', () => {
       return expect(awaitProxy).rejects.toMatchObject(new Error(getIncorrectMethodValueError('service/hello')));
     }
   );
+
+  test(`
+    Scenario: validation check for duplication of proxyName 
+    Given     a microservice 
+    And       2 ProxiesOptions have same proxyName
+              |proxy	| proxyName	  | serviceDefinition
+              |proxy1 |	'proxyName'	| greetingsServiceDefinition
+              |proxy2 |	'proxyName'	| helloServiceDefinition
+    When      createProxies with both ProxiesOptions
+    Then      error will be thrown
+    And       proxiesMap won't be created
+`, () => {
+    expect.assertions(1);
+
+    const proxiesOptions1: ProxiesOptions = {
+      proxyName: 'proxyName',
+      serviceDefinition: { serviceName: 'valid1', methods: {} },
+    };
+
+    const proxiesOptions2: ProxiesOptions = {
+      proxyName: 'proxyName',
+      serviceDefinition: { serviceName: 'valid2', methods: {} },
+    };
+
+    try {
+      ms.createProxies({
+        proxies: [proxiesOptions1, proxiesOptions2],
+        isAsync: true,
+      });
+    } catch (e) {
+      expect(e.message).toMatch(DUPLICATE_PROXY_NAME);
+    }
+  });
 });
