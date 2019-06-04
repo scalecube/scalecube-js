@@ -16,6 +16,7 @@ import {
   DUPLICATE_PROXY_NAME,
 } from '../../../src/helpers/constants';
 import { ProxiesOptions } from '../../../src/api';
+import { greetingServiceDefinition } from '../../mocks/GreetingService';
 
 describe('validation test for create proxy from microservice', () => {
   const ms = Microservices.create({});
@@ -60,7 +61,6 @@ describe('validation test for create proxy from microservice', () => {
               | boolean	   | false         |
               | number	   | 10            |
               | null	     | null          |
-              | undefined	 | undefined     |
               | symbol	   | Symbol()      |
     And       creating a proxy from the microservice with the serviceDefinition
     Then      exception will occur.`,
@@ -228,6 +228,40 @@ describe('validation test for create proxy from microservice', () => {
       });
     } catch (e) {
       expect(e.message).toMatch(DUPLICATE_PROXY_NAME);
+    }
+  });
+
+  test(`
+           Scenario: fail when  trying to create multiple proxies [isAsync: false,]
+           And       one of the serviceDefinition is invalid
+                     | proxy          | method                  | valid
+                     | service1Proxy  | hello : requestResponse | yes
+                     | service2Proxy  | greet$ : requestStream  | no
+           Given     microservice instance and serviceDefinitions
+           When      requesting a Proxies from the microservice
+           Then      a map of proxies by proxyName won't be created
+           And       error will be thrown  
+                   
+           
+  `, () => {
+    expect.assertions(1);
+    try {
+      ms.createProxies({
+        proxies: [
+          {
+            serviceDefinition: greetingServiceDefinition,
+            proxyName: 'service1Proxy',
+          },
+          {
+            // @ts-ignore
+            serviceDefinition: { serviceName: {} },
+            proxyName: 'service2Proxy',
+          },
+        ],
+        isAsync: false,
+      });
+    } catch (e) {
+      expect(e.message).toMatch(getServiceNameInvalid({}));
     }
   });
 });

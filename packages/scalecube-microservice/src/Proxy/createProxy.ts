@@ -58,11 +58,7 @@ export const createProxies = ({
         }
       });
     } else {
-      try {
-        proxiesMap[proxyName] = createProxy({ serviceDefinition, router, microserviceContext });
-      } catch (e) {
-        proxiesMap[proxyName] = e;
-      }
+      proxiesMap[proxyName] = createProxy({ serviceDefinition, router, microserviceContext });
     }
 
     return proxiesMap;

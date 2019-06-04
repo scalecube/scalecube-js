@@ -142,7 +142,7 @@ describe(`
       });
 
       test(`
-           Scenario: creating multiple proxies 
+           Scenario: creating multiple proxies [isAsync: true,]
            But       one of the serviceDefinition is invalid
            Given     microservice instance and serviceDefinitions
            When      requesting a Proxies from the microservice
@@ -173,37 +173,6 @@ describe(`
         expect(proxy1.hello).toBeDefined();
 
         return expect(service2Proxy).rejects.toMatchObject(new Error(getServiceNameInvalid({})));
-      });
-
-      test(`
-           Scenario: creating multiple proxies 
-           But       one of the serviceDefinition is invalid
-           Given     microservice instance and serviceDefinitions
-           When      requesting a Proxies from the microservice
-           Then      a map of proxies by proxyName will be created
-                     | proxy          | method                  | valid
-                     | service1Proxy  | hello : requestResponse | yes
-                     | service2Proxy  | greet$ : requestStream  | no
-           
-  `, () => {
-        expect.assertions(2);
-
-        const { service1Proxy: proxy1, service2Proxy } = sender.createProxies({
-          proxies: [
-            {
-              serviceDefinition: service1Definition,
-              proxyName: 'service1Proxy',
-            },
-            {
-              serviceDefinition: { serviceName: {} },
-              proxyName: 'service2Proxy',
-            },
-          ],
-          isAsync: false,
-        });
-
-        expect(proxy1.hello).toBeDefined();
-        expect(service2Proxy).toMatchObject(new Error(getServiceNameInvalid({})));
       });
     }
   );
