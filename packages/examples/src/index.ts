@@ -9,9 +9,20 @@ const greetingService: Api.Service = {
 };
 
 const ms = Microservices.create({ services: [greetingService] });
-const greetingServiceProxy = ms.createProxy({ serviceDefinition: greetingServiceDefinition });
-greetingServiceProxy.hello('User').then((result: string) => {
-  console.info('result from greeting service', result);
+const { awaitProxy } = ms.createProxies({
+  proxies: [
+    {
+      serviceDefinition: greetingServiceDefinition,
+      proxyName: 'awaitProxy',
+    },
+  ],
+  isAsync: true,
+});
+
+awaitProxy.then(({ greetingServiceProxy }: { greetingServiceProxy: GreetingService }) => {
+  greetingServiceProxy.hello('User').then((result: string) => {
+    console.info('result from greeting service', result);
+  });
 });
 
 console.info('Microservices from @scalecube/scalecube-microservice', Microservices);

@@ -3,14 +3,13 @@ import { GetProxyOptions } from '../helpers/types';
 import { getQualifier } from '../helpers/serviceData';
 import { getServiceMethodIsMissingError } from '../helpers/constants';
 
-export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) => {
-  return new Proxy(
+export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) =>
+  new Proxy(
     {},
     {
       get: preServiceCall({ serviceDefinition, serviceCall }),
     }
   );
-};
 
 const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => (target: object, prop: string) => {
   if (!serviceDefinition.methods[prop]) {

@@ -1,7 +1,7 @@
-import { ServiceDefinition, Router } from '.';
+import { Router, ServiceDefinition } from '.';
 
 /**
- * The options that are used for the creation of the proxy for the specific microservice container
+ * The options that are used for the creation of the proxy for the specific microservice container [deprecated]
  */
 export default interface ProxyOptions {
   /**

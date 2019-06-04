@@ -6,7 +6,7 @@ import {
   greet$,
 } from '../mocks/GreetingService';
 import { Microservices } from '../../src';
-import { Message, ServiceReference } from '../../src/api';
+import { Message } from '../../src/api';
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
 
@@ -96,7 +96,7 @@ describe(`Test positive-scenarios of usage
           }
 
           test(`
-          Scenario: Testing proxy for a successful response.
+          Scenario: Testing proxy[createProxy] for a successful response.
             When  invoking requestResponse's method with valid data
             Then  successful RequestResponse is received
               `, () => {
@@ -105,7 +105,7 @@ describe(`Test positive-scenarios of usage
           });
 
           test(`
-          Scenario: Testing proxy for a successful subscription (array).
+          Scenario: Testing proxy[createProxy] for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
             `, (done) => {
@@ -113,6 +113,46 @@ describe(`Test positive-scenarios of usage
             proxy.greet$([defaultUser]).subscribe((response: any) => {
               expect(response).toEqual(`greetings ${defaultUser}`);
               done();
+            });
+          });
+
+          test(`
+          Scenario: Testing proxy[createProxies] for a successful response.
+            When  invoking requestResponse's method with valid data
+            Then  successful RequestResponse is received
+              `, async () => {
+            const { awaitProxy } = sender.createProxies({
+              proxies: [
+                {
+                  serviceDefinition: receiverServiceDefinition,
+                  proxyName: 'awaitProxy',
+                },
+              ],
+              isAsync: true,
+            });
+            const { proxy } = await awaitProxy;
+            return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
+          });
+
+          test(`
+          Scenario: Testing proxy[createProxies] for a successful subscription (array).
+            When  subscribe to RequestStream's method with valid data/message
+            Then  successful RequestStream is emitted
+            `, (done) => {
+            const { awaitProxy } = sender.createProxies({
+              proxies: [
+                {
+                  serviceDefinition: receiverServiceDefinition,
+                  proxyName: 'awaitProxy',
+                },
+              ],
+              isAsync: true,
+            });
+            awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
+              proxy.greet$([defaultUser]).subscribe((response: any) => {
+                expect(response).toEqual(`greetings ${defaultUser}`);
+                done();
+              });
             });
           });
 

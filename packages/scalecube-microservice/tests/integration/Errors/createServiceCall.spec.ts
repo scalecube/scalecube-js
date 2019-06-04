@@ -38,6 +38,7 @@ describe('validation test for create proxy from microservice', () => {
     );
   });
 
+  // @ts-ignore
   describe.each([[], 'test', 10, null, Symbol(), true, false])(
     `
       Scenario: serviceCall invalid message

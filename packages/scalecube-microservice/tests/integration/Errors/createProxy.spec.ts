@@ -94,9 +94,11 @@ describe('validation test for create proxy from microservice', () => {
       expect(e.message).toBe(DEFINITION_MISSING_METHODS);
     }
   });
+
+  // @ts-ignore
   test.each([[], 'methods', true, false, 10, null, Symbol()])(
     `
-    Scenario: serviceDefinition with invalid 'methods' value  
+    Scenario: serviceDefinition with invalid 'methods' value
     Given     a 'methods'
       And     a microservice instance
     When      creating a serviceDefinition with the 'methods'
@@ -130,7 +132,7 @@ describe('validation test for create proxy from microservice', () => {
   // @ts-ignore
   test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new class {}()])(
     `
-    Scenario: serviceDefinition with invalid 'asyncModel' value  
+    Scenario: serviceDefinition with invalid 'asyncModel' value
     Given     a 'asyncModel'
       And     a microservice instance
     When      creating a serviceDefinition with the 'asyncModel'

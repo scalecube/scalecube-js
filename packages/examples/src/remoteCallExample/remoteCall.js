@@ -38,37 +38,58 @@ window.addEventListener('DOMContentLoaded', (event) => {
       },
     };
 
-    Microservices.create({
-      services: [
-        {
-          definition: remoteServiceDefinition,
-          reference: remoteService,
-        },
-      ],
-    });
+    /**
+     * Service will be available only after 2s
+     */
+    setTimeout(() => {
+      console.log('provision remote microservice after 2s');
+      Microservices.create({
+        services: [
+          {
+            definition: remoteServiceDefinition,
+            reference: remoteService,
+          },
+        ],
+      });
+    }, 2000);
+
+    var placeHolder = document.getElementById('placeHolder');
+    var waitMessage = document.getElementById('waitMessage');
+
+    waitMessage.innerText = 'Wait for service ~ 2s';
 
     var localMS = Microservices.create({ services: [] });
-    var proxy = localMS.createProxy({
-      serviceDefinition: remoteServiceDefinition,
+
+    var { awaitProxyName } = localMS.createProxies({
+      proxies: [
+        {
+          serviceDefinition: remoteServiceDefinition,
+          proxyName: 'awaitProxyName',
+        },
+      ],
+      isAsync: true,
     });
 
-    proxy
-      .hello('ME!!!')
-      .then((response) => {
-        createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
-      })
-      .catch(console.log);
+    awaitProxyName.then(({ proxy: serviceNameProxy }) => {
+      console.log('remote service is available!');
+      serviceNameProxy
+        .hello('ME!!!')
+        .then((response) => {
+          createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
+        })
+        .catch(console.log);
 
-    proxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
-      createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
+      serviceNameProxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
+        createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
+      });
     });
-
-    var root = document.getElementById('root');
 
     function createLineHTML({ response, type }) {
+      waitMessage.innerText = 'Service is available:';
+
       var responseSpan = document.createElement('div');
       responseSpan.innerText = `${type}: ${response}`;
-      root.appendChild(responseSpan);
+      placeHolder.appendChild(responseSpan);
     }
   })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs);
 });
