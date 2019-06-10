@@ -1,0 +1,48 @@
+{
+  "name": "@scalecube/transport",
+  "version": "0.0.1",
+  "private": false,
+  "main": "lib/index.js",
+  "unpkg": "dist-min/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "dist-min",
+    "dist",
+    "lib",
+    "es"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist && rimraf dist-min",
+    "build": "rimraf .cache && npm-run-all build:commonJS build:es build:umd build:umd-min",
+    "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
+    "build:es": "rimraf es && tsc --module esnext --target es5 --outDir es",
+    "build:umd": "rimraf dist && parcel build src/index.ts --no-minify --experimental-scope-hoisting --out-dir dist dist --global sc",
+    "build:umd-min": "rimraf dist-min && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist-min dist --global transportProvider",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": "jest --config jest.config.js",
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "10.1.4",
+    "jest": "^24.6.0",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "rsocket-core": "^0.0.10",
+    "rsocket-events-client": "^0.0.14",
+    "rsocket-events-server": "^0.0.14",
+    "rsocket-flowable": "^0.0.10",
+    "rxjs": "^6.4.0"
+  }
+}
