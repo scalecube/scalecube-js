@@ -9,6 +9,7 @@ import RSocketTcpClient from 'rsocket-tcp-client';
 import WebSocket from 'ws';
 
 import { NOT_VALID_PROTOCOL } from '../helpers/constants';
+import { validateAddress } from '../helpers/validation';
 
 export const transportClientProviderCallback = ({
   address,
@@ -17,6 +18,8 @@ export const transportClientProviderCallback = ({
   address: Address;
   remoteTransportClientProviderOptions: any;
 }) => {
+  validateAddress(address);
+
   const { protocol, host, path, port } = address;
   switch (protocol.toLowerCase()) {
     case 'pm':

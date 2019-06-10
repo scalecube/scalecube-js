@@ -8,6 +8,7 @@ import RSocketTCPServer from 'rsocket-tcp-server';
 import { TransportServer } from 'rsocket-core';
 import { Address } from '../api';
 import { NOT_VALID_PROTOCOL } from '../helpers/constants';
+import { validateAddress } from '../helpers/validation';
 
 export const transportServerProviderCallback = ({
   address,
@@ -16,6 +17,8 @@ export const transportServerProviderCallback = ({
   address: Address;
   remoteTransportServerProviderOptions: any;
 }): TransportServer => {
+  validateAddress(address);
+
   const { protocol, host, path, port } = address;
   switch (protocol.toLowerCase()) {
     case 'pm':

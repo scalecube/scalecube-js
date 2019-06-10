@@ -2,20 +2,17 @@
   "name": "@scalecube/transport",
   "version": "0.0.1",
   "private": false,
-  "main": "lib/index.js",
-  "unpkg": "dist-min/index.js",
-  "module": "es/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "files": [
-    "lib",
-    "es"
+    "dist"
   ],
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist && rimraf dist-min",
-    "build": "rimraf .cache && npm-run-all build:commonJS build:es",
-    "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
-    "build:es": "rimraf es && tsc --module esnext --target es5 --outDir es",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
+    "build": "yarn clean && yarn build-rollup",
+    "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest --config jest.config.js",
@@ -29,6 +26,8 @@
     "jest": "^24.6.0",
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-typescript2": "^0.21.1",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
@@ -38,10 +37,10 @@
     "rsocket-core": "^0.0.10",
     "rsocket-events-client": "^0.0.14",
     "rsocket-events-server": "^0.0.14",
-    "rsocket-websocket-client": "^0.0.10",
-    "rsocket-websocket-server": "^0.0.10",
     "rsocket-tcp-client": "^0.0.10",
     "rsocket-tcp-server": "^0.0.10",
+    "rsocket-websocket-client": "^0.0.10",
+    "rsocket-websocket-server": "^0.0.10",
     "ws": "^2.3.1"
   }
 }
