@@ -1,22 +1,59 @@
 import { Transport } from '../src';
 /* tslint:disable */
 
-const mockServerPM = jest.fn();
+const mockServer = jest.fn();
 jest.mock('rsocket-events-server', () => {
   return class RSocketEventsServer {
     constructor(data: any) {
-      mockServerPM(data);
+      mockServer(data);
     }
   };
 });
 
-const mockClientPM = jest.fn();
+const mockClient = jest.fn();
 jest.mock('rsocket-events-client', () => {
   return class RSocketEventsClient {
     constructor(...data: any) {
-      mockClientPM(data);
+      mockClient(data);
     }
   };
+});
+
+jest.mock('rsocket-websocket-server', () => {
+  return class RSocketEventsServer {
+    constructor(data: any) {
+      mockServer(data);
+    }
+  };
+});
+
+jest.mock('rsocket-websocket-client', () => {
+  return class RSocketEventsClient {
+    constructor(...data: any) {
+      mockClient(data);
+    }
+  };
+});
+
+jest.mock('rsocket-tcp-server', () => {
+  return class RSocketEventsServer {
+    constructor(data: any) {
+      mockServer(data);
+    }
+  };
+});
+
+jest.mock('rsocket-tcp-client', () => {
+  return class RSocketEventsClient {
+    constructor(...data: any) {
+      mockClient(data);
+    }
+  };
+});
+
+beforeEach(() => {
+  mockClient.mockClear();
+  mockServer.mockClear();
 });
 
 describe(`
@@ -37,14 +74,14 @@ describe(`
 
   describe.each([
     {
-      mock: mockServerPM,
+      mock: mockServer,
       providerCallback: Transport.remoteTransportServerProvider.transportServerProviderCallback,
       options: {
         remoteTransportServerProviderOptions: null,
       },
     },
     {
-      mock: mockClientPM,
+      mock: mockClient,
       providerCallback: Transport.remoteTransportClientProvider.transportClientProviderCallback,
       options: {
         remoteTransportClientProviderOptions: null,
@@ -58,7 +95,7 @@ describe(`
   
   `,
     ({ mock, providerCallback, options }) => {
-      test.each(['pm' /*, 'ws', 'http', 'https'*/])(
+      test.each(['pm', 'ws', 'tcp'])(
         `
   Scenario: create RSocketServerProvider | RSocketClientProvider
   Given     protocol

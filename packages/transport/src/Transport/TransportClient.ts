@@ -2,8 +2,13 @@ import { Address } from '../api';
 // @ts-ignore
 import RSocketEventsClient from 'rsocket-events-client';
 // @ts-ignore
-import { RSocketClient } from 'rsocket-core';
-import { NOT_IMPLEMENTED_YET, NOT_VALID_PROTOCOL } from '../helpers/constants';
+import RSocketWebSocketClient from 'rsocket-websocket-client';
+// @ts-ignore
+import RSocketTcpClient from 'rsocket-tcp-client';
+// @ts-ignore
+import WebSocket from 'ws';
+
+import { NOT_VALID_PROTOCOL } from '../helpers/constants';
 
 export const transportClientProviderCallback = ({
   address,
@@ -13,16 +18,18 @@ export const transportClientProviderCallback = ({
   remoteTransportClientProviderOptions: any;
 }) => {
   const { protocol, host, path, port } = address;
-  switch (protocol) {
+  switch (protocol.toLowerCase()) {
     case 'pm':
       return new RSocketEventsClient({ address: `${protocol}://${host}:${port}/${path}` });
     case 'ws':
-      // TODO: rsocket ws client
-      throw Error(NOT_IMPLEMENTED_YET);
-    case 'https':
-    case 'http':
-      // TODO rsocket tcp client
-      throw Error(NOT_IMPLEMENTED_YET);
+      return new RSocketWebSocketClient({
+        url: 'ws://' + address.host + ':' + address.port,
+        wsCreator: (url: string) => {
+          return new WebSocket(url);
+        },
+      });
+    case 'tcp':
+      return new RSocketTcpClient({ ...address });
     default:
       throw Error(NOT_VALID_PROTOCOL);
   }

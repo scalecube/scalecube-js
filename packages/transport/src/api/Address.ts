@@ -16,7 +16,7 @@ export default interface Address {
   /**
    * @property
    * rules for communication between server and client
-   * ws | pm | https| http
+   * ws | pm | tcp
    */
   protocol: string;
   /**
