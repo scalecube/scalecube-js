@@ -2547,6 +2547,7 @@ clone@^2.1.1:
 clones@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/clones/-/clones-1.2.0.tgz#b34c872045446a9f264ccceb7731bca05c529b71"
+  integrity sha512-FXDYw4TjR8wgPZYui2LeTqWh1BLpfQ8lB6upMtlpDF6WlOOxghmTTxWyngdKTgozqBgKnHbTVwTE+hOHqAykuQ==
 
 cmd-shim@^2.0.2:
   version "2.0.2"
@@ -8655,8 +8656,9 @@ safe-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
 safer-eval@^1.3.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/safer-eval/-/safer-eval-1.3.1.tgz#737ec26c6121b4115c97bd0c1da021eaaf4214e3"
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/safer-eval/-/safer-eval-1.3.3.tgz#0309e9fcc0609e66c1b599fd0d4772132b260ca8"
+  integrity sha512-j/qb0rtnwTp5V1D7nR0Ns/14HU8OiHPaoZNJhM+Lfmv1nbXZCXG9LHaVW157agEocdSVAeeRNddK/yuWfalzGQ==
   dependencies:
     clones "^1.2.0"
 
