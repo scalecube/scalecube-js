@@ -8,16 +8,32 @@ export const createDiscovery: CreateDiscovery = ({
   itemsToPublish,
   seedAddress,
 }: DiscoveryOptions): Discovery => {
+  if (!seedAddress) {
+    seedAddress = {
+      host: '',
+      port: 8080,
+      path: '',
+      protocol: 'pm',
+      fullAddress: 'defaultSeedAddress',
+    };
+  }
+
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
 
-  cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
+  if (address) {
+    cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
+  }
 
   return Object.freeze({
     destroy: () => {
-      cluster = leaveCluster({ cluster, address });
-      subjectNotifier && subjectNotifier.complete();
-      return Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
+      if (address && seedAddress) {
+        cluster = leaveCluster({ cluster, address });
+        subjectNotifier && subjectNotifier.complete();
+        return Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
+      } else {
+        return Promise.resolve('');
+      }
     },
     discoveredItems$: () => subjectNotifier.asObservable(),
   });
