@@ -11,7 +11,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
-    "build": "yarn clean && yarn build-rollup",
+    "build": "yarn clean &&  yarn && yarn build-rollup",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",

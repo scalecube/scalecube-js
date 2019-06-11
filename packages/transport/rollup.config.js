@@ -17,6 +17,7 @@ export default {
   plugins: [
     typescript({
       typescript: require('typescript'),
+      clean: true,
     }),
   ],
 };
