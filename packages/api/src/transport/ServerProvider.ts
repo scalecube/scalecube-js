@@ -1,4 +1,4 @@
-import { ServerFactory } from '.';
+import { ProviderFactory } from '.';
 
 /**
  * @interface ServerProvider
@@ -6,12 +6,12 @@ import { ServerFactory } from '.';
 export default interface ServerProvider {
   /**
    * @method
-   *
+   * Factory for creating RSocket server transport provider
    */
-  serverFactory: ServerFactory;
+  serverFactory: ProviderFactory;
   /**
    * @property
-   *
+   * Extra configuration to pass to the factory
    */
-  serverFactoryOptions?: any;
+  serverOptions?: any;
 }

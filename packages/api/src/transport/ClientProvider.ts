@@ -1,16 +1,16 @@
-import { ClientFactory } from '.';
+import { ProviderFactory } from '.';
 /**
  * @interface ClientProvider
  */
 export default interface ClientProvider {
   /**
    * @method
-   *
+   * Factory for creating RSocket client transport provider
    */
-  clientFactory: ClientFactory;
+  clientFactory: ProviderFactory;
   /**
    * @property
-   * C
+   * Extra configuration to pass to the factory
    */
-  clientFactoryOptions?: any;
+  factoryOptions?: any;
 }

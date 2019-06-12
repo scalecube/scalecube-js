@@ -1,10 +1,10 @@
 import { Address } from '.';
+
 /**
- *
+ * RSocket transport provider factory
  * DuplexConnection - https://github.com/rsocket/rsocket-js/blob/master/packages/rsocket-core/src/RSocketClient.js
  */
-// @ts-ignore
-export type ServerFactory = (options: { address: Address; serverFactoryOptions: null }) => DuplexConnection;
+export type ProviderFactory = (options: { address: Address; factoryOptions?: any }) => DuplexConnection;
 
 /**
  * import { DuplexConnection } from 'rsocket-common';

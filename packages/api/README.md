@@ -13,6 +13,3 @@ All interfaces that are shared between scalecube's different modules
 #### transport
 
 Transport's interface
-
-
-

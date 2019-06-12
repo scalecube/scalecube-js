@@ -1,7 +1,4 @@
 .cache
 node_modules
 
-lib/
-es/
-dist-min/
 dist/
