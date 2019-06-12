@@ -10,20 +10,27 @@ export const createDiscovery: CreateDiscovery = ({
 }: DiscoveryOptions): Discovery => {
   if (!seedAddress) {
     seedAddress = {
-      host: '',
+      host: 'defaultSeedAddress',
       port: 8080,
-      path: '',
+      path: 'path',
       protocol: 'pm',
-      fullAddress: 'defaultSeedAddress',
+      fullAddress: 'pm://defaultSeedAddress:8080/path',
     };
   }
 
+  if (!address) {
+    address = {
+      host: 'defaultAddress',
+      port: 8000,
+      path: 'path',
+      protocol: 'pm',
+      fullAddress: 'pm://defaultAddress:8000/path',
+    };
+  }
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
 
-  if (address) {
-    cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
-  }
+  cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
 
   return Object.freeze({
     destroy: () => {

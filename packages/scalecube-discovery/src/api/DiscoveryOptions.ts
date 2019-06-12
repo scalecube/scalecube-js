@@ -1,4 +1,4 @@
-import { Api as TransportAPI } from '@scalecube/transport';
+import { Address } from '@scalecube/api';
 import { Item } from '.';
 
 /**
@@ -10,7 +10,7 @@ export default interface DiscoveryOptions {
    * @property
    * A unique address of the Discovery.
    */
-  address?: TransportAPI.Address;
+  address?: Address;
   /**
    * @property
    * The data that the discovery need to share.
@@ -20,5 +20,5 @@ export default interface DiscoveryOptions {
    * @property
    * The unique address of the Cluster
    */
-  seedAddress?: TransportAPI.Address;
+  seedAddress?: Address;
 }

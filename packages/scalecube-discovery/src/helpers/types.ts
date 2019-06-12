@@ -1,6 +1,6 @@
 import { ReplaySubject } from 'rxjs';
 import { Item } from '../api';
-import { Api as TransportAPI } from '@scalecube/transport';
+import { Address } from '@scalecube/api';
 
 declare global {
   interface Window {
@@ -29,25 +29,25 @@ export interface ShareDataBetweenDiscoveries {
 }
 
 export interface DiscoveryEntity {
-  address: TransportAPI.Address;
+  address: Address;
   discoveredItems: Item[];
   subjectNotifier: ReplaySubject<Item[]>;
 }
 
 export interface GetCluster {
-  seedAddress: TransportAPI.Address;
+  seedAddress: Address;
 }
 
 export interface JoinCluster {
   cluster: Cluster;
-  address: TransportAPI.Address;
+  address: Address;
   itemsToPublish: Item[];
   subjectNotifier: ReplaySubject<Item[]>;
 }
 
 export interface LeaveCluster {
   cluster: Cluster;
-  address: TransportAPI.Address;
+  address: Address;
 }
 
 export interface Cluster {
