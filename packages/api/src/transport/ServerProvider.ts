@@ -13,5 +13,5 @@ export default interface ServerProvider {
    * @property
    * Extra configuration to pass to the factory
    */
-  serverOptions?: any;
+  factoryOptions?: any;
 }
