@@ -10,17 +10,16 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf dist",
     "build": "yarn build-rollup",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
-    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
+    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "rollup": "^1.14.6",
     "rollup-plugin-typescript2": "^0.21.1",
