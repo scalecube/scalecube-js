@@ -16,8 +16,7 @@
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest --config jest.config.js",
-    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
-    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Transport Browser' --hideGenerator --readme ./README.md"
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
@@ -30,7 +29,6 @@
     "rollup-plugin-typescript2": "^0.21.1",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
-    "typedoc": "^0.14.2",
     "typescript": "^3.2.4",
     "@scalecube/api": "^0.0.1"
   },

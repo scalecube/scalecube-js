@@ -16,7 +16,7 @@
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
-    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
+    "doc": "typedoc ./src --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
