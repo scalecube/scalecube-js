@@ -1,5 +1,5 @@
 import { expectWithFailNow } from '../helpers/utils';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
+import { getAddressCollusion, getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
 import createDiscovery from '../../src/index';
 import { Discovery } from '../../src/api';
 import { getScalecubeGlobal } from '../../src/helpers/utils';
@@ -207,5 +207,26 @@ describe('Discovery tests', () => {
     });
 
     return expect(discovery1.destroy()).resolves.toBe(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
+  });
+
+  test(`Scenario: address and seedAddress are the same
+  Given seed address
+    And address
+    And they are the same
+   When creating discovery
+   Then error will be thrown`, () => {
+    expect.assertions(1);
+
+    const address = getAddress(1);
+    const seedAddress = getAddress(1);
+    try {
+      createDiscovery({
+        address,
+        seedAddress,
+        itemsToPublish: [],
+      });
+    } catch (e) {
+      expect(e.message).toMatch(getAddressCollusion(address, seedAddress));
+    }
   });
 });

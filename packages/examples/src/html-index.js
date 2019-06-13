@@ -1,7 +1,7 @@
 /**
  * LocalCall example,
  * Adding services to a microservice and using it.
- * The follow example demonstrate a creaation of custom-element and consuming it with scalecube
+ * The follow example demonstrate a creation of custom-element and consuming it with scalecube
  *
  */
 

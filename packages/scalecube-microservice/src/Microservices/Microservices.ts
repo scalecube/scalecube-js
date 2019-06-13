@@ -29,7 +29,6 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       services: [],
       discovery: createDiscovery,
       transport: TransportBrowser,
-      seedAddress: getDefaultAddress(),
       ...options,
     };
     // TODO: add address, customTransport, customDiscovery  to the validation process

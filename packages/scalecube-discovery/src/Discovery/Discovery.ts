@@ -1,7 +1,8 @@
 import { ReplaySubject } from 'rxjs';
+import { Address } from '@scalecube/api';
 import { DiscoveryOptions, Discovery, Item, CreateDiscovery } from '../api';
 import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import { getAddressCollusion, getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
 
 export const createDiscovery: CreateDiscovery = ({
   address,
@@ -27,6 +28,9 @@ export const createDiscovery: CreateDiscovery = ({
       fullAddress: 'pm://defaultAddress:8000/path',
     };
   }
+
+  validateAddressCollusion(address, seedAddress);
+
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
 
@@ -44,4 +48,10 @@ export const createDiscovery: CreateDiscovery = ({
     },
     discoveredItems$: () => subjectNotifier.asObservable(),
   });
+};
+
+const validateAddressCollusion = (addressPort: Address, seedAddressPort: Address) => {
+  if (addressPort.fullAddress === seedAddressPort.fullAddress) {
+    throw new Error(getAddressCollusion(addressPort, seedAddressPort));
+  }
 };

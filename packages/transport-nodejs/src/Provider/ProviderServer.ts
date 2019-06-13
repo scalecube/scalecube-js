@@ -16,6 +16,7 @@ export const serverFactory: TransportApi.ProviderFactory = (options: { address: 
   const { protocol, host, path, port } = address;
   switch (protocol.toLowerCase()) {
     case 'ws':
+    case 'wss':
       return new RSocketWebSocketServer({ ...address });
     case 'tcp':
       return new RSocketTCPServer({ ...address });

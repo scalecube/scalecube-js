@@ -67,5 +67,5 @@ export const assertFunction = (val: any, msg = 'Expected to be a function') => {
 };
 
 export const assertNumber = (val: any, msg = 'Expected to be aa number') => {
-  assert(typeof val === 'number', msg);
+  assert(!isNaN(val), msg);
 };

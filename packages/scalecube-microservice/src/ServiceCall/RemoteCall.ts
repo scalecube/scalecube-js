@@ -10,7 +10,7 @@ import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
 import { RSocketClientSocket } from 'rsocket-core';
 // @ts-ignore
-import { ISubscription } from 'rsocket-api';
+import { ISubscription } from 'rsocket-types';
 
 export const remoteCall = ({
   router,
