@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/transport-nodejs",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -21,6 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
+    "@scalecube/api": "^0.0.2-alpha.0",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
@@ -28,8 +29,7 @@
     "rollup-plugin-typescript2": "^0.21.1",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.4",
-    "@scalecube/api": "^0.0.1"
+    "typescript": "^3.2.4"
   },
   "dependencies": {
     "rsocket-core": "^0.0.10",
