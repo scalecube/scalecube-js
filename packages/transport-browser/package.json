@@ -2,15 +2,16 @@
   "name": "@scalecube/transport-browser",
   "version": "0.0.1",
   "private": false,
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist"
+    "lib",
+    "es"
   ],
-  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf dist",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
     "build": "yarn build-rollup",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
@@ -23,8 +24,6 @@
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
-    "parcel-bundler": "^1.12.3",
-    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "rollup": "^1.14.6",
     "rollup-plugin-typescript2": "^0.21.1",
     "ts-jest": "^23.10.5",

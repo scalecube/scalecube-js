@@ -2,15 +2,14 @@
   "name": "@scalecube/api",
   "version": "0.0.1",
   "private": false,
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "lib/index.js",
   "files": [
-    "dist"
+    "lib"
   ],
-  "types": "dist/index.d.ts",
+  "types": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf dist",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
     "build": "yarn build-rollup",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
