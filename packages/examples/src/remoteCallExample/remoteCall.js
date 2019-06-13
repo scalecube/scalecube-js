@@ -1,5 +1,7 @@
 /**
- * Simple example of provisioning services from remote microservice by using RSocket transport
+ * RemoteCall example,
+ * adding services to one microservice but using those services from another microservice
+ * Simple example of provisioning services from remote microservice by using RSocketTransport
  *
  */
 
@@ -38,6 +40,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
       },
     };
 
+    var generateAddress = (port) => ({
+      host: 'defaultHostName',
+      port,
+      path: 'defaultPathName',
+      protocol: 'pm',
+      fullAddress: `pm://defaultHostName:${port}/path`,
+    });
     /**
      * Service will be available only after 2s
      */
@@ -50,6 +59,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
             reference: remoteService,
           },
         ],
+        seedAddress: generateAddress(8000),
+        address: generateAddress(1234),
       });
     }, 2000);
 
@@ -58,7 +69,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     waitMessage.innerText = 'Wait for service ~ 2s';
 
-    var localMS = Microservices.create({ services: [] });
+    var localMS = Microservices.create({ services: [], seedAddress: generateAddress(8000) });
 
     var { awaitProxyName } = localMS.createProxies({
       proxies: [

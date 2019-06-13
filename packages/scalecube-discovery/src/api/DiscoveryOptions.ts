@@ -1,3 +1,4 @@
+import { Address } from '@scalecube/api';
 import { Item } from '.';
 
 /**
@@ -9,7 +10,7 @@ export default interface DiscoveryOptions {
    * @property
    * A unique address of the Discovery.
    */
-  address: string;
+  address?: Address;
   /**
    * @property
    * The data that the discovery need to share.
@@ -19,5 +20,5 @@ export default interface DiscoveryOptions {
    * @property
    * The unique address of the Cluster
    */
-  seedAddress: string;
+  seedAddress?: Address;
 }

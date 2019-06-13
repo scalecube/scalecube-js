@@ -1,5 +1,4 @@
-// @ts-ignore
-import RSocketEventsServer from 'rsocket-events-server';
+import { TransportApi } from '@scalecube/api';
 // @ts-ignore
 import { RSocketServer } from 'rsocket-core';
 // @ts-ignore
@@ -8,8 +7,9 @@ import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingSe
 import { Microservices } from '../../../src';
 import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
 import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
-import { MicroserviceContext } from '../../../src/helpers/types';
+import { ServiceCall } from '../../../src/helpers/types';
 import { Observable } from 'rxjs';
+import { getDefaultAddress } from '../../../src/helpers/utils';
 
 const errorMessage = 'mockError';
 
@@ -19,16 +19,27 @@ const errorMessage = 'mockError';
  */
 jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
   return {
-    createServer: ({ address, microserviceContext }: { address: string; microserviceContext: MicroserviceContext }) => {
-      return new RSocketServer({
+    startServer: ({
+      address,
+      serviceCall,
+      transportServerProvider,
+    }: {
+      address: TransportApi.Address;
+      serviceCall: ServiceCall;
+      transportServerProvider: TransportApi.ServerProvider;
+    }) => {
+      const { factoryOptions, serverFactory } = transportServerProvider;
+      const server = new RSocketServer({
         getRequestHandler: (socket: any) => {
           return {
             requestResponse: () => Single.error(new Error(errorMessage)),
             requestStream: () => Flowable.error(new Error(errorMessage)),
           };
         },
-        transport: new RSocketEventsServer({ address }),
+        transport: serverFactory({ address, factoryOptions }),
       });
+
+      server.start();
     },
   };
 });
@@ -52,8 +63,10 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
         reference: { hello, greet$ },
       },
     ],
+    seedAddress: getDefaultAddress(8000),
+    address: getDefaultAddress(8005),
   });
-  const localMicroservice = Microservices.create({});
+  const localMicroservice = Microservices.create({ seedAddress: getDefaultAddress(8000) });
   const { awaitProxy } = localMicroservice.createProxies({
     proxies: [
       {

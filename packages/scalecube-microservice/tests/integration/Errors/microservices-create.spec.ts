@@ -21,6 +21,7 @@ import {
   getAsynModelNotProvidedError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
+  NOT_VALID_ADDRESS,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
@@ -481,7 +482,7 @@ describe('Test the creation of Microservice', () => {
   );
 
   // @ts-ignore
-  test.each(['', [], {}, false, true, 10, null, Symbol(), new class {}()])(
+  test.each(['', [], false, true, 10, null, Symbol()])(
     `
      Scenario: microservise option  with invalid seedAddress value
         Given   a 'microserviceOptions'
@@ -489,13 +490,12 @@ describe('Test the creation of Microservice', () => {
 
                 |definition      | value
                 |array	         | []
-                |object	         | {}
+                |string	         | ''
                 |boolean	       | false
                 |boolean	       | true
                 |number	         | 10
                 |null	           | null
                 |symbol	         | Symbol()
-                |new class       | new class{}
 
         When    creating a microservice
         Then    exception will occur: seed address should be non empty string
@@ -506,7 +506,7 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [], seedAddress });
       } catch (error) {
-        expect(error.message).toMatch(SEED_ADDRESS_IS_NOT_STRING);
+        expect(error.message).toMatch(NOT_VALID_ADDRESS);
       }
     }
   );

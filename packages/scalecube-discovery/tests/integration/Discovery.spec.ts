@@ -1,10 +1,18 @@
 import { expectWithFailNow } from '../helpers/utils';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
+import { getAddressCollision, getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
 import createDiscovery from '../../src/index';
 import { Discovery } from '../../src/api';
 import { getScalecubeGlobal } from '../../src/helpers/utils';
 
 const scalecubeGlobal = getScalecubeGlobal();
+
+const getAddress = (port: number) => ({
+  host: 'host',
+  port,
+  path: 'path',
+  protocol: 'pm',
+  fullAddress: `pm://host:${port}/path`,
+});
 
 describe('Discovery tests', () => {
   beforeEach(() => {
@@ -29,11 +37,13 @@ describe('Discovery tests', () => {
     let counter = 0;
     const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}].reduce(
       (acc: any[], v: any, i: number) => {
-        const itemToPublish = { address: `address${i}` };
+        const itemToPublish = {
+          address: getAddress(i),
+        };
         acc.push(
           createDiscovery({
-            address: `address${i}`,
-            seedAddress: 'seedAddress',
+            address: getAddress(i),
+            seedAddress: getAddress(8000),
             itemsToPublish: [itemToPublish],
           })
         );
@@ -73,10 +83,10 @@ describe('Discovery tests', () => {
     And no discoveries were created before
    When creating discoveries
       |  Discovery  |  endpoints | seedAddress
-      |  11  |  11           | 1 |
-      |  12  |  12          | 1 |
-      |  21  |  21           | 2 |
-      |  22  |  22           | 2 |
+      |  11  |  11           | 1 | 8121
+      |  12  |  12          | 1 | 8121
+      |  21  |  21           | 2 | 8122
+      |  22  |  22           | 2 |8122
    Then discoveries will have endpoints:
       |  Discovery  |  endpoints |
       |  11  |  12       |
@@ -95,13 +105,13 @@ describe('Discovery tests', () => {
       discovery22,
       itemToPublish22,
     ] = [{}, {}, {}].reduce((acc: any[], v: any, i: number) => {
-      const itemToPublish1 = { address: `address${i}1` };
-      const itemToPublish2 = { address: `address${i}2` };
+      const itemToPublish1 = { address: getAddress(Number(`${i}1`)) };
+      const itemToPublish2 = { address: getAddress(Number(`${i}2`)) };
 
       acc.push(
         createDiscovery({
-          address: `address${i}1`,
-          seedAddress: `seedAddress${i}`,
+          address: getAddress(Number(`${i}1`)),
+          seedAddress: getAddress(Number(`8${i}21`)),
           itemsToPublish: [itemToPublish1],
         })
       );
@@ -110,8 +120,8 @@ describe('Discovery tests', () => {
 
       acc.push(
         createDiscovery({
-          address: `address${i}2`,
-          seedAddress: `seedAddress${i}`,
+          address: getAddress(Number(`${i}2`)),
+          seedAddress: getAddress(Number(`8${i}21`)),
           itemsToPublish: [itemToPublish2],
         })
       );
@@ -129,20 +139,20 @@ describe('Discovery tests', () => {
     });
   });
 
-  it(`Scenario: remove discovery from the cluster
-  Given seed address 
+  test(`Scenario: remove discovery from the cluster
+  Given seed address
     And no discoveries were created before
-   When creating discoveries 
+   When creating discoveries
       |  Discovery  |  endpoints |
-      |  1  |  1           |
-      |  2  |  2           |
-      |  3  |  3           |  
+      |  1  |  1           | 8000
+      |  2  |  2           | 8000
+      |  3  |  3           | 8000
    Then discoveries  will have endpoints:
       |  Discovery  |  endpoints |
       |  1  |  2,3       |
       |  2  |  1,3       |
       |  3  |  1,2       |
-   When destroy discovery1 
+   When destroy discovery1
    Then discoveries  will have endpoints:
       |  Discovery  |  endpoints |
       |  2  |  3       |
@@ -152,11 +162,11 @@ describe('Discovery tests', () => {
     let destroyFlag = false;
     const [discovery1, itemToPublish1, discovery2, itemToPublish2, discovery3, itemToPublish3] = [{}, {}, {}].reduce(
       (acc: any[], v: any, i: number) => {
-        const itemToPublish = { address: `address${i}` };
+        const itemToPublish = { address: getAddress(i) };
         acc.push(
           createDiscovery({
-            address: `address${i}`,
-            seedAddress: 'seedAddress',
+            address: getAddress(i),
+            seedAddress: getAddress(8000),
             itemsToPublish: [itemToPublish],
           })
         );
@@ -180,22 +190,43 @@ describe('Discovery tests', () => {
     discovery1.destroy();
   });
 
-  it(`Scenario: remove discovery from the cluster
-  Given seed address 
+  test(`Scenario: remove discovery from the cluster
+  Given seed address
     And no discoveries were created before
    When creating discovery
     And then destroy it
    Then correct message will be received`, async () => {
     expect.assertions(1);
 
+    const address = getAddress(1);
+    const seedAddress = getAddress(2);
     const discovery1 = createDiscovery({
-      address: 'address',
-      seedAddress: 'seedAddress',
-      itemsToPublish: [{ address: 'address' }],
+      address,
+      seedAddress,
+      itemsToPublish: [{ address }],
     });
 
-    return expect(discovery1.destroy()).resolves.toBe(
-      getDiscoverySuccessfullyDestroyedMessage('address', 'seedAddress')
-    );
+    return expect(discovery1.destroy()).resolves.toBe(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
+  });
+
+  test(`Scenario: address and seedAddress are the same
+  Given seed address
+    And address
+    And they are the same
+   When creating discovery
+   Then error will be thrown`, () => {
+    expect.assertions(1);
+
+    const address = getAddress(1);
+    const seedAddress = getAddress(1);
+    try {
+      createDiscovery({
+        address,
+        seedAddress,
+        itemsToPublish: [],
+      });
+    } catch (e) {
+      expect(e.message).toMatch(getAddressCollision(address, seedAddress));
+    }
   });
 });

@@ -1,2 +1,7 @@
-export const getDiscoverySuccessfullyDestroyedMessage = (nodeAddress: string, seedAddress: string) =>
-  `${nodeAddress} has been removed from ${seedAddress}`;
+import { Address } from '@scalecube/api';
+
+export const getAddressCollision = (addressPort: Address, seedAddressPort: Address) =>
+  `address ${addressPort.fullAddress} must be different from the seed Address ${seedAddressPort.fullAddress}`;
+
+export const getDiscoverySuccessfullyDestroyedMessage = (nodeAddress: Address, seedAddress: Address) =>
+  `${nodeAddress.fullAddress} has been removed from ${seedAddress.fullAddress}`;

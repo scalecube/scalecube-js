@@ -1,18 +1,10 @@
+import { Address } from '@scalecube/api';
 import AsyncModel from './AsyncModel';
 
 /**
  * Defines remote service data
  */
 export default interface Endpoint {
-  /**
-   * The full path to the method: <transport/serviceName/methodName>
-   */
-  uri?: string;
-  /**
-   * The transport that is used to get access to the method implementation in the service
-   * For instance: ws://100.1.2.1 | window | webWorker | https://100.1.2.1 | http://100.1.2.1
-   */
-  transport?: string;
   /**
    * The combination of serviceName and methodName: <serviceName/methodName>
    */
@@ -31,6 +23,7 @@ export default interface Endpoint {
   asyncModel: AsyncModel;
   /**
    * A unique address of an endpoint
+   * <protocol>://<host>:<port>/<path>
    */
-  address: string;
+  address: Address;
 }

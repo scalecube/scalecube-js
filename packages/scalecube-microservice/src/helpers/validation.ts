@@ -1,6 +1,5 @@
 import * as check from './check';
 import {
-  SEED_ADDRESS_IS_NOT_STRING,
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
   MICROSERVICE_OPTIONS_IS_NOT_OBJECT,
@@ -23,16 +22,34 @@ import {
   getInvalidAsyncModelError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
+  NOT_VALID_ADDRESS,
 } from './constants';
 import { getQualifier } from './serviceData';
 import ServiceDefinition from '../api/ServiceDefinition';
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
-  const { services, seedAddress } = microserviceOptions;
-  check.assertNonEmptyString(seedAddress, SEED_ADDRESS_IS_NOT_STRING);
+  const { services, seedAddress, address } = microserviceOptions;
+  validateAddress(seedAddress);
+  validateAddress(address);
   check.assertArray(services, SERVICES_IS_NOT_ARRAY);
   services.forEach(validateService);
+};
+
+export const validateAddress = (address: any) => {
+  if (typeof address === 'undefined') {
+    return;
+  }
+
+  check.assertObject(address, NOT_VALID_ADDRESS);
+
+  const { host, path, port, protocol, fullAddress } = address;
+
+  check.assertString(host, 'Not valid host');
+  check.assertString(path, 'Not valid path');
+  check.assertNumber(port, 'Not valid port');
+  check.assertString(protocol, 'Not valid protocol');
+  check.assertString(fullAddress, 'Not valid fullAddress');
 };
 
 export const validateService = (service: any) => {
@@ -92,4 +109,11 @@ export const validateQualifier = (value: any) => {
   check.assert(parts.length === 2, INVALID_QUALIFIER);
   check.assertNonEmptyString(parts[0], INVALID_QUALIFIER);
   check.assertNonEmptyString(parts[1], INVALID_QUALIFIER);
+};
+
+export const validateDiscoveryInstance = (discovery: any) => {
+  check.assertDefined(discovery, '');
+  const { discoveredItems$, destroy } = discovery;
+  check.assertDefined(discoveredItems$, '');
+  check.assertDefined(destroy, '');
 };

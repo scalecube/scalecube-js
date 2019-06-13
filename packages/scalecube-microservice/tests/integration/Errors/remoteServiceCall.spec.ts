@@ -3,6 +3,7 @@ import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTrans
 import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
+import { getDefaultAddress } from '../../../src/helpers/utils';
 
 const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
@@ -49,9 +50,11 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         },
       },
     ],
+    seedAddress: getDefaultAddress(8000),
+    address: getDefaultAddress(8004),
   });
 
-  const microServiceWithoutServices = Microservices.create({});
+  const microServiceWithoutServices = Microservices.create({ seedAddress: getDefaultAddress(8000) });
 
   describe.each([
     // ################# LocalCall #################

@@ -4,6 +4,7 @@ import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransfer
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
+import { getDefaultAddress } from '../../src/helpers/utils';
 
 describe(`
      Background: Resolve createProxies ONLY when the service available in the registry
@@ -47,8 +48,12 @@ describe(`
 
   const defaultUser = 'Me';
 
-  const microserviceWithServices = Microservices.create({ services: [service1, service2] });
-  const microserviceWithoutSerrvices = Microservices.create({});
+  const microserviceWithServices = Microservices.create({
+    services: [service1, service2],
+    address: getDefaultAddress(1000),
+    seedAddress: getDefaultAddress(8000),
+  });
+  const microserviceWithoutSerrvices = Microservices.create({ seedAddress: getDefaultAddress(8000) });
   describe.each([
     // ################# LocalCall #################
     {

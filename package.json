@@ -14,7 +14,7 @@
     "packages/*"
   ],
   "repository": "github:scalecube/scalecube-js",
-  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
+  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browsers (your client doesn't have to be mono!)",
   "keywords": [
     "scalecube",
     "scalecube-js",
@@ -24,7 +24,7 @@
     "cluster"
   ],
   "scripts": {
-    "pre-push": "yarn lint && yarn build && yarn test",
+    "pre-push": "yarn lint && yarn build && yarn test && yarn doc",
     "update-scalecube": "lerna clean --yes && rimraf node_modules/@scalecube && yarn install && yarn bootstrap",
     "start": "http-server -a localhost -p 8000",
     "start-node-example": "lerna run start-node-example",
