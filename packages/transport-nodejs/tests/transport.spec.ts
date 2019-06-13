@@ -1,24 +1,9 @@
-import { Transport } from '../src';
+import { TransportNodeJS } from '../src';
 import { NOT_VALID_PROTOCOL } from '../src/helpers/constants';
 /* tslint:disable */
 
 const mockServer = jest.fn();
-jest.mock('rsocket-events-server', () => {
-  return class RSocketEventsServer {
-    constructor(data: any) {
-      mockServer(data);
-    }
-  };
-});
-
 const mockClient = jest.fn();
-jest.mock('rsocket-events-client', () => {
-  return class RSocketEventsClient {
-    constructor(...data: any) {
-      mockClient(data);
-    }
-  };
-});
 
 jest.mock('rsocket-websocket-server', () => {
   return class RSocketEventsServer {
@@ -59,8 +44,8 @@ beforeEach(() => {
 
 describe(`
          Background: rsocket provider is selected base on protocol
-         Given       TransportServerProviderCallback
-         And         TransportClientProviderCallback
+         Given       serverFactory
+         And         clientFactory
          And         address with path, host, port   
         `, () => {
   const address = {
@@ -74,17 +59,11 @@ describe(`
   describe.each([
     {
       mock: mockServer,
-      providerCallback: Transport.remoteTransportServerProvider.transportServerProviderCallback,
-      options: {
-        remoteTransportServerProviderOptions: null,
-      },
+      providerFactory: TransportNodeJS.serverProvider.serverFactory,
     },
     {
       mock: mockClient,
-      providerCallback: Transport.remoteTransportClientProvider.transportClientProviderCallback,
-      options: {
-        remoteTransportClientProviderOptions: null,
-      },
+      providerFactory: TransportNodeJS.clientProvider.clientFactory,
     },
   ])(
     `
@@ -92,8 +71,8 @@ describe(`
   # RSocketServerProvider - server
   # RSocketClientProvider - client
   `,
-    ({ mock, providerCallback, options }) => {
-      test.each(['pm', 'ws', 'tcp'])(
+    ({ mock, providerFactory, options }) => {
+      test.each(['ws', 'tcp'])(
         `
           Scenario: create RSocketServerProvider | RSocketClientProvider
           Given     protocol
@@ -108,8 +87,8 @@ describe(`
           address.protocol = protocol;
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
-          providerCallback({
-            ...options,
+          providerFactory({
+            factoryOptions: null,
             address,
           });
 
@@ -133,7 +112,7 @@ describe(`
          | empty string       | ''            |
          | not valid protocol | 'dfsdf'       |
          
-         And       a transport provider callback
+         And       a transport provider Factory
          When      invoking transport provider
          Then      error will be thrown
          `,
@@ -143,8 +122,8 @@ describe(`
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
           try {
-            Transport.remoteTransportServerProvider.transportServerProviderCallback({
-              remoteTransportServerProviderOptions: null,
+            TransportNodeJS.serverProvider.serverFactory({
+              factoryOptions: null,
               address,
             });
           } catch (e) {

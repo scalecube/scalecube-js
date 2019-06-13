@@ -1,0 +1,45 @@
+{
+  "name": "@scalecube/transport-nodejs",
+  "version": "0.0.1",
+  "private": false,
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf dist",
+    "build": "yarn build-rollup",
+    "build-rollup": "rollup -c",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": "jest --config jest.config.js",
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Transport NodeJS' --hideGenerator --readme ./README.md"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "10.1.4",
+    "jest": "^24.6.0",
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.2.4",
+    "@scalecube/api": "^0.0.1"
+  },
+  "dependencies": {
+    "rsocket-core": "^0.0.10",
+    "rsocket-tcp-client": "^0.0.10",
+    "rsocket-tcp-server": "^0.0.10",
+    "rsocket-websocket-client": "^0.0.10",
+    "rsocket-websocket-server": "^0.0.10",
+    "ws": "^2.3.1"
+  }
+}

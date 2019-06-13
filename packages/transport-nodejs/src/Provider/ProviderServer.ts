@@ -1,28 +1,21 @@
-// @ts-ignore
-import RSocketEventsServer from 'rsocket-events-server';
+import { TransportApi, Address } from '@scalecube/api';
+
 // @ts-ignore
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 // @ts-ignore
 import RSocketTCPServer from 'rsocket-tcp-server';
 // @ts-ignore
-import { TransportServer } from 'rsocket-core';
-import { Address } from '../api';
+import { TransportServer } from 'rsocket-common';
 import { NOT_VALID_PROTOCOL } from '../helpers/constants';
 import { validateAddress } from '../helpers/validation';
 
-export const transportServerProviderCallback = ({
-  address,
-  remoteTransportServerProviderOptions,
-}: {
-  address: Address;
-  remoteTransportServerProviderOptions: any;
-}): TransportServer => {
+export const serverFactory: TransportApi.ProviderFactory = (options: { address: Address; factoryOptions?: any }) => {
+  const { address, factoryOptions } = options;
+
   validateAddress(address);
 
   const { protocol, host, path, port } = address;
   switch (protocol.toLowerCase()) {
-    case 'pm':
-      return new RSocketEventsServer({ address: `${protocol}://${host}:${port}/${path}` });
     case 'ws':
       return new RSocketWebSocketServer({ ...address });
     case 'tcp':

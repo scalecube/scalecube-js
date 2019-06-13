@@ -1,5 +1,5 @@
 {
-  "name": "@scalecube/transport",
+  "name": "@scalecube/transport-browser",
   "version": "0.0.1",
   "private": false,
   "main": "dist/index.js",
@@ -10,14 +10,14 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
-    "build": "yarn clean &&  yarn && yarn build-rollup",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf dist",
+    "build": "yarn build-rollup",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest --config jest.config.js",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
-    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
+    "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Transport Browser' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
@@ -31,16 +31,12 @@
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "@scalecube/api": "^0.0.1"
   },
   "dependencies": {
     "rsocket-core": "^0.0.10",
     "rsocket-events-client": "^0.0.14",
-    "rsocket-events-server": "^0.0.14",
-    "rsocket-tcp-client": "^0.0.10",
-    "rsocket-tcp-server": "^0.0.10",
-    "rsocket-websocket-client": "^0.0.10",
-    "rsocket-websocket-server": "^0.0.10",
-    "ws": "^2.3.1"
+    "rsocket-events-server": "^0.0.14"
   }
 }
