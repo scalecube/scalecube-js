@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "rsocket-core": "^0.0.10",
-    "rsocket-events-client": "^0.0.14",
-    "rsocket-events-server": "^0.0.14"
+    "rsocket-events-client": "^0.0.16",
+    "rsocket-events-server": "^0.0.16"
   }
 }

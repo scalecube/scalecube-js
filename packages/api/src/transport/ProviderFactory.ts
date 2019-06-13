@@ -7,6 +7,6 @@ import { Address } from '.';
 export type ProviderFactory = (options: { address: Address; factoryOptions?: any }) => DuplexConnection;
 
 /**
- * import { DuplexConnection } from 'rsocket-common';
+ * import { DuplexConnection } from 'rsocket-core';
  */
 type DuplexConnection = any;

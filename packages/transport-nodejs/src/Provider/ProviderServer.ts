@@ -4,8 +4,7 @@ import { TransportApi, Address } from '@scalecube/api';
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 // @ts-ignore
 import RSocketTCPServer from 'rsocket-tcp-server';
-// @ts-ignore
-import { TransportServer } from 'rsocket-common';
+
 import { NOT_VALID_PROTOCOL } from '../helpers/constants';
 import { validateAddress } from '../helpers/validation';
 

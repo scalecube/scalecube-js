@@ -8,7 +8,7 @@ import { createClient } from '../TransportProviders/MicroserviceClient';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
-import { RSocketClientSocket } from 'rsocket-common';
+import { RSocketClientSocket } from 'rsocket-core';
 // @ts-ignore
 import { ISubscription } from 'rsocket-api';
 
