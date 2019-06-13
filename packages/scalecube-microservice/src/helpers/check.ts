@@ -65,3 +65,7 @@ export const isFunction = (val: any) => typeof val === 'function';
 export const assertFunction = (val: any, msg = 'Expected to be a function') => {
   assert(isFunction(val), msg);
 };
+
+export const assertNumber = (val: any, msg = 'Expected to be aa number') => {
+  assert(typeof val === 'number', msg);
+};

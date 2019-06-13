@@ -7,7 +7,11 @@ import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { take } from 'rxjs/operators';
 
-export const getServiceCall = ({ router, microserviceContext }: CreateServiceCallOptions): ServiceCall => {
+export const getServiceCall = ({
+  router,
+  microserviceContext,
+  transportClientProvider,
+}: CreateServiceCallOptions): ServiceCall => {
   const openConnections = {};
   return ({ message, asyncModel, includeMessage }: ServiceCallOptions): ServiceCallResponse => {
     try {
@@ -19,7 +23,7 @@ export const getServiceCall = ({ router, microserviceContext }: CreateServiceCal
     const localService = microserviceContext.methodRegistry.lookUp({ qualifier: message.qualifier });
     const res$: Observable<any> = localService
       ? localCall({ localService, asyncModel, includeMessage, message })
-      : remoteCall({ router, microserviceContext, message, asyncModel, openConnections });
+      : remoteCall({ router, microserviceContext, message, asyncModel, openConnections, transportClientProvider });
 
     return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.pipe(take(1)).toPromise() : res$;
   };

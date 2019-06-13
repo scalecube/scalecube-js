@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { Address, TransportApi } from '@scalecube/api';
 import {
   Router,
   ServiceDefinition,
@@ -23,17 +24,18 @@ export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCal
 
 export interface AvailableServices {
   services?: Service[];
-  address: string;
+  address?: Address;
 }
 
 export interface AvailableService {
   service: Service;
-  address: string;
+  address?: Address;
 }
 
 export interface CreateServiceCallOptions {
   router: Router;
   microserviceContext: MicroserviceContext;
+  transportClientProvider: TransportApi.ClientProvider;
 }
 
 export interface GetProxyOptions {
@@ -68,6 +70,7 @@ export interface RemoteCallOptions {
   microserviceContext: MicroserviceContext;
   message: Message;
   asyncModel: AsyncModel;
+  transportClientProvider: TransportApi.ClientProvider;
   openConnections: { [key: string]: any };
 }
 
@@ -114,9 +117,4 @@ export interface MicroserviceContext {
 export interface RsocketEventsPayload {
   data: any;
   metadata: any;
-}
-
-export interface IsValid {
-  isValid: boolean;
-  exception: Error | null;
 }

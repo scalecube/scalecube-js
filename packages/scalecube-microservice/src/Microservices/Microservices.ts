@@ -1,11 +1,12 @@
-import uuidv4 from 'uuid/v4';
-import createDiscovery from '@scalecube/scalecube-discovery';
+import { Address, TransportApi } from '@scalecube/api';
+import { TransportBrowser } from '@scalecube/transport-browser';
+import { createDiscovery, Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
 import { createMethodRegistry } from '../Registry/MethodRegistry';
 import { MicroserviceContext } from '../helpers/types';
-import { validateMicroserviceOptions } from '../helpers/validation';
+import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
 import {
   Endpoint,
   Message,
@@ -17,16 +18,24 @@ import {
   CreateProxiesOptions,
 } from '../api';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { createServer } from '../TransportProviders/MicroserviceServer';
+import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
+import { getDefaultAddress } from '../helpers/utils';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
-    const microserviceOptions = { services: [], seedAddress: 'defaultSeedAddress', ...options };
+    const microserviceOptions = {
+      services: [],
+      discovery: createDiscovery,
+      transport: TransportBrowser,
+      seedAddress: getDefaultAddress(),
+      ...options,
+    };
+    // TODO: add address, customTransport, customDiscovery  to the validation process
     validateMicroserviceOptions(microserviceOptions);
-    const { services, seedAddress } = microserviceOptions;
-    const address = uuidv4();
+    const { services, seedAddress, address, transport, discovery } = microserviceOptions;
+    const transportClientProvider = transport.clientProvider;
 
     // tslint:disable-next-line
     let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
@@ -34,32 +43,55 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 
     methodRegistry.add({ services, address });
 
-    const endPointsToPublishInCluster =
-      serviceRegistry.createEndPoints({
-        services,
-        address,
-      }) || [];
+    // if address is not available then microservice can't share services
+    const endPointsToPublishInCluster = address
+      ? serviceRegistry.createEndPoints({
+          services,
+          address,
+        }) || []
+      : [];
 
-    const discovery = createDiscovery({
+    const discoveryInstance: DiscoveryAPI.Discovery = createDiscoveryInstance({
       address,
       itemsToPublish: endPointsToPublishInCluster,
       seedAddress,
+      discovery,
     });
 
-    const server = createServer({ address, microserviceContext });
-    server.start();
+    // server use only localCall therefor, router is irrelevant
+    const defaultLocalCall = getServiceCall({
+      router: defaultRouter,
+      microserviceContext,
+      transportClientProvider: transport.clientProvider,
+    });
+    // if address is not available then microservice can't start a server and get serviceCall requests
+    address &&
+      startServer({
+        address,
+        serviceCall: defaultLocalCall,
+        transportServerProvider: transport.serverProvider,
+      });
 
-    discovery
+    discoveryInstance
       .discoveredItems$()
       .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
 
-    const isServiceAvailable = isServiceAvailableInRegistry(endPointsToPublishInCluster, serviceRegistry, discovery);
+    const isServiceAvailable = isServiceAvailableInRegistry(
+      endPointsToPublishInCluster,
+      serviceRegistry,
+      discoveryInstance
+    );
 
     return Object.freeze({
       createProxies: (createProxiesOptions: CreateProxiesOptions) =>
-        createProxies({ createProxiesOptions, microserviceContext, isServiceAvailable }),
-      createProxy: (proxyOptions: ProxyOptions) => createProxy({ ...proxyOptions, microserviceContext }),
-      createServiceCall: ({ router }) => createServiceCall({ router, microserviceContext }),
+        createProxies({ createProxiesOptions, microserviceContext, isServiceAvailable, transportClientProvider }),
+      createProxy: (proxyOptions: ProxyOptions) =>
+        createProxy({
+          ...proxyOptions,
+          microserviceContext,
+          transportClientProvider,
+        }),
+      createServiceCall: ({ router }) => createServiceCall({ router, microserviceContext, transportClientProvider }),
       destroy: () => destroy({ microserviceContext, discovery }),
     } as Microservice);
   },
@@ -68,15 +100,17 @@ export const Microservices: MicroservicesInterface = Object.freeze({
 const createServiceCall = ({
   router = defaultRouter,
   microserviceContext,
+  transportClientProvider,
 }: {
   router?: Router;
   microserviceContext: MicroserviceContext | null;
+  transportClientProvider: TransportApi.ClientProvider;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
-  const serviceCall = getServiceCall({ router, microserviceContext });
+  const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
   return Object.freeze({
     requestStream: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
@@ -121,4 +155,22 @@ const createMicroserviceContext = () => {
     serviceRegistry,
     methodRegistry,
   };
+};
+
+const createDiscoveryInstance = (opt: {
+  address?: Address;
+  seedAddress?: Address;
+  itemsToPublish: Endpoint[];
+  discovery: (...data: any[]) => DiscoveryAPI.Discovery;
+}): DiscoveryAPI.Discovery => {
+  const { address, seedAddress, itemsToPublish, discovery } = opt;
+  const discoveryInstance = discovery({
+    address,
+    itemsToPublish,
+    seedAddress,
+  });
+
+  validateDiscoveryInstance(discoveryInstance);
+
+  return discoveryInstance;
 };

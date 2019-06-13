@@ -1,3 +1,4 @@
+import { Address } from '@scalecube/api';
 import { throwError } from 'rxjs';
 import { AsyncModel } from '../api';
 import { ASYNC_MODEL_TYPES } from './constants';
@@ -21,3 +22,11 @@ export const throwErrorFromServiceCall = ({
 };
 
 export const getGlobalNamespace = () => (typeof window === 'undefined' ? global : window);
+
+export const getDefaultAddress = (port = 8080): Address => ({
+  host: 'defaultHost',
+  port,
+  protocol: 'pm',
+  path: 'path',
+  fullAddress: `pm://defaultHost:${port}/path`,
+});

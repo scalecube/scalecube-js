@@ -6,7 +6,7 @@
  *    Check validity - proxy - serviceDefinition method format         - https://github.com/scalecube/scalecube-js/issues/104
  *    Check validity - proxy - serviceDefinition asyncModel value      - https://github.com/scalecube/scalecube-js/issues/103
  *****/
-import { Microservices } from '../../../src';
+import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
@@ -213,12 +213,20 @@ describe('validation test for create proxy from microservice', () => {
 
     const proxiesOptions1: ProxiesOptions = {
       proxyName: 'proxyName',
-      serviceDefinition: { serviceName: 'valid1', methods: {} },
+      serviceDefinition: {
+        serviceName: 'valid1',
+        methods: { hello: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE } },
+      },
     };
 
     const proxiesOptions2: ProxiesOptions = {
       proxyName: 'proxyName',
-      serviceDefinition: { serviceName: 'valid2', methods: {} },
+      serviceDefinition: {
+        serviceName: 'valid2',
+        methods: {
+          hello: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
+        },
+      },
     };
 
     try {

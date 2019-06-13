@@ -9,6 +9,7 @@ import { Microservices } from '../../src';
 import { Message } from '../../src/api';
 import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
+import { getDefaultAddress } from '../../src/helpers/utils';
 
 describe(`Test positive-scenarios of usage
           LocalCall - a microservice instance use its own services.
@@ -59,11 +60,12 @@ describe(`Test positive-scenarios of usage
     (service) => {
       const microserviceWithServices = Microservices.create({
         services: [service],
-        seedAddress,
+        seedAddress: getDefaultAddress(8000),
+        address: getDefaultAddress(1234),
       });
 
       const microserviceWithoutServices = Microservices.create({
-        seedAddress,
+        seedAddress: getDefaultAddress(8000),
       });
 
       describe.each([

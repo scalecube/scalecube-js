@@ -63,19 +63,18 @@ export const getUpdatedServiceRegistry = ({
 });
 
 export const getEndpointsFromService = ({ service, address }: AvailableService): Endpoint[] => {
+  if (!address) {
+    return [];
+  }
   const { definition } = service;
-  const transport = 'window:/';
   const { serviceName, methods } = definition;
-  const endpoints: Endpoint[] =
+  return (
     Object.keys(methods).map((methodName: string) => ({
       qualifier: getQualifier({ serviceName, methodName }),
       serviceName,
       methodName,
       asyncModel: methods[methodName].asyncModel,
-      transport,
-      uri: `${transport}/${serviceName}/${methodName}`,
       address,
-    })) || [];
-
-  return endpoints;
+    })) || []
+  );
 };

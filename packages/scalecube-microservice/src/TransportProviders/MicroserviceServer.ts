@@ -1,33 +1,34 @@
+import { TransportApi, Address } from '@scalecube/api';
 // @ts-ignore
-import RSocketEventsServer from 'rsocket-events-server';
-// @ts-ignore
-import { MAX_STREAM_ID, RSocketClient, RSocketServer } from 'rsocket-core';
+import { RSocketServer } from 'rsocket-core';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 import { Observable } from 'rxjs';
 
-import { MicroserviceContext, RsocketEventsPayload, ServiceCall } from '../helpers/types';
-import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { defaultRouter } from '../Routers/default';
+import { RsocketEventsPayload, ServiceCall } from '../helpers/types';
 import { ASYNC_MODEL_TYPES } from '..';
 
-export const createServer = ({
+export const startServer = ({
   address,
-  microserviceContext,
+  serviceCall,
+  transportServerProvider,
 }: {
-  address: string;
-  microserviceContext: MicroserviceContext;
+  address: Address;
+  serviceCall: ServiceCall;
+  transportServerProvider: TransportApi.ServerProvider;
 }) => {
-  const serviceCall = getServiceCall({ router: defaultRouter, microserviceContext });
-  return new RSocketServer({
+  const { factoryOptions, serverFactory } = transportServerProvider;
+  const server = new RSocketServer({
     getRequestHandler: (socket: any) => {
       return {
         requestResponse: (payload: RsocketEventsPayload) => requestResponse({ ...payload, serviceCall }),
         requestStream: (payload: RsocketEventsPayload) => requestStream({ ...payload, serviceCall }),
       };
     },
-    transport: new RSocketEventsServer({ address }),
+    transport: serverFactory({ address, factoryOptions }),
   });
+
+  server.start();
 };
 
 const requestResponse = ({

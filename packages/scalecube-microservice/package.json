@@ -19,7 +19,7 @@
     "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
     "build:es": "rimraf es && tsc --module esnext --target es5 --outDir es",
     "build:umd": "rimraf dist && parcel build src/index.ts --no-minify  --out-dir dist dist --global sc",
-    "build:umd-min": "rimraf dist-min && parcel build src/index.ts --experimental-scope-hoisting --out-dir dist-min dist --global sc",
+    "build:umd-min": "rimraf dist-min && parcel build src/index.ts --out-dir dist-min dist --global sc",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env && yarn test-node-env",
@@ -29,25 +29,32 @@
     "doc": "typedoc ./src/api --out ./doc --mode file --name 'Scalecube Microservice' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
+    }
+  },
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
-    "parcel-bundler": "^1.11.0",
+    "parcel-bundler": "^1.12.3",
     "parcel-plugin-bundle-visualiser": "^1.2.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "@scalecube/api": "^0.0.1"
   },
   "dependencies": {
+    "@scalecube/transport-browser": "^0.0.1",
     "@scalecube/scalecube-discovery": "^0.1.1-alpha.2",
-    "@types/uuid": "^3.4.4",
     "rsocket-core": "^0.0.10",
     "rsocket-events-client": "^0.0.14",
     "rsocket-events-server": "^0.0.14",
     "rsocket-flowable": "^0.0.10",
-    "rxjs": "^6.4.0",
-    "uuid": "^3.3.2"
+    "rxjs": "^6.4.0"
   }
 }

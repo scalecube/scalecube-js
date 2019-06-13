@@ -1,3 +1,4 @@
+import { Address, TransportApi } from '@scalecube/api';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
@@ -7,9 +8,9 @@ import { createClient } from '../TransportProviders/MicroserviceClient';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
-import { RSocketClientSocket } from 'rsocket-core';
+import { RSocketClientSocket } from 'rsocket-common';
 // @ts-ignore
-import { ISubscription } from 'rsocket-types';
+import { ISubscription } from 'rsocket-api';
 
 export const remoteCall = ({
   router,
@@ -17,6 +18,7 @@ export const remoteCall = ({
   message,
   asyncModel,
   openConnections,
+  transportClientProvider,
 }: RemoteCallOptions): Observable<any> => {
   const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
   if (!endPoint) {
@@ -34,7 +36,7 @@ export const remoteCall = ({
     }) as Observable<any>;
   }
 
-  return remoteResponse({ address: endPoint.address, asyncModel, message, openConnections });
+  return remoteResponse({ address: endPoint.address, asyncModel, message, openConnections, transportClientProvider });
 };
 
 const remoteResponse = ({
@@ -42,25 +44,28 @@ const remoteResponse = ({
   asyncModel,
   message,
   openConnections,
+  transportClientProvider,
 }: {
-  address: string;
+  address: Address;
   asyncModel: string;
   message: Message;
   openConnections: { [key: string]: any };
+  transportClientProvider: TransportApi.ClientProvider;
 }) => {
   return new Observable((observer) => {
     let connection: Promise<RSocketClientSocket>;
-    if (!openConnections[address]) {
-      const client = createClient({ address });
+    const { fullAddress } = address;
+    if (!openConnections[fullAddress]) {
+      const client = createClient({ address, transportClientProvider });
       connection = new Promise((resolve, reject) => {
         client.connect().subscribe({
           onComplete: (socket: RSocketClientSocket) => resolve(socket),
           onError: (error: Error) => observer.error(error),
         });
       });
-      openConnections[address] = connection;
+      openConnections[fullAddress] = connection;
     } else {
-      connection = openConnections[address];
+      connection = openConnections[fullAddress];
     }
 
     connection.then((socket: RSocketClientSocket) => {
@@ -109,12 +114,12 @@ const remoteResponse = ({
 
       socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
         if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
-          openConnections[address] = null;
+          openConnections[fullAddress] = null;
           observer.error(error);
         }
 
         if (kind.toUpperCase() === RSocketConnectionStatus.CLOSED) {
-          openConnections[address] = null;
+          openConnections[fullAddress] = null;
         }
       });
     });

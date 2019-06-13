@@ -1,16 +1,24 @@
+import { TransportApi, Address } from '@scalecube/api';
 // @ts-ignore
-import RSocketEventsClient from 'rsocket-events-client';
-// @ts-ignore
-import { RSocketClient } from 'rsocket-core';
+import { RSocketClient, DuplexConnection } from 'rsocket-core';
 
-export const createClient = (clientOptions: { address: string }) =>
-  // TODO pick RSocketClient base on transport type <PM || WS>
-  new RSocketClient({
+export const createClient = ({
+  address,
+  transportClientProvider,
+}: {
+  address: Address;
+  transportClientProvider: TransportApi.ClientProvider;
+}) => {
+  const { factoryOptions, clientFactory } = transportClientProvider;
+
+  // TODO pick RSocketClient base on transport-browser type <PM || WS>
+  return new RSocketClient({
     setup: {
       dataMimeType: 'text/plain',
       keepAlive: process.env.dev ? 1000 : 1000000,
       lifetime: process.env.dev ? 1000 : 1000000,
       metadataMimeType: 'text/plain',
     },
-    transport: new RSocketEventsClient(clientOptions),
+    transport: clientFactory({ address, factoryOptions }),
   });
+};
