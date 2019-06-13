@@ -1,5 +1,5 @@
 import { expectWithFailNow } from '../helpers/utils';
-import { getAddressCollusion, getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
+import { getAddressCollision, getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
 import createDiscovery from '../../src/index';
 import { Discovery } from '../../src/api';
 import { getScalecubeGlobal } from '../../src/helpers/utils';
@@ -226,7 +226,7 @@ describe('Discovery tests', () => {
         itemsToPublish: [],
       });
     } catch (e) {
-      expect(e.message).toMatch(getAddressCollusion(address, seedAddress));
+      expect(e.message).toMatch(getAddressCollision(address, seedAddress));
     }
   });
 });

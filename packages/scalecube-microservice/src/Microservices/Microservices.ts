@@ -21,7 +21,6 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
-import { getDefaultAddress } from '../helpers/utils';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {

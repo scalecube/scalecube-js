@@ -2,7 +2,7 @@ import { ReplaySubject } from 'rxjs';
 import { Address } from '@scalecube/api';
 import { DiscoveryOptions, Discovery, Item, CreateDiscovery } from '../api';
 import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
-import { getAddressCollusion, getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import { getAddressCollision, getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
 
 export const createDiscovery: CreateDiscovery = ({
   address,
@@ -29,7 +29,7 @@ export const createDiscovery: CreateDiscovery = ({
     };
   }
 
-  validateAddressCollusion(address, seedAddress);
+  validateAddressCollision(address, seedAddress);
 
   let cluster = getCluster({ seedAddress });
   const subjectNotifier = new ReplaySubject<Item[]>(1);
@@ -50,8 +50,8 @@ export const createDiscovery: CreateDiscovery = ({
   });
 };
 
-const validateAddressCollusion = (addressPort: Address, seedAddressPort: Address) => {
+const validateAddressCollision = (addressPort: Address, seedAddressPort: Address) => {
   if (addressPort.fullAddress === seedAddressPort.fullAddress) {
-    throw new Error(getAddressCollusion(addressPort, seedAddressPort));
+    throw new Error(getAddressCollision(addressPort, seedAddressPort));
   }
 };
