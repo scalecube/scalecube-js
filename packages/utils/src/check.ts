@@ -1,3 +1,5 @@
+type Collection<T> = T[] | { [key: string]: T };
+
 export const assert = (predicate: boolean, msg: string): void | never => {
   if (!predicate) {
     throw new Error(msg);
@@ -13,7 +15,7 @@ export const assertDefined = (val: any, msg = 'Expect to be defined') => {
 export const isString = (val: any): boolean => typeof val === 'string' || val instanceof String;
 
 export const assertString = (val: any, msg = 'Expected to be a string') => {
-  assert(isString(val), msg);
+  assert(isDefined(val) && isString(val), msg);
 };
 
 export const assertNonEmptyString = (val: any, msg = 'Expected to be non empty string') => {
@@ -40,6 +42,30 @@ export const assertNonEmptyObject = (val: any, msg = 'Expected to be non empty o
   assert(Object.keys(val).length > 0, msg);
 };
 
-export const assertNumber = (val: any, msg = 'Expected to be number') => {
-  assert(typeof val === 'number', msg);
+export const isOneOf = (collection: Collection<any>, val: any): boolean => {
+  if (isArray(collection)) {
+    return collection.includes(val);
+  }
+  if (isObject(collection)) {
+    return Object.values(collection).includes(val);
+  }
+  return false;
+};
+
+export const assertOneOf = (
+  collection: Collection<any>,
+  val: any,
+  msg = 'Expected to be one of the collection elements'
+) => {
+  assert(isOneOf(collection, val), msg);
+};
+
+export const isFunction = (val: any) => typeof val === 'function';
+
+export const assertFunction = (val: any, msg = 'Expected to be a function') => {
+  assert(isFunction(val), msg);
+};
+
+export const assertNumber = (val: any, msg = 'Expected to be a number') => {
+  assert(typeof val === 'number' && !isNaN(val), msg);
 };

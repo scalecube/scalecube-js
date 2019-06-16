@@ -4,7 +4,7 @@
  * 2. microservice create from a service, service contains definition + reference.
  * 3. We include here scenarios for various validation for definition.
  *****/
-
+import { constants } from '@scalecube/utils';
 import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
 import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
@@ -17,11 +17,9 @@ import {
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
   SERVICE_NAME_NOT_PROVIDED,
-  SEED_ADDRESS_IS_NOT_STRING,
   getAsynModelNotProvidedError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
-  NOT_VALID_ADDRESS,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
 
@@ -506,7 +504,7 @@ describe('Test the creation of Microservice', () => {
         // @ts-ignore
         Microservices.create({ services: [], seedAddress });
       } catch (error) {
-        expect(error.message).toMatch(NOT_VALID_ADDRESS);
+        expect(error.message).toMatch(constants.NOT_VALID_ADDRESS);
       }
     }
   );

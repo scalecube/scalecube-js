@@ -1,5 +1,5 @@
 import { TransportNodeJS } from '../src';
-import { NOT_VALID_PROTOCOL } from '../src/helpers/constants';
+import { constants } from '@scalecube/utils';
 /* tslint:disable */
 
 const mockServer = jest.fn();
@@ -127,7 +127,7 @@ describe(`
               address,
             });
           } catch (e) {
-            expect(e.message).toMatch(NOT_VALID_PROTOCOL);
+            expect(e.message).toMatch(constants.NOT_VALID_PROTOCOL);
           }
         }
       );

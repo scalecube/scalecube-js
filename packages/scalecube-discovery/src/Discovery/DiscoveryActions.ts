@@ -8,9 +8,10 @@ import {
   ScalecubeGlobal,
 } from '../helpers/types';
 import { getGlobalNamespace, getScalecubeGlobal } from '../helpers/utils';
+import { getFullAddress } from '@scalecube/utils';
 
 export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
-  const { fullAddress: seedAddressName } = seedAddress;
+  const seedAddressName = getFullAddress(seedAddress);
   const globalNamespace = getGlobalNamespace();
   globalNamespace.scalecube = globalNamespace.scalecube || ({} as ScalecubeGlobal);
   globalNamespace.scalecube.clusters = globalNamespace.scalecube.clusters || ({} as ClustersMap);
@@ -28,17 +29,17 @@ export const getCluster = ({ seedAddress }: GetCluster): Cluster => {
 export const leaveCluster = ({ cluster, address }: LeaveCluster): Cluster => {
   // remove from allDiscoveredItems[]
   cluster.allDiscoveredItems = cluster.allDiscoveredItems.filter(
-    (item) => item.address.fullAddress !== address.fullAddress
+    (item) => getFullAddress(item.address) !== getFullAddress(address)
   );
   // remove from each discoveryEntity discoveredItems[]
   cluster.discoveries.forEach((discovery) => {
     discovery.discoveredItems = discovery.discoveredItems.filter(
-      (item) => item.address.fullAddress !== address.fullAddress
+      (item) => getFullAddress(item.address) !== getFullAddress(address)
     );
   });
   // remove discoveryEntity from the cluster
   cluster.discoveries = cluster.discoveries.filter(
-    (discovery) => discovery.address.fullAddress !== address.fullAddress
+    (discovery) => getFullAddress(discovery.address) !== getFullAddress(address)
   );
 
   shareDataBetweenDiscoveries({ discoveries: cluster.discoveries });

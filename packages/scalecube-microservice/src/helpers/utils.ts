@@ -28,5 +28,4 @@ export const getDefaultAddress = (port = 8080): Address => ({
   port,
   protocol: 'pm',
   path: 'path',
-  fullAddress: `pm://defaultHost:${port}/path`,
 });
