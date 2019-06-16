@@ -1,3 +1,4 @@
+import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
 
@@ -18,6 +19,9 @@ export default {
     typescript({
       typescript: require('typescript'),
       clean: true,
+    }),
+    visualizer({
+      filename: 'report.html',
     }),
   ],
 };
