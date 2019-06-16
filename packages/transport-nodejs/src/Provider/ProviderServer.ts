@@ -1,12 +1,9 @@
 import { TransportApi, Address } from '@scalecube/api';
-
+import { validateAddress, constants } from '@scalecube/utils';
 // @ts-ignore
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 // @ts-ignore
 import RSocketTCPServer from 'rsocket-tcp-server';
-
-import { NOT_VALID_PROTOCOL } from '../helpers/constants';
-import { validateAddress } from '../helpers/validation';
 
 export const serverFactory: TransportApi.ProviderFactory = (options: { address: Address; factoryOptions?: any }) => {
   const { address, factoryOptions } = options;
@@ -21,6 +18,6 @@ export const serverFactory: TransportApi.ProviderFactory = (options: { address: 
     case 'tcp':
       return new RSocketTCPServer({ ...address });
     default:
-      throw Error(NOT_VALID_PROTOCOL);
+      throw Error(constants.NOT_VALID_PROTOCOL);
   }
 };

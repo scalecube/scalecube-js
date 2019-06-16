@@ -49,6 +49,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/utils": "^0.0.1",
     "@scalecube/scalecube-discovery": "^0.1.1-alpha.3",
     "@scalecube/transport-browser": "^0.0.2-alpha.0",
     "rsocket-core": "^0.0.10",

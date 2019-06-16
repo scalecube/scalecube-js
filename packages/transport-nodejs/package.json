@@ -32,6 +32,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/utils": "^0.0.1",
     "rsocket-core": "^0.0.10",
     "rsocket-tcp-client": "^0.0.10",
     "rsocket-tcp-server": "^0.0.10",

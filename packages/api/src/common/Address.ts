@@ -24,9 +24,4 @@ export default interface Address {
    * relative address
    */
   path: string;
-  /**
-   * @property
-   * address is <protocol>://<host>:<port>/<path>
-   */
-  fullAddress: string;
 }

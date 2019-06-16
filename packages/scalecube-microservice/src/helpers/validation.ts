@@ -1,4 +1,4 @@
-import * as check from './check';
+import { check, validateAddress } from '@scalecube/utils';
 import {
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
@@ -22,7 +22,6 @@ import {
   getInvalidAsyncModelError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
-  NOT_VALID_ADDRESS,
 } from './constants';
 import { getQualifier } from './serviceData';
 import ServiceDefinition from '../api/ServiceDefinition';
@@ -30,26 +29,10 @@ import ServiceDefinition from '../api/ServiceDefinition';
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
   const { services, seedAddress, address } = microserviceOptions;
-  validateAddress(seedAddress);
-  validateAddress(address);
+  validateAddress(seedAddress, true);
+  validateAddress(address, true);
   check.assertArray(services, SERVICES_IS_NOT_ARRAY);
   services.forEach(validateService);
-};
-
-export const validateAddress = (address: any) => {
-  if (typeof address === 'undefined') {
-    return;
-  }
-
-  check.assertObject(address, NOT_VALID_ADDRESS);
-
-  const { host, path, port, protocol, fullAddress } = address;
-
-  check.assertString(host, 'Not valid host');
-  check.assertString(path, 'Not valid path');
-  check.assertNumber(port, 'Not valid port');
-  check.assertString(protocol, 'Not valid protocol');
-  check.assertString(fullAddress, 'Not valid fullAddress');
 };
 
 export const validateService = (service: any) => {

@@ -42,6 +42,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/utils": "^0.0.1",
     "rxjs": "^6.4.0"
   }
 }

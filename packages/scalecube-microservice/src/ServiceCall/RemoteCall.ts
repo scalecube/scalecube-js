@@ -1,4 +1,5 @@
 import { Address, TransportApi } from '@scalecube/api';
+import { getFullAddress } from '@scalecube/utils';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
@@ -54,7 +55,7 @@ const remoteResponse = ({
 }) => {
   return new Observable((observer) => {
     let connection: Promise<RSocketClientSocket>;
-    const { fullAddress } = address;
+    const fullAddress = getFullAddress(address);
     if (!openConnections[fullAddress]) {
       const client = createClient({ address, transportClientProvider });
       connection = new Promise((resolve, reject) => {

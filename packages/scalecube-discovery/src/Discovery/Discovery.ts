@@ -1,4 +1,5 @@
 import { ReplaySubject } from 'rxjs';
+import { getFullAddress } from '@scalecube/utils';
 import { Address } from '@scalecube/api';
 import { DiscoveryOptions, Discovery, Item, CreateDiscovery } from '../api';
 import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
@@ -15,7 +16,6 @@ export const createDiscovery: CreateDiscovery = ({
       port: 8080,
       path: 'path',
       protocol: 'pm',
-      fullAddress: 'pm://defaultSeedAddress:8080/path',
     };
   }
 
@@ -25,7 +25,6 @@ export const createDiscovery: CreateDiscovery = ({
       port: 8000,
       path: 'path',
       protocol: 'pm',
-      fullAddress: 'pm://defaultAddress:8000/path',
     };
   }
 
@@ -51,7 +50,7 @@ export const createDiscovery: CreateDiscovery = ({
 };
 
 const validateAddressCollision = (addressPort: Address, seedAddressPort: Address) => {
-  if (addressPort.fullAddress === seedAddressPort.fullAddress) {
+  if (getFullAddress(addressPort) === getFullAddress(seedAddressPort)) {
     throw new Error(getAddressCollision(addressPort, seedAddressPort));
   }
 };
