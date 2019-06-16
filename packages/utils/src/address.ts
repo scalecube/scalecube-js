@@ -4,7 +4,7 @@ import { NOT_VALID_ADDRESS, NOT_VALID_HOST, NOT_VALID_PATH, NOT_VALID_PORT, NOT_
 
 export const validateAddress = (address: any, isOptional: boolean = true) => {
   if (isOptional && typeof address === 'undefined') {
-    return;
+    return true;
   }
 
   check.assertNonEmptyObject(address, NOT_VALID_ADDRESS);
@@ -16,6 +16,8 @@ export const validateAddress = (address: any, isOptional: boolean = true) => {
   check.assertNumber(port, NOT_VALID_PORT);
   check.assertString(protocol, NOT_VALID_PROTOCOL);
   check.assert(check.isOneOf(['pm', 'ws', 'wss', 'tcp'], protocol), NOT_VALID_PROTOCOL);
+
+  return true;
 };
 
 /**

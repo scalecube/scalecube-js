@@ -15,7 +15,7 @@ export const assertDefined = (val: any, msg = 'Expect to be defined') => {
 export const isString = (val: any): boolean => typeof val === 'string' || val instanceof String;
 
 export const assertString = (val: any, msg = 'Expected to be a string') => {
-  assert(isString(val), msg);
+  assert(isDefined(val) && isString(val), msg);
 };
 
 export const assertNonEmptyString = (val: any, msg = 'Expected to be non empty string') => {
@@ -67,5 +67,5 @@ export const assertFunction = (val: any, msg = 'Expected to be a function') => {
 };
 
 export const assertNumber = (val: any, msg = 'Expected to be a number') => {
-  assert(!isNaN(val), msg);
+  assert(typeof val === 'number' && !isNaN(val), msg);
 };
