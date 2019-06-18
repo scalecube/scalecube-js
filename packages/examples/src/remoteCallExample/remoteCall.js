@@ -1,85 +1,30 @@
 /**
  * RemoteCall example,
  * adding services to one microservice but using those services from another microservice
- * Simple example of provisioning services from remote microservice by using RSocketTransport
  *
+ * In this example we will use a service that was created and published in another microservice instance.
+ *
+ * Scalecube provide us a way to consume the service from any platform.
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, rxjs) {
-    var remoteService = {
-      hello: function(name) {
-        return new Promise((resolve, reject) => {
-          if (!name) {
-            reject(new Error('please provide user to greet'));
-          } else {
-            resolve(`Hello ${name}`);
-          }
-        });
-      },
-
-      greet$: function(greetings) {
-        return new rxjs.Observable((observer) => {
-          if (!greetings || !Array.isArray(greetings) || greetings.length === 0) {
-            observer.error(new Error('please provide Array of greetings'));
-          }
-          greetings.map((i) => observer.next(`greetings ${i}`));
-        });
-      },
-    };
-
-    var remoteServiceDefinition = {
-      serviceName: 'RemoteService',
-      methods: {
-        hello: {
-          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-        },
-        greet$: {
-          asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        },
-      },
-    };
-
-    var generateAddress = (port) => ({
-      host: 'defaultHostName',
-      port,
-      path: 'defaultPathName',
-      protocol: 'pm',
-      fullAddress: `pm://defaultHostName:${port}/path`,
-    });
-    /**
-     * Service will be available only after 2s
-     */
-    setTimeout(() => {
-      console.log('provision remote microservice after 2s');
-      Microservices.create({
-        services: [
-          {
-            definition: remoteServiceDefinition,
-            reference: remoteService,
-          },
-        ],
-        seedAddress: generateAddress(8000),
-        address: generateAddress(1234),
-      });
-    }, 2000);
-
+  (function(Microservices, ASYNC_MODEL_TYPES, utils) {
     var placeHolder = document.getElementById('placeHolder');
     var waitMessage = document.getElementById('waitMessage');
 
     waitMessage.innerText = 'Wait for service ~ 2s';
 
-    var localMS = Microservices.create({ services: [], seedAddress: generateAddress(8000) });
-
-    var { awaitProxyName } = localMS.createProxies({
+    var localMS = Microservices.create({ services: [], seedAddress: utils.generateAddress(8000) });
+    var proxyConfig = {
       proxies: [
         {
-          serviceDefinition: remoteServiceDefinition,
+          serviceDefinition: utils.remoteServiceDefinition,
           proxyName: 'awaitProxyName',
         },
       ],
       isAsync: true,
-    });
+    };
+    var { awaitProxyName } = localMS.createProxies(proxyConfig);
 
     awaitProxyName.then(({ proxy: serviceNameProxy }) => {
       console.log('remote service is available!');
@@ -102,5 +47,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
       responseSpan.innerText = `${type}: ${response}`;
       placeHolder.appendChild(responseSpan);
     }
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, utils);
 });
