@@ -7,7 +7,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "moduleResolution": "node",
-    "baseUrl": "./src"
+    "baseUrl": "./src/builds"
   },
   "include": ["src/**/*"]
 }

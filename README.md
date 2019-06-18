@@ -2,49 +2,61 @@
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
+
 # Scalecube
 
-Microservices library inspired by the java scalecube-services. scalecube provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupling between service implementation and technology.
+Scalecube is a toolkit for creating microservices based systems.  
+Scalecube provides tools like: [Microservice](packages/scalecube-microservice/README.md), [Router](<>), [Discovery](packages/scalecube-discovery/README.md), [Transport-browser](packages/transport-browser/README.md), [Transport-nodejs](packages/transport-nodejs/README.md), [Gateway](<>), [Cluster](<>).
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
+## Basic Usage
+
+npm:
+
+```text
+yarn add @scalecube/scalecube-microservice
+```
+
+yarn:
+
+```text
+npm install @scalecube/scalecube-microservice
+```
+
+### Usage
+
+**provider side** - create the service & publish it.
+
+```typescript
+import { Microservices } from '@scalecube/scalecube-microservice';
+const microserviceInstance = Microservices.create({
+  services: [{
+        definition: greetingsDefinition,
+        reference: { hello : (name) => `Hello ${name}!` }
+  }]
+});
+```
+
+**consumer side** - use the service.
+
+```typescript
+import { Microservices } from '@scalecube/scalecube-microservice';
+const greetingService = Microservices.create({}).createProxy({  serviceDefinition: greetingsDefinition });
+greetingService.hello('Me').then(console.log) // 'Hello Me!'
+```
+
+The service can be written and re-written in every available technology.  
+it can be run in workers, browser or server.  
+Scalecube provide us a way to publish the service from any platform and consume the service at any plaform without any additional code.
+
+For more details how to use it see [scalecube basic usage](packages/scalecube-microservice/README.md)
 
 ## Project Status
 
 currently we are working on version 0.2.x
-and it will be the first version with LTS (meaning the API will be backwards compatible until the major will change).
-The SLA is still under debate and will be release as part of 0.2.x
+and it will be the first version with LTS (meaning the API will be backwards compatible until the major will change).  
+The SLA is still under debate and will be release as part of 0.2.x  
 for more details about 0.2.x go to <https://github.com/scalecube/scalecube-js/issues/30>
-
-## Install
-
-yarn add @scalecube/scalecube-microservice
-
-or
-
-npm install @scalecube/scalecube-microservice
-
-import Microservices, { Microservices, ASYNC_MODEL_TYPES, Api } from '@scalecube/scalecube-microservice'
-
-## Basic Usage
-
-[scalecube basic usage](packages/scalecube-microservice/README.md)
-
-For more details how to use it see the tests
-
-## Run/Debug
-
-Install `yarn/npm install`  
-Build `npm build`  
-Run test `npm test`
-
-To run/debug jest tests:
-
--   jest options: --runInBand --no-cache --env=jsdom
-
--   env variables: BABEL_ENV=commonjs
-
--   you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: <https://facebook.github.io/jest/docs/en/troubleshooting.html>
-    ![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
 
 ## Version
 
@@ -55,3 +67,48 @@ To run/debug jest tests:
 **MINOR** version when you add functionality in a backwards-compatible manner, and
 
 **PATCH** version when you make backwards-compatible bug fixes.
+
+<!--
+
+Working with microservices allow you:
+- **Scale-up** 
+  - Scale develop capacity as your team grow.
+- **Technology agnostic**
+  - Avoiding tight-coupling between service implementation and technology.
+ 
+With Scalecube it is also possible to create monolith,
+and change to microservice architecture when you are ready to scale.
+
+
+
+
+## Problems microservice solves:
+
+- Have you ever wanted to replace only part of your code as technology progress?
+- Have you ever had to develop the same (or similar) logic multiple times?
+- Have you ever had hard integration process between different teams?
+
+#### Solve integration problem
+Develop capacity scale as your team grows,
+
+but the integration between features/ change requests/ etc.. become harder.
+
+Scalecube approach for solving this problem:
+- define API for a service.
+- service must implement the given API.
+
+After service is defined, it is possible for the service provider and the service consumer to work independently.
+
+- once the service is production-ready the consumer doesn't need to have any integration phase. 
+
+#### Solve technology block
+Changing technology is never easy but almost always necessary.
+
+It is common that js libraries developed/changed over time.
+
+working with micro-services you will be able to replace/update small part of your code.
+
+with Scalecube you will be able to take it one step further.
+
+it will be possible to change the service between backEnd technology and frontEnd technology.
+-->
