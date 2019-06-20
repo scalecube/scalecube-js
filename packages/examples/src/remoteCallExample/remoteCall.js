@@ -8,7 +8,7 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, utils) {
+  (function(Microservices, ASYNC_MODEL_TYPES, utils, definitions) {
     var placeHolder = document.getElementById('placeHolder');
     var waitMessage = document.getElementById('waitMessage');
 
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     var proxyConfig = {
       proxies: [
         {
-          serviceDefinition: utils.remoteServiceDefinition,
+          serviceDefinition: definitions.remoteServiceDefinition,
           proxyName: 'awaitProxyName',
         },
       ],
@@ -47,5 +47,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
       responseSpan.innerText = `${type}: ${response}`;
       placeHolder.appendChild(responseSpan);
     }
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, utils);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, utils, definitions);
 });

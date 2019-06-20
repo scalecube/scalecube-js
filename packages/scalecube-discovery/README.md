@@ -5,7 +5,7 @@
 # Discovery
 
 This package provides a default discovery implementation.
-it is intended to publish and discover metadata in a distributed environment.
+it is intended to publish and discover any data in a distributed environment.
 
 ## Basic Usage
 

@@ -8,7 +8,7 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, rxjs, utils) {
+  (function(Microservices, ASYNC_MODEL_TYPES, rxjs, utils, definitions) {
     var remoteService = {
       hello: function(name) {
         return new Promise((resolve, reject) => {
@@ -31,14 +31,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
     };
 
     /**
-     * Service will be available only after 2s
+     * the remote service will be available only after 2s
      */
     setTimeout(() => {
       console.log('provision remote microservice after 2s');
       Microservices.create({
         services: [
           {
-            definition: utils.remoteServiceDefinition,
+            definition: definitions.remoteServiceDefinition,
             reference: remoteService,
           },
         ],
@@ -46,5 +46,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
         address: utils.generateAddress(1234),
       });
     }, 2000);
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs, utils);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs, utils, definitions);
 });
