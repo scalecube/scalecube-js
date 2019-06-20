@@ -4,30 +4,27 @@
 
 # Discovery
 
-Discovery is used that publish and discover values in a distributed environment.
+This package provides a default discovery implementation.
+it is intended to publish and discover any data in a distributed environment.
 
 ## Basic Usage
 
 ```javascript
+import { createDiscovery } from '@scalecube/scalecube-discovery';
+
 const discoveryConfig = {
-  seedAddress: 'defaultEnvironment', // string
-  address: 'random-discovery-identifier', // string
-  itemsToPublish: [], // Item[]
+  seedAddress,
+  address,
+  itemsToPublish: [],
 };
+
 const discovery = createDiscovery(discoveryConfig);
-```
 
-After the creation of the discovery, it is possible to subscribe to `discoveredItems$()`
-and then to receive information about the other discoveries that join the same environment ('seedAddress')
+// on subscribe to `discoveredItems$()`, we will start getting emits of the distributed environment's latest state.
+discovery.discoveredItems$().subscribe(console.log); 
 
-```javascript
-discovery.discoveredItems$().subscribe(console.log); // emits all values from the other discoveries that are joining the same 'seedAddress'
-```
 
-After the creation of the discovery, it is possible to remove it by `destroy()`
-destroy will complete the stream, remove the discovery's data from the environment
-and notify all other discoveries about the change.
-
-```javascript
-discovery.destroy().then(console.log); // random-discovery-identifier has been removed from defaultEnvironment
+// on calling `destroy()`, we will remove our metadata from the distributed environment. 
+// also, it stops the discovery from sharing/publishing metadata.
+discovery.destroy().then(console.log); 
 ```

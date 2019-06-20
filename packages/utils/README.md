@@ -28,33 +28,3 @@ Then  valid address can be undefined or type Address
 When  calling validateAddress(address, isOptional) 
 Then  valid address must be of type Address
 ```
-
-## constants
-
-```text
-NOT_VALID_PROTOCOL
-NOT_VALID_ADDRESS 
-NOT_VALID_HOST 
-NOT_VALID_PATH
-NOT_VALID_PORT
-```
-
-\##check
-
-```text
-assert
-isDefined
-isString
-assertNonEmptyString
-isArray
-isNonEmptyArray
-assertArray
-isObject
-assertObject
-assertNonEmptyObject
-isOneOf
-assertOneOf
-isFunction
-assertFunction
-assertNumber
-```

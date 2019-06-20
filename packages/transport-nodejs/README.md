@@ -4,4 +4,4 @@
 
 # transport-nodejs
 
-RSocket Transport provider implementation for running on NodeJS
+This package serves as RSocket Transport provider for running on NodeJS

@@ -4,4 +4,4 @@
 
 # transport-browser
 
-RSocket Transport provider implementation for running on browser
+This package serves as RSocket Transport provider for running on browser

@@ -2,99 +2,74 @@
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
-# Microservices - Basic Usage
+# Microservices
 
-Scalecube.js microservices basic usage for creating microfrontend.
+This package provides Scalecube's implementation for microservices architecture.
 
-## Create a service
+## Usage
 
-The contract the creator of the service need to uphold.
+#### Define a service
 
-```javascript
-// serviceDefinition is a plain object, that describes the asyncModel for each method, that you want to use within your microfrontend
+```typescript
+import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+
 export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
-  methods: {
+  methods: { 
     hello: {
-      asyncModel: 'RequestResponse', // Promise
-    },
-    greet$: {
-      asyncModel: 'RequestStream', // Observable
-    },
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+    }
   },
 };
 ```
 
-Create your service how ever you like,
-It can be done using Class approach
+#### Create a service
 
-```javascript
-// service can be class
-export default class GreetingService {
-  hello(name) {
-    return Promise.resolve(`hello ${name}`);
-  }
-  greet$(...names) {
-    // RX.Js from() creator of Observable
-    return from(names).pipe(map((name) => `greetings ${name}`));
-  }
-}
-```
+```typescript
+import { Microservices } from '@scalecube/scalecube-microservice';
+import { greetingServiceDefinition } from './definitions';
 
-It can be done using Module approach
-
-```javascript
-// service can be module || function
-export const hello = (name) => Promise.resolve(`hello ${name}`);
-export const greet$ = (...names) => from(names).pipe(map((name) => `greetings ${name}`));
-```
-
-## Provision the service
-
-The provider of the service creates microserviceContainer and specifies the services that should be included in it
-
-```javascript
-// Creating microservice from class
-const microserviceContainer = Microservices.create({
-  services: [
-    {
-      definition: greetingServiceDefinition,
-      reference: new GreetingService(),
-    },
-  ],
+Microservices.create({
+  service : [{
+    definition: greetingServiceDefinition,
+    reference: {
+      hello : (name) => `Hello ${name}`
+    }, 
+   }]
 });
 ```
 
-```javascript
-// Creating microservice from module
-const microserviceContainer = Microservices.create({
-  services: [
-    {
-      definition: greetingServiceDefinition,
-      reference: {hello, greet$}
-    },
-  ],
-});
-```
+#### Use the service
 
-## Creating a proxy from the microservice and use the service
+```typescript
+import { Microservices } from '@scalecube/scalecube-microservice';
 
-```javascript
-// the consumer of the service creates a proxy from the microserviceContainer
-const greetingServiceProxy = microserviceContainer.createProxies({
-proxies : [{
-  serviceDefinition: greetingServiceDefinition,
-  proxyName : 'greetingServiceAwaitProxy'
-}],
-isAsync : true, // optional ( default false)
-router : defaultRouter // optional
+const microservice = Microservices.create({});
+
+// example of resolving the proxy only when the service is available
+const { awaitProxyName } = microservice.createProxies({
+      proxies: [{
+          serviceDefinition: remoteServiceDefinition,
+          proxyName: 'awaitProxyName',
+        },
+      ],
+      isAsync: true,
 });
 
-const { proxy : greetingServiceProxy } : {greetingServiceProxy : GreetingService} = await greetingServiceAwaitProxy;
-// then the consumer can invoke the method from GreetingService using the proxy
-greetingServiceProxy.hello('someone').then((response) => console.log(response)); // hello someone
-greetingServiceProxy.greet$(['someone1','someone2'])
-  .subscribe((response) => 
-    console.log(response) // greetings someone1 
-  );                      // greetings someone2
+awaitProxyName.then(({proxy}) => {
+  proxy.hello('ME').then(console.log) // Hello ME
+});
+
+// example of resolving the proxy immediately
+// in this time we are not sure if the service is available to use.
+const { proxyName } = microservice.createProxies({
+      proxies: [{
+          serviceDefinition: remoteServiceDefinition,
+          proxyName: 'proxyName',
+        },
+      ],
+      // isAsync: false, 
+});
+
+proxyName.hello('ME').then(console.log) // Hello ME
 ```
