@@ -1,5 +1,5 @@
 import * as check from './check';
-import { getFullAddress, validateAddress } from './address';
+import { getFullAddress, validateAddress, getAddress } from './address';
 import * as constants from './constants';
 
-export { check, getFullAddress, validateAddress, constants };
+export { check, getFullAddress, validateAddress, constants, getAddress };

@@ -1,56 +1,35 @@
-import { ReplaySubject } from 'rxjs';
-import { Item } from '../api';
-import { Address } from '@scalecube/api';
+import { Observable } from 'rxjs';
+import { ClusterEvent } from '../Discovery/Cluster';
 
-declare global {
-  interface Window {
-    scalecube: ScalecubeGlobal;
-  }
+export interface MembersMap {
+  [member: string]: any;
 }
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      scalecube: ScalecubeGlobal;
-    }
-  }
+export interface MembersPort {
+  [member: string]: MessagePort;
 }
 
-export interface ScalecubeGlobal {
-  clusters: ClustersMap;
+export type MemberEventType = 'ADDED' | 'REMOVED' | 'INIT' | 'CLOSE';
+
+export interface MembershipEvent {
+  /**
+   * address of the member
+   */
+  member: string;
+  /**
+   * status of the member
+   */
+  type: MemberEventType;
+  /**
+   * metadata of the member
+   */
+  metadata: MembersMap;
 }
 
-export interface ClustersMap {
-  [seedAddress: string]: Cluster;
-}
-
-export interface ShareDataBetweenDiscoveries {
-  discoveries: DiscoveryEntity[];
-}
-
-export interface DiscoveryEntity {
-  address: Address;
-  discoveredItems: Item[];
-  subjectNotifier: ReplaySubject<Item[]>;
-}
-
-export interface GetCluster {
-  seedAddress: Address;
-}
-
-export interface JoinCluster {
-  cluster: Cluster;
-  address: Address;
-  itemsToPublish: Item[];
-  subjectNotifier: ReplaySubject<Item[]>;
-}
-
-export interface LeaveCluster {
-  cluster: Cluster;
-  address: Address;
-}
+export type ConnectType = 'window' | 'port';
 
 export interface Cluster {
-  discoveries: DiscoveryEntity[];
-  allDiscoveredItems: Item[];
+  getCurrentMemberStates: () => Promise<MembersMap>;
+  listen$: () => Observable<ClusterEvent>;
+  destroy: () => Promise<string>;
 }

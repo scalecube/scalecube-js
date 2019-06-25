@@ -1,8 +1,10 @@
 import { Address } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 
-export const getAddressCollision = (addressPort: Address, seedAddressPort: Address) =>
-  `address ${getFullAddress(addressPort)} must be different from the seed Address ${getFullAddress(seedAddressPort)}`;
+export const ADDRESS_DESTROYED = 'address already been removed';
 
-export const getDiscoverySuccessfullyDestroyedMessage = (nodeAddress: Address, seedAddress: Address) =>
-  `${getFullAddress(nodeAddress)} has been removed from ${getFullAddress(seedAddress)}`;
+export const getAddressCollision = (address: Address, seedAddress: Address) =>
+  `address ${getFullAddress(address)} must be different from the seed Address ${getFullAddress(seedAddress)}`;
+
+export const getDiscoverySuccessfullyDestroyedMessage = (address: Address) =>
+  `${getFullAddress(address)} has been removed`;

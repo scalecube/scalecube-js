@@ -28,3 +28,36 @@ export const getFullAddress = (address: Address) => {
   const { host, path, port, protocol } = address;
   return `${protocol}://${host}:${port}/${path}`;
 };
+
+export const getAddress = (address: string): Address => {
+  const newAddress: { [key: string]: any } = {};
+  address = buildAddress({ key: 'protocol', optionalValue: 'pm', delimiter: '://', str: address, newAddress });
+  address = buildAddress({ key: 'host', optionalValue: 'defaultHost', delimiter: ':', str: address, newAddress });
+  address = buildAddress({ key: 'port', optionalValue: 8080, delimiter: '/', str: address, newAddress });
+  newAddress.path = address;
+
+  return newAddress as Address;
+};
+
+const buildAddress = ({
+  key,
+  optionalValue,
+  delimiter,
+  newAddress,
+  str,
+}: {
+  optionalValue: string | number;
+  delimiter: string;
+  str: string;
+  newAddress: { [key: string]: any };
+  key: string;
+}) => {
+  let [v1, rest]: any = str.split(delimiter);
+  if (!rest) {
+    rest = v1;
+    v1 = optionalValue;
+  }
+
+  newAddress[key] = v1;
+  return rest;
+};
