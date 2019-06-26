@@ -1,8 +1,11 @@
 import { Observable } from 'rxjs';
-import { ClusterEvent } from '../Discovery/Cluster';
+import { ClusterEvent } from '../Discovery/Cluster/JoinCluster';
 
 export interface MembersMap {
-  [member: string]: any;
+  membersState: {
+    [member: string]: any;
+  };
+  membersPort: MembersPort;
 }
 
 export interface MembersPort {

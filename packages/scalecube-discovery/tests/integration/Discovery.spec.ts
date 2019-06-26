@@ -24,8 +24,8 @@ describe('Test discovery success scenarios', () => {
   `, (done) => {
     expect.assertions(2);
 
-    const aAddress = getAddress('aAddress');
-    const bAddress = getAddress('bAddress');
+    const aAddress = getAddress('A');
+    const bAddress = getAddress('B');
     const bItem = {
       address: bAddress,
     };
@@ -105,8 +105,8 @@ describe('Test discovery success scenarios', () => {
   `, (done) => {
     expect.assertions(3);
 
-    const aAddress = getAddress('aAddress');
-    const bAddress = getAddress('bAddress');
+    const aAddress = getAddress('A');
+    const bAddress = getAddress('B');
     const bItem = {
       address: bAddress,
     };
