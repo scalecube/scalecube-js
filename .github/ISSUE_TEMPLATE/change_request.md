@@ -99,13 +99,13 @@ _**Example:** reduce bundle size by X%._
 
 ####
 
-- [ ] Technical review
+- [ ] Developer review
+
+- [ ] QA review
 
 - [ ] All tests are implemented <!-- automatic testing -->
 
 - [ ] Documentation
-
-- [ ] Release notes
 
 - [ ] KPI has been reached
 

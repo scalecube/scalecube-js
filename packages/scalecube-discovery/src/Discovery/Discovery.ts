@@ -1,7 +1,12 @@
-import { getFullAddress, getAddress } from '@scalecube/utils';
+import { getFullAddress, getAddress, validateAddress, check } from '@scalecube/utils';
 import { Address, DiscoveryApi } from '@scalecube/api';
 import { ClusterEvent, joinCluster } from './Cluster/JoinCluster';
-import { ADDRESS_DESTROYED, getAddressCollision, getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import {
+  ADDRESS_DESTROYED,
+  getAddressCollision,
+  getDiscoverySuccessfullyDestroyedMessage,
+  INVALID_ITEMS_TO_PUBLISH,
+} from '../helpers/const';
 import { ReplaySubject } from 'rxjs';
 import { Cluster, MembersData } from '../helpers/types';
 
@@ -15,11 +20,14 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
   const membersState: { [member: string]: boolean } = {};
 
   return new Promise((resolve, reject) => {
-    if (!address) {
-      address = getAddress('address');
+    validateAddress(address, false);
+
+    if (seedAddress) {
+      validateAddress(seedAddress, false);
+      validateAddressCollision(address, seedAddress);
     }
 
-    seedAddress && validateAddressCollision(address, seedAddress);
+    check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
 
     const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
@@ -106,7 +114,9 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
 };
 
 const validateAddressCollision = (address: Address, seedAddress: Address) => {
-  if (getFullAddress(address) === getFullAddress(seedAddress)) {
-    throw new Error(getAddressCollision(address, seedAddress));
+  const fullAddress = getFullAddress(address);
+  const fullSeedAddress = getFullAddress(seedAddress);
+  if (fullAddress === fullSeedAddress) {
+    throw new Error(getAddressCollision(fullAddress, fullSeedAddress));
   }
 };

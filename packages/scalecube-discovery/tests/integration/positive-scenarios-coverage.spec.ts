@@ -13,6 +13,7 @@ describe('Test discovery success scenarios', () => {
 
   const discoveryList: DiscoveryApi.Discovery[] = [];
 
+  // @ts-ignore
   beforeEach(async (done) => {
     while (discoveryList.length > 0) {
       const discovery = discoveryList.pop();
@@ -109,7 +110,8 @@ describe('Test discovery success scenarios', () => {
      Then       discoveredItems$ emits ServiceDiscoveryEvent
                 | type   | 'UNREGISTERED' |
                 | item   | b1             |
-  `, async (done) => {
+  `, // @ts-ignore
+  async (done) => {
     expect.assertions(3);
 
     const aAddress = getAddress('A');
@@ -120,14 +122,12 @@ describe('Test discovery success scenarios', () => {
     const discoveryB = await createDiscovery({
       address: bAddress,
       itemsToPublish: [bItem],
-      debug: true,
     });
 
     createDiscovery({
       address: aAddress,
       seedAddress: bAddress,
       itemsToPublish: [],
-      debug: true,
     }).then((discoveryA: DiscoveryApi.Discovery) => {
       discoveryList.push(discoveryA);
       let step = 0;

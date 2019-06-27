@@ -22,7 +22,7 @@
     "build:umd-min": "rimraf dist-min && parcel build src/index.ts --out-dir dist-min --global discovery",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "yarn test-dom-env && yarn test-node-env",
+    "test": "yarn test-dom-env",
     "test-dom-env": "jest --config jest.config-dom.js",
     "test-node-env": "jest --config jest.config-node.js",
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",

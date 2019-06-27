@@ -17,7 +17,7 @@ export interface DiscoveryOptions {
    * @property
    * A unique address of the Discovery.
    */
-  address?: Address;
+  address: Address;
   /**
    * @property
    * The data that the discovery need to share.
