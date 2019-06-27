@@ -59,9 +59,6 @@ export const client = (options: {
             } else {
               // console.log('whoAmI', whoAmI, 'seed ', seed, 'type ', type, 'from ', from, 'to ', to, 'metadata: ', metadata);
               updateConnectedMember({ metadata, type, from, to });
-              if (from !== seed) {
-                port2.postMessage(getMembershipEvent({ metadata, type, from: whoAmI, to: seed, origin: from }));
-              }
             }
 
             saveToLogs(
@@ -117,6 +114,17 @@ export const client = (options: {
         to: null,
       });
 
+      port2.postMessage(
+        getMembershipEvent({
+          metadata: {
+            [whoAmI]: itemsToPublish,
+          },
+          type: REMOVED,
+          from: whoAmI,
+          to: seed,
+          origin: whoAmI,
+        })
+      );
       port1.removeEventListener(MESSAGE, portEventsHandler);
       port1.close();
       port2.close();
