@@ -16,6 +16,7 @@ export const joinCluster = ({
   seedAddress,
   itemsToPublish,
   transport,
+  retry,
   debug,
   logger,
 }: {
@@ -23,6 +24,9 @@ export const joinCluster = ({
   seedAddress?: Address;
   itemsToPublish: any;
   transport: any;
+  retry?: {
+    timeout: number;
+  };
   debug?: boolean;
   logger?: {
     namespace: string;
@@ -38,27 +42,47 @@ export const joinCluster = ({
 
   let serverPort: any = null;
   let clientPort: any = null;
-  const updateConnectedMember = ({ type, metadata }: { type: MemberEventType; metadata: MembersMap }) => {
+  const updateConnectedMember = ({
+    type,
+    metadata,
+    from,
+    to,
+  }: {
+    from: string;
+    to: string;
+    metadata: any;
+    type: MemberEventType;
+  }) => {
     const { membersPort } = membersStatus;
 
     Object.keys(membersPort).forEach((nextMember: string) => {
-      const mPort: MessagePort = membersPort[nextMember];
-      mPort.postMessage(
-        getMembershipEvent({
-          from: whoAmI,
-          to: nextMember,
-          metadata,
-          type,
-        })
-      );
+      if (from !== nextMember && whoAmI !== nextMember) {
+        const mPort: MessagePort = membersPort[nextMember];
+        mPort.postMessage(
+          getMembershipEvent({
+            from: whoAmI,
+            to: nextMember,
+            origin: from,
+            metadata,
+            type,
+          })
+        );
+      }
     });
   };
 
   const cluster = Object.assign({
     getCurrentMemberStates: () => {
-      const { membersState } = membersStatus;
-      saveToLogs(`${whoAmI} current state`, membersState, logger, debug);
-      return Promise.resolve(membersState);
+      saveToLogs(
+        `${whoAmI} current state`,
+        {
+          membersState: { ...membersStatus.membersState },
+          membersPort: { ...membersStatus.membersPort },
+        },
+        logger,
+        debug
+      );
+      return Promise.resolve({ ...membersStatus.membersState });
     },
     listen$: () => rSubjectMembers.asObservable(),
     destroy: () => {
@@ -83,16 +107,19 @@ export const joinCluster = ({
         membersStatus,
         itemsToPublish,
         rSubjectMembers,
+        retry: retry || {
+          timeout: 500,
+        },
         logger,
         debug,
+        seed: to,
       });
-      clientPort.start(to).then(() => {
-        const { membersState, membersPort } = membersStatus;
+      clientPort.start().then(() => {
         saveToLogs(
           `${whoAmI} established connection with ${to}`,
           {
-            membersState,
-            portList: keysAsArray(membersPort),
+            membersState: { ...membersStatus.membersState },
+            membersPort: { ...membersStatus.membersPort },
           },
           logger,
           debug
@@ -108,17 +135,20 @@ export const getMembershipEvent = ({
   from,
   to,
   metadata,
+  origin,
   type,
 }: {
   from: string;
   to: string;
   metadata: any;
+  origin: string;
   type: MemberEventType;
 }) => ({
   detail: {
     metadata,
     type,
     from,
+    origin,
     to,
   },
   type: MEMBERSHIP_EVENT,
@@ -127,9 +157,10 @@ export const getMembershipEvent = ({
 export interface ClusterEvent {
   type: MemberEventType;
   items: [];
+  from: string;
 }
 
-export const saveToLogs = (msg: string, extra: {}, logger?: { namespace: string }, debug?: boolean) => {
+export const saveToLogs = (msg: string, extra: MembersMap, logger?: { namespace: string }, debug?: boolean) => {
   const state = {
     msg,
     ...extra,
@@ -145,8 +176,12 @@ export const saveToLogs = (msg: string, extra: {}, logger?: { namespace: string 
     logger && window.scalecube.cluster.push(state);
   }
 
-  // tslint:disable-next-line
-  debug && console.log('logger', state);
+  // tslint:disable
+  // @ts-ignore
+  debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
+  // @ts-ignore
+  debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', keysAsArray(extra.membersPort));
+  // tslint:enable
 };
 
-export const keysAsArray = (obj: {}) => Object.keys(obj) || [];
+export const keysAsArray = (obj: {}) => (obj && Object.keys(obj)) || [];

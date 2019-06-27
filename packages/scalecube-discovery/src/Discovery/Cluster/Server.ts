@@ -9,7 +9,7 @@ import {
   MESSAGE,
   REMOVED,
 } from './JoinCluster';
-import { MembersMap, MembersPort } from '../../helpers/types';
+import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
 
 export const server = (options: {
@@ -27,104 +27,124 @@ export const server = (options: {
   const globalEventsHandler = (ev: any) => {
     const { type: evType, detail: membershipEvent } = ev.data;
     if (evType === MEMBERSHIP_EVENT) {
-      const { metadata, type, to, from } = membershipEvent;
+      const { metadata, type, to, from, origin } = membershipEvent;
 
       if (to !== whoAmI) {
         return;
       }
 
+      saveToLogs(
+        `${whoAmI} server received ${type} request from ${from}`,
+        {
+          membersState: { ...membersStatus.membersState },
+          membersPort: { ...membersStatus.membersPort },
+        },
+        logger,
+        debug
+      );
+
+      rSubjectMembers &&
+        rSubjectMembers.next({
+          type,
+          items: metadata[origin],
+          from: origin,
+        });
+
       const mPort = ev.ports[0];
-      membersStatus.membersPort[from] = mPort;
+
       // response to initiator of the contact with all members data
       mPort.postMessage(
         getMembershipEvent({
-          from: to,
+          from: whoAmI,
           to: from,
+          origin: whoAmI,
           metadata: { ...membersStatus.membersState, [whoAmI]: itemsToPublish },
           type: INIT,
         })
       );
 
-      mPort.addEventListener(MESSAGE, portEventsHandler);
-      mPort.start();
+      membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
+      membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+      updateConnectedMember({ metadata, type: ADDED, from, to });
 
       saveToLogs(
-        `${whoAmI} server received ${type} request from ${from}`,
+        `${whoAmI} update ports`,
         {
-          membersState: membersStatus.membersState,
-          portList: keysAsArray(membersStatus.membersPort),
+          membersState: { ...membersStatus.membersState },
+          membersPort: { ...membersStatus.membersPort },
         },
         logger,
         debug
       );
+
+      mPort.addEventListener(MESSAGE, portEventsHandler);
+      mPort.start();
     }
   };
 
   const portEventsHandler = (ev: any) => {
     const { type: evType, detail: membershipEvent } = ev.data;
-    if (evType === MEMBERSHIP_EVENT) {
-      const { metadata, type, from, to } = membershipEvent;
+    const { metadata, type, from, to } = membershipEvent;
 
-      updateConnectedMember({ metadata, type });
-
-      if (type === ADDED) {
-        membersStatus.membersState[from] = metadata;
-        // saveToLogs({ whoAmI, action: 'ADDED', current: membersData, prev: prevState });
-      } else {
-        if (membersStatus.membersState[from]) {
-          delete membersStatus.membersState[from];
-        }
-
-        const mPort = membersStatus.membersPort[from];
-        if (mPort) {
-          mPort.postMessage(
-            getMembershipEvent({
-              type: 'CLOSE',
-              metadata: {},
-              to: from,
-              from: to,
-            })
-          );
-
-          membersStatus.membersPort[from].close();
-        }
-
-        saveToLogs(
-          `${whoAmI} server received ${type} request from ${from}`,
-          {
-            membersState: membersStatus.membersState,
-            portList: keysAsArray(membersStatus.membersPort),
-          },
-          logger,
-          debug
-        );
+    updateConnectedMember({ metadata, type, from, to });
+    if (type === ADDED || type === INIT) {
+      membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+    } else {
+      if (membersStatus.membersState[from]) {
+        delete membersStatus.membersState[from];
       }
 
-      rSubjectMembers &&
-        rSubjectMembers.next({
-          type,
-          items: metadata[from],
-        });
+      const mPort = membersStatus.membersPort[from];
+      if (mPort) {
+        mPort.postMessage(
+          getMembershipEvent({
+            type: 'CLOSE',
+            metadata: {},
+            to: from,
+            from: to,
+            origin: whoAmI,
+          })
+        );
+
+        membersStatus.membersPort[from].close();
+      }
     }
+
+    saveToLogs(
+      `${whoAmI} server received ${type} request from ${from}`,
+      {
+        membersState: { ...membersStatus.membersState },
+        membersPort: { ...membersStatus.membersPort },
+      },
+      logger,
+      debug
+    );
+
+    rSubjectMembers &&
+      rSubjectMembers.next({
+        type,
+        items: metadata[from],
+        from: origin,
+      });
   };
 
   return {
     start: () => {
       addEventListener(MESSAGE, globalEventsHandler);
-      saveToLogs(
-        `${whoAmI} server start`,
-        {
-          membersState: membersStatus.membersState,
-          portList: keysAsArray(membersStatus.membersPort),
-        },
-        logger,
-        debug
-      );
+      // saveToLogs(
+      //   `${whoAmI} start server`,
+      //   {
+      //     membersState: { ...membersStatus.membersState },
+      //     membersPort: { ...membersStatus.membersPort },
+      //   },
+      //   logger,
+      //   debug
+      // );
     },
     stop: () => {
       removeEventListener(MESSAGE, globalEventsHandler);
 
-      const membersList = keysAsArray(membersStatus.membersPort);
+      const membersList = keysAsArray({ ...membersStatus.membersPort });
       membersList.forEach((to) => {
         const mPort = membersStatus.membersPort[to];
         mPort &&
@@ -132,6 +152,7 @@ export const server = (options: {
             getMembershipEvent({
               to,
               from: whoAmI,
+              origin: whoAmI,
               metadata: {
                 [whoAmI]: itemsToPublish,
               },
@@ -142,15 +163,15 @@ export const server = (options: {
         mPort.removeEventListener(MESSAGE, portEventsHandler);
         mPort.close();
 
-        saveToLogs(
-          `${whoAmI} server close`,
-          {
-            membersState: membersStatus.membersState,
-            portList: keysAsArray(membersStatus.membersPort),
-          },
-          logger,
-          debug
-        );
+        // saveToLogs(
+        //   `${whoAmI} close server`,
+        //   {
+        //     membersState: { ...membersStatus.membersState },
+        //     membersPort: { ...membersStatus.membersPort },
+        //   },
+        //   logger,
+        //   debug
+        // );
       });
 
       return Promise.resolve('');

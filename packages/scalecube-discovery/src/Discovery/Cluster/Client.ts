@@ -17,37 +17,58 @@ export const client = (options: {
   updateConnectedMember: (...data: any[]) => any;
   itemsToPublish: any[];
   rSubjectMembers: ReplaySubject<ClusterEvent>;
+  retry: {
+    timeout: number;
+  };
+  seed: string;
   debug?: boolean;
   logger?: {
     namespace: string;
   };
 }) => {
-  const { whoAmI, membersStatus, updateConnectedMember, itemsToPublish, rSubjectMembers, logger, debug } = options;
+  const {
+    whoAmI,
+    membersStatus,
+    updateConnectedMember,
+    itemsToPublish,
+    rSubjectMembers,
+    logger,
+    debug,
+    retry,
+    seed,
+  } = options;
   const { port1, port2 } = new MessageChannel();
 
   let portEventsHandler = (ev: any) => {};
 
+  let retryTimer: any = null;
+
   return {
-    start: (to: string) =>
+    start: () =>
       new Promise((resolve, reject) => {
         portEventsHandler = (ev: any) => {
           const { type: evType, detail: membershipEvent } = ev.data;
           if (evType === MEMBERSHIP_EVENT) {
-            const { metadata, type, from } = membershipEvent;
-
+            const { metadata, type, from, to, origin } = membershipEvent;
             membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
 
             if (type === INIT) {
+              clearInterval(retryTimer);
+
               resolve();
             } else {
-              updateConnectedMember({ metadata, type });
+              // console.log('whoAmI', whoAmI, 'seed ', seed, 'type ', type, 'from ', from, 'to ', to, 'metadata: ', metadata);
+              updateConnectedMember({ metadata, type, from, to });
+              if (from !== seed) {
+                port2.postMessage(getMembershipEvent({ metadata, type, from: whoAmI, to: seed, origin: from }));
+              }
             }
 
             saveToLogs(
               `${whoAmI} client received ${type} request from ${from}`,
               {
-                membersState: membersStatus.membersState,
-                portList: keysAsArray(membersStatus.membersPort),
+                membersState: { ...membersStatus.membersState },
+                membersPort: { ...membersStatus.membersPort },
               },
               logger,
               debug
@@ -56,28 +77,35 @@ export const client = (options: {
             rSubjectMembers &&
               rSubjectMembers.next({
                 type,
-                items: metadata[from],
+                items: metadata[origin],
+                from: origin,
               });
           }
         };
 
         port1.addEventListener(MESSAGE, portEventsHandler);
         port1.start();
-        const { membersState, membersPort } = membersStatus;
-        saveToLogs(`${whoAmI} start client`, { membersState, portList: keysAsArray(membersPort) }, logger, debug);
 
-        postMessage(
-          getMembershipEvent({
-            metadata: {
-              [whoAmI]: itemsToPublish,
-            },
-            type: INIT,
-            to,
-            from: whoAmI,
-          }),
-          '*',
-          [port2]
-        );
+        // saveToLogs(`${whoAmI} start client`, {
+        //   membersState: { ...membersStatus.membersState },
+        //   membersPort: { ...membersStatus.membersPort },
+        // }, logger, debug);
+
+        retryTimer = setTimeout(() => {
+          postMessage(
+            getMembershipEvent({
+              metadata: {
+                [whoAmI]: itemsToPublish,
+              },
+              type: INIT,
+              to: seed,
+              from: whoAmI,
+              origin: whoAmI,
+            }),
+            '*',
+            [port2]
+          );
+        }, retry.timeout);
       }),
     stop: () => {
       updateConnectedMember({
@@ -85,15 +113,18 @@ export const client = (options: {
           [whoAmI]: itemsToPublish,
         },
         type: REMOVED,
+        from: whoAmI,
+        to: null,
       });
+
       port1.removeEventListener(MESSAGE, portEventsHandler);
       port1.close();
       port2.close();
       saveToLogs(
         `${whoAmI} close client`,
         {
-          membersState: membersStatus.membersState,
-          portList: keysAsArray(membersStatus.membersPort),
+          membersState: { ...membersStatus.membersState },
+          membersPort: { ...membersStatus.membersPort },
         },
         logger,
         debug
