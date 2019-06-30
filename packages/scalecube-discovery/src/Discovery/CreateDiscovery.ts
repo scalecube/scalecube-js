@@ -1,5 +1,3 @@
-import { Discovery, DiscoveryOptions } from '../api';
-
-type CreateDiscovery = (options: DiscoveryOptions) => Discovery;
+import { createDiscovery as CreateDiscovery } from './Discovery';
 
 export default CreateDiscovery;

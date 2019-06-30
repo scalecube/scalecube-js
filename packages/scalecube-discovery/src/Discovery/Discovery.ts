@@ -6,7 +6,7 @@ import {
   getAddressCollision,
   getDiscoverySuccessfullyDestroyedMessage,
   INVALID_ITEMS_TO_PUBLISH,
-} from '../helpers/const';
+} from '../helpers/constants';
 import { ReplaySubject } from 'rxjs';
 import { Cluster, MembersData } from '../helpers/types';
 
@@ -40,15 +40,11 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
           Object.freeze({
             destroy: () => {
               subscription && subscription.unsubscribe();
-              if (!address) {
-                return Promise.reject(ADDRESS_DESTROYED);
-              }
-              const tempAddress = address;
               discoveredItemsSubject.complete();
               return cluster
                 .destroy()
                 .then(() =>
-                  Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(tempAddress)).catch((error: any) =>
+                  Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address)).catch((error: any) =>
                     Promise.reject(error)
                   )
                 );

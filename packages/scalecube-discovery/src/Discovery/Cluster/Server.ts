@@ -52,7 +52,7 @@ export const server = (options: {
 
       const mPort = ev.ports[0];
 
-      // response to initiator of the contact with all members data
+      // 1. response to initiator of the contact with all members data
       mPort.postMessage(
         getMembershipEvent({
           from: whoAmI,
@@ -62,20 +62,11 @@ export const server = (options: {
           type: INIT,
         })
       );
-
-      membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
+      // 2. update membersState
       membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
       updateConnectedMember({ metadata, type: ADDED, from, to });
-
-      saveToLogs(
-        `${whoAmI} update ports`,
-        {
-          membersState: { ...membersStatus.membersState },
-          membersPort: { ...membersStatus.membersPort },
-        },
-        logger,
-        debug
-      );
+      // 3. update ports
+      membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
 
       mPort.addEventListener(MESSAGE, portEventsHandler);
       mPort.start();
@@ -131,15 +122,6 @@ export const server = (options: {
   return {
     start: () => {
       addEventListener(MESSAGE, globalEventsHandler);
-      // saveToLogs(
-      //   `${whoAmI} start server`,
-      //   {
-      //     membersState: { ...membersStatus.membersState },
-      //     membersPort: { ...membersStatus.membersPort },
-      //   },
-      //   logger,
-      //   debug
-      // );
     },
     stop: () => {
       removeEventListener(MESSAGE, globalEventsHandler);
@@ -162,16 +144,6 @@ export const server = (options: {
 
         mPort.removeEventListener(MESSAGE, portEventsHandler);
         mPort.close();
-
-        // saveToLogs(
-        //   `${whoAmI} close server`,
-        //   {
-        //     membersState: { ...membersStatus.membersState },
-        //     membersPort: { ...membersStatus.membersPort },
-        //   },
-        //   logger,
-        //   debug
-        // );
       });
 
       return Promise.resolve('');

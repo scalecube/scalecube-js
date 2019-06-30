@@ -1,6 +1,6 @@
 import { createDiscovery } from '../../src';
 import { getAddress } from '@scalecube/utils';
-import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/const';
+import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/constants';
 
 describe(`Test discovery destroy`, () => {
   test(`

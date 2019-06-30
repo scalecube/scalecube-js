@@ -18,20 +18,26 @@ export type MemberEventType = 'ADDED' | 'REMOVED' | 'INIT' | 'CLOSE';
 
 export interface MembershipEvent {
   /**
-   * address of the member
+   * the previous node the event arrived from
    */
-  member: string;
+  from: string;
   /**
-   * status of the member
+   * the next node the event need to be send to
+   */
+  to: string;
+  /**
+   * metadata of the event
+   */
+  metadata: any;
+  /**
+   * the original node that initiate the event
+   */
+  origin: string;
+  /**
+   * the type of the event
    */
   type: MemberEventType;
-  /**
-   * metadata of the member
-   */
-  metadata: MembersMap;
 }
-
-export type ConnectType = 'window' | 'port';
 
 export interface Cluster {
   getCurrentMemberStates: () => Promise<MembersMap>;

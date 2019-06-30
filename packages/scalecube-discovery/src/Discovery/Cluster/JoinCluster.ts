@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 import { Address } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
-import { Cluster, MemberEventType, MembersMap } from '../../helpers/types';
+import { Cluster, MemberEventType, MembershipEvent, MembersMap } from '../../helpers/types';
 import { server } from './Server';
 import { client } from './Client';
 
@@ -40,8 +40,8 @@ export const joinCluster = ({
   const rSubjectMembers = new ReplaySubject<ClusterEvent>(1);
   const whoAmI = getFullAddress(address);
 
-  let serverPort: any = null;
   let clientPort: any = null;
+
   const updateConnectedMember = ({
     type,
     metadata,
@@ -71,6 +71,17 @@ export const joinCluster = ({
     });
   };
 
+  const serverPort = server({
+    whoAmI,
+    membersStatus,
+    rSubjectMembers,
+    itemsToPublish,
+    updateConnectedMember,
+    logger,
+    debug,
+  });
+  serverPort.start();
+
   const cluster = Object.assign({
     getCurrentMemberStates: () => {
       saveToLogs(
@@ -87,14 +98,11 @@ export const joinCluster = ({
     listen$: () => rSubjectMembers.asObservable(),
     destroy: () => {
       clientPort && clientPort.stop();
-      serverPort && serverPort.stop();
+      serverPort.stop();
       rSubjectMembers.complete();
       return Promise.resolve('');
     },
   });
-
-  serverPort = server({ whoAmI, membersStatus, rSubjectMembers, itemsToPublish, updateConnectedMember, logger, debug });
-  serverPort.start();
 
   return new Promise((resolve, reject) => {
     if (!seedAddress) {
@@ -131,19 +139,7 @@ export const joinCluster = ({
   });
 };
 
-export const getMembershipEvent = ({
-  from,
-  to,
-  metadata,
-  origin,
-  type,
-}: {
-  from: string;
-  to: string;
-  metadata: any;
-  origin: string;
-  type: MemberEventType;
-}) => ({
+export const getMembershipEvent = ({ from, to, metadata, origin, type }: MembershipEvent) => ({
   detail: {
     metadata,
     type,
@@ -160,7 +156,12 @@ export interface ClusterEvent {
   from: string;
 }
 
-export const saveToLogs = (msg: string, extra: MembersMap, logger?: { namespace: string }, debug?: boolean) => {
+export const saveToLogs = (
+  msg: string,
+  extra: { [key: string]: any },
+  logger?: { namespace: string },
+  debug?: boolean
+) => {
   const state = {
     msg,
     ...extra,
@@ -177,9 +178,7 @@ export const saveToLogs = (msg: string, extra: MembersMap, logger?: { namespace:
   }
 
   // tslint:disable
-  // @ts-ignore
   debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
-  // @ts-ignore
   debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', keysAsArray(extra.membersPort));
   // tslint:enable
 };

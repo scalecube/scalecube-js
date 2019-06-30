@@ -15,7 +15,8 @@ export type CreateDiscovery = (options: DiscoveryOptions) => Promise<Discovery>;
 export interface DiscoveryOptions {
   /**
    * @property
-   * A unique address of the Discovery.
+   * A unique address.
+   * used for connection between discoveries.
    */
   address: Address;
   /**
@@ -25,7 +26,7 @@ export interface DiscoveryOptions {
   itemsToPublish: Item[];
   /**
    * @property
-   * The unique address of the Cluster
+   * the address we want to use in-order to connect to the distributed environment.
    */
   seedAddress?: Address;
 
@@ -61,7 +62,7 @@ export interface Discovery {
    * Destroy the discovery:
    * - Completes discoveredItems$.
    * - Notifies other discoveries that this discovery's items are not available anymore.
-   * - Resolves with the message, that specifies the address of the node and the address of the seed
+   * - Resolves with the message, that specifies the address of the discovery
    */
   destroy(): Promise<string>;
 }

@@ -54,10 +54,13 @@ export const client = (options: {
 
             if (type === INIT) {
               clearInterval(retryTimer);
-
               resolve();
             } else {
-              // console.log('whoAmI', whoAmI, 'seed ', seed, 'type ', type, 'from ', from, 'to ', to, 'metadata: ', metadata);
+              saveToLogs(
+                `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
+                {},
+                logger
+              );
               updateConnectedMember({ metadata, type, from, to });
             }
 
@@ -83,12 +86,7 @@ export const client = (options: {
         port1.addEventListener(MESSAGE, portEventsHandler);
         port1.start();
 
-        // saveToLogs(`${whoAmI} start client`, {
-        //   membersState: { ...membersStatus.membersState },
-        //   membersPort: { ...membersStatus.membersPort },
-        // }, logger, debug);
-
-        retryTimer = setTimeout(() => {
+        retryTimer = setInterval(() => {
           postMessage(
             getMembershipEvent({
               metadata: {
