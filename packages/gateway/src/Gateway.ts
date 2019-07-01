@@ -1,12 +1,13 @@
+import { Observable } from 'rxjs';
 // @ts-ignore
 import { RSocketServer } from 'rsocket-core';
 // @ts-ignore
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 // @ts-ignore
-import { Single } from 'rsocket-flowable';
-import { Gateway as GatewayInterface } from './api';
+import { Single, Flowable } from 'rsocket-flowable';
+import { Api } from '@scalecube/scalecube-microservice';
 
-export class Gateway implements GatewayInterface {
+export class Gateway implements Api.Gateway {
   private port: number;
   private server: any;
   private transport: any;
@@ -20,6 +21,7 @@ export class Gateway implements GatewayInterface {
       getRequestHandler: (socket: any) => {
         return {
           requestResponse: (payload: any) => requestResponse(payload, serviceCall),
+          requestStream: (payload: any) => requestStream(payload, serviceCall),
         };
       },
       transport: this.transport,
@@ -34,7 +36,6 @@ export class Gateway implements GatewayInterface {
 }
 
 const requestResponse = (payload: any, serviceCall: any) => {
-  console.log('HHHHHHHHHHHHH', serviceCall);
   const { data, metadata } = payload;
   console.log('Request:', data, metadata);
   return new Single((subscriber: any) => {
@@ -42,6 +43,7 @@ const requestResponse = (payload: any, serviceCall: any) => {
     serviceCall({
       message: JSON.parse(data),
       asyncModel: 'requestResponse',
+      // includeMessage: true,
     })
       .then((resp: any) => {
         console.log('RESP', resp);
@@ -50,5 +52,23 @@ const requestResponse = (payload: any, serviceCall: any) => {
       .catch((err: any) => {
         subscriber.onError(err);
       });
+  });
+};
+const requestStream = (payload: any, serviceCall: any) => {
+  console.log('rS', payload);
+  const { data, metadata } = payload;
+  return new Flowable((subscriber: any) => {
+    subscriber.onSubscribe();
+    const message = JSON.parse(data);
+    (serviceCall({
+      message,
+      asyncModel: 'requestStream',
+    }) as Observable<any>).subscribe(
+      (response: any) => {
+        subscriber.onNext({ data: JSON.stringify(response), metadata: '' });
+      },
+      (error: any) => subscriber.onError(error),
+      () => subscriber.onComplete()
+    );
   });
 };

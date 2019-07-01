@@ -19,6 +19,7 @@ import { LookUp } from './LookUp';
 import ProxiesMap from './ProxiesMap';
 import ProxiesOptions from './ProxiesOptions';
 import CreateProxiesOptions from './CreateProxiesOptions';
+import { Gateway } from './Gateway';
 
 export {
   AsyncModel,
@@ -43,4 +44,5 @@ export {
   Endpoint,
   Reference,
   LookUp,
+  Gateway,
 };

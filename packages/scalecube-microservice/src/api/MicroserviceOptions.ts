@@ -1,7 +1,7 @@
 import { Service } from '.';
 import { Address, TransportApi } from '@scalecube/api';
 import { Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
-import { Api as GatewayApi } from '@scalecube/gateway';
+import { Gateway } from './Gateway';
 /**
  * @interface MicroserviceOptions
  * The options for the creation of a microservice container
@@ -41,5 +41,5 @@ export default interface MicroserviceOptions {
    * discovery responsible to exchange data in the distributed env.
    */
   discovery?: (opt: DiscoveryAPI.DiscoveryOptions) => DiscoveryAPI.Discovery;
-  gateway?: GatewayApi.Gateway;
+  gateway?: Gateway;
 }

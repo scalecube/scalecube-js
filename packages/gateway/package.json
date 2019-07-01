@@ -22,6 +22,7 @@
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
     "@scalecube/api": "^0.0.2-alpha.1",
+    "@scalecube/scalecube-microservice": "0.1.3-alpha.10",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
