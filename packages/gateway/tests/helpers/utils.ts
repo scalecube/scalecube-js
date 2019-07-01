@@ -1,16 +1,15 @@
 import { from, throwError } from 'rxjs';
 import { RSocketClient } from 'rsocket-core';
-// @ts-ignore
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../../src/Gateway';
 
 class ServiceA {
   methodA() {
-    return Promise.resolve(1);
+    return Promise.resolve({ id: 1 });
   }
   methodB() {
-    return Promise.reject(new Error('methodB error'));
+    return Promise.reject({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
   }
   methodC() {
     return from([1, 2]);
@@ -30,7 +29,7 @@ const definition = {
   },
 };
 
-type makeConnectionType = (port: number) => Promise<{ gateway: any; socket: any }>;
+type makeConnectionType = (port?: number) => Promise<{ gateway: any; socket: any }>;
 
 export const makeConnection: makeConnectionType = (port = 8080) => {
   const gateway = new Gateway({ port });
@@ -50,7 +49,7 @@ export const makeConnection: makeConnectionType = (port = 8080) => {
     });
     client.connect().subscribe({
       onComplete: (socket: any) => {
-        console.log('Connected', socket);
+        console.log('Connected');
         resolve({ gateway, socket });
       },
       onError: (error: any) => {

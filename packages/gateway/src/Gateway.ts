@@ -11,7 +11,8 @@ export class Gateway implements Api.Gateway {
   private port: number;
   private server: any;
   private transport: any;
-  constructor(port: number) {
+  constructor(options) {
+    const { port } = options;
     this.port = port;
     this.transport = new RSocketWebSocketServer({ port });
   }

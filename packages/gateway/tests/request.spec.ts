@@ -1,7 +1,5 @@
 import { Observable, from } from 'rxjs';
-// @ts-ignore
 import { RSocketClient } from 'rsocket-core';
-// @ts-ignore
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../src/Gateway';
@@ -15,7 +13,7 @@ beforeAll(async () => {
 
 afterAll(() => gateway.stop());
 
-test.only('success requestResponse', (done) => {
+test('success requestResponse', (done) => {
   socket
     .requestResponse({
       data: JSON.stringify({
@@ -28,12 +26,28 @@ test.only('success requestResponse', (done) => {
         const { data, metadata } = args;
         const res = JSON.parse(data);
         console.log('Response', data, metadata);
-        // expect(res).toEqual({ response: 'ping pong' });
-        // done();
+        expect(res).toEqual({ id: 1 });
+        done();
       },
       onError: (e: any) => {
-        console.error('Eee', e);
-        done.fail();
+        done.fail(e);
       },
-    }); // Single type
+    });
+});
+
+test('fail requestResponse', (done) => {
+  socket
+    .requestResponse({
+      data: JSON.stringify({
+        qualifier: 'serviceA/methodB',
+        data: [{ request: 'ping' }],
+      }),
+    })
+    .subscribe({
+      onError: (e: any) => {
+        // console.error('ERR', e.source);
+        expect(e.source.message).toEqual('methodB error');
+        done();
+      },
+    });
 });
