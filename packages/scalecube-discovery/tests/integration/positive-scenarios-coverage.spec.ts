@@ -14,11 +14,12 @@ describe('Test discovery success scenarios', () => {
   const discoveryList: DiscoveryApi.Discovery[] = [];
 
   // @ts-ignore
-  beforeEach(async (done) => {
+  beforeEach((done) => {
     while (discoveryList.length > 0) {
       const discovery = discoveryList.pop();
-      discovery && (await discovery.destroy());
+      discovery && discovery.destroy();
     }
+    // console.log('*********************************');
     done();
   });
 
@@ -39,27 +40,28 @@ describe('Test discovery success scenarios', () => {
     const bAddress = getAddress('B');
     const bItem = 'bItemData';
 
-    createDiscovery({
+    const discoveryB = createDiscovery({
       address: bAddress,
       itemsToPublish: [bItem],
-    }).then((discoveryB: DiscoveryApi.Discovery) => {
-      discoveryList.push(discoveryB);
     });
 
-    createDiscovery({
+    const discoveryA = createDiscovery({
       address: aAddress,
       seedAddress: bAddress,
       itemsToPublish: [],
-    }).then((discoveryA: DiscoveryApi.Discovery) => {
-      discoveryList.push(discoveryA);
-      discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        expect(type).toBe('REGISTERED');
-        items.forEach((item) => {
-          expect(item).toMatch(bItem);
-        });
-        done();
+    });
+
+    discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      expect(type).toBe('REGISTERED');
+      items.forEach((item) => {
+        expect(item).toMatch(bItem);
       });
+
+      discoveryList.push(discoveryB);
+      discoveryList.push(discoveryA);
+
+      done();
     });
   });
 
@@ -77,24 +79,24 @@ describe('Test discovery success scenarios', () => {
     const aAddress = getAddress('aAddress');
     const bAddress = getAddress('bAddress');
 
-    createDiscovery({
+    const discoveryB = createDiscovery({
       address: bAddress,
       itemsToPublish: [],
-    }).then((discoveryB: DiscoveryApi.Discovery) => {
-      discoveryList.push(discoveryB);
     });
 
-    createDiscovery({
+    const discoveryA = createDiscovery({
       address: aAddress,
       seedAddress: bAddress,
       itemsToPublish: [],
-    }).then((discoveryA: DiscoveryApi.Discovery) => {
+    });
+
+    discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      expect(type).toBe('IDLE');
+
+      discoveryList.push(discoveryB);
       discoveryList.push(discoveryA);
-      discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        expect(type).toBe('IDLE');
-        done();
-      });
+      done();
     });
   });
 
@@ -108,48 +110,49 @@ describe('Test discovery success scenarios', () => {
      Then       discoveredItems$ emits ServiceDiscoveryEvent
                 | type   | 'UNREGISTERED' |
                 | item   | b1             |
-  `, // @ts-ignore
-  async (done) => {
+  `, (done) => { // @ts-ignore
     expect.assertions(3);
 
     const aAddress = getAddress('A');
     const bAddress = getAddress('B');
     const bItem = 'bItemData';
-    const discoveryB = await createDiscovery({
+    const discoveryB = createDiscovery({
       address: bAddress,
       itemsToPublish: [bItem],
     });
 
-    createDiscovery({
+    const discoveryA = createDiscovery({
       address: aAddress,
       seedAddress: bAddress,
       itemsToPublish: [],
-    }).then((discoveryA: DiscoveryApi.Discovery) => {
-      discoveryList.push(discoveryA);
-      let step = 0;
-      discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        if (type === 'IDLE') {
-          return;
-        }
+    });
 
-        switch (step) {
-          case 0:
-            expect(type).toBe('REGISTERED');
-            step++;
+    let step = 0;
+    discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      if (type === 'IDLE') {
+        return;
+      }
+
+      switch (step) {
+        case 0:
+          expect(type).toBe('REGISTERED');
+          step++;
+          discoveryB.discoveredItems$().subscribe((discoveryEventB: DiscoveryApi.ServiceDiscoveryEvent) => {
             discoveryB.destroy();
-            break;
-          case 1:
-            expect(type).toBe('UNREGISTERED');
-            items.forEach((item) => {
-              expect(item).toMatch(bItem);
-              discoveryA.destroy().then(() => {
-                done();
-              });
+          });
+          break;
+        case 1:
+          expect(type).toBe('UNREGISTERED');
+          items.forEach((item) => {
+            expect(item).toMatch(bItem);
+            discoveryA.destroy().then(() => {
+              discoveryList.push(discoveryA);
+              done();
             });
-            break;
-        }
-      });
+          });
+          break;
+      }
     });
 
     return;
@@ -178,8 +181,8 @@ describe('Test discovery success scenarios', () => {
        Then discoveredItems$ emits ServiceDiscoveryEvent with
       	      | type   | 'REGISTERED' | 'REGISTERED' |
               | item   | a1           |   c1         |
-              
-              
+
+
 discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (seed: B)
 | port | items|                     | port | items                        | port  | items
 | {}   |  {}  |                     | null | null                         | null  | null
@@ -189,9 +192,9 @@ discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (
 | {}   |  {}  | <-- INIT event A -- |      |                              |       |
 |      |      |                     |{A, C}| {iA, iC} <-- INIT event B -- | {}    | {}
 |      |      |                     |      |          -- INIT event C --> | {B}   | {iA}
-| {}   | {iC} | <-- ADDED event A --|      |                              |       |       
-|      |      |                     |      |                              |       |              
-              
+| {}   | {iC} | <-- ADDED event A --|      |                              |       |
+|      |      |                     |      |                              |       |
+
   `, (done) => {
     let counter = 0;
     expect.assertions(6);
@@ -201,63 +204,67 @@ discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (
     const aItem = 'aItemData';
     const cItem = 'cItemData';
 
-    createDiscovery({
+    const discoveryA = createDiscovery({
       address: aAddress,
       seedAddress: bAddress,
       itemsToPublish: [aItem],
-    }).then((discoveryA) => {
-      discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        if (type === 'IDLE') {
-          return;
-        }
-        counter++;
-        expect(type).toBe('REGISTERED');
-        items.forEach((item) => {
-          expect(item).toMatch(cItem);
-        });
-        if (counter === 4) {
-          done();
-        }
-      });
     });
 
-    createDiscovery({
+    discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      if (type === 'IDLE') {
+        return;
+      }
+      counter++;
+      expect(type).toBe('REGISTERED');
+      items.forEach((item) => {
+        expect(item).toMatch(cItem);
+      });
+      if (counter === 4) {
+        done();
+      }
+    });
+
+    const discoveryB = createDiscovery({
       address: bAddress,
       itemsToPublish: [],
-    }).then((discoveryB) => {
-      discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        if (type === 'IDLE') {
-          return;
-        }
-        counter++;
-        expect(type).toBe('REGISTERED');
-        if (counter === 4) {
-          done();
-        }
-      });
     });
 
-    createDiscovery({
+    discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      if (type === 'IDLE') {
+        return;
+      }
+      counter++;
+      expect(type).toBe('REGISTERED');
+      if (counter === 4) {
+        done();
+      }
+    });
+
+    const discoveryC = createDiscovery({
       address: cAddress,
       seedAddress: bAddress,
       itemsToPublish: [cItem],
-    }).then((discoveryC) => {
-      discoveryC.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-        const { type, items } = discoveryEvent;
-        if (type === 'IDLE') {
-          return;
-        }
-        counter++;
-        expect(type).toBe('REGISTERED');
-        items.forEach((item) => {
-          expect(item).toMatch(aItem);
-        });
-        if (counter === 4) {
-          done();
-        }
-      });
     });
+
+    discoveryC.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      const { type, items } = discoveryEvent;
+      if (type === 'IDLE') {
+        return;
+      }
+      counter++;
+      expect(type).toBe('REGISTERED');
+      items.forEach((item) => {
+        expect(item).toMatch(aItem);
+      });
+      if (counter === 4) {
+        done();
+      }
+    });
+
+    discoveryList.push(discoveryA);
+    discoveryList.push(discoveryB);
+    discoveryList.push(discoveryC);
   });
 });

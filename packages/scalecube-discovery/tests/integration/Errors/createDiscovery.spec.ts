@@ -24,13 +24,16 @@ describe('check validations', () => {
    When create discovery with this address
    Then an exception will be thrown
   `,
-    (value) => {
-      return expect(
+    (value, done) => {
+      try {
         createDiscovery({
           address: value,
           itemsToPublish: [],
-        })
-      ).rejects.toMatchObject(new Error(constants.NOT_VALID_ADDRESS));
+        });
+      } catch (e) {
+        expect(e.message).toMatch(constants.NOT_VALID_ADDRESS);
+        done();
+      }
     }
   );
 
@@ -39,7 +42,7 @@ describe('check validations', () => {
     `
   Scenario: Create discovery with invalid seedAddress
    Given a seedAddress with the following value
-   
+
    type	        | value
    -------------|------
    array	      | []
@@ -48,20 +51,23 @@ describe('check validations', () => {
    number	      | 10
    string       | 'test'
    symbol	      | Symbol()
-   
+
    # must check seedAddress validation for every value that result as true.
-   
+
    When create discovery with this address
    Then an exception will be thrown
   `,
-    (value) => {
-      return expect(
+    (value, done) => {
+      try {
         createDiscovery({
           address: getAddress('AA'),
           seedAddress: value,
           itemsToPublish: [],
-        })
-      ).rejects.toMatchObject(new Error(constants.NOT_VALID_ADDRESS));
+        });
+      } catch (e) {
+        expect(e.message).toMatch(constants.NOT_VALID_ADDRESS);
+        done();
+      }
     }
   );
 
@@ -70,7 +76,7 @@ describe('check validations', () => {
     `
   Scenario: Create discovery with invalid itemsToPublish
     Given  itemsToPublish with following value
-   
+
    type	        | value
    -------------|------
    empty object | {}
@@ -81,19 +87,22 @@ describe('check validations', () => {
    undefined	  | undefined
    string       | 'test'
    symbol	      | Symbol()
-   
+
    # must check seedAddress validation for every value that result as true.
-   
+
    When create discovery with this itemsToPublish
    Then an exception is thrown
   `,
-    (value) => {
-      return expect(
+    (value, done) => {
+      try {
         createDiscovery({
           address: getAddress('AA'),
           itemsToPublish: value,
-        })
-      ).rejects.toMatchObject(new Error(INVALID_ITEMS_TO_PUBLISH));
+        });
+      } catch (e) {
+        expect(e.message).toMatch(INVALID_ITEMS_TO_PUBLISH);
+        done();
+      }
     }
   );
 });

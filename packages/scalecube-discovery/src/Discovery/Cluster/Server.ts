@@ -12,7 +12,7 @@ import {
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
 
-export const server = (options: {
+interface ClusterServer {
   whoAmI: string;
   itemsToPublish: any[];
   rSubjectMembers: ReplaySubject<ClusterEvent>;
@@ -22,14 +22,16 @@ export const server = (options: {
   logger?: {
     namespace: string;
   };
-}) => {
+}
+
+export const server = (options: ClusterServer) => {
   const { whoAmI, itemsToPublish, rSubjectMembers, membersStatus, updateConnectedMember, logger, debug } = options;
   const globalEventsHandler = (ev: any) => {
     const { type: evType, detail: membershipEvent } = ev.data;
     if (evType === MEMBERSHIP_EVENT) {
       const { metadata, type, to, from, origin } = membershipEvent;
 
-      if (to !== whoAmI) {
+      if (origin === whoAmI || from === whoAmI || from === to || to !== whoAmI) {
         return;
       }
 
@@ -42,15 +44,10 @@ export const server = (options: {
         logger,
         debug
       );
-
-      rSubjectMembers &&
-        rSubjectMembers.next({
-          type,
-          items: metadata[origin],
-          from: origin,
-        });
-
       const mPort = ev.ports[0];
+
+      mPort.addEventListener(MESSAGE, portEventsHandler);
+      mPort.start();
 
       // 1. response to initiator of the contact with all members data
       mPort.postMessage(
@@ -62,14 +59,19 @@ export const server = (options: {
           type: INIT,
         })
       );
+
       // 2. update membersState
       membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-      updateConnectedMember({ metadata, type: ADDED, from, to });
+      updateConnectedMember({ metadata, type: ADDED, from, to, origin });
       // 3. update ports
       membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
 
-      mPort.addEventListener(MESSAGE, portEventsHandler);
-      mPort.start();
+      rSubjectMembers &&
+        rSubjectMembers.next({
+          type,
+          items: metadata[origin],
+          from: origin,
+        });
     }
   };
 
@@ -77,7 +79,11 @@ export const server = (options: {
     const { type: evType, detail: membershipEvent } = ev.data;
     const { metadata, type, from, to } = membershipEvent;
 
-    updateConnectedMember({ metadata, type, from, to });
+    if (origin === whoAmI || from === whoAmI) {
+      return;
+    }
+
+    updateConnectedMember({ metadata, type, from, to, origin });
     if (type === ADDED || type === INIT) {
       membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
     } else {

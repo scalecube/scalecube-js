@@ -31,32 +31,37 @@ export const joinCluster = ({
   logger?: {
     namespace: string;
   };
-}): Promise<Cluster> => {
+}): Cluster => {
   const membersStatus: MembersMap = {
     membersPort: {},
     membersState: {},
   };
 
+  const delayedActions: any[] = [];
+  let isConnected = !seedAddress;
+
   const rSubjectMembers = new ReplaySubject<ClusterEvent>(1);
   const whoAmI = getFullAddress(address);
 
-  let clientPort: any = null;
+  let clientPort: any;
 
   const updateConnectedMember = ({
     type,
     metadata,
     from,
     to,
+    origin,
   }: {
     from: string;
     to: string;
+    origin: string;
     metadata: any;
     type: MemberEventType;
   }) => {
     const { membersPort } = membersStatus;
 
     Object.keys(membersPort).forEach((nextMember: string) => {
-      if (from !== nextMember && whoAmI !== nextMember) {
+      if (from !== nextMember && whoAmI !== nextMember && origin !== nextMember) {
         const mPort: MessagePort = membersPort[nextMember];
         mPort.postMessage(
           getMembershipEvent({
@@ -81,62 +86,47 @@ export const joinCluster = ({
     debug,
   });
   serverPort.start();
-
-  const cluster = Object.assign({
-    getCurrentMemberStates: () => {
-      saveToLogs(
-        `${whoAmI} current state`,
-        {
-          membersState: { ...membersStatus.membersState },
-          membersPort: { ...membersStatus.membersPort },
-        },
-        logger,
-        debug
-      );
-      return Promise.resolve({ ...membersStatus.membersState });
+  clientPort = client({
+    whoAmI,
+    updateConnectedMember,
+    membersStatus,
+    itemsToPublish,
+    rSubjectMembers,
+    retry: retry || {
+      timeout: 1000,
     },
-    listen$: () => rSubjectMembers.asObservable(),
-    destroy: () => {
-      clientPort && clientPort.stop();
-      serverPort.stop();
-      rSubjectMembers.complete();
-      return Promise.resolve('');
-    },
+    logger,
+    debug,
+    seedAddress,
   });
 
-  return new Promise((resolve, reject) => {
-    if (!seedAddress) {
-      resolve(cluster);
-    } else {
-      const to = getFullAddress(seedAddress);
-      clientPort = client({
-        whoAmI,
-        updateConnectedMember,
-        membersStatus,
-        itemsToPublish,
-        rSubjectMembers,
-        retry: retry || {
-          timeout: 500,
-        },
-        logger,
-        debug,
-        seed: to,
-      });
-      clientPort.start().then(() => {
-        saveToLogs(
-          `${whoAmI} established connection with ${to}`,
-          {
-            membersState: { ...membersStatus.membersState },
-            membersPort: { ...membersStatus.membersPort },
-          },
-          logger,
-          debug
-        );
-
-        resolve(cluster);
-      });
+  clientPort.start().then(() => {
+    isConnected = true;
+    if (delayedActions.length > 0) {
+      delayedActions.forEach((action: any) => action && action());
     }
   });
+
+  return Object.freeze({
+    getCurrentMemberStates: () => Promise.resolve({ ...membersStatus.membersState }),
+    listen$: () => rSubjectMembers.asObservable(),
+    destroy: () => {
+      return new Promise((resolve, reject) => {
+        const destroyCluster = () => {
+          clientPort && clientPort.stop();
+          serverPort.stop();
+          rSubjectMembers.complete();
+          resolve('');
+        };
+
+        if (!isConnected) {
+          delayedActions.push(destroyCluster);
+        } else {
+          destroyCluster();
+        }
+      });
+    },
+  }) as Cluster;
 };
 
 export const getMembershipEvent = ({ from, to, metadata, origin, type }: MembershipEvent) => ({

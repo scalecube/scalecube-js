@@ -1,17 +1,10 @@
-import {
-  ClusterEvent,
-  getMembershipEvent,
-  INIT,
-  keysAsArray,
-  saveToLogs,
-  MEMBERSHIP_EVENT,
-  MESSAGE,
-  REMOVED,
-} from './JoinCluster';
+import { ClusterEvent, getMembershipEvent, INIT, saveToLogs, MEMBERSHIP_EVENT, MESSAGE, REMOVED } from './JoinCluster';
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
+import { Address } from '@scalecube/api';
+import { getFullAddress } from '@scalecube/utils';
 
-export const client = (options: {
+interface ClusterClient {
   whoAmI: string;
   membersStatus: MembersMap;
   updateConnectedMember: (...data: any[]) => any;
@@ -20,12 +13,14 @@ export const client = (options: {
   retry: {
     timeout: number;
   };
-  seed: string;
+  seedAddress: Address | void;
   debug?: boolean;
   logger?: {
     namespace: string;
   };
-}) => {
+}
+
+export const client = (options: ClusterClient) => {
   const {
     whoAmI,
     membersStatus,
@@ -35,72 +30,85 @@ export const client = (options: {
     logger,
     debug,
     retry,
-    seed,
+    seedAddress,
   } = options;
-  const { port1, port2 } = new MessageChannel();
 
+  const { port1, port2 } = new MessageChannel();
+  let seed = '';
   let portEventsHandler = (ev: any) => {};
 
   let retryTimer: any = null;
 
-  return {
+  return Object.freeze({
     start: () =>
       new Promise((resolve, reject) => {
-        portEventsHandler = (ev: any) => {
-          const { type: evType, detail: membershipEvent } = ev.data;
-          if (evType === MEMBERSHIP_EVENT) {
-            const { metadata, type, from, to, origin } = membershipEvent;
-            membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+        if (!seedAddress) {
+          resolve();
+        } else {
+          seed = getFullAddress(seedAddress);
 
-            if (type === INIT) {
-              clearInterval(retryTimer);
-              resolve();
-            } else {
+          portEventsHandler = (ev: any) => {
+            const { type: evType, detail: membershipEvent } = ev.data;
+            if (evType === MEMBERSHIP_EVENT) {
+              const { metadata, type, from, to, origin } = membershipEvent;
+
+              if (origin === whoAmI || from === whoAmI || from === to) {
+                return;
+              }
+
+              membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+
+              if (type === INIT) {
+                clearInterval(retryTimer);
+                retryTimer = null;
+                resolve();
+              } else {
+                saveToLogs(
+                  `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
+                  {},
+                  logger
+                );
+                updateConnectedMember({ metadata, type, from, to, origin });
+              }
+
               saveToLogs(
-                `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
-                {},
-                logger
+                `${whoAmI} client received ${type} request from ${from}`,
+                {
+                  membersState: { ...membersStatus.membersState },
+                  membersPort: { ...membersStatus.membersPort },
+                },
+                logger,
+                debug
               );
-              updateConnectedMember({ metadata, type, from, to });
+
+              rSubjectMembers &&
+                rSubjectMembers.next({
+                  type,
+                  items: metadata[origin],
+                  from: origin,
+                });
             }
+          };
 
-            saveToLogs(
-              `${whoAmI} client received ${type} request from ${from}`,
-              {
-                membersState: { ...membersStatus.membersState },
-                membersPort: { ...membersStatus.membersPort },
-              },
-              logger,
-              debug
+          port1.addEventListener(MESSAGE, portEventsHandler);
+          port1.start();
+
+          retryTimer = setInterval(() => {
+            postMessage(
+              getMembershipEvent({
+                metadata: {
+                  [whoAmI]: itemsToPublish,
+                },
+                type: INIT,
+                to: seed,
+                from: whoAmI,
+                origin: whoAmI,
+              }),
+              '*',
+              [port2]
             );
-
-            rSubjectMembers &&
-              rSubjectMembers.next({
-                type,
-                items: metadata[origin],
-                from: origin,
-              });
-          }
-        };
-
-        port1.addEventListener(MESSAGE, portEventsHandler);
-        port1.start();
-
-        retryTimer = setInterval(() => {
-          postMessage(
-            getMembershipEvent({
-              metadata: {
-                [whoAmI]: itemsToPublish,
-              },
-              type: INIT,
-              to: seed,
-              from: whoAmI,
-              origin: whoAmI,
-            }),
-            '*',
-            [port2]
-          );
-        }, retry.timeout);
+          }, retry.timeout);
+        }
       }),
     stop: () => {
       updateConnectedMember({
@@ -110,6 +118,7 @@ export const client = (options: {
         type: REMOVED,
         from: whoAmI,
         to: null,
+        origin: whoAmI,
       });
 
       port2.postMessage(
@@ -136,5 +145,5 @@ export const client = (options: {
         debug
       );
     },
-  };
+  });
 };

@@ -6,7 +6,7 @@ import { Address } from '../common';
  * @interface CreateDiscovery
  * factory for creating discovery instance
  */
-export type CreateDiscovery = (options: DiscoveryOptions) => Promise<Discovery>;
+export type CreateDiscovery = (options: DiscoveryOptions) => Discovery;
 
 /**
  * @interface DiscoveryOptions

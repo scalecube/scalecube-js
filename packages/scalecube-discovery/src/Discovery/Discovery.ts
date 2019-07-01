@@ -16,96 +16,96 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
   seedAddress,
   logger,
   debug,
-}: DiscoveryApi.DiscoveryOptions): Promise<DiscoveryApi.Discovery> => {
+}: DiscoveryApi.DiscoveryOptions): DiscoveryApi.Discovery => {
   const membersState: { [member: string]: boolean } = {};
 
-  return new Promise((resolve, reject) => {
-    validateAddress(address, false);
+  validateAddress(address, false);
 
-    if (seedAddress) {
-      validateAddress(seedAddress, false);
-      validateAddressCollision(address, seedAddress);
-    }
+  if (seedAddress) {
+    validateAddress(seedAddress, false);
+    validateAddressCollision(address, seedAddress);
+  }
 
-    check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
+  check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
 
-    const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
+  const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
-    joinCluster({ address, seedAddress, itemsToPublish, transport: null, logger, debug })
-      .then((cluster: Cluster) => {
-        const clusterListener = cluster.listen$();
-        let subscription: any;
+  const cluster: Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, logger, debug });
 
-        resolve(
-          Object.freeze({
-            destroy: () => {
-              subscription && subscription.unsubscribe();
-              discoveredItemsSubject.complete();
-              return cluster
-                .destroy()
-                .then(() =>
-                  Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address)).catch((error: any) =>
-                    Promise.reject(error)
-                  )
-                );
-            },
-            discoveredItems$: () => {
-              cluster
-                .getCurrentMemberStates()
-                .then((currentMembersState: MembersData) => {
-                  const members = Object.keys(currentMembersState);
-                  members.forEach((member: string) => {
-                    const memberItem = currentMembersState[member];
+  const clusterListener = cluster.listen$();
+  let subscription: any;
 
-                    if (memberItem.length === 0) {
-                      discoveredItemsSubject.next({
-                        type: 'IDLE',
-                        items: [],
-                      });
-                    } else {
-                      if (!membersState[member]) {
-                        discoveredItemsSubject.next({
-                          type: 'REGISTERED',
-                          items: memberItem,
-                        });
-                        membersState[member] = true;
-                      }
-                    }
-                  });
-                })
-                .catch((error: any) => discoveredItemsSubject.error(error));
+  return Object.freeze({
+    destroy: () => {
+      subscription && subscription.unsubscribe();
+      discoveredItemsSubject.complete();
+      return new Promise<string>((resolve, reject) => {
+        cluster
+          .destroy()
+          .then(() => resolve(getDiscoverySuccessfullyDestroyedMessage(address)))
+          .catch((error: any) => reject(error));
+      });
+    },
+    discoveredItems$: () => {
+      cluster
+        .getCurrentMemberStates()
+        .then((currentMembersState: MembersData) => {
+          const members = Object.keys(currentMembersState);
+          members.forEach((member: string) => {
+            const memberItem = currentMembersState[member];
 
-              subscription = clusterListener.subscribe(
-                (clusterEvent: ClusterEvent) => {
-                  const { type, items, from } = clusterEvent;
-                  if (items.length > 0) {
-                    if (type === 'REMOVED' && membersState[from]) {
-                      discoveredItemsSubject.next({
-                        type: 'UNREGISTERED',
-                        items,
-                      });
-                      membersState[from] = false;
-                    }
+            if (memberItem.length === 0) {
+              discoveredItemsSubject.next({
+                type: 'IDLE',
+                items: [],
+              });
+            } else {
+              if (!membersState[member]) {
+                discoveredItemsSubject.next({
+                  type: 'REGISTERED',
+                  items: memberItem,
+                });
+                membersState[member] = true;
+              }
+            }
+          });
+        })
+        .catch((error: any) => discoveredItemsSubject.error(error));
 
-                    if (type !== 'REMOVED' && !membersState[from]) {
-                      discoveredItemsSubject.next({
-                        type: 'REGISTERED',
-                        items,
-                      });
-                      membersState[from] = true;
-                    }
-                  }
-                },
-                (error: any) => discoveredItemsSubject.error(error),
-                () => discoveredItemsSubject.complete()
-              );
+      subscription = clusterListener.subscribe(
+        (clusterEvent: ClusterEvent) => {
+          const { type, items, from } = clusterEvent;
+          if (items.length > 0) {
+            if (type === 'REMOVED' && membersState[from]) {
+              discoveredItemsSubject.next({
+                type: 'UNREGISTERED',
+                items,
+              });
+              membersState[from] = false;
+            }
 
-              return discoveredItemsSubject.asObservable();
-            },
-          })
-        );
-      })
-      .catch((error: any) => reject(error));
+            if (type !== 'REMOVED' && !membersState[from]) {
+              discoveredItemsSubject.next({
+                type: 'REGISTERED',
+                items,
+              });
+              membersState[from] = true;
+            }
+          } else {
+            if (type === 'INIT') {
+              discoveredItemsSubject.next({
+                type: 'IDLE',
+                items: [],
+              });
+            }
+          }
+        },
+        (error: any) => discoveredItemsSubject.error(error),
+        () => discoveredItemsSubject.complete()
+      );
+
+      return discoveredItemsSubject.asObservable();
+    },
   });
 };
 
