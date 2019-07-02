@@ -69,7 +69,9 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         serviceCall: defaultLocalCall,
         transportServerProvider: transport.serverProvider,
       });
-    options.gateway && options.gateway.start({ serviceCall: defaultLocalCall });
+    if (options && options.gateway) {
+      options.gateway.start({ serviceCall: defaultLocalCall });
+    }
 
     discoveryInstance
       .discoveredItems$()
