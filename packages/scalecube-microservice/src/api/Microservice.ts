@@ -7,7 +7,7 @@ export default interface Microservice {
   /**
    * The method is used to delete a microservice and close all the subscriptions related with it
    */
-  destroy(): null;
+  destroy(): Promise<string>;
 
   /**
    * Create a map of proxies or Promises to proxy. (deepened on configuration)
@@ -18,6 +18,7 @@ export default interface Microservice {
    * Creates a proxy to a method and provides extra logic when is invoked
    */
   createProxy<T = any>(proxyOptions: ProxyOptions): T;
+
   /**
    * Exposes serviceCall to a user (not via Proxy)
    */

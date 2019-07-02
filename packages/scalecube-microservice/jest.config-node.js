@@ -1,6 +1,9 @@
 const jestConfig = require('./jest.config-dom');
 
 jestConfig.testEnvironment = 'node';
-jestConfig.testPathIgnorePatterns.push('<rootDir>/tests/implementations/ImportHtmlService.spec.ts');
-jestConfig.globals.isNodeEvn = true;
+jestConfig.globals = {
+  isNodeEvn: true,
+};
+jestConfig.setupFilesAfterEnv = ['<rootDir>/tests/helper.ts', ...(jestConfig.setupFilesAfterEnv || [])];
+
 module.exports = jestConfig;

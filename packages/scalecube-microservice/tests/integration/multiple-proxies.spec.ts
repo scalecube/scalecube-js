@@ -1,7 +1,5 @@
 import { Microservices, Api, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
-import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
 import { getDefaultAddress } from '../../src/helpers/utils';
@@ -13,12 +11,6 @@ describe(`
                      | service1  | service1Definition   | greet : requestResponse |
                      | service2  | service2Definition   | hello : requestStream   |
      `, () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  }
-
   const service1Definition = {
     serviceName: 'service1',
     methods: {
@@ -53,7 +45,7 @@ describe(`
     address: getDefaultAddress(1000),
     seedAddress: getDefaultAddress(8000),
   });
-  const microserviceWithoutSerrvices = Microservices.create({ seedAddress: getDefaultAddress(8000) });
+  const microserviceWithoutServices = Microservices.create({ seedAddress: getDefaultAddress(1000) });
   describe.each([
     // ################# LocalCall #################
     {
@@ -62,7 +54,7 @@ describe(`
     },
     // ################# RemoteCall ################
     {
-      sender: microserviceWithoutSerrvices,
+      sender: microserviceWithoutServices,
       isRemote: true,
     },
   ])(
@@ -155,7 +147,7 @@ describe(`
                      | proxy          | method                  | valid
                      | service1Proxy  | hello : requestResponse | yes
                      | service2Proxy  | greet$ : requestStream  | no
-           
+
   `, async () => {
         expect.assertions(2);
 
