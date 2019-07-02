@@ -1,5 +1,5 @@
 import { from, throwError } from 'rxjs';
-import { RSocketClient } from 'rsocket-core';
+import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../../src/Gateway';
@@ -39,6 +39,7 @@ export const makeConnection: makeConnectionType = (port = 8080) => {
   });
   return new Promise((resolve, reject) => {
     const client = new RSocketClient({
+      serializers: JsonSerializers,
       setup: {
         dataMimeType: 'application/json',
         keepAlive: 1000,

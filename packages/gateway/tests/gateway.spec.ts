@@ -17,17 +17,15 @@ afterAll(() => gateway.stop());
 test('success requestResponse', (done) => {
   socket
     .requestResponse({
-      data: JSON.stringify({
+      data: {
         qualifier: 'serviceA/methodA',
         data: [{ request: 'ping' }],
-      }),
+      },
     })
     .subscribe({
-      onComplete: (args: any) => {
-        const { data, metadata } = args;
-        const res = JSON.parse(data);
+      onComplete: ({ data }) => {
         // console.log('Response', data, metadata);
-        expect(res).toEqual({ id: 1 });
+        expect(data).toEqual({ id: 1 });
         done();
       },
       onError: (e: any) => {
@@ -39,10 +37,10 @@ test('success requestResponse', (done) => {
 test('fail requestResponse', (done) => {
   socket
     .requestResponse({
-      data: JSON.stringify({
+      data: {
         qualifier: 'serviceA/methodB',
         data: [{ request: 'ping' }],
-      }),
+      },
     })
     .subscribe({
       onError: (e: any) => {
@@ -57,18 +55,17 @@ test('success requestStream', (done) => {
   const responses = [1, 2];
   socket
     .requestStream({
-      data: JSON.stringify({
+      data: {
         qualifier: 'serviceA/methodC',
         data: [{ request: 'ping' }],
-      }),
+      },
     })
     .subscribe({
       onSubscribe(subscription) {
         subscription.request(2);
       },
       onNext: ({ data }) => {
-        const res = JSON.parse(data);
-        expect(res).toEqual(responses.shift());
+        expect(data).toEqual(responses.shift());
       },
       onComplete: () => {
         done();
@@ -82,10 +79,10 @@ test('success requestStream', (done) => {
 test('fail requestStream', (done) => {
   socket
     .requestStream({
-      data: JSON.stringify({
+      data: {
         qualifier: 'serviceA/methodD',
         data: [{ request: 'ping' }],
-      }),
+      },
     })
     .subscribe({
       onSubscribe(subscription) {
