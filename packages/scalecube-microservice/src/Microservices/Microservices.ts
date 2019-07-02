@@ -70,7 +70,12 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         transportServerProvider: transport.serverProvider,
       });
     if (options && options.gateway) {
-      options.gateway.start({ serviceCall: defaultLocalCall });
+      const gatewayServiceCall = getServiceCall({
+        router: options.gatewayRouter || defaultRouter,
+        microserviceContext,
+        transportClientProvider: transport.clientProvider,
+      });
+      options.gateway.start({ serviceCall: gatewayServiceCall });
     }
 
     discoveryInstance
