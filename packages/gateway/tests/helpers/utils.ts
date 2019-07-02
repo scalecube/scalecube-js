@@ -15,7 +15,7 @@ class ServiceA {
     return from([1, 2]);
   }
   methodD() {
-    return throwError(new Error('methodC error'));
+    return throwError(new Error('methodD error'));
   }
 }
 

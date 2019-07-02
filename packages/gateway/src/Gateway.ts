@@ -56,7 +56,7 @@ const requestResponse = (payload: any, serviceCall: any) => {
   });
 };
 const requestStream = (payload: any, serviceCall: any) => {
-  console.log('rS', payload);
+  console.log('request payload: ', payload);
   const { data, metadata } = payload;
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
