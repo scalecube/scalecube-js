@@ -5,16 +5,16 @@ import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microserv
 import { Gateway } from '../../src/Gateway';
 
 class ServiceA {
-  methodA() {
+  public methodA() {
     return Promise.resolve({ id: 1 });
   }
-  methodB() {
+  public methodB() {
     return Promise.reject({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
   }
-  methodC() {
+  public methodC() {
     return from([1, 2]);
   }
-  methodD() {
+  public methodD() {
     return throwError(new Error('methodD error'));
   }
 }
@@ -49,11 +49,11 @@ export const makeConnection: makeConnectionType = (port = 8080) => {
     });
     client.connect().subscribe({
       onComplete: (socket: any) => {
-        console.log('Connected');
+        // console.log('Connected');
         resolve({ gateway, socket });
       },
       onError: (error: any) => {
-        console.log('Err', error);
+        // console.log('Err', error);
         reject(new Error('Connection error'));
       },
     });

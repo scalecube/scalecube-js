@@ -13,7 +13,7 @@ export class Gateway implements Api.Gateway {
     this.port = port;
     this.transport = new RSocketWebSocketServer({ port });
   }
-  start(opts) {
+  public start(opts) {
     const { serviceCall } = opts;
     this.server = new RSocketServer({
       getRequestHandler: (socket) => {
@@ -25,10 +25,10 @@ export class Gateway implements Api.Gateway {
       transport: this.transport,
     });
     this.server.start();
-    console.log('Gateway started on port: ' + this.port);
+    // console.log('Gateway started on port: ' + this.port);
   }
-  stop() {
+  public stop() {
     this.server.stop();
-    console.log('Gateway stopped');
+    // console.log('Gateway stopped');
   }
 }

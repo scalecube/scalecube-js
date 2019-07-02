@@ -5,7 +5,8 @@ import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microserv
 import { Gateway } from '../src/Gateway';
 import { makeConnection } from './helpers/utils';
 
-let gateway: Gateway, socket: any;
+let gateway: Gateway;
+let socket;
 
 beforeAll(async () => {
   ({ gateway, socket } = await makeConnection());
@@ -25,7 +26,7 @@ test('success requestResponse', (done) => {
       onComplete: (args: any) => {
         const { data, metadata } = args;
         const res = JSON.parse(data);
-        console.log('Response', data, metadata);
+        // console.log('Response', data, metadata);
         expect(res).toEqual({ id: 1 });
         done();
       },

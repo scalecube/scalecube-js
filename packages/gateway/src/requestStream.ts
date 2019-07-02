@@ -1,7 +1,7 @@
 import { Flowable } from 'rsocket-flowable';
 
 export const requestStream = (payload, serviceCall) => {
-  console.log('request payload: ', payload);
+  // console.log('request payload: ', payload);
   const { data, metadata } = payload;
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
