@@ -81,7 +81,6 @@ export const server = (options: ClusterServer) => {
     const { metadata, type, from, to } = membershipEvent;
 
     if (origin === whoAmI || from === whoAmI) {
-      console.log('return portEventsHandler', origin, whoAmI, from, to);
       return;
     }
 
