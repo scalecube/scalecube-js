@@ -1,13 +1,15 @@
-import { ClusterEvent, getMembershipEvent, INIT, saveToLogs, MEMBERSHIP_EVENT, MESSAGE, REMOVED } from './JoinCluster';
+import { ClusterEvent } from './JoinCluster';
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
 import { Address } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
+import { MEMBERSHIP_EVENT, saveToLogs, INIT, MESSAGE, REMOVED } from './utils';
 
 interface ClusterClient {
   whoAmI: string;
   membersStatus: MembersMap;
   updateConnectedMember: (...data: any[]) => any;
+  getMembershipEvent: (...data: any[]) => any;
   itemsToPublish: any[];
   rSubjectMembers: ReplaySubject<ClusterEvent>;
   retry: {
@@ -25,6 +27,7 @@ export const client = (options: ClusterClient) => {
     whoAmI,
     membersStatus,
     updateConnectedMember,
+    getMembershipEvent,
     itemsToPublish,
     rSubjectMembers,
     logger,

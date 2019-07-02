@@ -1,16 +1,7 @@
-import {
-  ADDED,
-  ClusterEvent,
-  getMembershipEvent,
-  INIT,
-  keysAsArray,
-  saveToLogs,
-  MEMBERSHIP_EVENT,
-  MESSAGE,
-  REMOVED,
-} from './JoinCluster';
+import { ClusterEvent } from './JoinCluster';
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
+import { saveToLogs, keysAsArray, MEMBERSHIP_EVENT, INIT, MESSAGE, REMOVED, ADDED } from './utils';
 
 interface ClusterServer {
   whoAmI: string;
@@ -18,6 +9,7 @@ interface ClusterServer {
   rSubjectMembers: ReplaySubject<ClusterEvent>;
   membersStatus: MembersMap;
   updateConnectedMember: (...data: any[]) => any;
+  getMembershipEvent: (...data: any[]) => any;
   debug?: boolean;
   logger?: {
     namespace: string;
@@ -25,7 +17,16 @@ interface ClusterServer {
 }
 
 export const server = (options: ClusterServer) => {
-  const { whoAmI, itemsToPublish, rSubjectMembers, membersStatus, updateConnectedMember, logger, debug } = options;
+  const {
+    whoAmI,
+    itemsToPublish,
+    rSubjectMembers,
+    membersStatus,
+    updateConnectedMember,
+    getMembershipEvent,
+    logger,
+    debug,
+  } = options;
   const globalEventsHandler = (ev: any) => {
     const { type: evType, detail: membershipEvent } = ev.data;
     if (evType === MEMBERSHIP_EVENT) {

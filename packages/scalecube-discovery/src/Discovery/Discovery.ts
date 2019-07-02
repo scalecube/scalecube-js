@@ -1,8 +1,7 @@
-import { getFullAddress, getAddress, validateAddress, check } from '@scalecube/utils';
+import { getFullAddress, validateAddress, check } from '@scalecube/utils';
 import { Address, DiscoveryApi } from '@scalecube/api';
 import { ClusterEvent, joinCluster } from './Cluster/JoinCluster';
 import {
-  ADDRESS_DESTROYED,
   getAddressCollision,
   getDiscoverySuccessfullyDestroyedMessage,
   INVALID_ITEMS_TO_PUBLISH,
