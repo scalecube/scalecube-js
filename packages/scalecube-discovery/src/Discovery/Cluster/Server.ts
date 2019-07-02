@@ -1,7 +1,7 @@
 import { ClusterEvent } from './JoinCluster';
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
-import { saveToLogs, keysAsArray, MEMBERSHIP_EVENT, INIT, MESSAGE, REMOVED, ADDED } from './utils';
+import { saveToLogs, getKeysAsArray, MEMBERSHIP_EVENT, INIT, MESSAGE, REMOVED, ADDED } from './utils';
 
 interface ClusterServer {
   whoAmI: string;
@@ -81,6 +81,7 @@ export const server = (options: ClusterServer) => {
     const { metadata, type, from, to } = membershipEvent;
 
     if (origin === whoAmI || from === whoAmI) {
+      console.log('return portEventsHandler', origin, whoAmI, from, to);
       return;
     }
 
@@ -133,7 +134,7 @@ export const server = (options: ClusterServer) => {
     stop: () => {
       removeEventListener(MESSAGE, globalEventsHandler);
 
-      const membersList = keysAsArray({ ...membersStatus.membersPort });
+      const membersList = getKeysAsArray({ ...membersStatus.membersPort });
       membersList.forEach((to) => {
         const mPort = membersStatus.membersPort[to];
         mPort &&

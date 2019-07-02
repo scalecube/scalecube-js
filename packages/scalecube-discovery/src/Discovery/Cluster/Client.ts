@@ -61,16 +61,17 @@ export const client = (options: ClusterClient) => {
 
               membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
 
+              saveToLogs(
+                `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
+                {},
+                logger
+              );
+
               if (type === INIT) {
                 clearInterval(retryTimer);
                 retryTimer = null;
                 resolve();
               } else {
-                saveToLogs(
-                  `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
-                  {},
-                  logger
-                );
                 updateConnectedMember({ metadata, type, from, to, origin });
               }
 
@@ -84,12 +85,14 @@ export const client = (options: ClusterClient) => {
                 debug
               );
 
-              rSubjectMembers &&
-                rSubjectMembers.next({
-                  type,
-                  items: metadata[origin],
-                  from: origin,
-                });
+              Object.keys(metadata).forEach((member: string) => {
+                rSubjectMembers &&
+                  rSubjectMembers.next({
+                    type,
+                    items: metadata[member],
+                    from: origin,
+                  });
+              });
             }
           };
 

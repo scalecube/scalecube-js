@@ -6,6 +6,8 @@ export const ADDED = 'ADDED';
 export const REMOVED = 'REMOVED';
 export const INIT = 'INIT';
 
+export const getKeysAsArray = (obj: {}) => (obj && Object.keys(obj)) || [];
+
 export const utils = (whoAmI: string, membersStatus: MembersMap) => {
   const getMembershipEvent = ({ from, to, metadata, origin, type }: MembershipEvent) => ({
     detail: {
@@ -76,8 +78,6 @@ export const saveToLogs = (
 
   // tslint:disable
   debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
-  debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', keysAsArray(extra.membersPort));
+  debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', getKeysAsArray(extra.membersPort));
   // tslint:enable
 };
-
-export const keysAsArray = (obj: {}) => (obj && Object.keys(obj)) || [];

@@ -1,23 +1,15 @@
 import { createDiscovery } from '../../src';
 import { getAddress } from '@scalecube/utils';
 import { DiscoveryApi } from '@scalecube/api';
-import { applyPostMessagePolyfill } from '../../../scalecube-microservice/tests/mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../../../scalecube-microservice/tests/mocks/utils/MessageChannelPolyfill';
 
 describe('Test discovery success scenarios', () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  }
-
   const discoveryList: DiscoveryApi.Discovery[] = [];
 
   // @ts-ignore
-  beforeEach((done) => {
+  beforeEach(async (done) => {
     while (discoveryList.length > 0) {
       const discovery = discoveryList.pop();
-      discovery && discovery.destroy();
+      discovery && (await discovery.destroy());
     }
     // console.log('*********************************');
     done();
@@ -54,6 +46,7 @@ describe('Test discovery success scenarios', () => {
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
       expect(type).toBe('REGISTERED');
+
       items.forEach((item) => {
         expect(item).toMatch(bItem);
       });
@@ -110,7 +103,8 @@ describe('Test discovery success scenarios', () => {
      Then       discoveredItems$ emits ServiceDiscoveryEvent
                 | type   | 'UNREGISTERED' |
                 | item   | b1             |
-  `, (done) => { // @ts-ignore
+  `, (done) => {
+    // @ts-ignore
     expect.assertions(3);
 
     const aAddress = getAddress('A');
@@ -130,6 +124,7 @@ describe('Test discovery success scenarios', () => {
     let step = 0;
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+
       if (type === 'IDLE') {
         return;
       }
@@ -144,6 +139,7 @@ describe('Test discovery success scenarios', () => {
           break;
         case 1:
           expect(type).toBe('UNREGISTERED');
+
           items.forEach((item) => {
             expect(item).toMatch(bItem);
             discoveryA.destroy().then(() => {
@@ -217,6 +213,7 @@ discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (
       }
       counter++;
       expect(type).toBe('REGISTERED');
+
       items.forEach((item) => {
         expect(item).toMatch(cItem);
       });
@@ -232,11 +229,11 @@ discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (
 
     discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+      expect(type).toBe('REGISTERED');
       if (type === 'IDLE') {
         return;
       }
       counter++;
-      expect(type).toBe('REGISTERED');
       if (counter === 4) {
         done();
       }

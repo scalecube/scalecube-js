@@ -1,15 +1,8 @@
 import { createDiscovery } from '../../src';
 import { getAddress } from '@scalecube/utils';
 import { getDiscoverySuccessfullyDestroyedMessage } from '../../src/helpers/constants';
-import { applyPostMessagePolyfill } from '../../../scalecube-microservice/tests/mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../../../scalecube-microservice/tests/mocks/utils/MessageChannelPolyfill';
 
 describe(`Test discovery destroy`, () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  }
   test(`
     Scenario: Call to destroy method destroys the Discovery
     Given     discovery A
