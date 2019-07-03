@@ -3,16 +3,17 @@
 This package provides gateway implementation for NodeJS based on rsocket websocket
 
 # API
+
 ```typescript
 interface Gateway {
   constructor(options: {port: number});
   start: (options: { serviceCall: ServiceCall }) => void;
   stop: () => void;
 }
-
 ```
 
 # Usage
+
 ```typescript
 import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '@scalecube/gateway';
@@ -33,5 +34,4 @@ const ms = Microservices.create({
   services: [{ definition, reference: new ServiceA() }],
   gateway,
 });
-
 ```
