@@ -474,7 +474,7 @@ describe('Test the creation of Microservice', () => {
   );
 
   // @ts-ignore
-  test.each(['', [], false, true, 10, null, Symbol()])(
+  test.each([[], false, true, 10, null, Symbol()])(
     `
      Scenario: microservise option  with invalid seedAddress value
         Given   a 'microserviceOptions'
@@ -482,7 +482,6 @@ describe('Test the creation of Microservice', () => {
 
                 |definition      | value
                 |array	         | []
-                |string	         | ''
                 |boolean	       | false
                 |boolean	       | true
                 |number	         | 10

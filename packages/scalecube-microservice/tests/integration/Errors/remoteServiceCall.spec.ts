@@ -1,7 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
-import { getAddress } from '@scalecube/utils';
 
 const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
@@ -42,10 +41,10 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         },
       },
     ],
-    address: getAddress('seed'),
+    address: 'seed',
   });
 
-  const microServiceWithoutServices = Microservices.create({ seedAddress: getAddress('seed') });
+  const microServiceWithoutServices = Microservices.create({ seedAddress: 'seed', address: 'local' });
 
   describe.each([
     // ################# LocalCall #################

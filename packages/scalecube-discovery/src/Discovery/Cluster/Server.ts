@@ -45,7 +45,11 @@ export const server = (options: ClusterServer) => {
         logger,
         debug
       );
-      const mPort = ev.ports[0];
+
+      const mPort: MessagePort = ev && ev.ports && ev.ports[0];
+      if (!mPort) {
+        console.error(`Address collusion ${whoAmI} and ${from}`);
+      }
 
       mPort.addEventListener(MESSAGE, portEventsHandler);
       mPort.start();

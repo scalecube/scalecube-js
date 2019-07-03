@@ -17,13 +17,13 @@ export default interface MicroserviceOptions {
    * seedAddress is the entry point to our distributed env.
    * if seedAddress is not provided, then the microservice instance can only wait for some other microserivce instance to connect to it.
    */
-  seedAddress?: Address;
+  seedAddress?: Address | string;
   /**
    * @property
    * An address for this microservice instance
    * other microservices can use this address to connect with this microservice container.
    */
-  address?: Address;
+  address?: Address | string;
   /**
    * @property
    * Pluggable transport-browser,

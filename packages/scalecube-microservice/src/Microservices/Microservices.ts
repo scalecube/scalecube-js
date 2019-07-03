@@ -21,19 +21,35 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
-import { getAddress } from '@scalecube/utils';
+import { check, getAddress } from '@scalecube/utils';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
-    const microserviceOptions = {
+    let microserviceOptions = {
       services: [],
       discovery: createDiscovery,
       transport: TransportBrowser,
       ...options,
     };
+
+    if (check.isString(microserviceOptions.address)) {
+      microserviceOptions = { ...microserviceOptions, address: getAddress(microserviceOptions.address as string) };
+    }
+
+    if (check.isString(microserviceOptions.seedAddress)) {
+      microserviceOptions = {
+        ...microserviceOptions,
+        seedAddress: getAddress(microserviceOptions.seedAddress as string),
+      };
+    }
+
     // TODO: add address, customTransport, customDiscovery  to the validation process
     validateMicroserviceOptions(microserviceOptions);
-    const { services, seedAddress, address, transport, discovery } = microserviceOptions;
+
+    const { services, transport, discovery } = microserviceOptions;
+    const address = microserviceOptions.address as Address;
+    const seedAddress = microserviceOptions.seedAddress as Address;
+
     const transportClientProvider = transport.clientProvider;
 
     // tslint:disable-next-line
@@ -76,6 +92,8 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       if (discoveryEvent.type === 'REGISTERED') {
         const discoveryEndpoints = discoveryEvent.items;
         serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] });
+      } else {
+        // TODO : UNREGISTERED
       }
     });
 

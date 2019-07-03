@@ -51,10 +51,10 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
       },
     ],
 
-    address: getAddress('seed'),
+    address: 'seed',
   });
   const localMicroservice = Microservices.create({
-    seedAddress: getAddress('seed'),
+    seedAddress: 'seed',
     address: getAddress('address'),
   });
   const { awaitProxy } = localMicroservice.createProxies({
