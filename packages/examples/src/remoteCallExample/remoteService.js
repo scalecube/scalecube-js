@@ -3,12 +3,11 @@
  * The service can be written and re-written in every available technology.
  * it can be run in workers, browser or server.
  * Scalecube provide us a way to publish the service from any platform.
- *
  * In this example we will create the service and use it by other microservice instance.
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, rxjs, utils, definitions) {
+  (function(Microservices, ASYNC_MODEL_TYPES, rxjs, definitions) {
     var remoteService = {
       hello: function(name) {
         return new Promise((resolve, reject) => {
@@ -42,9 +41,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
             reference: remoteService,
           },
         ],
-        seedAddress: utils.generateAddress(8000),
-        address: utils.generateAddress(1234),
+        address: 'seed',
       });
     }, 2000);
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs, utils, definitions);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, rxjs, definitions);
 });
