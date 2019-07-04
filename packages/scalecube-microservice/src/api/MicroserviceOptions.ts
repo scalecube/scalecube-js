@@ -42,6 +42,13 @@ export default interface MicroserviceOptions {
    * discovery responsible to exchange data in the distributed env.
    */
   discovery?: (opt: DiscoveryAPI.DiscoveryOptions) => DiscoveryAPI.Discovery;
+  /**
+   * @property
+   * Pluggable gateway,
+   * a instance of class that implements Gateway API
+   * gateway is responsible for receiving requests outside of the distributed env
+   * and response with result of serivice call
+   */
   gateway?: Gateway;
   gatewayRouter?: Router;
 }
