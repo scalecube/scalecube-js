@@ -1,6 +1,8 @@
 import { MemberEventType, MembershipEvent, MembersMap } from '../../helpers/types';
 
 export const MEMBERSHIP_EVENT = 'membershipEvent';
+export const MEMBERSHIP_EVENT_INIT_SERVER = 'membershipEventInitServer';
+export const MEMBERSHIP_EVENT_INIT_CLIENT = 'membershipEventInitClient';
 export const MESSAGE = 'message';
 export const ADDED = 'ADDED';
 export const REMOVED = 'REMOVED';
@@ -77,7 +79,7 @@ export const saveToLogs = (
   }
 
   // tslint:disable
-  debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
+  /*debug &&*/ extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
   debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', getKeysAsArray(extra.membersPort));
   // tslint:enable
 };

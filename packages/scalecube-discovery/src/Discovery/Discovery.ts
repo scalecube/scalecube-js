@@ -60,11 +60,11 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
               });
             } else {
               if (!membersState[member]) {
+                membersState[member] = true;
                 discoveredItemsSubject.next({
                   type: 'REGISTERED',
                   items: memberItem,
                 });
-                membersState[member] = true;
               }
             }
           });
@@ -76,19 +76,19 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
           const { type, items, from } = clusterEvent;
           if (items.length > 0) {
             if (type === 'REMOVED' && membersState[from]) {
+              membersState[from] = false;
               discoveredItemsSubject.next({
                 type: 'UNREGISTERED',
                 items,
               });
-              membersState[from] = false;
             }
 
             if (type !== 'REMOVED' && !membersState[from]) {
+              membersState[from] = true;
               discoveredItemsSubject.next({
                 type: 'REGISTERED',
                 items,
               });
-              membersState[from] = true;
             }
           } else {
             if (type === 'INIT') {

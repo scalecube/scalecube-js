@@ -186,9 +186,10 @@ const createDiscoveryInstance = (opt: {
   itemsToPublish: Endpoint[];
   discovery: DiscoveryApi.CreateDiscovery;
 }): DiscoveryApi.Discovery => {
-  const { address, seedAddress, itemsToPublish, discovery } = opt;
+  const { seedAddress, itemsToPublish, discovery } = opt;
+  const address = opt.address || getAddress(Date.now().toString());
   const discoveryInstance = discovery({
-    address: address || getAddress(Date.now.toString()),
+    address,
     itemsToPublish,
     seedAddress,
   });

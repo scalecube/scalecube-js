@@ -1,7 +1,17 @@
 import { ClusterEvent } from './JoinCluster';
 import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
-import { saveToLogs, getKeysAsArray, MEMBERSHIP_EVENT, INIT, MESSAGE, REMOVED, ADDED } from './utils';
+import {
+  saveToLogs,
+  getKeysAsArray,
+  MEMBERSHIP_EVENT,
+  INIT,
+  MESSAGE,
+  REMOVED,
+  ADDED,
+  MEMBERSHIP_EVENT_INIT_SERVER,
+  MEMBERSHIP_EVENT_INIT_CLIENT,
+} from './utils';
 
 interface ClusterServer {
   whoAmI: string;
@@ -77,6 +87,23 @@ export const server = (options: ClusterServer) => {
           items: metadata[origin],
           from: origin,
         });
+    }
+
+    if (evType === MEMBERSHIP_EVENT_INIT_SERVER) {
+      const { to, origin } = membershipEvent;
+      if (to === whoAmI && to !== origin) {
+        postMessage(
+          {
+            detail: {
+              from: whoAmI,
+              to: origin,
+              origin,
+            },
+            type: MEMBERSHIP_EVENT_INIT_CLIENT,
+          },
+          '*'
+        );
+      }
     }
   };
 

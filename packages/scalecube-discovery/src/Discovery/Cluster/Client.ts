@@ -3,7 +3,15 @@ import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
 import { Address } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
-import { MEMBERSHIP_EVENT, saveToLogs, INIT, MESSAGE, REMOVED } from './utils';
+import {
+  MEMBERSHIP_EVENT,
+  saveToLogs,
+  INIT,
+  MESSAGE,
+  REMOVED,
+  MEMBERSHIP_EVENT_INIT_SERVER,
+  MEMBERSHIP_EVENT_INIT_CLIENT,
+} from './utils';
 
 interface ClusterClient {
   whoAmI: string;
@@ -40,6 +48,8 @@ export const client = (options: ClusterClient) => {
   let seed = '';
   let portEventsHandler = (ev: any) => {};
 
+  let globalEventsHandler = (ev: any) => {};
+
   let retryTimer: any = null;
 
   return Object.freeze({
@@ -69,11 +79,12 @@ export const client = (options: ClusterClient) => {
 
               if (type === INIT) {
                 clearInterval(retryTimer);
+                removeEventListener(MESSAGE, globalEventsHandler);
                 retryTimer = null;
                 resolve();
-              } else {
-                updateConnectedMember({ metadata, type, from, to, origin });
               }
+
+              updateConnectedMember({ metadata, type, from, to, origin });
 
               saveToLogs(
                 `${whoAmI} client received ${type} request from ${from}`,
@@ -96,22 +107,43 @@ export const client = (options: ClusterClient) => {
             }
           };
 
-          port1.addEventListener(MESSAGE, portEventsHandler);
-          port1.start();
+          globalEventsHandler = (ev: any) => {
+            const { type: evType, detail: membershipEvent } = ev.data;
+            if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
+              const { from, origin } = membershipEvent;
+              if (from === seed && origin && origin === whoAmI) {
+                port1.addEventListener(MESSAGE, portEventsHandler);
+                port1.start();
+
+                postMessage(
+                  getMembershipEvent({
+                    metadata: {
+                      [whoAmI]: itemsToPublish,
+                    },
+                    type: INIT,
+                    to: seed,
+                    from: whoAmI,
+                    origin: whoAmI,
+                  }),
+                  '*',
+                  [port2]
+                );
+              }
+            }
+          };
+
+          addEventListener(MESSAGE, globalEventsHandler);
 
           retryTimer = setInterval(() => {
             postMessage(
-              getMembershipEvent({
-                metadata: {
-                  [whoAmI]: itemsToPublish,
+              {
+                detail: {
+                  origin: whoAmI,
+                  to: seed,
                 },
-                type: INIT,
-                to: seed,
-                from: whoAmI,
-                origin: whoAmI,
-              }),
-              '*',
-              [port2]
+                type: MEMBERSHIP_EVENT_INIT_SERVER,
+              },
+              '*'
             );
           }, retry.timeout);
         }
@@ -138,6 +170,8 @@ export const client = (options: ClusterClient) => {
           origin: whoAmI,
         })
       );
+
+      removeEventListener(MESSAGE, globalEventsHandler);
       port1.removeEventListener(MESSAGE, portEventsHandler);
       port1.close();
       port2.close();
