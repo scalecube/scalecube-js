@@ -145,7 +145,6 @@ export const server = (options: ClusterServer) => {
 
     switch (type) {
       case INIT:
-        console.log(`server portEventsHandler INIT ${whoAmI}`, metadata, type, from, origin);
         break;
       case ADDED:
         membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
