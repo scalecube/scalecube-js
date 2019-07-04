@@ -11,6 +11,7 @@ import {
   ADDED,
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
+  genericPostMessage,
 } from './utils';
 
 interface ClusterServer {
@@ -108,17 +109,14 @@ export const server = (options: ClusterServer) => {
     if (evType === MEMBERSHIP_EVENT_INIT_SERVER) {
       const { to, origin } = membershipEvent;
       if (to === whoAmI && to !== origin) {
-        postMessage(
-          {
-            detail: {
-              from: whoAmI,
-              to: origin,
-              origin,
-            },
-            type: MEMBERSHIP_EVENT_INIT_CLIENT,
+        genericPostMessage({
+          detail: {
+            from: whoAmI,
+            to: origin,
+            origin,
           },
-          '*'
-        );
+          type: MEMBERSHIP_EVENT_INIT_CLIENT,
+        });
       }
     }
   };

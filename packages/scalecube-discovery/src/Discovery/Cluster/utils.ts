@@ -83,3 +83,18 @@ export const saveToLogs = (
   debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', getKeysAsArray(extra.membersPort));
   // tslint:enable
 };
+
+export const genericPostMessage = (data: any, transfer?: any) => {
+  try {
+    // @ts-ignore
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+      postMessage(data, transfer);
+    } else {
+      postMessage(data, '*', transfer);
+    }
+  } catch (e) {
+    console.error('Unable to post message ', e);
+  }
+};
+
+const postMessageWorker = () => {};

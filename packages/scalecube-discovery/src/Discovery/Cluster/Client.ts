@@ -12,6 +12,7 @@ import {
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
   ADDED,
+  genericPostMessage,
 } from './utils';
 
 interface ClusterClient {
@@ -114,7 +115,11 @@ export const client = (options: ClusterClient) => {
                 port1.addEventListener(MESSAGE, portEventsHandler);
                 port1.start();
 
-                postMessage(
+                clearInterval(retryTimer);
+                removeEventListener(MESSAGE, globalEventsHandler);
+                retryTimer = null;
+
+                genericPostMessage(
                   getMembershipEvent({
                     metadata: {
                       [whoAmI]: itemsToPublish,
@@ -124,7 +129,6 @@ export const client = (options: ClusterClient) => {
                     from: whoAmI,
                     origin: whoAmI,
                   }),
-                  '*',
                   [port2]
                 );
               }
@@ -134,16 +138,13 @@ export const client = (options: ClusterClient) => {
           addEventListener(MESSAGE, globalEventsHandler);
 
           retryTimer = setInterval(() => {
-            postMessage(
-              {
-                detail: {
-                  origin: whoAmI,
-                  to: seed,
-                },
-                type: MEMBERSHIP_EVENT_INIT_SERVER,
+            genericPostMessage({
+              detail: {
+                origin: whoAmI,
+                to: seed,
               },
-              '*'
-            );
+              type: MEMBERSHIP_EVENT_INIT_SERVER,
+            });
           }, retry.timeout);
         }
       }),
