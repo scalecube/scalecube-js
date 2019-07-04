@@ -37,34 +37,35 @@ describe(`
     
 
 
-   discoveryA (seed: B)            discoveryB (seed: D)                 discoveryC (seed: B)
-   | port | items|                     | port | items                        | port  | items
-1. | {}   |  {}  |                     | null | null                         | null  | null
-2. |      |      | -- INIT event B --> | {}   | {}                           |       |
-3. |      |      | 500ms (retry)       |      |                              |       |
-4. |      |      | -- INIT event B --> | {A}  | {iA}                         |       |
-5. | {}   |  {}  | <-- INIT event A -- |      |                              |       |
-6. |      |      |                     |{A, C}| {iA, iC} <-- INIT event B -- | {}    | {}
-7. |      |      |                     |      |          -- INIT event C --> | {B}   | {iA}
-8. | {}   | {iC} | <-- ADDED event A --|      |                              |       |
-9. |      |      |                     |      |                              |       |
+   discoveryA (seed: B)       discoveryB (seed: D)           discoveryC (seed: B)
+   | port | items|                | port | items                 | port  | items
+1. | {}   |  {}  |                | null | null                  | null  | null
+2. |      |      | -- INIT B -->  | {}   | {}                    |       |
+3. |      |      | 500ms (retry)  |      |                       |       |
+4. |      |      | -- INIT B -->  | {A}  | {iA}                  |       |
+5. | {}   |  {}  | <-- INIT A --  |      |                       |       |
+6. |      |      |                |{A, C}| {iA, iC} <-- INIT B --| {}    | {}
+7. |      |      |                |      |          -- INIT C -->| {B}   | {iA}
+8. | {}   | {iC} | <-- ADDED A -- |      |                       |       |
+9. |      |      |                |      |                       |       |
+10.| {}   | {iC} | -- REMOVED C --| {C}  | {iA} -- REMOVED C --> | {B}   | {}
 
-   discoveryD (seed: nul)            discoveryB (seed: D)
-   | port | items |                     | port | items    
-   | {}   | {}    |                     | null | null     
-   |      |       | <-- INIT event D -- | {}   | {}       
-   | {B}  | {}    | -- INIT event D --> | {}   | {}           
-4. | {B}  | {iA}  | <-- ADDED event A --| {A}  | {iA}       
-5. |      |       |                     |      |      
-6. |      |       |                     |{A, C}| {iA, iC}          
-7. | {B}  |{iA,iC}| <-- ADDED event C --|      |          
-8. |      |       |                     |      |          
 
+   discoveryD (seed: null)        discoveryB (seed: D)
+   | port | items |                 | port | items    
+   | {}   | {}    |                 | null | null     
+   |      |       | <-- INIT D --   | {}   | {}       
+   | {B}  | {}    | -- INIT D -->   | {}   | {}           
+4. | {B}  | {iA}  | <-- ADDED A --  | {A}  | {iA}       
+5. |      |       |                 |      |      
+6. |      |       |                 |{A, C}| {iA, iC}          
+7. | {B}  |{iA,iC}| <-- ADDED C --  |      |    
+8. |      |       |                 |      |          
+10.| {B}  | {iA}  | -- REMOVED C -->| {B}  | {iA}
 
 
   `, (done) => {
-    let counter = 0;
-    expect.assertions(8);
+    expect.assertions(9);
 
     const aAddress = getAddress('A');
     const bAddress = getAddress('B');
@@ -78,18 +79,51 @@ describe(`
       itemsToPublish: [],
     });
 
+    const discoveryDRegisteredEvents: { [key: string]: any } = { [cItem]: cItem, [aItem]: aItem };
+    const discoveryBRegisteredEvents: { [key: string]: any } = { [cItem]: cItem, [aItem]: aItem };
+    const discoveryARegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
+    const discoveryCRegisteredEvents: { [key: string]: any } = { [aItem]: aItem };
+
+    const discoveryDUnRegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
+    const discoveryAUnRegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
+    const discoveryBUnRegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
+
+    const checkDone = () => {
+      if (
+        Object.keys(discoveryDRegisteredEvents).length === 0 &&
+        Object.keys(discoveryDUnRegisteredEvents).length === 0 &&
+        Object.keys(discoveryARegisteredEvents).length === 0 &&
+        Object.keys(discoveryAUnRegisteredEvents).length === 0 &&
+        Object.keys(discoveryBRegisteredEvents).length === 0 &&
+        Object.keys(discoveryBUnRegisteredEvents).length === 0 &&
+        Object.keys(discoveryCRegisteredEvents).length === 0
+      ) {
+        done();
+      }
+    };
+
     discoveryD.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
 
       if (type === 'IDLE') {
         return;
       }
-
-      counter++;
-      expect(type).toBe('REGISTERED');
-      if (counter === 6) {
-        done();
+      // console.log('DDDDDDD', discoveryEvent);
+      if (type === 'REGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryDRegisteredEvents[item]).toMatch(item);
+          delete discoveryDRegisteredEvents[item];
+        });
       }
+
+      if (type === 'UNREGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryDUnRegisteredEvents[item]).toMatch(item);
+          delete discoveryDUnRegisteredEvents[item];
+        });
+      }
+
+      checkDone();
     });
 
     const discoveryA = createDiscovery({
@@ -100,18 +134,26 @@ describe(`
 
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+
       if (type === 'IDLE') {
         return;
       }
-      counter++;
-      expect(type).toBe('REGISTERED');
-
-      items.forEach((item) => {
-        expect(item).toMatch(cItem);
-      });
-      if (counter === 6) {
-        done();
+      // console.log('AAAAAAA', discoveryEvent);
+      if (type === 'REGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryARegisteredEvents[item]).toMatch(item);
+          delete discoveryARegisteredEvents[item];
+        });
       }
+
+      if (type === 'UNREGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryAUnRegisteredEvents[item]).toMatch(item);
+          delete discoveryAUnRegisteredEvents[item];
+        });
+      }
+
+      checkDone();
     });
 
     const discoveryB = createDiscovery({
@@ -122,14 +164,26 @@ describe(`
 
     discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+
       if (type === 'IDLE') {
         return;
       }
-      counter++;
-      expect(type).toBe('REGISTERED');
-      if (counter === 6) {
-        done();
+      // console.log('BBBBBBB', discoveryEvent);
+      if (type === 'REGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryBRegisteredEvents[item]).toMatch(item);
+          delete discoveryBRegisteredEvents[item];
+        });
       }
+
+      if (type === 'UNREGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryBUnRegisteredEvents[item]).toMatch(item);
+          delete discoveryBUnRegisteredEvents[item];
+        });
+      }
+
+      checkDone();
     });
 
     const discoveryC = createDiscovery({
@@ -140,16 +194,18 @@ describe(`
 
     discoveryC.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+      // console.log('CCCCCCCCC', discoveryEvent);
       if (type === 'IDLE') {
         return;
       }
-      counter++;
-      expect(type).toBe('REGISTERED');
-      items.forEach((item) => {
-        expect(item).toMatch(aItem);
-      });
-      if (counter === 6) {
-        done();
+
+      if (type === 'REGISTERED') {
+        items.forEach((item: string) => {
+          expect(discoveryCRegisteredEvents[item]).toMatch(item);
+          delete discoveryCRegisteredEvents[item];
+
+          discoveryC.destroy();
+        });
       }
     });
   });

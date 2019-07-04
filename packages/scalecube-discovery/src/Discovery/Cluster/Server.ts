@@ -131,33 +131,23 @@ export const server = (options: ClusterServer) => {
       return;
     }
 
+    // update seed with the change in members
+    seed &&
+      port1.postMessage(
+        getMembershipEvent({
+          from: whoAmI,
+          to: seed,
+          origin,
+          metadata,
+          type,
+        })
+      );
+
     switch (type) {
       case INIT:
         console.log(`server portEventsHandler INIT ${whoAmI}`, metadata, type, from, origin);
-        //
-        //
-        //
-        // membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-        //
-        // rSubjectMembers &&
-        // rSubjectMembers.next({
-        //   type,
-        //   items: metadata,
-        //   from: origin,
-        // });
         break;
       case ADDED:
-        seed &&
-          port1.postMessage(
-            getMembershipEvent({
-              from: whoAmI,
-              to: seed,
-              origin,
-              metadata,
-              type,
-            })
-          );
-
         membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
 
         rSubjectMembers &&
