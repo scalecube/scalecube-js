@@ -79,7 +79,7 @@ export const saveToLogs = (
   }
 
   // tslint:disable
-  /*debug &&*/ extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
+  debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
   debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', getKeysAsArray(extra.membersPort));
   // tslint:enable
 };

@@ -11,6 +11,7 @@ import {
   REMOVED,
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
+  ADDED,
 } from './utils';
 
 interface ClusterClient {
@@ -19,6 +20,8 @@ interface ClusterClient {
   updateConnectedMember: (...data: any[]) => any;
   getMembershipEvent: (...data: any[]) => any;
   itemsToPublish: any[];
+  port1: MessagePort;
+  port2: MessagePort;
   rSubjectMembers: ReplaySubject<ClusterEvent>;
   retry: {
     timeout: number;
@@ -38,13 +41,14 @@ export const client = (options: ClusterClient) => {
     getMembershipEvent,
     itemsToPublish,
     rSubjectMembers,
+    port1,
+    port2,
     logger,
     debug,
     retry,
     seedAddress,
   } = options;
 
-  const { port1, port2 } = new MessageChannel();
   let seed = '';
   let portEventsHandler = (ev: any) => {};
 
@@ -69,13 +73,7 @@ export const client = (options: ClusterClient) => {
                 return;
               }
 
-              membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-
-              saveToLogs(
-                `whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`,
-                {},
-                logger
-              );
+              // console.log(`whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`);
 
               if (type === INIT) {
                 clearInterval(retryTimer);
@@ -84,7 +82,8 @@ export const client = (options: ClusterClient) => {
                 resolve();
               }
 
-              updateConnectedMember({ metadata, type, from, to, origin });
+              membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+              updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
 
               saveToLogs(
                 `${whoAmI} client received ${type} request from ${from}`,
@@ -159,7 +158,7 @@ export const client = (options: ClusterClient) => {
         origin: whoAmI,
       });
 
-      port2.postMessage(
+      port1.postMessage(
         getMembershipEvent({
           metadata: {
             [whoAmI]: itemsToPublish,

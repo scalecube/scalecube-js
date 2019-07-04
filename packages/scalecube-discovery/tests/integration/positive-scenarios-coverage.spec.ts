@@ -124,7 +124,6 @@ describe('Test discovery success scenarios', () => {
     let step = 0;
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
-
       if (type === 'IDLE') {
         return;
       }
@@ -152,116 +151,5 @@ describe('Test discovery success scenarios', () => {
     });
 
     return;
-  });
-
-  test(`
-    Scenario: Creating distributed environment
-    Background:
-      Given discovery A with itemsToPublish: [a1]
-      And discovery C with itemsToPublish: [c1]
-      And discovery B with  itemsToPublish: [ ]
-      And discovery A establish connection with B
-      And discovery C establish connection with B
-
-      When discovery A subscribes to discoveredItems$
-       Then discoveredItems$ emits ServiceDiscoveryEvent
-      	      | type  | 'REGISTERED' |
-              | item   | c1           |
-
-      When discovery C subscribes to discoveredItems$
-       Then discoveredItems$ emits ServiceDiscoveryEvent
-      	      | type   | 'REGISTERED' |
-              | item   | a1           |
-
-      When discovery B subscribes to discoveredItems$
-       Then discoveredItems$ emits ServiceDiscoveryEvent with
-      	      | type   | 'REGISTERED' | 'REGISTERED' |
-              | item   | a1           |   c1         |
-
-
-discoveryA (seed: B)            discoveryB (seed: null)             discoveryC (seed: B)
-| port | items|                     | port | items                        | port  | items
-| {}   |  {}  |                     | null | null                         | null  | null
-|      |      | -- INIT event B --> | {}   | {}                           |       |
-|      |      | 500ms (retry)       |      |                              |       |
-|      |      | -- INIT event B --> | {A}  | {iA}                         |       |
-| {}   |  {}  | <-- INIT event A -- |      |                              |       |
-|      |      |                     |{A, C}| {iA, iC} <-- INIT event B -- | {}    | {}
-|      |      |                     |      |          -- INIT event C --> | {B}   | {iA}
-| {}   | {iC} | <-- ADDED event A --|      |                              |       |
-|      |      |                     |      |                              |       |
-
-  `, (done) => {
-    let counter = 0;
-    expect.assertions(6);
-    const aAddress = getAddress('A');
-    const bAddress = getAddress('B');
-    const cAddress = getAddress('C');
-    const aItem = 'aItemData';
-    const cItem = 'cItemData';
-
-    const discoveryA = createDiscovery({
-      address: aAddress,
-      seedAddress: bAddress,
-      itemsToPublish: [aItem],
-    });
-
-    discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-      const { type, items } = discoveryEvent;
-      if (type === 'IDLE') {
-        return;
-      }
-      counter++;
-      expect(type).toBe('REGISTERED');
-
-      items.forEach((item) => {
-        expect(item).toMatch(cItem);
-      });
-      if (counter === 4) {
-        done();
-      }
-    });
-
-    const discoveryB = createDiscovery({
-      address: bAddress,
-      itemsToPublish: [],
-    });
-
-    discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-      const { type, items } = discoveryEvent;
-      expect(type).toBe('REGISTERED');
-      if (type === 'IDLE') {
-        return;
-      }
-      counter++;
-      if (counter === 4) {
-        done();
-      }
-    });
-
-    const discoveryC = createDiscovery({
-      address: cAddress,
-      seedAddress: bAddress,
-      itemsToPublish: [cItem],
-    });
-
-    discoveryC.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-      const { type, items } = discoveryEvent;
-      if (type === 'IDLE') {
-        return;
-      }
-      counter++;
-      expect(type).toBe('REGISTERED');
-      items.forEach((item) => {
-        expect(item).toMatch(aItem);
-      });
-      if (counter === 4) {
-        done();
-      }
-    });
-
-    discoveryList.push(discoveryA);
-    discoveryList.push(discoveryB);
-    discoveryList.push(discoveryC);
   });
 });

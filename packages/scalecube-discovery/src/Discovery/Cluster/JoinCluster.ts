@@ -22,7 +22,7 @@ interface JoinCluster {
 
 export const joinCluster = (options: JoinCluster): Cluster => {
   const { address, seedAddress, itemsToPublish, transport, retry, debug, logger } = options;
-
+  const { port1, port2 } = new MessageChannel();
   const membersStatus: MembersMap = {
     membersPort: {},
     membersState: {},
@@ -45,9 +45,12 @@ export const joinCluster = (options: JoinCluster): Cluster => {
     itemsToPublish,
     updateConnectedMember,
     getMembershipEvent,
+    port1,
+    seed: seedAddress ? getFullAddress(seedAddress) : undefined,
     logger,
     debug,
   });
+
   serverPort.start();
   clientPort = client({
     whoAmI,
@@ -56,6 +59,8 @@ export const joinCluster = (options: JoinCluster): Cluster => {
     membersStatus,
     itemsToPublish,
     rSubjectMembers,
+    port1,
+    port2,
     retry: retry || {
       timeout: 500,
     },
