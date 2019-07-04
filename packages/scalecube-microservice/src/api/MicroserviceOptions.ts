@@ -47,7 +47,7 @@ export default interface MicroserviceOptions {
    * Pluggable gateway,
    * a instance of class that implements Gateway API
    * gateway is responsible for receiving requests outside of the distributed env
-   * and responsing with result of serivice call
+   * and responsing with result of Serivice Call
    */
   gateway?: Gateway;
   gatewayRouter?: Router;
