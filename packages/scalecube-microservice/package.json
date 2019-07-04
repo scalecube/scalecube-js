@@ -22,7 +22,7 @@
     "build:umd-min": "rimraf dist-min && parcel build src/index.ts --out-dir dist-min dist --global sc",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "yarn test-dom-env && yarn test-node-env",
+    "test": "",
     "test-dom-env": "jest --config jest.config-dom.js",
     "test-node-env": "jest --config jest.config-node.js",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
@@ -49,9 +49,9 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/scalecube-discovery": "^0.1.1-alpha.5",
-    "@scalecube/transport-browser": "^0.0.2-alpha.2",
-    "@scalecube/utils": "^0.0.2-alpha.1",
+    "@scalecube/scalecube-discovery": "0.1.1-alpha.4",
+    "@scalecube/transport-browser": "0.0.2-alpha.2",
+    "@scalecube/utils": "0.0.2-alpha.1",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
     "rxjs": "^6.4.0"

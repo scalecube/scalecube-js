@@ -1445,6 +1445,14 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
+"@scalecube/scalecube-discovery@0.1.1-alpha.4":
+  version "0.1.1-alpha.4"
+  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-discovery/-/scalecube-discovery-0.1.1-alpha.4.tgz#e7ad6d7a3cbf0691a8434261536f38254062d475"
+  integrity sha512-ma0qABnkS7sp76XFi+FL8ICbMYwpDq6SuOwes0x8+C1V1jhzPn5iCRUurhxyM953O7o8OjeJSzxVL88AG6IByg==
+  dependencies:
+    "@scalecube/utils" "^0.0.2-alpha.0"
+    rxjs "^6.4.0"
+
 "@scalecube/scalecube-microservice@0.1.3-snapshot.1562236272.16":
   version "0.1.3-snapshot.1562236272.16"
   resolved "https://registry.yarnpkg.com/@scalecube/scalecube-microservice/-/scalecube-microservice-0.1.3-snapshot.1562236272.16.tgz#28fe046dd848a726389c7baf28254f62b449cac7"

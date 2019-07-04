@@ -1,6 +1,7 @@
+import { from } from 'rxjs';
 import { Address, TransportApi } from '@scalecube/api';
 import { TransportBrowser } from '@scalecube/transport-browser';
-import { createDiscovery, Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
+// import { createDiscovery, Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
@@ -26,7 +27,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
     const microserviceOptions = {
       services: [],
-      discovery: createDiscovery,
+      // discovery: createDiscovery,
       transport: TransportBrowser,
       ...options,
     };
@@ -49,12 +50,16 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         }) || []
       : [];
 
-    const discoveryInstance: DiscoveryAPI.Discovery = createDiscoveryInstance({
-      address,
-      itemsToPublish: endPointsToPublishInCluster,
-      seedAddress,
-      discovery,
-    });
+    const discoveryInstance: any = {
+      destroy: () => Promise.resolve(),
+      discoveredItems$: () => from([]),
+    };
+    // const discoveryInstance: DiscoveryAPI.Discovery = createDiscoveryInstance({
+    //   address,
+    //   itemsToPublish: endPointsToPublishInCluster,
+    //   seedAddress,
+    //   discovery,
+    // });
 
     // server use only localCall therefor, router is irrelevant
     const defaultLocalCall = getServiceCall({
@@ -163,20 +168,20 @@ const createMicroserviceContext = () => {
   };
 };
 
-const createDiscoveryInstance = (opt: {
-  address?: Address;
-  seedAddress?: Address;
-  itemsToPublish: Endpoint[];
-  discovery: (...data: any[]) => DiscoveryAPI.Discovery;
-}): DiscoveryAPI.Discovery => {
-  const { address, seedAddress, itemsToPublish, discovery } = opt;
-  const discoveryInstance = discovery({
-    address,
-    itemsToPublish,
-    seedAddress,
-  });
+// const createDiscoveryInstance = (opt: {
+//   address?: Address;
+//   seedAddress?: Address;
+//   itemsToPublish: Endpoint[];
+//   discovery: (...data: any[]) => DiscoveryAPI.Discovery;
+// }): DiscoveryAPI.Discovery => {
+//   const { address, seedAddress, itemsToPublish, discovery } = opt;
+//   const discoveryInstance = discovery({
+//     address,
+//     itemsToPublish,
+//     seedAddress,
+//   });
 
-  validateDiscoveryInstance(discoveryInstance);
+//   validateDiscoveryInstance(discoveryInstance);
 
-  return discoveryInstance;
-};
+//   return discoveryInstance;
+// };
