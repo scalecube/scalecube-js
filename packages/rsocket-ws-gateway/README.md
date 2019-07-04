@@ -16,7 +16,7 @@ interface Gateway {
 
 ```typescript
 import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
-import { Gateway } from '@scalecube/gateway';
+import { Gateway } from '@scalecube/rsocket-ws-gateway';
 
 class ServiceA {
   public method1() {
