@@ -7,22 +7,22 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, definitions) {
-    var placeHolder1 = document.getElementById('placeHolder');
-    var placeHolder2 = document.getElementById('placeHolder2');
-    var waitMessage = document.getElementById('waitMessage');
+  ((Microservices, ASYNC_MODEL_TYPES, definitions) => {
+    const placeHolder1 = document.getElementById('placeHolder');
+    const placeHolder2 = document.getElementById('placeHolder2');
+    const waitMessage = document.getElementById('waitMessage');
 
     waitMessage.innerText = 'Wait for service ~ 2s';
 
-    var worker = new Worker('worker1.js');
-    var worker2 = new Worker('worker2.js');
+    const worker = new Worker('worker1.js');
+    const worker2 = new Worker('worker2.js');
 
-    var connect = connectWorkers();
+    const connect = connectWorkers();
     connect.addWorker(worker);
     connect.addWorker(worker2);
 
-    var localMS = Microservices.create({ services: [], address: 'main' });
-    var proxyConfig = {
+    const localMS = Microservices.create({ services: [], address: 'main' });
+    const proxyConfig = {
       proxies: [
         {
           serviceDefinition: definitions.remoteServiceDefinition,
@@ -35,7 +35,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       ],
       isAsync: true,
     };
-    var { awaitProxyName, awaitProxyName2 } = localMS.createProxies(proxyConfig);
+    const { awaitProxyName, awaitProxyName2 } = localMS.createProxies(proxyConfig);
 
     awaitProxyName.then(({ proxy: serviceNameProxy }) => {
       console.log('remote service is available!');
@@ -63,31 +63,31 @@ window.addEventListener('DOMContentLoaded', (event) => {
       }
     });
 
-    function createLineHTML({ response, type, placeHolder }) {
+    const createLineHTML = ({ response, type, placeHolder }) => {
       waitMessage.innerText = 'Service is available from workers:';
 
-      var responseSpan = document.createElement('div');
+      const responseSpan = document.createElement('div');
       responseSpan.innerText = `${type}: start at ${response.start}, end at ${response.end}, time ${response.time}`;
       placeHolder.appendChild(responseSpan);
-    }
+    };
   })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, definitions);
 });
 
-var connectWorkers = function() {
-  var workersMap = {};
+const connectWorkers = () => {
+  let workersMap = {};
 
   addEventListener('message', (ev) => {
     if (ev && ev.data && !ev.data.workerId) {
       if (ev.data.detail) {
         // console.log('window to worker: ', ev.data, workersMap);
-        var propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; //discoveryEvents || rsocketEvents
+        const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; //discoveryEvents || rsocketEvents
         propogateTo && propogateTo.postMessage(ev.data, ev.ports || undefined);
       }
     }
   });
 
   return {
-    addWorker: function(worker) {
+    addWorker: (worker) => {
       worker.addEventListener('message', (ev) => {
         if (ev && ev.data && ev.data.type === 'membershipEventInitServer') {
           workersMap = {
