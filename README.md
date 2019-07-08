@@ -34,6 +34,7 @@ const microserviceInstance = Microservices.create({
         definition: greetingsDefinition,
         reference: { hello : (name) => `Hello ${name}!` }
   }]
+  address : 'remoteService1'
 });
 ```
 
@@ -41,7 +42,9 @@ const microserviceInstance = Microservices.create({
 
 ```typescript
 import { Microservices } from '@scalecube/scalecube-microservice';
-const greetingService = Microservices.create({}).createProxy({  serviceDefinition: greetingsDefinition });
+const greetingService = Microservices.create({
+  seedAddress : 'remoteService1'
+}).createProxy({  serviceDefinition: greetingsDefinition });
 greetingService.hello('Me').then(console.log) // 'Hello Me!'
 ```
 

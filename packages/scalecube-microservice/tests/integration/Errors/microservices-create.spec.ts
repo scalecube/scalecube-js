@@ -5,8 +5,6 @@
  * 3. We include here scenarios for various validation for definition.
  *****/
 import { constants } from '@scalecube/utils';
-import { ScalecubeGlobal } from '@scalecube/scalecube-discovery/lib/helpers/types';
-import { getGlobalNamespace } from '../../../src/helpers/utils';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import {
   getInvalidMethodReferenceError,
@@ -24,10 +22,6 @@ import {
 import { getQualifier } from '../../../src/helpers/serviceData';
 
 describe('Test the creation of Microservice', () => {
-  beforeEach(() => {
-    getGlobalNamespace().scalecube = {} as ScalecubeGlobal;
-  });
-
   const baseServiceDefinition = {
     serviceName: 'GreetingService',
   };
@@ -480,7 +474,7 @@ describe('Test the creation of Microservice', () => {
   );
 
   // @ts-ignore
-  test.each(['', [], false, true, 10, null, Symbol()])(
+  test.each([[], false, true, 10, null, Symbol()])(
     `
      Scenario: microservise option  with invalid seedAddress value
         Given   a 'microserviceOptions'
@@ -488,7 +482,6 @@ describe('Test the creation of Microservice', () => {
 
                 |definition      | value
                 |array	         | []
-                |string	         | ''
                 |boolean	       | false
                 |boolean	       | true
                 |number	         | 10

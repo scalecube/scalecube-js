@@ -1,20 +1,11 @@
 import { Observable, of } from 'rxjs';
-import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
 import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
-import { getDefaultAddress } from '../../../src/helpers/utils';
 
 const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
 
 describe(`Test RSocket doesn't hide remoteService errors`, () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  }
-
   const greetingServiceDefinition = {
     serviceName: 'GreetingService',
     methods: {
@@ -50,11 +41,10 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         },
       },
     ],
-    seedAddress: getDefaultAddress(8000),
-    address: getDefaultAddress(8004),
+    address: 'seed',
   });
 
-  const microServiceWithoutServices = Microservices.create({ seedAddress: getDefaultAddress(8000) });
+  const microServiceWithoutServices = Microservices.create({ seedAddress: 'seed', address: 'local' });
 
   describe.each([
     // ################# LocalCall #################

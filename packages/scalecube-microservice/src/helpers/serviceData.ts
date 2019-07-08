@@ -2,6 +2,7 @@ import { Qualifier, ServiceRegistry } from './types';
 import { Endpoint, ServiceDefinition, ServiceReference } from '../api';
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
+import { DiscoveryApi } from '@scalecube/api';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
 
@@ -71,8 +72,11 @@ export const isServiceAvailableInRegistry = (
       discovery
         .discoveredItems$()
         .pipe(
-          takeWhile((discoveryEndpoints: any[]) => {
-            confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
+          takeWhile((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+            if (discoveryEvent.type === 'REGISTERED') {
+              const discoveryEndpoints = discoveryEvent.items;
+              confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
+            }
 
             if (unConfirmedMethods.length === 0) {
               resolve(true);

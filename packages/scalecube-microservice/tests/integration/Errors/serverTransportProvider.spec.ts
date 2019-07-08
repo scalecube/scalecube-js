@@ -5,11 +5,9 @@ import { RSocketServer } from 'rsocket-core';
 import { Flowable, Single } from 'rsocket-flowable';
 import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingService';
 import { Microservices } from '../../../src';
-import { applyPostMessagePolyfill } from '../../mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../../mocks/utils/MessageChannelPolyfill';
 import { ServiceCall } from '../../../src/helpers/types';
 import { Observable } from 'rxjs';
-import { getDefaultAddress } from '../../../src/helpers/utils';
+import { getAddress } from '@scalecube/utils';
 
 const errorMessage = 'mockError';
 
@@ -45,28 +43,20 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
 });
 
 describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  } else {
-    test('fake test for jest in node env', () => {
-      return; // TODO: RFC - remoteCall nodejs
-    });
-    return; // TODO: RFC - remoteCall nodejs
-  }
-
-  const remoteMicroservice = Microservices.create({
+  Microservices.create({
     services: [
       {
         definition: greetingServiceDefinition,
         reference: { hello, greet$ },
       },
     ],
-    seedAddress: getDefaultAddress(8000),
-    address: getDefaultAddress(8005),
+
+    address: 'seed',
   });
-  const localMicroservice = Microservices.create({ seedAddress: getDefaultAddress(8000) });
+  const localMicroservice = Microservices.create({
+    seedAddress: 'seed',
+    address: getAddress('address'),
+  });
   const { awaitProxy } = localMicroservice.createProxies({
     proxies: [
       {

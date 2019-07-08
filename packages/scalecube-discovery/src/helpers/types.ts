@@ -1,56 +1,46 @@
-import { ReplaySubject } from 'rxjs';
-import { Item } from '../api';
-import { Address } from '@scalecube/api';
+import { Observable } from 'rxjs';
+import { ClusterEvent } from '../Discovery/Cluster/JoinCluster';
 
-declare global {
-  interface Window {
-    scalecube: ScalecubeGlobal;
-  }
+export interface MembersMap {
+  membersState: MembersData;
+  membersPort: MembersPort;
 }
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      scalecube: ScalecubeGlobal;
-    }
-  }
+export interface MembersData {
+  [member: string]: any;
 }
 
-export interface ScalecubeGlobal {
-  clusters: ClustersMap;
+export interface MembersPort {
+  [member: string]: MessagePort;
 }
 
-export interface ClustersMap {
-  [seedAddress: string]: Cluster;
-}
+export type MemberEventType = 'ADDED' | 'REMOVED' | 'INIT' | 'CLOSE';
 
-export interface ShareDataBetweenDiscoveries {
-  discoveries: DiscoveryEntity[];
-}
-
-export interface DiscoveryEntity {
-  address: Address;
-  discoveredItems: Item[];
-  subjectNotifier: ReplaySubject<Item[]>;
-}
-
-export interface GetCluster {
-  seedAddress: Address;
-}
-
-export interface JoinCluster {
-  cluster: Cluster;
-  address: Address;
-  itemsToPublish: Item[];
-  subjectNotifier: ReplaySubject<Item[]>;
-}
-
-export interface LeaveCluster {
-  cluster: Cluster;
-  address: Address;
+export interface MembershipEvent {
+  /**
+   * the previous node the event arrived from
+   */
+  from: string;
+  /**
+   * the next node the event need to be send to
+   */
+  to: string;
+  /**
+   * metadata of the event
+   */
+  metadata: any;
+  /**
+   * the original node that initiate the event
+   */
+  origin: string;
+  /**
+   * the type of the event
+   */
+  type: MemberEventType;
 }
 
 export interface Cluster {
-  discoveries: DiscoveryEntity[];
-  allDiscoveredItems: Item[];
+  getCurrentMemberStates: () => Promise<MembersMap>;
+  listen$: () => Observable<ClusterEvent>;
+  destroy: () => Promise<string>;
 }

@@ -32,6 +32,7 @@ export const createServiceRegistry = (): ServiceRegistry => {
         serviceRegistryMap,
         endpoints,
       });
+
       return { ...serviceRegistryMap };
     },
     destroy: () => {

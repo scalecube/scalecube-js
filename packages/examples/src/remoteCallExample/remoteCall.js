@@ -8,13 +8,13 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  (function(Microservices, ASYNC_MODEL_TYPES, utils, definitions) {
+  (function(Microservices, ASYNC_MODEL_TYPES, definitions) {
     var placeHolder = document.getElementById('placeHolder');
     var waitMessage = document.getElementById('waitMessage');
 
     waitMessage.innerText = 'Wait for service ~ 2s';
 
-    var localMS = Microservices.create({ services: [], seedAddress: utils.generateAddress(8000) });
+    var localMS = Microservices.create({ services: [], seedAddress: 'seed', address: 'local' });
     var proxyConfig = {
       proxies: [
         {
@@ -47,5 +47,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
       responseSpan.innerText = `${type}: ${response}`;
       placeHolder.appendChild(responseSpan);
     }
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, utils, definitions);
+  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, definitions);
 });

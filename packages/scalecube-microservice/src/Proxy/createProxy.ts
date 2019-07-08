@@ -37,7 +37,7 @@ export const createProxies = ({
 }: {
   createProxiesOptions: CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
-  isServiceAvailable: (serviceDefinition: ServiceDefinition) => Promise<boolean>;
+  isServiceAvailable: any;
   transportClientProvider: TransportApi.ClientProvider;
 }): ProxiesMap => {
   if (!microserviceContext) {

@@ -1,6 +1,6 @@
-import { Address, TransportApi } from '@scalecube/api';
+import { Address, TransportApi, DiscoveryApi } from '@scalecube/api';
+import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
-import { createDiscovery, Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createServiceRegistry } from '../Registry/ServiceRegistry';
@@ -21,18 +21,35 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
+import { check, getAddress } from '@scalecube/utils';
 
 export const Microservices: MicroservicesInterface = Object.freeze({
   create: (options: MicroserviceOptions): Microservice => {
-    const microserviceOptions = {
+    let microserviceOptions = {
       services: [],
       discovery: createDiscovery,
       transport: TransportBrowser,
       ...options,
     };
+
+    if (check.isString(microserviceOptions.address)) {
+      microserviceOptions = { ...microserviceOptions, address: getAddress(microserviceOptions.address as string) };
+    }
+
+    if (check.isString(microserviceOptions.seedAddress)) {
+      microserviceOptions = {
+        ...microserviceOptions,
+        seedAddress: getAddress(microserviceOptions.seedAddress as string),
+      };
+    }
+
     // TODO: add address, customTransport, customDiscovery  to the validation process
     validateMicroserviceOptions(microserviceOptions);
-    const { services, seedAddress, address, transport, discovery } = microserviceOptions;
+
+    const { services, transport, discovery } = microserviceOptions;
+    const address = microserviceOptions.address as Address;
+    const seedAddress = microserviceOptions.seedAddress as Address;
+
     const transportClientProvider = transport.clientProvider;
 
     // tslint:disable-next-line
@@ -49,7 +66,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         }) || []
       : [];
 
-    const discoveryInstance: DiscoveryAPI.Discovery = createDiscoveryInstance({
+    const discoveryInstance: DiscoveryApi.Discovery = createDiscoveryInstance({
       address,
       itemsToPublish: endPointsToPublishInCluster,
       seedAddress,
@@ -62,6 +79,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
       microserviceContext,
       transportClientProvider: transport.clientProvider,
     });
+
     // if address is not available then microservice can't start a server and get serviceCall requests
     address &&
       startServer({
@@ -70,9 +88,14 @@ export const Microservices: MicroservicesInterface = Object.freeze({
         transportServerProvider: transport.serverProvider,
       });
 
-    discoveryInstance
-      .discoveredItems$()
-      .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
+    discoveryInstance.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
+      if (discoveryEvent.type === 'REGISTERED') {
+        const discoveryEndpoints = discoveryEvent.items;
+        serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] });
+      } else {
+        // TODO : UNREGISTERED
+      }
+    });
 
     const isServiceAvailable = isServiceAvailableInRegistry(
       endPointsToPublishInCluster,
@@ -90,7 +113,7 @@ export const Microservices: MicroservicesInterface = Object.freeze({
           transportClientProvider,
         }),
       createServiceCall: ({ router }) => createServiceCall({ router, microserviceContext, transportClientProvider }),
-      destroy: () => destroy({ microserviceContext, discovery }),
+      destroy: () => destroy({ microserviceContext, discovery: discoveryInstance }),
     } as Microservice);
   },
 });
@@ -130,20 +153,22 @@ const destroy = ({
   discovery,
 }: {
   microserviceContext: MicroserviceContext | null;
-  discovery: any;
+  discovery: DiscoveryApi.Discovery;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
-  discovery && discovery.destroy();
-
-  Object.values(microserviceContext).forEach(
-    (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
-  );
-  microserviceContext = null;
-
-  return microserviceContext;
+  return new Promise((resolve, reject) => {
+    microserviceContext = null;
+    discovery &&
+      discovery.destroy().then(() => {
+        // Object.values(microserviceContext).forEach(
+        //   (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
+        // );
+        resolve('');
+      });
+  });
 };
 
 const createMicroserviceContext = () => {
@@ -159,9 +184,10 @@ const createDiscoveryInstance = (opt: {
   address?: Address;
   seedAddress?: Address;
   itemsToPublish: Endpoint[];
-  discovery: (...data: any[]) => DiscoveryAPI.Discovery;
-}): DiscoveryAPI.Discovery => {
-  const { address, seedAddress, itemsToPublish, discovery } = opt;
+  discovery: DiscoveryApi.CreateDiscovery;
+}): DiscoveryApi.Discovery => {
+  const { seedAddress, itemsToPublish, discovery } = opt;
+  const address = opt.address || getAddress(Date.now().toString());
   const discoveryInstance = discovery({
     address,
     itemsToPublish,

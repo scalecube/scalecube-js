@@ -1,56 +1,117 @@
+import { getFullAddress, validateAddress, check } from '@scalecube/utils';
+import { Address, DiscoveryApi } from '@scalecube/api';
+import { ClusterEvent, joinCluster } from './Cluster/JoinCluster';
+import {
+  getAddressCollision,
+  getDiscoverySuccessfullyDestroyedMessage,
+  INVALID_ITEMS_TO_PUBLISH,
+} from '../helpers/constants';
 import { ReplaySubject } from 'rxjs';
-import { getFullAddress } from '@scalecube/utils';
-import { Address } from '@scalecube/api';
-import { DiscoveryOptions, Discovery, Item, CreateDiscovery } from '../api';
-import { getCluster, joinCluster, leaveCluster } from './DiscoveryActions';
-import { getAddressCollision, getDiscoverySuccessfullyDestroyedMessage } from '../helpers/const';
+import { Cluster, MembersData } from '../helpers/types';
 
-export const createDiscovery: CreateDiscovery = ({
+export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
   address,
   itemsToPublish,
   seedAddress,
-}: DiscoveryOptions): Discovery => {
-  if (!seedAddress) {
-    seedAddress = {
-      host: 'defaultSeedAddress',
-      port: 8080,
-      path: 'path',
-      protocol: 'pm',
-    };
+  logger,
+  debug,
+}: DiscoveryApi.DiscoveryOptions): DiscoveryApi.Discovery => {
+  const membersState: { [member: string]: boolean } = {};
+
+  validateAddress(address, false);
+
+  if (seedAddress) {
+    validateAddress(seedAddress, false);
+    validateAddressCollision(address, seedAddress);
   }
 
-  if (!address) {
-    address = {
-      host: 'defaultAddress',
-      port: 8000,
-      path: 'path',
-      protocol: 'pm',
-    };
-  }
+  check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
 
-  validateAddressCollision(address, seedAddress);
+  const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
-  let cluster = getCluster({ seedAddress });
-  const subjectNotifier = new ReplaySubject<Item[]>(1);
+  const cluster: Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, logger, debug });
 
-  cluster = joinCluster({ cluster, address, itemsToPublish, subjectNotifier });
+  const clusterListener = cluster.listen$();
+  let subscription: any;
 
   return Object.freeze({
     destroy: () => {
-      if (address && seedAddress) {
-        cluster = leaveCluster({ cluster, address });
-        subjectNotifier && subjectNotifier.complete();
-        return Promise.resolve(getDiscoverySuccessfullyDestroyedMessage(address, seedAddress));
-      } else {
-        return Promise.resolve('');
-      }
+      subscription && subscription.unsubscribe();
+      discoveredItemsSubject.complete();
+      return new Promise<string>((resolve, reject) => {
+        cluster
+          .destroy()
+          .then(() => resolve(getDiscoverySuccessfullyDestroyedMessage(address)))
+          .catch((error: any) => reject(error));
+      });
     },
-    discoveredItems$: () => subjectNotifier.asObservable(),
+    discoveredItems$: () => {
+      cluster
+        .getCurrentMemberStates()
+        .then((currentMembersState: MembersData) => {
+          const members = Object.keys(currentMembersState);
+          members.forEach((member: string) => {
+            const memberItem = currentMembersState[member];
+
+            if (memberItem.length === 0) {
+              discoveredItemsSubject.next({
+                type: 'IDLE',
+                items: [],
+              });
+            } else {
+              if (!membersState[member]) {
+                membersState[member] = true;
+                discoveredItemsSubject.next({
+                  type: 'REGISTERED',
+                  items: memberItem,
+                });
+              }
+            }
+          });
+        })
+        .catch((error: any) => discoveredItemsSubject.error(error));
+
+      subscription = clusterListener.subscribe(
+        (clusterEvent: ClusterEvent) => {
+          const { type, items, from } = clusterEvent;
+          if (items.length > 0) {
+            if (type === 'REMOVED' && membersState[from]) {
+              membersState[from] = false;
+              discoveredItemsSubject.next({
+                type: 'UNREGISTERED',
+                items,
+              });
+            }
+
+            if (type !== 'REMOVED' && !membersState[from]) {
+              membersState[from] = true;
+              discoveredItemsSubject.next({
+                type: 'REGISTERED',
+                items,
+              });
+            }
+          } else {
+            if (type === 'INIT') {
+              discoveredItemsSubject.next({
+                type: 'IDLE',
+                items: [],
+              });
+            }
+          }
+        },
+        (error: any) => discoveredItemsSubject.error(error),
+        () => discoveredItemsSubject.complete()
+      );
+
+      return discoveredItemsSubject.asObservable();
+    },
   });
 };
 
-const validateAddressCollision = (addressPort: Address, seedAddressPort: Address) => {
-  if (getFullAddress(addressPort) === getFullAddress(seedAddressPort)) {
-    throw new Error(getAddressCollision(addressPort, seedAddressPort));
+const validateAddressCollision = (address: Address, seedAddress: Address) => {
+  const fullAddress = getFullAddress(address);
+  const fullSeedAddress = getFullAddress(seedAddress);
+  if (fullAddress === fullSeedAddress) {
+    throw new Error(getAddressCollision(fullAddress, fullSeedAddress));
   }
 };
