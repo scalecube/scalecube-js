@@ -15,8 +15,8 @@ export const createClient = ({
   return new RSocketClient({
     setup: {
       dataMimeType: 'text/plain',
-      keepAlive: process.env.dev ? 1000 : 1000000,
-      lifetime: process.env.dev ? 1000 : 1000000,
+      keepAlive: 1000000,
+      lifetime: 1000000,
       metadataMimeType: 'text/plain',
     },
     transport: clientFactory({ address, factoryOptions }),
