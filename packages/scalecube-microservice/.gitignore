@@ -5,3 +5,6 @@ lib/
 es/
 dist-min/
 dist/
+
+report.iffe.html
+report.libs.html
