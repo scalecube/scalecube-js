@@ -1,8 +1,7 @@
-import { Qualifier, ServiceRegistry } from './types';
-import { Endpoint, ServiceDefinition, ServiceReference } from '../api';
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { DiscoveryApi } from '@scalecube/api';
+import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { Qualifier, ServiceRegistry } from './types';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
 
@@ -10,7 +9,7 @@ export const getReferencePointer = ({
   reference,
   methodName,
 }: {
-  reference: ServiceReference;
+  reference: MicroserviceApi.ServiceReference;
   methodName: string;
 }): ((...args: any[]) => any) => {
   const methodRef = reference[methodName];
@@ -21,8 +20,12 @@ export const getReferencePointer = ({
   return reference.constructor && reference.constructor[methodName];
 };
 
-const confirmMethods = (endPoints: Endpoint[], serviceDefinition: ServiceDefinition, unConfirmedMethods: string[]) => {
-  endPoints.forEach((endPoint: Endpoint) => {
+const confirmMethods = (
+  endPoints: MicroserviceApi.Endpoint[],
+  serviceDefinition: MicroserviceApi.ServiceDefinition,
+  unConfirmedMethods: string[]
+) => {
+  endPoints.forEach((endPoint: MicroserviceApi.Endpoint) => {
     if (endPoint.serviceName === serviceDefinition.serviceName) {
       const removeAt = unConfirmedMethods.indexOf(endPoint.methodName);
       if (removeAt !== -1) {
@@ -33,7 +36,7 @@ const confirmMethods = (endPoints: Endpoint[], serviceDefinition: ServiceDefinit
 };
 
 const confirmInRegistry = (
-  serviceDefinition: ServiceDefinition,
+  serviceDefinition: MicroserviceApi.ServiceDefinition,
   unConfirmedMethods: string[],
   serviceRegistry: ServiceRegistry
 ) => {
@@ -49,13 +52,13 @@ const confirmInRegistry = (
 };
 
 export const isServiceAvailableInRegistry = (
-  endPointsToPublishInCluster: Endpoint[],
+  endPointsToPublishInCluster: MicroserviceApi.Endpoint[],
   serviceRegistry: ServiceRegistry,
   discovery: {
     discoveredItems$: () => Observable<any>;
   }
 ) => {
-  return (serviceDefinition: ServiceDefinition): Promise<boolean> => {
+  return (serviceDefinition: MicroserviceApi.ServiceDefinition): Promise<boolean> => {
     const unConfirmedMethods = Object.keys(serviceDefinition.methods);
 
     return new Promise((resolve, reject) => {
@@ -75,7 +78,7 @@ export const isServiceAvailableInRegistry = (
           takeWhile((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
             if (discoveryEvent.type === 'REGISTERED') {
               const discoveryEndpoints = discoveryEvent.items;
-              confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
+              confirmMethods(discoveryEndpoints as MicroserviceApi.Endpoint[], serviceDefinition, unConfirmedMethods);
             }
 
             if (unConfirmedMethods.length === 0) {

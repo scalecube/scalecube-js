@@ -7,7 +7,7 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  ((Microservices, ASYNC_MODEL_TYPES, definitions) => {
+  ((createMicroservice, ASYNC_MODEL_TYPES, definitions) => {
     const placeHolder1 = document.getElementById('placeHolder');
     const placeHolder2 = document.getElementById('placeHolder2');
     const waitMessage = document.getElementById('waitMessage');
@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     connect.addWorker(worker);
     connect.addWorker(worker2);
 
-    const localMS = Microservices.create({ services: [], address: 'main' });
+    const localMS = createMicroservice({ services: [], address: 'main' });
     const proxyConfig = {
       proxies: [
         {
@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       responseSpan.innerText = `${type}: start at ${response.start}, end at ${response.end}, time ${response.time}`;
       placeHolder.appendChild(responseSpan);
     };
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES, definitions);
+  })(window.sc.createMicroservice, window.sc.ASYNC_MODEL_TYPES, definitions);
 });
 
 const connectWorkers = () => {

@@ -28,8 +28,8 @@ npm install @scalecube/scalecube-microservice
 **provider side** - create the service & publish it.
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
-const microserviceInstance = Microservices.create({
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+const microserviceInstance = createMicroservice({
   services: [{
         definition: greetingsDefinition,
         reference: { hello : (name) => `Hello ${name}!` }
@@ -41,8 +41,8 @@ const microserviceInstance = Microservices.create({
 **consumer side** - use the service.
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
-const greetingService = Microservices.create({
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+const greetingService = createMicroservice({
   seedAddress : 'remoteService1'
 }).createProxy({  serviceDefinition: greetingsDefinition });
 greetingService.hello('Me').then(console.log) // 'Hello Me!'

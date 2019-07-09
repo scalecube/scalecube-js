@@ -6,7 +6,7 @@
  *    Check validity - proxy - serviceDefinition method format         - https://github.com/scalecube/scalecube-js/issues/104
  *    Check validity - proxy - serviceDefinition asyncModel value      - https://github.com/scalecube/scalecube-js/issues/103
  *****/
-import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
+import { ASYNC_MODEL_TYPES, createMicroservice, Api } from '../../../src';
 import {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
@@ -15,11 +15,11 @@ import {
   getServiceNameInvalid,
   DUPLICATE_PROXY_NAME,
 } from '../../../src/helpers/constants';
-import { ProxiesOptions } from '../../../src/api';
+
 import { greetingServiceDefinition } from '../../mocks/GreetingService';
 
 describe('validation test for create proxy from microservice', () => {
-  const ms = Microservices.create({});
+  const ms = createMicroservice({});
 
   test(`
     Scenario: Service name is not provided in service definition
@@ -211,7 +211,7 @@ describe('validation test for create proxy from microservice', () => {
 `, () => {
     expect.assertions(1);
 
-    const proxiesOptions1: ProxiesOptions = {
+    const proxiesOptions1: Api.MicroserviceApi.ProxiesOptions = {
       proxyName: 'proxyName',
       serviceDefinition: {
         serviceName: 'valid1',
@@ -219,7 +219,7 @@ describe('validation test for create proxy from microservice', () => {
       },
     };
 
-    const proxiesOptions2: ProxiesOptions = {
+    const proxiesOptions2: Api.MicroserviceApi.ProxiesOptions = {
       proxyName: 'proxyName',
       serviceDefinition: {
         serviceName: 'valid2',

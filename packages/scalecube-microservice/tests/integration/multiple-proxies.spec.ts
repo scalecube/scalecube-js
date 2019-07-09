@@ -1,4 +1,4 @@
-import { Microservices, Api, ASYNC_MODEL_TYPES } from '../../src';
+import { createMicroservice, Api, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
@@ -19,7 +19,7 @@ describe(`
       },
     },
   };
-  const service1: Api.Service = {
+  const service1: Api.MicroserviceApi.Service = {
     definition: service1Definition,
     reference: { hello },
   };
@@ -33,19 +33,19 @@ describe(`
     },
   };
 
-  const service2: Api.Service = {
+  const service2: Api.MicroserviceApi.Service = {
     definition: service2Definition,
     reference: { greet$ },
   };
 
   const defaultUser = 'Me';
 
-  const microserviceWithServices = Microservices.create({
+  const microserviceWithServices = createMicroservice({
     services: [service1, service2],
     address: getDefaultAddress(1000),
     seedAddress: getDefaultAddress(8000),
   });
-  const microserviceWithoutServices = Microservices.create({ seedAddress: getDefaultAddress(1000) });
+  const microserviceWithoutServices = createMicroservice({ seedAddress: getDefaultAddress(1000) });
   describe.each([
     // ################# LocalCall #################
     {

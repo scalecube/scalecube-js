@@ -1,3 +1,4 @@
+import { MicroserviceApi } from '@scalecube/api';
 import {
   AvailableService,
   AvailableServices,
@@ -5,7 +6,6 @@ import {
   ServiceRegistry,
   ServiceRegistryMap,
 } from '../helpers/types';
-import { Service, Endpoint } from '../api';
 import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
@@ -13,7 +13,7 @@ export const createServiceRegistry = (): ServiceRegistry => {
   let serviceRegistryMap: ServiceRegistryMap | null = {};
 
   return Object.freeze({
-    lookUp: ({ qualifier }) => {
+    lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => {
       if (!serviceRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -25,9 +25,9 @@ export const createServiceRegistry = (): ServiceRegistry => {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
 
-      return getEndpointsFromServices({ services, address }) as Endpoint[]; // all services => endPoints[]
+      return getEndpointsFromServices({ services, address }) as MicroserviceApi.Endpoint[]; // all services => endPoints[]
     },
-    add: ({ endpoints = [] }: { endpoints: Endpoint[] }) => {
+    add: ({ endpoints = [] }: { endpoints: MicroserviceApi.Endpoint[] }) => {
       serviceRegistryMap = getUpdatedServiceRegistry({
         serviceRegistryMap,
         endpoints,
@@ -44,9 +44,15 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
 // Helpers
 
-export const getEndpointsFromServices = ({ services = [], address }: AvailableServices): Endpoint[] | [] =>
+export const getEndpointsFromServices = ({
+  services = [],
+  address,
+}: AvailableServices): MicroserviceApi.Endpoint[] | [] =>
   services.reduce(
-    (res: Endpoint[], service: Service) => [...res, ...getEndpointsFromService({ service, address })],
+    (res: MicroserviceApi.Endpoint[], service: MicroserviceApi.Service) => [
+      ...res,
+      ...getEndpointsFromService({ service, address }),
+    ],
     []
   );
 
@@ -55,7 +61,7 @@ export const getUpdatedServiceRegistry = ({
   endpoints,
 }: GetUpdatedServiceRegistryOptions): ServiceRegistryMap => ({
   ...endpoints.reduce(
-    (res: ServiceRegistryMap, endpoint: Endpoint) => ({
+    (res: ServiceRegistryMap, endpoint: MicroserviceApi.Endpoint) => ({
       ...res,
       [endpoint.qualifier]: [...(res[endpoint.qualifier] || []), endpoint],
     }),
@@ -63,7 +69,7 @@ export const getUpdatedServiceRegistry = ({
   ),
 });
 
-export const getEndpointsFromService = ({ service, address }: AvailableService): Endpoint[] => {
+export const getEndpointsFromService = ({ service, address }: AvailableService): MicroserviceApi.Endpoint[] => {
   if (!address) {
     return [];
   }

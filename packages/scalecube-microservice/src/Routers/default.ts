@@ -1,7 +1,7 @@
-import { Router } from '../api';
+import { MicroserviceApi } from '@scalecube/api';
 
-export const defaultRouter: Router = Object.freeze({
-  route: ({ message, lookUp }) => {
+export const defaultRouter: MicroserviceApi.Router = Object.freeze({
+  route: ({ message, lookUp }: MicroserviceApi.RouterOptions) => {
     const { qualifier } = message;
     const endpoints = lookUp({ qualifier });
     if (!(endpoints && Array.isArray(endpoints) && endpoints.length > 0)) {
@@ -10,4 +10,4 @@ export const defaultRouter: Router = Object.freeze({
       return endpoints[0];
     }
   },
-} as Router);
+});

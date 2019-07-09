@@ -1,6 +1,5 @@
 import { greetingServiceDefinition, hello, greet$, GreetingService } from '../mocks/GreetingService';
-import { Microservices } from '../../src';
-import { Message, Microservice } from '../../src/api';
+import { createMicroservice, Api } from '../../src';
 import { getAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
 
@@ -17,7 +16,7 @@ describe(`Test positive-scenarios of usage
   const defaultUser = 'defaultUser';
   const GreetingServiceObject = { hello, greet$ };
 
-  const microservicesList: Microservice[] = [];
+  const microservicesList: Api.MicroserviceApi.Microservice[] = [];
 
   // @ts-ignore
   beforeEach(async (done) => {
@@ -41,7 +40,7 @@ describe(`Test positive-scenarios of usage
     };
 
     const serviceDefinition = service.definition;
-    const microserviceWithServices = Microservices.create({
+    const microserviceWithServices = createMicroservice({
       services: [service],
       address: getAddress('B'),
     });
@@ -53,7 +52,7 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestResponse is received
               `, (done) => {
       expect.assertions(2);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('createProxy-requestResponse'),
         seedAddress: getAddress('B'),
@@ -80,7 +79,7 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
             `, (done) => {
       expect.assertions(2);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('createProxy-RequestStream'),
         seedAddress: getAddress('B'),
@@ -109,7 +108,7 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestResponse is received
               `, async () => {
       expect.assertions(1);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('createProxies-requestResponse'),
         seedAddress: getAddress('B'),
@@ -135,7 +134,7 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
             `, (done) => {
       expect.assertions(1);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('createProxies-RequestStream'),
         seedAddress: getAddress('B'),
@@ -164,14 +163,14 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestResponse is received
             `, (done) => {
       expect.assertions(2);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('serviceCall-requestResponse'),
         seedAddress: getAddress('B'),
       });
 
       microservicesList.push(microserviceWithoutServices);
-      const message: Message = {
+      const message: Api.MicroserviceApi.Message = {
         qualifier: `${serviceDefinition.serviceName}/hello`,
         data: [`${defaultUser}`],
       };
@@ -182,7 +181,7 @@ describe(`Test positive-scenarios of usage
       });
 
       setTimeout(() => {
-        serviceCall.requestResponse(message).then((res: Message) => {
+        serviceCall.requestResponse(message).then((res: Api.MicroserviceApi.Message) => {
           expect(res).toMatch(`Hello ${defaultUser}`);
           done();
         });
@@ -195,28 +194,28 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
                   `, (done) => {
       expect.assertions(2);
-      const microserviceWithoutServices = Microservices.create({
+      const microserviceWithoutServices = createMicroservice({
         services: [],
         address: getAddress('serviceCall-RequestStream'),
         seedAddress: getAddress('B'),
       });
 
       microservicesList.push(microserviceWithoutServices);
-      const message: Message = {
+      const message: Api.MicroserviceApi.Message = {
         qualifier: `${serviceDefinition.serviceName}/greet$`,
         data: [[`${defaultUser}`]],
       };
       const serviceCall = microserviceWithoutServices.createServiceCall({});
 
       serviceCall.requestStream(message).subscribe(
-        (res: Message) => {},
+        (res: Api.MicroserviceApi.Message) => {},
         (e: Error) => {
           expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
         }
       );
 
       setTimeout(() => {
-        serviceCall.requestStream(message).subscribe((response: Message) => {
+        serviceCall.requestStream(message).subscribe((response: Api.MicroserviceApi.Message) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
           done();
         });

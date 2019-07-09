@@ -2,7 +2,7 @@ importScripts('http://localhost:8000/packages/scalecube-microservice/dist/index.
 importScripts('./definitions.js');
 importScripts('./bubbleSortService.js');
 
-sc.Microservices.create({
+sc.createMicroservice({
   services: [
     {
       reference: remoteBubbleSortService,

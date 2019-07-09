@@ -1,4 +1,4 @@
-import { Message } from '../api';
+import { MicroserviceApi } from '@scalecube/api';
 import { GetProxyOptions } from '../helpers/types';
 import { getQualifier } from '../helpers/serviceData';
 import { getServiceMethodIsMissingError } from '../helpers/constants';
@@ -19,7 +19,7 @@ const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => 
   const { asyncModel } = serviceDefinition.methods[prop];
 
   return (...data: any[]) => {
-    const message: Message = {
+    const message: MicroserviceApi.Message = {
       qualifier: getQualifier({ serviceName: serviceDefinition.serviceName, methodName: prop }),
       data,
     };
