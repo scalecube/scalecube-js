@@ -1,7 +1,8 @@
 import { greetingServiceDefinition, hello, greet$, GreetingService } from '../mocks/GreetingService';
-import { createMicroservice, Api } from '../../src';
+import { createMicroservice } from '../../src';
 import { getAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
+import { MicroserviceApi } from '@scalecube/api';
 
 describe(`Test positive-scenarios of usage
           RemoteCall - a microservice instance use other microservice's services.
@@ -16,7 +17,7 @@ describe(`Test positive-scenarios of usage
   const defaultUser = 'defaultUser';
   const GreetingServiceObject = { hello, greet$ };
 
-  const microservicesList: Api.MicroserviceApi.Microservice[] = [];
+  const microservicesList: MicroserviceApi.Microservice[] = [];
 
   // @ts-ignore
   beforeEach(async (done) => {
@@ -170,7 +171,7 @@ describe(`Test positive-scenarios of usage
       });
 
       microservicesList.push(microserviceWithoutServices);
-      const message: Api.MicroserviceApi.Message = {
+      const message: MicroserviceApi.Message = {
         qualifier: `${serviceDefinition.serviceName}/hello`,
         data: [`${defaultUser}`],
       };
@@ -181,7 +182,7 @@ describe(`Test positive-scenarios of usage
       });
 
       setTimeout(() => {
-        serviceCall.requestResponse(message).then((res: Api.MicroserviceApi.Message) => {
+        serviceCall.requestResponse(message).then((res: MicroserviceApi.Message) => {
           expect(res).toMatch(`Hello ${defaultUser}`);
           done();
         });
@@ -201,21 +202,21 @@ describe(`Test positive-scenarios of usage
       });
 
       microservicesList.push(microserviceWithoutServices);
-      const message: Api.MicroserviceApi.Message = {
+      const message: MicroserviceApi.Message = {
         qualifier: `${serviceDefinition.serviceName}/greet$`,
         data: [[`${defaultUser}`]],
       };
       const serviceCall = microserviceWithoutServices.createServiceCall({});
 
       serviceCall.requestStream(message).subscribe(
-        (res: Api.MicroserviceApi.Message) => {},
+        (res: MicroserviceApi.Message) => {},
         (e: Error) => {
           expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
         }
       );
 
       setTimeout(() => {
-        serviceCall.requestStream(message).subscribe((response: Api.MicroserviceApi.Message) => {
+        serviceCall.requestStream(message).subscribe((response: MicroserviceApi.Message) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
           done();
         });

@@ -1,8 +1,9 @@
-import { createMicroservice, Api, ASYNC_MODEL_TYPES } from '../../src';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
 import { getDefaultAddress } from '../../src/helpers/utils';
+import { MicroserviceApi } from '@scalecube/api';
 
 describe(`
      Background: Resolve createProxies ONLY when the service available in the registry
@@ -19,7 +20,7 @@ describe(`
       },
     },
   };
-  const service1: Api.MicroserviceApi.Service = {
+  const service1: MicroserviceApi.Service = {
     definition: service1Definition,
     reference: { hello },
   };
@@ -33,7 +34,7 @@ describe(`
     },
   };
 
-  const service2: Api.MicroserviceApi.Service = {
+  const service2: MicroserviceApi.Service = {
     definition: service2Definition,
     reference: { greet$ },
   };

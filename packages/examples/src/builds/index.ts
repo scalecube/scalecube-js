@@ -1,9 +1,11 @@
-import { createMicroservice, Api } from '@scalecube/scalecube-microservice';
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+import { MicroserviceApi } from '@scalecube/api';
+
 import GreetingService, { greetingServiceDefinition } from './service/GreetingService';
 
-const reference: Api.MicroserviceApi.ServiceReference = new GreetingService();
+const reference: MicroserviceApi.ServiceReference = new GreetingService();
 
-const greetingService: Api.MicroserviceApi.Service = {
+const greetingService: MicroserviceApi.Service = {
   definition: greetingServiceDefinition,
   reference,
 };
