@@ -5,8 +5,8 @@ import {
   hello,
   greet$,
 } from '../mocks/GreetingService';
-import { Microservices } from '../../src';
-import { Message, Microservice } from '../../src/api';
+import { createMicroservice } from '../../src';
+import { MicroserviceApi } from '@scalecube/api';
 import { getAddress } from '@scalecube/utils';
 
 describe(`Test positive-scenarios of usage
@@ -20,7 +20,7 @@ describe(`Test positive-scenarios of usage
   const defaultUser = 'defaultUser';
   const GreetingServiceObject = { hello, greet$ };
 
-  const microservicesList: Microservice[] = [];
+  const microservicesList: MicroserviceApi.Microservice[] = [];
 
   // @ts-ignore
   afterEach(async (done) => {
@@ -54,7 +54,7 @@ describe(`Test positive-scenarios of usage
 		`,
     (service) => {
       const serviceDefinition = service.definition;
-      const microserviceWithServices = Microservices.create({
+      const microserviceWithServices = createMicroservice({
         services: [service],
         address: getAddress('B'),
       });
@@ -127,7 +127,7 @@ describe(`Test positive-scenarios of usage
             When  invoking serviceCall's requestResponse method with valid message
             Then  successful RequestResponse is received
             `, () => {
-        const message: Message = {
+        const message: MicroserviceApi.Message = {
           qualifier: `${serviceDefinition.serviceName}/hello`,
           data: [`${defaultUser}`],
         };
@@ -140,7 +140,7 @@ describe(`Test positive-scenarios of usage
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
                   `, (done) => {
-        const message: Message = {
+        const message: MicroserviceApi.Message = {
           qualifier: `${serviceDefinition.serviceName}/greet$`,
           data: [[`${defaultUser}`]],
         };

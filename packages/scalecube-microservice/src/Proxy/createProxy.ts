@@ -1,5 +1,4 @@
-import { TransportApi } from '@scalecube/api';
-import { CreateProxiesOptions, ProxiesMap, ProxiesOptions, Router, ServiceDefinition } from '../api';
+import { TransportApi, MicroserviceApi } from '@scalecube/api';
 import { MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '../helpers/validation';
@@ -13,8 +12,8 @@ export const createProxy = ({
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: Router;
-  serviceDefinition: ServiceDefinition;
+  router?: MicroserviceApi.Router;
+  serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider: TransportApi.ClientProvider;
 }) => {
@@ -35,18 +34,18 @@ export const createProxies = ({
   isServiceAvailable,
   transportClientProvider,
 }: {
-  createProxiesOptions: CreateProxiesOptions;
+  createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: any;
   transportClientProvider: TransportApi.ClientProvider;
-}): ProxiesMap => {
+}): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
   const { isAsync = false, proxies, router } = createProxiesOptions;
 
-  return proxies.reduce((proxiesMap: ProxiesMap, proxyOption: ProxiesOptions) => {
+  return proxies.reduce((proxiesMap: MicroserviceApi.ProxiesMap, proxyOption: MicroserviceApi.ProxiesOptions) => {
     const { proxyName, serviceDefinition } = proxyOption;
 
     if (proxiesMap[proxyName]) {

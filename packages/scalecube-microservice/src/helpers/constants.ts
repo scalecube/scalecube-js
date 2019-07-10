@@ -1,4 +1,4 @@
-import { AsyncModel, Message, RequestResponseAsyncModel, RequestStreamAsyncModel } from '../api';
+import { MicroserviceApi } from '@scalecube/api';
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
@@ -22,15 +22,17 @@ export const getServiceMethodIsMissingError = (methodName: string) =>
   `service method '${methodName}' missing in the serviceDefinition`;
 export const getNotFoundByRouterError = (qualifier: string) =>
   `can't find services with the request: '${JSON.stringify(qualifier)}'`;
-export const getAsyncModelMissmatch = (expectedAsyncModel: AsyncModel, receivedAsyncModel: AsyncModel) =>
-  `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
+export const getAsyncModelMissmatch = (
+  expectedAsyncModel: MicroserviceApi.AsyncModel,
+  receivedAsyncModel: MicroserviceApi.AsyncModel
+) => `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const getIncorrectMethodValueError = (qualifier: string) =>
   `Method value for ${qualifier} definition should be non empty object`;
 export const getAsynModelNotProvidedError = (qualifier: string) =>
   `Async model is not provided in service definition for ${qualifier}`;
 export const getInvalidAsyncModelError = (qualifier: string) =>
   `Invalid async model in service definition for ${qualifier}`;
-export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
+export const getMethodNotFoundError = (message: MicroserviceApi.Message) => `Can't find method ${message.qualifier}`;
 export const getInvalidMethodReferenceError = (qualifier: string) =>
   `${qualifier} has valid definition but reference is not a function.`;
 
@@ -40,8 +42,8 @@ export const getServiceReferenceNotProvidedError = (serviceName: string) => `${s
 export const getInvalidServiceReferenceError = (serviceName: string) =>
   `${serviceName} reference expected to be an object`;
 export const ASYNC_MODEL_TYPES: {
-  REQUEST_STREAM: RequestStreamAsyncModel;
-  REQUEST_RESPONSE: RequestResponseAsyncModel;
+  REQUEST_STREAM: MicroserviceApi.RequestStreamAsyncModel;
+  REQUEST_RESPONSE: MicroserviceApi.RequestResponseAsyncModel;
 } = {
   REQUEST_RESPONSE: 'requestResponse',
   REQUEST_STREAM: 'requestStream',

@@ -26,10 +26,10 @@ export const greetingServiceDefinition = {
 #### Create a service
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
+import { createMicroservice } from '@scalecube/scalecube-microservice';
 import { greetingServiceDefinition } from './definitions';
 
-Microservices.create({
+createMicroservice({
   service : [{
     definition: greetingServiceDefinition,
     reference: {
@@ -43,9 +43,9 @@ Microservices.create({
 #### Use the service
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
+import { createMicroservice } from '@scalecube/scalecube-microservice';
 
-const microservice = Microservices.create({
+const microservice = createMicroservice({
   address : 'ms1',
   seedAddress : 'seed'
 });

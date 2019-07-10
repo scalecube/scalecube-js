@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { ASYNC_MODEL_TYPES, Microservices } from '../../../src';
+import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
 
 const errorMessage = 'mockError';
@@ -24,7 +24,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     },
   };
 
-  const microserviceWithServices = Microservices.create({
+  const microserviceWithServices = createMicroservice({
     services: [
       {
         definition: greetingServiceDefinition,
@@ -44,7 +44,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     address: 'seed',
   });
 
-  const microServiceWithoutServices = Microservices.create({ seedAddress: 'seed', address: 'local' });
+  const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local' });
 
   describe.each([
     // ################# LocalCall #################

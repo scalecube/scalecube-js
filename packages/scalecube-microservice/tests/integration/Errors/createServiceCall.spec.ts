@@ -6,7 +6,7 @@
  *    Check validation - serviceCall message data is not an array - https://github.com/scalecube/scalecube-js/issues/110
  *    Check validation - serviceCall qualifier is not type string - https://github.com/scalecube/scalecube-js/issues/111
  *****/
-import { Microservices } from '../../../src';
+import { createMicroservice } from '../../../src';
 import {
   MESSAGE_NOT_PROVIDED,
   MESSAGE_DATA_NOT_PROVIDED,
@@ -17,7 +17,7 @@ import {
 } from '../../../src/helpers/constants';
 
 describe('validation test for create proxy from microservice', () => {
-  const ms = Microservices.create({});
+  const ms = createMicroservice({});
   const serviceCall = ms.createServiceCall({});
 
   test(`

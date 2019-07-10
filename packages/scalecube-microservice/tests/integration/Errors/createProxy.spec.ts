@@ -6,7 +6,7 @@
  *    Check validity - proxy - serviceDefinition method format         - https://github.com/scalecube/scalecube-js/issues/104
  *    Check validity - proxy - serviceDefinition asyncModel value      - https://github.com/scalecube/scalecube-js/issues/103
  *****/
-import { Microservices } from '../../../src';
+import { createMicroservice } from '../../../src';
 import {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
@@ -16,7 +16,7 @@ import {
 } from '../../../src/helpers/constants';
 
 describe('validation test for create proxy from microservice', () => {
-  const ms = Microservices.create({});
+  const ms = createMicroservice({});
 
   test(`
     Scenario: Service name is not provided in service definition

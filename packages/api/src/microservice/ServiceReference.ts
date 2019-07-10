@@ -1,8 +1,8 @@
 /**
+ * @interface ServiceReference
  * Map: key<method>  and value<reference>(to service method)
  */
-
-export default interface ServiceReference {
+export interface ServiceReference {
   constructor?: any;
   [methodName: string]: any;
 }

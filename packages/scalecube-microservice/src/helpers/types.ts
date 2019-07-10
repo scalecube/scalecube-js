@@ -1,20 +1,9 @@
 import { Observable } from 'rxjs';
-import { Address, TransportApi } from '@scalecube/api';
-import {
-  Router,
-  ServiceDefinition,
-  Service,
-  Message,
-  AsyncModel,
-  Endpoint,
-  Reference,
-  LookupOptions,
-  LookUp,
-} from '../api';
+import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 
 export interface ServiceCallOptions {
-  message: Message;
-  asyncModel: AsyncModel;
+  message: MicroserviceApi.Message;
+  asyncModel: MicroserviceApi.AsyncModel;
   includeMessage: boolean;
 }
 
@@ -23,24 +12,24 @@ export type ServiceCallResponse = Observable<any> | Promise<any>;
 export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCallResponse;
 
 export interface AvailableServices {
-  services?: Service[];
+  services?: MicroserviceApi.Service[];
   address?: Address;
 }
 
 export interface AvailableService {
-  service: Service;
+  service: MicroserviceApi.Service;
   address?: Address;
 }
 
 export interface CreateServiceCallOptions {
-  router: Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
   transportClientProvider: TransportApi.ClientProvider;
 }
 
 export interface GetProxyOptions {
   serviceCall: ServiceCall;
-  serviceDefinition: ServiceDefinition;
+  serviceDefinition: MicroserviceApi.ServiceDefinition;
 }
 
 export interface Qualifier {
@@ -50,7 +39,7 @@ export interface Qualifier {
 
 export interface GetUpdatedServiceRegistryOptions {
   serviceRegistryMap: ServiceRegistryMap | null;
-  endpoints: Endpoint[];
+  endpoints: MicroserviceApi.Endpoint[];
 }
 
 export interface GetUpdatedMethodRegistryOptions {
@@ -60,32 +49,32 @@ export interface GetUpdatedMethodRegistryOptions {
 
 export interface LocalCallOptions {
   localService: Reference;
-  asyncModel: AsyncModel;
-  message: Message;
+  asyncModel: MicroserviceApi.AsyncModel;
+  message: MicroserviceApi.Message;
   includeMessage: boolean;
 }
 
 export interface RemoteCallOptions {
-  router: Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  message: Message;
-  asyncModel: AsyncModel;
+  message: MicroserviceApi.Message;
+  asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider: TransportApi.ClientProvider;
   openConnections: { [key: string]: any };
 }
 
 export interface InvokeMethodOptions {
   method: (...args: any[]) => any;
-  message: Message;
+  message: MicroserviceApi.Message;
 }
 
 export interface AddMessageToResponseOptions {
   includeMessage: boolean;
-  message: Message;
+  message: MicroserviceApi.Message;
 }
 
 export interface ServiceRegistryMap {
-  [qualifier: string]: Endpoint[];
+  [qualifier: string]: MicroserviceApi.Endpoint[];
 }
 
 export interface MethodRegistryMap {
@@ -99,13 +88,13 @@ export interface Registry {
 type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
 
 export interface ServiceRegistry extends Registry {
-  lookUp: LookUp;
-  add: ({ endpoints }: { endpoints: Endpoint[] }) => ServiceRegistryMap;
-  createEndPoints: AddServiceToRegistry<Endpoint[]>;
+  lookUp: MicroserviceApi.LookUp;
+  add: ({ endpoints }: { endpoints: MicroserviceApi.Endpoint[] }) => ServiceRegistryMap;
+  createEndPoints: AddServiceToRegistry<MicroserviceApi.Endpoint[]>;
 }
 
 export interface MethodRegistry extends Registry {
-  lookUp: ({ qualifier }: LookupOptions) => Reference | null;
+  lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => Reference | null;
   add: AddServiceToRegistry<MethodRegistryMap>;
 }
 
@@ -117,4 +106,32 @@ export interface MicroserviceContext {
 export interface RsocketEventsPayload {
   data: any;
   metadata: any;
+}
+
+/**
+ * Defines local service data
+ */
+export interface Reference {
+  /**
+   * The combination of serviceName and methodName: <serviceName/methodName>
+   */
+  qualifier: string;
+  /**
+   * The name of a service, that is provided in serviceDefinition
+   */
+  serviceName: string;
+  /**
+   * The name of a method, that is provided in the methods map in serviceDefinition
+   */
+  methodName: string;
+  /**
+   * The map of the name of a method from a service and its implementation
+   */
+  reference?: {
+    [methodName: string]: (...args: any[]) => any;
+  };
+  /**
+   * Type of communication between a consumer and a provider
+   */
+  asyncModel: MicroserviceApi.AsyncModel;
 }

@@ -11,6 +11,4 @@ export type RequestResponseAsyncModel = 'requestResponse';
 /**
  * Definition of the method's response type
  */
-type AsyncModel = RequestStreamAsyncModel | RequestResponseAsyncModel;
-
-export default AsyncModel;
+export type AsyncModel = RequestStreamAsyncModel | RequestResponseAsyncModel;
