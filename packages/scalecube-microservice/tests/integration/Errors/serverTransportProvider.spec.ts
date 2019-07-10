@@ -4,7 +4,7 @@ import { RSocketServer } from 'rsocket-core';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingService';
-import { Microservices } from '../../../src';
+import { createMicroservice } from '../../../src';
 import { ServiceCall } from '../../../src/helpers/types';
 import { Observable } from 'rxjs';
 import { getAddress } from '@scalecube/utils';
@@ -43,7 +43,7 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
 });
 
 describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
-  Microservices.create({
+  createMicroservice({
     services: [
       {
         definition: greetingServiceDefinition,
@@ -53,7 +53,7 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
 
     address: 'seed',
   });
-  const localMicroservice = Microservices.create({
+  const localMicroservice = createMicroservice({
     seedAddress: 'seed',
     address: getAddress('address'),
   });

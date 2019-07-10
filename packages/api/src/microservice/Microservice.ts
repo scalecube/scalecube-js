@@ -1,11 +1,48 @@
-import { Service } from '.';
-import { Address, TransportApi, DiscoveryApi } from '@scalecube/api';
+import { Address } from '../index';
+import { Discovery, DiscoveryOptions } from '../discovery';
+import { CreateProxies, CreateProxy, CreateServiceCall, Service } from '.';
+
+/**
+ * @interface CreateMicroservice
+ * The factory for the creation of microservice containers
+ */
+export type CreateMicroservice = (options: MicroserviceOptions) => Microservice;
+
+/**
+ * @interface Microservice
+ * Provides the functionality of a microservice container
+ */
+export interface Microservice {
+  /**
+   * @method destroy
+   * The method is used to delete a microservice and close all the subscriptions related with it
+   */
+  destroy: () => Promise<string>;
+
+  /**
+   * @method createProxies
+   * Create a map of proxies or Promises to proxy. (deepened on configuration)
+   */
+  createProxies: CreateProxies;
+
+  /**
+   * @method createProxy
+   * Creates a proxy to a method and provides extra logic when is invoked
+   */
+  createProxy: CreateProxy;
+
+  /**
+   * @method createServiceCall
+   * Exposes serviceCall to a user (not via Proxy)
+   */
+  createServiceCall: CreateServiceCall;
+}
 
 /**
  * @interface MicroserviceOptions
  * The options for the creation of a microservice container
  */
-export default interface MicroserviceOptions {
+export interface MicroserviceOptions {
   /**
    * @property
    * An array of services, that will exist inside a microservice container
@@ -26,18 +63,18 @@ export default interface MicroserviceOptions {
   address?: Address | string;
   /**
    * @property
-   * Pluggable transport-browser,
+   * Pluggable transport,
    * a module that implements MicroserviceTransport.
    * transport-browser responsible to open connection between two microservices container.
    * the client side will use remoteTransportClient to request the remote microservice to invoke a method.
    * the server side will use remoteTransportServer to invoke and method and send back the response of the method that been invoked.
    */
-  transport?: TransportApi.Transport;
+  transport?: Transport;
   /**
    * @method
    * Pluggable discovery,
    * a module that implements discovery API
    * discovery responsible to exchange data in the distributed env.
    */
-  discovery?: (opt: DiscoveryApi.DiscoveryOptions) => DiscoveryApi.Discovery;
+  discovery?: (opt: DiscoveryOptions) => Discovery;
 }

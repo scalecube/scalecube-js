@@ -1,7 +1,6 @@
-import { Microservices } from './Microservices/Microservices';
+import { createMicroservice } from './Microservices/Microservices';
 import { ASYNC_MODEL_TYPES } from './helpers/constants';
-import * as Api from './api';
 
-export { Microservices, ASYNC_MODEL_TYPES, Api };
+export { createMicroservice, ASYNC_MODEL_TYPES };
 
-export default Microservices;
+export default createMicroservice;

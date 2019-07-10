@@ -1,11 +1,12 @@
+import { MicroserviceApi } from '@scalecube/api';
 import {
   AvailableService,
   AvailableServices,
   GetUpdatedMethodRegistryOptions,
   MethodRegistry,
   MethodRegistryMap,
+  Reference,
 } from '../helpers/types';
-import { Service, Reference } from '../api';
 import { getQualifier, getReferencePointer } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
@@ -43,7 +44,7 @@ export const createMethodRegistry = (): MethodRegistry => {
 
 export const getReferenceFromServices = ({ services = [] }: AvailableServices): Reference[] | [] =>
   services.reduce(
-    (res: Reference[], service: Service) => [
+    (res: Reference[], service: MicroserviceApi.Service) => [
       ...res,
       ...getReferenceFromService({
         service,

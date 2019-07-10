@@ -1,9 +1,8 @@
-import { Address, TransportApi } from '@scalecube/api';
+import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions, RsocketEventsPayload } from '../helpers/types';
 import { throwErrorFromServiceCall } from '../helpers/utils';
-import { Endpoint, Message } from '../api';
 import { getNotFoundByRouterError, ASYNC_MODEL_TYPES, RSocketConnectionStatus } from '../helpers/constants';
 import { createClient } from '../TransportProviders/MicroserviceClient';
 // @ts-ignore
@@ -21,7 +20,10 @@ export const remoteCall = ({
   openConnections,
   transportClientProvider,
 }: RemoteCallOptions): Observable<any> => {
-  const endPoint: Endpoint | null = router.route({ lookUp: microserviceContext.serviceRegistry.lookUp, message });
+  const endPoint: MicroserviceApi.Endpoint | null = router.route({
+    lookUp: microserviceContext.serviceRegistry.lookUp,
+    message,
+  });
   if (!endPoint) {
     return throwErrorFromServiceCall({
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
@@ -49,7 +51,7 @@ const remoteResponse = ({
 }: {
   address: Address;
   asyncModel: string;
-  message: Message;
+  message: MicroserviceApi.Message;
   openConnections: { [key: string]: any };
   transportClientProvider: TransportApi.ClientProvider;
 }) => {
