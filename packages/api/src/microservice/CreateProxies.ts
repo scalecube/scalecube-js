@@ -51,7 +51,7 @@ export interface ProxiesOptions {
  * Map of generic proxyName and a Promise to the proxy
  */
 export interface ProxiesMap {
-  [proxyName: string]: Promise<Proxy> | Proxy;
+  [proxyName: string]: Promise<{ proxy: Proxy }> | Proxy;
 }
 
 type Proxy<T = any> = T;
