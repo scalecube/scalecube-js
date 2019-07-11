@@ -17,7 +17,7 @@ export const startServer = ({
   serviceCall: ServiceCall;
   transportServerProvider: TransportApi.ServerProvider;
 }) => {
-  const { factoryOptions, serverFactory } = transportServerProvider;
+  const { factoryOptions, serverFactory, serializers } = transportServerProvider;
   const server = new RSocketServer({
     getRequestHandler: (socket: any) => {
       return {
@@ -25,6 +25,7 @@ export const startServer = ({
         requestStream: (payload: RsocketEventsPayload) => requestStream({ ...payload, serviceCall }),
       };
     },
+    serializers,
     transport: serverFactory({ address, factoryOptions }),
   });
 
@@ -36,20 +37,19 @@ const requestResponse = ({
   metadata,
   serviceCall,
 }: {
-  data: string;
+  data: any;
   metadata: string;
   serviceCall: ServiceCall;
 }) => {
   return new Single((subscriber: any) => {
     subscriber.onSubscribe();
-    const message = JSON.parse(data);
     (serviceCall({
-      message,
+      message: data,
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-      includeMessage: true,
+      messageFormat: true,
     }) as Promise<any>)
       .then((response: any) => {
-        subscriber.onComplete({ data: JSON.stringify(response), metadata: '' });
+        subscriber.onComplete({ data: response, metadata: '' });
       })
       .catch((error: Error) => {
         subscriber.onError(error);
@@ -57,25 +57,16 @@ const requestResponse = ({
   });
 };
 
-const requestStream = ({
-  data,
-  metadata,
-  serviceCall,
-}: {
-  data: string;
-  metadata: string;
-  serviceCall: ServiceCall;
-}) => {
+const requestStream = ({ data, metadata, serviceCall }: { data: any; metadata: string; serviceCall: ServiceCall }) => {
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
-    const message = JSON.parse(data);
     (serviceCall({
-      message,
+      message: data,
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-      includeMessage: true,
+      messageFormat: true,
     }) as Observable<any>).subscribe(
       (response: any) => {
-        subscriber.onNext({ data: JSON.stringify(response), metadata: '' });
+        subscriber.onNext({ data: response, metadata: '' });
       },
       (error) => subscriber.onError(error),
       () => subscriber.onComplete()

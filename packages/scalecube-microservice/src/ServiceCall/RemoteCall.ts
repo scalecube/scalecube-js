@@ -72,19 +72,14 @@ const remoteResponse = ({
     }
 
     connection.then((socket: RSocketClientSocket) => {
-      const serializeData = JSON.stringify(message);
       const socketConnect: Single | Flowable = socket[asyncModel]({
-        data: serializeData,
+        data: message,
         metadata: '',
       });
 
-      const flowableNext = (response: RsocketEventsPayload) => {
-        try {
-          const { data } = JSON.parse(response && response.data);
-          observer.next(data);
-        } catch (parseError) {
-          observer.error(new Error(`RemoteCall ${asyncModel} response, parsing error: ${parseError}`));
-        }
+      const flowableNext = ({ data, metadata }: RsocketEventsPayload) => {
+        const { data: response } = data;
+        observer.next(response);
       };
       const flowableError = (err: { source: { message: string } }) =>
         observer.error(

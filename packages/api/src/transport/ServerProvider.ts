@@ -1,4 +1,5 @@
 import { ProviderFactory } from '.';
+import { PayloadSerializers } from './Transport';
 
 /**
  * @interface ServerProvider
@@ -14,4 +15,10 @@ export default interface ServerProvider {
    * Extra configuration to pass to the factory
    */
   factoryOptions?: any;
+
+  /**
+   * @property
+   * Optional serialize functionality for the payload
+   */
+  serializers?: PayloadSerializers;
 }
