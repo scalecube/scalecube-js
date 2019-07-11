@@ -26,7 +26,7 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
       serviceCall: ServiceCall;
       transportServerProvider: TransportApi.ServerProvider;
     }) => {
-      const { factoryOptions, serverFactory } = transportServerProvider;
+      const { factoryOptions, serverFactory, serializers } = transportServerProvider;
       const server = new RSocketServer({
         getRequestHandler: (socket: any) => {
           return {
@@ -34,6 +34,7 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
             requestStream: () => Flowable.error(new Error(errorMessage)),
           };
         },
+        serializers: serializers || undefined,
         transport: serverFactory({ address, factoryOptions }),
       });
 

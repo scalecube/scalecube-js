@@ -4,7 +4,7 @@ import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 export interface ServiceCallOptions {
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
-  includeMessage: boolean;
+  messageFormat: boolean;
 }
 
 export type ServiceCallResponse = Observable<any> | Promise<any>;
@@ -51,7 +51,7 @@ export interface LocalCallOptions {
   localService: Reference;
   asyncModel: MicroserviceApi.AsyncModel;
   message: MicroserviceApi.Message;
-  includeMessage: boolean;
+  messageFormat: boolean;
 }
 
 export interface RemoteCallOptions {
@@ -69,7 +69,7 @@ export interface InvokeMethodOptions {
 }
 
 export interface AddMessageToResponseOptions {
-  includeMessage: boolean;
+  messageFormat: boolean;
   message: MicroserviceApi.Message;
 }
 

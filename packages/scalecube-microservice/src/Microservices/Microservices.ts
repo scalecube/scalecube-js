@@ -132,13 +132,13 @@ const createServiceCall = ({
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        includeMessage: messageFormat,
+        messageFormat,
       }),
     requestResponse: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-        includeMessage: messageFormat,
+        messageFormat,
       }),
   });
 };

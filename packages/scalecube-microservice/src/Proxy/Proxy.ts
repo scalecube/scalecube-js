@@ -23,6 +23,6 @@ const preServiceCall = ({ serviceCall, serviceDefinition }: GetProxyOptions) => 
       qualifier: getQualifier({ serviceName: serviceDefinition.serviceName, methodName: prop }),
       data,
     };
-    return serviceCall({ message, asyncModel, includeMessage: false });
+    return serviceCall({ message, asyncModel, messageFormat: false });
   };
 };

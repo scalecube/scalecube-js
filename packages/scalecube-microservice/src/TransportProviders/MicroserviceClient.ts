@@ -9,10 +9,11 @@ export const createClient = ({
   address: Address;
   transportClientProvider: TransportApi.ClientProvider;
 }) => {
-  const { factoryOptions, clientFactory } = transportClientProvider;
+  const { factoryOptions, clientFactory, serializers } = transportClientProvider;
 
   // TODO pick RSocketClient base on transport-browser type <PM || WS>
   return new RSocketClient({
+    serializers,
     setup: {
       dataMimeType: 'text/plain',
       keepAlive: 1000000,

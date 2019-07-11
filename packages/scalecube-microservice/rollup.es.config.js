@@ -5,15 +5,12 @@ import tscompile from 'typescript';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import global from 'rollup-plugin-node-globals';
 import pkg from './package.json';
 
 export default {
   input: 'src/index.ts',
   output: [
-    {
-      file: pkg.main,
-      format: 'cjs',
-    },
     {
       file: pkg.module,
       format: 'es',
@@ -29,14 +26,14 @@ export default {
     resolve(),
     commonjs({ include: 'node_modules/**' }),
     visualizer({
-      filename: 'report.libs.html',
-      title: 'ROLLUP - libs',
+      filename: 'report.es.html',
+      title: 'ROLLUP - es',
     }),
     typescript({
       typescript: tscompile,
       clean: true,
     }),
-
+    global(),
     filesize(),
   ],
 };
