@@ -48,11 +48,11 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
 
   describe.each([
     // ################# LocalCall #################
-    {
-      sender: microserviceWithServices,
-      receiverServiceDefinition: greetingServiceDefinition,
-      isRemote: false,
-    },
+    // {
+    //   sender: microserviceWithServices,
+    //   receiverServiceDefinition: greetingServiceDefinition,
+    //   isRemote: false,
+    // },
     // ################# RemoteCall ################
     {
       sender: microServiceWithoutServices,

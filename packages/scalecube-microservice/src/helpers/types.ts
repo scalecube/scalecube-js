@@ -16,11 +16,6 @@ export interface AvailableServices {
   address?: Address;
 }
 
-export interface AvailableService {
-  service: MicroserviceApi.Service;
-  address?: Address;
-}
-
 export interface CreateServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
@@ -35,16 +30,6 @@ export interface GetProxyOptions {
 export interface Qualifier {
   serviceName: string;
   methodName: string;
-}
-
-export interface GetUpdatedServiceRegistryOptions {
-  serviceRegistryMap: ServiceRegistryMap | null;
-  endpoints: MicroserviceApi.Endpoint[];
-}
-
-export interface GetUpdatedMethodRegistryOptions {
-  methodRegistryMap: MethodRegistryMap | null;
-  references: Reference[];
 }
 
 export interface LocalCallOptions {
@@ -71,36 +56,6 @@ export interface InvokeMethodOptions {
 export interface AddMessageToResponseOptions {
   messageFormat: boolean;
   message: MicroserviceApi.Message;
-}
-
-export interface ServiceRegistryMap {
-  [qualifier: string]: MicroserviceApi.Endpoint[];
-}
-
-export interface MethodRegistryMap {
-  [qualifier: string]: Reference;
-}
-
-export interface Registry {
-  destroy: () => null;
-}
-
-type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
-
-export interface ServiceRegistry extends Registry {
-  lookUp: MicroserviceApi.LookUp;
-  update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
-  createEndPoints: AddServiceToRegistry<MicroserviceApi.Endpoint[]>;
-}
-
-export interface MethodRegistry extends Registry {
-  lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => Reference | null;
-  add: AddServiceToRegistry<MethodRegistryMap>;
-}
-
-export interface MicroserviceContext {
-  serviceRegistry: ServiceRegistry;
-  methodRegistry: MethodRegistry;
 }
 
 export interface RsocketEventsPayload {
@@ -134,4 +89,46 @@ export interface Reference {
    * Type of communication between a consumer and a provider
    */
   asyncModel: MicroserviceApi.AsyncModel;
+}
+
+export interface MicroserviceContext {
+  remoteRegistry: RemoteRegistry;
+  localRegistry: LocalRegistry;
+}
+
+export type CreateLocalRegistry = () => LocalRegistry;
+
+export interface LocalRegistry {
+  lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => Reference | null;
+  add: ({ services }: AvailableServices) => void;
+  destroy: () => void;
+}
+
+export interface LocalRegistryMap {
+  [qualifier: string]: Reference;
+}
+
+export type GetUpdatedLocalRegistry = (options: GetUpdatedLocalRegistryOptions) => LocalRegistryMap;
+
+export interface GetUpdatedLocalRegistryOptions {
+  localRegistryMap: LocalRegistryMap;
+  references: Reference[];
+}
+
+export type GetReferenceFromServices = (options: AvailableServices) => Reference[] | [];
+
+export type CreateRemoteRegistry = () => RemoteRegistry;
+
+export interface RemoteRegistry {
+  lookUp: MicroserviceApi.LookUp;
+  update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
+  createEndPoints: (options: AvailableServices) => MicroserviceApi.Endpoint[];
+}
+
+export interface RemoteRegistryMap {
+  [qualifier: string]: MicroserviceApi.Endpoint[];
+}
+
+export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEvent {
+  remoteRegistryMap: RemoteRegistryMap;
 }

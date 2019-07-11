@@ -20,7 +20,7 @@ export const getServiceCall = ({
       return throwErrorFromServiceCall({ asyncModel, errorMessage: e.message });
     }
 
-    const localService = microserviceContext.methodRegistry.lookUp({ qualifier: message.qualifier });
+    const localService = microserviceContext.localRegistry.lookUp({ qualifier: message.qualifier });
     const res$: Observable<any> = localService
       ? localCall({ localService, asyncModel, messageFormat, message })
       : remoteCall({ router, microserviceContext, message, asyncModel, openConnections, transportClientProvider });

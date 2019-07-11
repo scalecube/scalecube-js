@@ -140,7 +140,7 @@ describe(`
       });
 
       test(`
-           Scenario: creating multiple proxies [isAsync: true,]
+           Scenario: Creating multiple proxies [isAsync: true,]
            But       one of the serviceDefinition is invalid
            Given     microservice instance and serviceDefinitions
            When      requesting a Proxies from the microservice

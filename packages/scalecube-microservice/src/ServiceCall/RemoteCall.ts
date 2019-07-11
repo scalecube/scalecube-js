@@ -21,7 +21,7 @@ export const remoteCall = ({
   transportClientProvider,
 }: RemoteCallOptions): Observable<any> => {
   const endPoint: MicroserviceApi.Endpoint | null = router.route({
-    lookUp: microserviceContext.serviceRegistry.lookUp,
+    lookUp: microserviceContext.remoteRegistry.lookUp,
     message,
   });
   if (!endPoint) {
