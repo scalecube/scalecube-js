@@ -7,4 +7,5 @@ dist-min/
 dist/
 
 report.iffe.html
-report.libs.html
+report.cjs.html
+report.es.html
