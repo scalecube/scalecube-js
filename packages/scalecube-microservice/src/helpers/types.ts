@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
+import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube/api';
 
 export interface ServiceCallOptions {
   message: MicroserviceApi.Message;
@@ -89,7 +89,7 @@ type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
 
 export interface ServiceRegistry extends Registry {
   lookUp: MicroserviceApi.LookUp;
-  add: ({ endpoints }: { endpoints: MicroserviceApi.Endpoint[] }) => ServiceRegistryMap;
+  update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
   createEndPoints: AddServiceToRegistry<MicroserviceApi.Endpoint[]>;
 }
 

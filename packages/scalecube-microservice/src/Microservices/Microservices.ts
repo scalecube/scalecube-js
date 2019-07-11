@@ -79,14 +79,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       transportServerProvider: (transport as TransportApi.Transport).serverProvider,
     });
 
-  discoveryInstance.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-    if (discoveryEvent.type === 'REGISTERED') {
-      const discoveryEndpoints = discoveryEvent.items;
-      serviceRegistry.add({ endpoints: discoveryEndpoints as MicroserviceApi.Endpoint[] });
-    } else {
-      // TODO : UNREGISTERED
-    }
-  });
+  discoveryInstance.discoveredItems$().subscribe(serviceRegistry.update);
 
   const isServiceAvailable = isServiceAvailableInRegistry(
     endPointsToPublishInCluster,

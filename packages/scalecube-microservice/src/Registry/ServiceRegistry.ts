@@ -1,4 +1,4 @@
-import { MicroserviceApi } from '@scalecube/api';
+import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
 import {
   AvailableService,
   AvailableServices,
@@ -27,13 +27,13 @@ export const createServiceRegistry = (): ServiceRegistry => {
 
       return getEndpointsFromServices({ services, address }) as MicroserviceApi.Endpoint[]; // all services => endPoints[]
     },
-    add: ({ endpoints = [] }: { endpoints: MicroserviceApi.Endpoint[] }) => {
-      serviceRegistryMap = getUpdatedServiceRegistry({
-        serviceRegistryMap,
-        endpoints,
-      });
-
-      return { ...serviceRegistryMap };
+    update: ({ type, items }: DiscoveryApi.ServiceDiscoveryEvent) => {
+      switch (type) {
+        case 'REGISTERED':
+          break;
+        case 'UNREGISTERED':
+          break;
+      }
     },
     destroy: () => {
       serviceRegistryMap = null;
