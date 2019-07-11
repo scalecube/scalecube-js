@@ -8,6 +8,7 @@ import {
 } from '../helpers/types';
 import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { getFullAddress } from '@scalecube/utils';
 
 export const createRemoteRegistry: CreateRemoteRegistry = (): RemoteRegistry => {
   let remoteRegistryMap: RemoteRegistryMap | null = {};
@@ -71,6 +72,12 @@ export const updatedRemoteRegistry = ({ type, items, remoteRegistryMap }: Update
 
       break;
     case 'UNREGISTERED':
+      items.forEach((unregisteredEndpoint: MicroserviceApi.Endpoint) => {
+        remoteRegistryMap[unregisteredEndpoint.qualifier] = remoteRegistryMap[unregisteredEndpoint.qualifier].filter(
+          (registryEndpoint: MicroserviceApi.Endpoint) =>
+            getFullAddress(registryEndpoint.address) !== getFullAddress(unregisteredEndpoint.address)
+        );
+      });
       break;
   }
 

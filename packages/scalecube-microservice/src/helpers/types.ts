@@ -130,5 +130,7 @@ export interface RemoteRegistryMap {
 }
 
 export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEvent {
+  type: DiscoveryApi.Type;
+  items: DiscoveryApi.Item[];
   remoteRegistryMap: RemoteRegistryMap;
 }
