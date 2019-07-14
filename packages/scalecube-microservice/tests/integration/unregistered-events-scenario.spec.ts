@@ -4,20 +4,24 @@ import { getNotFoundByRouterError } from '../../src/helpers/constants';
 
 describe(`
   Background:
-    Given msB with service
-            With address 'B', seedAddress: 'A'
-    And   msA without any service 'hello'
-            With address 'A'.
-    And   msA connected to msB
 
-    When msA try to do removeCall to the service 'hello'
-    Then it will resolve correctly
+    Given msB , msA
+    And   msA have a open connection with msB
+    And   msB have a open connection with msA
+    
+          | microservice | address | seedAddress | service |
+          | msB          | B       |  A          | hello   |
+          | msA          | A       |             |         |
+          
+    When msA try to do removeCall to the service hello('ME')
+    Then it will resolve 'Hello ME'
     `, () => {
   test(`
   Scenario: destroy msB (registry doesn't have any 'hello' service)
-    When msB is destroyed.
-    And msA try to do removeCall to the service 'hello'
-    Then exception will occur.`, // @ts-ignore
+    When    msB is destroyed.
+    And     msA try to do removeCall to the service 'hello'
+    Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, // @ts-ignore
+
   async (done) => {
     expect.assertions(2);
 
@@ -64,27 +68,31 @@ describe(`
 
 describe(`
   Background:
-      Given msA with service hello
-        With address 'A', seedAddress: 'C'
-
-      And msB with service hello
-        With address 'B', seedAddress: 'C'
-
-      And msC without any service 
-        With address 'C'.
-
-      And msA, msB, msC are connected.
+      Given msB , msA, msC
+          And   msA have a open connection with msB 
+          And   msB have a open connection with msA  
+          And   msA have a open connection with msC 
+          And   msC have a open connection with msA 
+          And   msB have a open connection with msC 
+          And   msC have a open connection with msB 
+          
+          | microservice | address | seedAddress | service |
+          | msB          | B       |  A          | hello   |
+          | msC          | C       |  A          | hello   |
+          | msA          | A       |             |         |
 `, () => {
   test(`
   Scenario: destroy msB (registry still have msA 'hello' service)
-      When msB is destroyed.
-      And msC try to do remoteCall to the service s1
-      Then service will be invoked (from msA)
+      When  msB is destroyed.
+      And   msC try to do remoteCall to the service hello('ME')
+      Then  service will be invoked (from msA)
+      And   it will resolve 'Hello ME'
 
+    
   Scenario: destroy msA (registry doesn't have any 'hello' service)
-      When msA is destroyed.
-      And msA try to do removeCall to the service 'hello'
-      Then exception will occur.`, // @ts-ignore
+      When  msA is destroyed.
+      And   msA try to do removeCall to the service 'hello'
+      Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, // @ts-ignore
   async (done) => {
     expect.assertions(3);
 

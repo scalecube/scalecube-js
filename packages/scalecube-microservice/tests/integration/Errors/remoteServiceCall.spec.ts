@@ -24,7 +24,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     },
   };
 
-  const microserviceWithServices = createMicroservice({
+  createMicroservice({
     services: [
       {
         definition: greetingServiceDefinition,
@@ -46,87 +46,63 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
 
   const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local' });
 
-  describe.each([
-    // ################# LocalCall #################
-    // {
-    //   sender: microserviceWithServices,
-    //   receiverServiceDefinition: greetingServiceDefinition,
-    //   isRemote: false,
-    // },
-    // ################# RemoteCall ################
-    {
-      sender: microServiceWithoutServices,
-      receiverServiceDefinition: greetingServiceDefinition,
-      isRemote: true,
-    },
-  ])(
-    `
-    Given     'sender' and a 'receiverServiceDefinition' (receiver)
-              sender (microservice)       | receiverServiceDefinition (receiver)    |
-              microserviceWithServices    | greetingServiceDefinition               | # LocalCall
-              microserviceWithoutServices | greetingServiceDefinition               | # RemoteCall
+  // @ts-ignore
+  if (global.isNodeEvn) {
+    return; // TODO: RFC - remoteCall nodejs
+  }
 
-        `,
-    (connect) => {
-      const { sender, receiverServiceDefinition, isRemote } = connect;
-
-      // @ts-ignore
-      if (isRemote && global.isNodeEvn) {
-        return; // TODO: RFC - remoteCall nodejs
-      }
-
-      test(`
+  test(`
     Scenario: service reject
     Given     proxy and remoteService
     When      remoteService reject
     Then      proxy receive the error message
 
   `, async () => {
-        expect.assertions(1);
-        const { awaitProxy } = sender.createProxies({
-          proxies: [
-            {
-              serviceDefinition: receiverServiceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
-        const { proxy: service } = await awaitProxy;
+    expect.assertions(1);
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: greetingServiceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
+    const { proxy: service } = await awaitProxy;
 
-        return expect(service.hello('Me')).rejects.toMatchObject(new Error(errorMessage));
-      });
+    return expect(service.hello('Me')).rejects.toMatchObject(new Error(errorMessage));
+  });
 
-      test(`
+  test(`
     Scenario: service emit error
     Given     proxy and remoteService
     When      remoteService emit error
     Then      proxy receive the error message
   `, (done) => {
-        expect.assertions(1);
+    expect.assertions(1);
 
-        const { awaitProxy } = sender.createProxies({
-          proxies: [
-            {
-              serviceDefinition: receiverServiceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: greetingServiceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
 
-        awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
-          proxy.greet$(['Me']).subscribe(
-            (response: any) => {},
-            (error: string) => {
-              expect(error).toMatchObject(new Error(errorMessage));
-              done();
-            }
-          );
-        });
-      });
+    awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
+      proxy.greet$(['Me']).subscribe(
+        (response: any) => {},
+        (error: string) => {
+          expect(error).toMatchObject(new Error(errorMessage));
+          done();
+        }
+      );
+    });
+  });
 
-      test(`
+  test(`
     Scenario: service emit instead of resolve.
     Given     proxy
       And     remoteService
@@ -135,22 +111,22 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     When      remoteService emit values
     Then      proxy receive only first emit
   `, async () => {
-        expect.assertions(1);
-        const { awaitProxy } = sender.createProxies({
-          proxies: [
-            {
-              serviceDefinition: receiverServiceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
+    expect.assertions(1);
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: greetingServiceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
 
-        const { proxy } = await awaitProxy;
-        return expect(proxy.incorrectAsyncModel('Me')).resolves.toMatchObject({ emptyMessage });
-      });
+    const { proxy } = await awaitProxy;
+    return expect(proxy.incorrectAsyncModel('Me')).resolves.toMatchObject({ emptyMessage });
+  });
 
-      test(`
+  test(`
     Scenario: service resolve instead of emit.
     Given     proxy
       And     remoteService
@@ -159,24 +135,22 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     When      remoteService return value
     Then      proxy receive the value
   `, (done) => {
-        expect.assertions(1);
-        const { awaitProxy } = sender.createProxies({
-          proxies: [
-            {
-              serviceDefinition: receiverServiceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
+    expect.assertions(1);
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: greetingServiceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
 
-        awaitProxy.then(({ proxy }: any) => {
-          proxy.incorrectAsyncModel$().subscribe((res: any) => {
-            expect(res).toMatchObject({ emptyMessage });
-            done();
-          });
-        });
+    awaitProxy.then(({ proxy }: any) => {
+      proxy.incorrectAsyncModel$().subscribe((res: any) => {
+        expect(res).toMatchObject({ emptyMessage });
+        done();
       });
-    }
-  );
+    });
+  });
 });
