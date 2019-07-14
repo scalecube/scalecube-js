@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/api",
-  "version": "0.0.2-alpha.4",
+  "version": "0.0.2-alpha.5",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/node": "10.1.4",
     "rollup": "^1.14.6",
+    "rollup-plugin-filesize": "^6.1.1",
     "rollup-plugin-typescript2": "^0.21.1",
     "rollup-plugin-filesize": "^6.1.1",
     "ts-jest": "^23.10.5",
