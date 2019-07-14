@@ -3,8 +3,8 @@ import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
 import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { createServiceRegistry } from '../Registry/ServiceRegistry';
-import { createMethodRegistry } from '../Registry/MethodRegistry';
+import { createRemoteRegistry } from '../Registry/RemoteRegistry';
+import { createLocalRegistry } from '../Registry/LocalRegistry';
 import { MicroserviceContext } from '../helpers/types';
 import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
@@ -45,13 +45,13 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 
   // tslint:disable-next-line
   let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
-  const { methodRegistry, serviceRegistry } = microserviceContext;
+  const { remoteRegistry, localRegistry } = microserviceContext;
 
-  methodRegistry.add({ services, address });
+  localRegistry.add({ services, address });
 
   // if address is not available then microservice can't share services
   const endPointsToPublishInCluster = address
-    ? serviceRegistry.createEndPoints({
+    ? remoteRegistry.createEndPoints({
         services,
         address,
       }) || []
@@ -79,18 +79,11 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       transportServerProvider: (transport as TransportApi.Transport).serverProvider,
     });
 
-  discoveryInstance.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-    if (discoveryEvent.type === 'REGISTERED') {
-      const discoveryEndpoints = discoveryEvent.items;
-      serviceRegistry.add({ endpoints: discoveryEndpoints as MicroserviceApi.Endpoint[] });
-    } else {
-      // TODO : UNREGISTERED
-    }
-  });
+  discoveryInstance.discoveredItems$().subscribe(remoteRegistry.update);
 
   const isServiceAvailable = isServiceAvailableInRegistry(
     endPointsToPublishInCluster,
-    serviceRegistry,
+    remoteRegistry,
     discoveryInstance
   );
 
@@ -161,17 +154,21 @@ const destroy = ({
         // Object.values(microserviceContext).forEach(
         //   (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
         // );
+
+        // TODO: destroy server
+        // TODO: destroy client
+        // TODO: destroy registry
         resolve('');
       });
   });
 };
 
 const createMicroserviceContext = () => {
-  const serviceRegistry = createServiceRegistry();
-  const methodRegistry = createMethodRegistry();
+  const remoteRegistry = createRemoteRegistry();
+  const localRegistry = createLocalRegistry();
   return {
-    serviceRegistry,
-    methodRegistry,
+    remoteRegistry,
+    localRegistry,
   };
 };
 

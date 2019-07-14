@@ -1,48 +1,48 @@
 import { MicroserviceApi } from '@scalecube/api';
 import {
-  AvailableService,
   AvailableServices,
-  GetUpdatedMethodRegistryOptions,
-  MethodRegistry,
-  MethodRegistryMap,
+  CreateLocalRegistry,
+  GetReferenceFromServices,
+  GetUpdatedLocalRegistry,
+  LocalRegistry,
+  LocalRegistryMap,
   Reference,
 } from '../helpers/types';
 import { getQualifier, getReferencePointer } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
-export const createMethodRegistry = (): MethodRegistry => {
-  let methodRegistryMap: MethodRegistryMap | null = {};
+export const createLocalRegistry: CreateLocalRegistry = (): LocalRegistry => {
+  let localRegistryMap: LocalRegistryMap | null = {};
 
   return Object.freeze({
-    lookUp: ({ qualifier }): Reference | null => {
-      if (!methodRegistryMap) {
+    lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => {
+      if (!localRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
 
-      return methodRegistryMap[qualifier] || null;
+      return localRegistryMap[qualifier] || null;
     },
-    add: ({ services = [] }: AvailableServices): MethodRegistryMap => {
-      if (!methodRegistryMap) {
+
+    add: ({ services = [] }: AvailableServices) => {
+      if (!localRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
       const references = getReferenceFromServices({ services });
-      methodRegistryMap = getUpdatedMethodRegistry({
-        methodRegistryMap,
+      localRegistryMap = getUpdatedLocalRegistry({
+        localRegistryMap,
         references,
       });
-      return { ...methodRegistryMap };
     },
 
-    destroy: (): null => {
-      methodRegistryMap = null;
-      return null;
+    destroy: () => {
+      localRegistryMap = null;
     },
-  } as MethodRegistry);
+  });
 };
 
 // Helpers
 
-export const getReferenceFromServices = ({ services = [] }: AvailableServices): Reference[] | [] =>
+const getReferenceFromServices: GetReferenceFromServices = ({ services = [] }) =>
   services.reduce(
     (res: Reference[], service: MicroserviceApi.Service) => [
       ...res,
@@ -53,21 +53,18 @@ export const getReferenceFromServices = ({ services = [] }: AvailableServices): 
     []
   );
 
-export const getUpdatedMethodRegistry = ({
-  methodRegistryMap,
-  references,
-}: GetUpdatedMethodRegistryOptions): MethodRegistryMap => ({
-  ...methodRegistryMap,
+const getUpdatedLocalRegistry: GetUpdatedLocalRegistry = ({ localRegistryMap, references }) => ({
+  ...localRegistryMap,
   ...references.reduce(
-    (res: MethodRegistryMap, reference: Reference) => ({
+    (res: LocalRegistryMap, reference: Reference) => ({
       ...res,
       [reference.qualifier]: reference,
     }),
-    methodRegistryMap || {}
+    localRegistryMap || {}
   ),
 });
 
-export const getReferenceFromService = ({ service }: AvailableService): Reference[] => {
+const getReferenceFromService = ({ service }: { service: MicroserviceApi.Service }): Reference[] => {
   const data: Reference[] = [];
   const { definition, reference } = service;
 

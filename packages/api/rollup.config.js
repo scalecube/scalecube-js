@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import filesize from 'rollup-plugin-filesize';
 import pkg from './package.json';
 
 export default {
@@ -8,6 +9,10 @@ export default {
       file: pkg.main,
       format: 'cjs',
     },
+    {
+      file: pkg.module,
+      format: 'es',
+    },
   ],
   external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
   plugins: [
@@ -15,5 +20,6 @@ export default {
       typescript: require('typescript'),
       clean: true,
     }),
+    filesize(),
   ],
 };

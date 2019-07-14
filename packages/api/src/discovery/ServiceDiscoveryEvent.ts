@@ -1,6 +1,8 @@
 import { Item } from '.';
 
-export default interface ServiceDiscoveryEvent {
-  type: 'REGISTERED' | 'UNREGISTERED' | 'IDLE';
+export interface ServiceDiscoveryEvent {
+  type: Type;
   items: Item[];
 }
+
+export type Type = 'REGISTERED' | 'UNREGISTERED' | 'IDLE';
