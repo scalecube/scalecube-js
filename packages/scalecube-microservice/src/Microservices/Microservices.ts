@@ -154,6 +154,10 @@ const destroy = ({
         // Object.values(microserviceContext).forEach(
         //   (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
         // );
+
+        // TODO: destroy server
+        // TODO: destroy client
+        // TODO: destroy registry
         resolve('');
       });
   });
