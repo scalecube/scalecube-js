@@ -45,7 +45,6 @@ export interface RemoteCallOptions {
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider: TransportApi.ClientProvider;
-  openConnections: { [key: string]: any };
 }
 
 export interface InvokeMethodOptions {
@@ -123,6 +122,7 @@ export interface RemoteRegistry {
   lookUp: MicroserviceApi.LookUp;
   update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
   createEndPoints: (options: AvailableServices) => MicroserviceApi.Endpoint[];
+  destroy: () => void;
 }
 
 export interface RemoteRegistryMap {

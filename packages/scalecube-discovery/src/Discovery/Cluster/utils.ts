@@ -84,17 +84,21 @@ export const saveToLogs = (
   // tslint:enable
 };
 
-export const genericPostMessage = (data: any, transfer?: any) => {
+export const genericPostMessage = (data: any, transfer?: any[]) => {
   try {
     // @ts-ignore
     if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
-      postMessage(data, transfer);
+      // @ts-ignore
+      postMessage(data, transfer ? transfer : undefined);
+      const event = new MessageEvent('message', {
+        data,
+        ports: transfer ? transfer : undefined,
+      });
+      dispatchEvent(event);
     } else {
-      postMessage(data, '*', transfer);
+      postMessage(data, '*', transfer ? transfer : undefined);
     }
   } catch (e) {
     console.error('Unable to post message ', e);
   }
 };
-
-const postMessageWorker = () => {};

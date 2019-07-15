@@ -12,6 +12,7 @@ import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
 import { check, getAddress } from '@scalecube/utils';
+import { destroyAllTransportClients } from '../TransportProviders/MicroserviceClient';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -72,12 +73,13 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   });
 
   // if address is not available then microservice can't start a server and get serviceCall requests
-  address &&
-    startServer({
-      address,
-      serviceCall: defaultLocalCall,
-      transportServerProvider: (transport as TransportApi.Transport).serverProvider,
-    });
+  const serverStop = address
+    ? startServer({
+        address,
+        serviceCall: defaultLocalCall,
+        transportServerProvider: (transport as TransportApi.Transport).serverProvider,
+      })
+    : null;
 
   discoveryInstance.discoveredItems$().subscribe(remoteRegistry.update);
 
@@ -102,7 +104,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
         microserviceContext,
         transportClientProvider,
       }),
-    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance }),
+    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
   } as MicroserviceApi.Microservice);
 };
 
@@ -139,25 +141,29 @@ const createServiceCall = ({
 const destroy = ({
   microserviceContext,
   discovery,
+  serverStop,
 }: {
   microserviceContext: MicroserviceContext | null;
   discovery: DiscoveryApi.Discovery;
+  serverStop: any;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
   return new Promise((resolve, reject) => {
-    microserviceContext = null;
+    if (microserviceContext) {
+      const { localRegistry, remoteRegistry } = microserviceContext;
+      localRegistry.destroy();
+      remoteRegistry.destroy();
+    }
+
+    destroyAllTransportClients();
+    serverStop && serverStop();
+
     discovery &&
       discovery.destroy().then(() => {
-        // Object.values(microserviceContext).forEach(
-        //   (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
-        // );
-
-        // TODO: destroy server
-        // TODO: destroy client
-        // TODO: destroy registry
+        microserviceContext = null;
         resolve('');
       });
   });

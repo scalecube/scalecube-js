@@ -30,6 +30,14 @@ export const startServer = ({
   });
 
   server.start();
+
+  return () => {
+    try {
+      server.stop.bind(server);
+    } catch (e) {
+      console.error('RSocket unable to close connection ' + e);
+    }
+  };
 };
 
 const requestResponse = ({
