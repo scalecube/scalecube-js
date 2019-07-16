@@ -1,6 +1,6 @@
 importScripts('http://localhost:8000/packages/scalecube-microservice/dist/index.js');
 importScripts('./definitions.js');
-importScripts('./bubbleSortService.js');
+importScripts('./reactiveStream.js');
 
 sc.createMicroservice({
   services: [

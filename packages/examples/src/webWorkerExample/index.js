@@ -7,7 +7,7 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  ((createMicroservice, ASYNC_MODEL_TYPES, definitions) => {
+  ((createMicroservice, addWorker, ASYNC_MODEL_TYPES, definitions) => {
     const placeHolder1 = document.getElementById('placeHolder');
     const placeHolder2 = document.getElementById('placeHolder2');
     const waitMessage = document.getElementById('waitMessage');
@@ -17,9 +17,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const worker = new Worker('worker1.js');
     const worker2 = new Worker('worker2.js');
 
-    const connect = connectWorkers();
-    connect.addWorker(worker);
-    connect.addWorker(worker2);
+    addWorker(worker);
+    addWorker(worker2);
 
     const localMS = createMicroservice({ services: [], address: 'main' });
     const proxyConfig = {
@@ -70,36 +69,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
       responseSpan.innerText = `${type}: start at ${response.start}, end at ${response.end}, time ${response.time}`;
       placeHolder.appendChild(responseSpan);
     };
-  })(window.sc.createMicroservice, window.sc.ASYNC_MODEL_TYPES, definitions);
+  })(window.sc.createMicroservice, window.sc.addWorker, window.sc.ASYNC_MODEL_TYPES, definitions);
 });
-
-const connectWorkers = () => {
-  let workersMap = {};
-
-  addEventListener('message', (ev) => {
-    if (ev && ev.data && !ev.data.workerId) {
-      if (ev.data.detail) {
-        console.log('window to worker: ', ev.data, workersMap);
-        const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; //discoveryEvents || rsocketEvents
-        propogateTo && propogateTo.postMessage(ev.data, ev.ports || undefined);
-      }
-    }
-  });
-
-  return {
-    addWorker: (worker) => {
-      worker.addEventListener('message', (ev) => {
-        if (ev && ev.data && ev.data.type === 'membershipEventInitServer') {
-          workersMap = {
-            ...workersMap,
-            [ev.data.detail.origin]: worker,
-          };
-        }
-
-        ev.data.workerId = 1;
-        console.log('worker to window: ', ev.data);
-        postMessage(ev.data, '*', ev.ports || undefined);
-      });
-    },
-  };
-};

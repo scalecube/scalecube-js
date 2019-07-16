@@ -1,21 +1,21 @@
 importScripts('http://localhost:8000/packages/scalecube-microservice/dist/index.js');
 importScripts('./definitions.js');
-importScripts('./bubbleSortService.js');
+importScripts('./reactiveStream.js');
 
-sc.createMicroservice({
+const ms1 = sc.createMicroservice({
   services: [
     {
-      reference: remoteBubbleSortService,
+      reference: reactiveStreamExample,
       definition: definitions.remoteServiceDefinition,
     },
   ],
   address: 'worker',
 });
 
-sc.createMicroservice({
+const ms2 = sc.createMicroservice({
   services: [
     {
-      reference: remoteBubbleSortService,
+      reference: reactiveStreamExample,
       definition: definitions.remoteServiceDefinition3,
     },
   ],
@@ -23,28 +23,47 @@ sc.createMicroservice({
   seedAddress: 'worker',
 });
 
-const ms = sc.createMicroservice({
+const ms3 = sc.createMicroservice({
   address: 'empty',
   seedAddress: 'worker',
 });
 
-const { awaitProxyName } = ms.createProxies({
+const { awaitProxyName, awaitProxyName3 } = ms3.createProxies({
   proxies: [
     {
       serviceDefinition: definitions.remoteServiceDefinition,
       proxyName: 'awaitProxyName',
     },
+    {
+      serviceDefinition: definitions.remoteServiceDefinition3,
+      proxyName: 'awaitProxyName3',
+    },
   ],
   isAsync: true,
 });
 
-// addEventListener('message', (ev)=>{
-//   if (ev.data.detail.type === "rsocket-events-open-connection"){
-//     console.log("rsocket-events-open-connection",ev)
-//   }
-// })
-
 awaitProxyName.then(({ proxy: serviceNameProxy }) => {
-  console.log('worker - service ready');
-  serviceNameProxy.bubbleSortTime().then((res) => console.log('wo', res));
+  console.log(`webworker 1 - awaitProxyName is ready: `);
+  serviceNameProxy
+    .getInterval(1000)
+    .subscribe(
+      (res) => console.log(`webworker 1 - awaitProxyName is resolve every 1000ms: ${res}`),
+      (error) => console.log(error.message)
+    );
 });
+
+awaitProxyName3.then(({ proxy: serviceNameProxy }) => {
+  console.log(`webworker 1 - awaitProxyName3 is ready: `);
+  serviceNameProxy
+    .getInterval(9000)
+    .subscribe(
+      (res) => console.log(`webworker 1 - awaitProxyName3 is resolve every 9000ms: ${res}`),
+      (error) => console.log(error.message)
+    );
+});
+
+setTimeout(() => {
+  ms1.destroy();
+  ms2.destroy();
+  ms3.destroy();
+}, 60 * 0.5 * 1000);
