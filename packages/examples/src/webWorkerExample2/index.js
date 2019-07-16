@@ -23,63 +23,63 @@ window.addEventListener('DOMContentLoaded', (event) => {
     connect.addWorker({ address: 'pm://defaultHost:8080/worker2', worker: worker2 });
 
     const localMS = createMicroservice({ services: [], address: 'main', seedAddress: 'worker' });
-    const proxyConfig = {
-      proxies: [
-        {
-          serviceDefinition: definitions.remoteServiceDefinition,
-          proxyName: 'awaitProxyName',
-        },
-        {
-          serviceDefinition: definitions.remoteServiceDefinition2,
-          proxyName: 'awaitProxyName2',
-        },
-        {
-          serviceDefinition: definitions.remoteServiceDefinition3,
-          proxyName: 'awaitProxyName3',
-        },
-      ],
-      isAsync: true,
-    };
-    const { awaitProxyName, awaitProxyName2, awaitProxyName3 } = localMS.createProxies(proxyConfig);
-
-    awaitProxyName.then(({ proxy: serviceNameProxy }) => {
-      console.log('remote service is available!');
-      let i = 0;
-      for (i; i < 5; i++) {
-        serviceNameProxy
-          .bubbleSortTime()
-          .then((response) => {
-            createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, placeHolder: placeHolder1 });
-          })
-          .catch(console.log);
-      }
-    });
-
-    awaitProxyName2.then(({ proxy: serviceNameProxy }) => {
-      console.log('remote service2 is available!');
-      let i = 0;
-      for (i; i < 5; i++) {
-        serviceNameProxy
-          .bubbleSortTime()
-          .then((response) => {
-            createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, placeHolder: placeHolder2 });
-          })
-          .catch(console.log);
-      }
-    });
-
-    awaitProxyName3.then(({ proxy: serviceNameProxy }) => {
-      console.log('remote service3 is available!');
-      let i = 0;
-      for (i; i < 5; i++) {
-        serviceNameProxy
-          .bubbleSortTime()
-          .then((response) => {
-            console.log('3333', response);
-          })
-          .catch(console.log);
-      }
-    });
+    // const proxyConfig = {
+    //   proxies: [
+    //     {
+    //       serviceDefinition: definitions.remoteServiceDefinition,
+    //       proxyName: 'awaitProxyName',
+    //     },
+    //     {
+    //       serviceDefinition: definitions.remoteServiceDefinition2,
+    //       proxyName: 'awaitProxyName2',
+    //     },
+    //     {
+    //       serviceDefinition: definitions.remoteServiceDefinition3,
+    //       proxyName: 'awaitProxyName3',
+    //     },
+    //   ],
+    //   isAsync: true,
+    // };
+    // const { awaitProxyName, awaitProxyName2, awaitProxyName3 } = localMS.createProxies(proxyConfig);
+    //
+    // awaitProxyName.then(({ proxy: serviceNameProxy }) => {
+    //   console.log('remote service is available!');
+    //   let i = 0;
+    //   for (i; i < 5; i++) {
+    //     serviceNameProxy
+    //       .bubbleSortTime()
+    //       .then((response) => {
+    //         createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, placeHolder: placeHolder1 });
+    //       })
+    //       .catch(console.log);
+    //   }
+    // });
+    //
+    // awaitProxyName2.then(({ proxy: serviceNameProxy }) => {
+    //   console.log('remote service2 is available!');
+    //   let i = 0;
+    //   for (i; i < 5; i++) {
+    //     serviceNameProxy
+    //       .bubbleSortTime()
+    //       .then((response) => {
+    //         createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE, placeHolder: placeHolder2 });
+    //       })
+    //       .catch(console.log);
+    //   }
+    // });
+    //
+    // awaitProxyName3.then(({ proxy: serviceNameProxy }) => {
+    //   console.log('remote service3 is available!');
+    //   let i = 0;
+    //   for (i; i < 5; i++) {
+    //     serviceNameProxy
+    //       .bubbleSortTime()
+    //       .then((response) => {
+    //         console.log('3333', response);
+    //       })
+    //       .catch(console.log);
+    //   }
+    // });
 
     const createLineHTML = ({ response, type, placeHolder }) => {
       waitMessage.innerText = 'Service is available from workers:';
@@ -96,6 +96,7 @@ const connectWorkers = () => {
   addEventListener('message', (ev) => {
     if (ev && ev.data && !ev.data.workerId) {
       if (ev.data.detail) {
+        ev.data.workerId = 1;
         const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; //discoveryEvents || rsocketEvents
         console.log('window -> propogateTo', ev.data);
         propogateTo

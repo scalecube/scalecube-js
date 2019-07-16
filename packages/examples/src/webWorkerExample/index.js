@@ -79,7 +79,7 @@ const connectWorkers = () => {
   addEventListener('message', (ev) => {
     if (ev && ev.data && !ev.data.workerId) {
       if (ev.data.detail) {
-        // console.log('window to worker: ', ev.data, workersMap);
+        console.log('window to worker: ', ev.data, workersMap);
         const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; //discoveryEvents || rsocketEvents
         propogateTo && propogateTo.postMessage(ev.data, ev.ports || undefined);
       }
@@ -97,7 +97,7 @@ const connectWorkers = () => {
         }
 
         ev.data.workerId = 1;
-        // console.log('worker to window: ', ev.data);
+        console.log('worker to window: ', ev.data);
         postMessage(ev.data, '*', ev.ports || undefined);
       });
     },
