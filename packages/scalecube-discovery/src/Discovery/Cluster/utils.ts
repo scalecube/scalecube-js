@@ -75,7 +75,7 @@ export const genericPostMessage = (data: any, transfer?: any[]) => {
   try {
     // @ts-ignore
     if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
-      if (localAddress.indexOf(data.detail.to) > -1) {
+      if (data.detail && data.detail.to && localAddress.indexOf(data.detail.to) > -1) {
         const event = new MessageEvent('message', {
           data,
           ports: transfer ? transfer : undefined,
