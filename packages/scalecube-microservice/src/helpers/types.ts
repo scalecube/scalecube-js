@@ -1,3 +1,5 @@
+// @ts-ignore
+import { RSocketClientSocket } from 'rsocket-core';
 import { Observable } from 'rxjs';
 import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube/api';
 
@@ -20,6 +22,7 @@ export interface CreateServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
   transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }
 
 export interface GetProxyOptions {
@@ -45,6 +48,7 @@ export interface RemoteCallOptions {
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }
 
 export interface InvokeMethodOptions {
@@ -133,4 +137,13 @@ export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEven
   type: DiscoveryApi.Type;
   items: DiscoveryApi.Item[];
   remoteRegistryMap: RemoteRegistryMap;
+}
+
+export type CreateConnectionManager = () => ConnectionManager;
+
+export interface ConnectionManager {
+  getConnection: (connectionAddress: string) => Promise<RSocketClientSocket>;
+  getAllConnections: () => { [key: string]: Promise<RSocketClientSocket> };
+  setConnection: (connectionAddress: string, value: Promise<RSocketClientSocket>) => void;
+  removeConnection: (connectionAddress: string) => void;
 }
