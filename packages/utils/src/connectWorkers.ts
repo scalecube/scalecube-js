@@ -9,11 +9,11 @@ if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScop
       if (ev.data.detail) {
         ev.data.workerId = 1;
         const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
-        // console.log('window -> propogateTo', ev.data);
-
-        propogateTo &&
+        if (propogateTo) {
+          // console.log('window -> propogateTo', ev.data);
           // @ts-ignore
           propogateTo.postMessage(ev.data, ev.ports || undefined);
+        }
       }
     }
   });
@@ -29,11 +29,13 @@ export const addWorker = (worker: Worker) => {
       } else {
         const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
         // console.log('worker -> propogateTo', ev.data);
-        propogateTo
-          ? // @ts-ignore
-            propogateTo.postMessage(ev.data, ev.ports || undefined)
-          : // @ts-ignore
-            postMessage(ev.data, '*', ev.ports || undefined);
+        if (propogateTo) {
+          // @ts-ignore
+          propogateTo.postMessage(ev.data, ev.ports || undefined);
+        } else {
+          // @ts-ignore
+          postMessage(ev.data, '*', ev.ports || undefined);
+        }
       }
     }
   });
