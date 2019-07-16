@@ -35,14 +35,6 @@ export interface DiscoveryOptions {
    * enable discovery console.logs
    */
   debug?: boolean;
-  /**
-   * @property
-   * register discovery logs under namespace
-   * window[namespace]
-   */
-  logger?: {
-    namespace: string;
-  };
 }
 
 /**

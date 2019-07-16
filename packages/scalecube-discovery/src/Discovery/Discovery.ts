@@ -13,7 +13,6 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
   address,
   itemsToPublish,
   seedAddress,
-  logger,
   debug,
 }: DiscoveryApi.DiscoveryOptions): DiscoveryApi.Discovery => {
   const membersState: { [member: string]: boolean } = {};
@@ -29,7 +28,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
 
   const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
-  const cluster: Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, logger, debug });
+  const cluster: Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, debug });
 
   const clusterListener = cluster.listen$();
   let subscription: any;
