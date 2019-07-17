@@ -86,6 +86,9 @@ export const genericPostMessage = (data: any, transfer?: any[]) => {
         postMessage(data, transfer ? transfer : undefined);
       }
     } else {
+      if (data.type === 'ConnectWorkerEvent') {
+        return;
+      }
       postMessage(data, '*', transfer ? transfer : undefined);
     }
   } catch (e) {

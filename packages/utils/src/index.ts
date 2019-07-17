@@ -1,6 +1,6 @@
 import * as check from './check';
 import { getFullAddress, validateAddress, getAddress } from './address';
 import * as constants from './constants';
-import { addWorker } from './connectWorkers';
+import { addWorker, removeWorker } from './connectWorkers';
 
-export { check, getFullAddress, validateAddress, constants, getAddress, addWorker };
+export { check, getFullAddress, validateAddress, constants, getAddress, addWorker, removeWorker };

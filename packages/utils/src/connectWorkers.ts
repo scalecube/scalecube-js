@@ -19,24 +19,31 @@ if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScop
   });
 }
 
-export const addWorker = (worker: Worker) => {
-  worker.addEventListener('message', (ev) => {
-    if (!ev.data.workerId) {
-      ev.data.workerId = 1;
+function workerEventHandler(ev: any) {
+  if (!ev.data.workerId) {
+    ev.data.workerId = 1;
 
-      if (ev.data.type === 'ConnectWorkerEvent') {
-        workersMap[ev.data.detail.whoAmI] = worker;
+    if (ev.data.type === 'ConnectWorkerEvent') {
+      // @ts-ignore
+      workersMap[ev.data.detail.whoAmI] = this;
+    } else {
+      const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
+      // console.log('worker -> propogateTo', ev.data);
+      if (propogateTo) {
+        // @ts-ignore
+        propogateTo.postMessage(ev.data, ev.ports || undefined);
       } else {
-        const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
-        // console.log('worker -> propogateTo', ev.data);
-        if (propogateTo) {
-          // @ts-ignore
-          propogateTo.postMessage(ev.data, ev.ports || undefined);
-        } else {
-          // @ts-ignore
-          postMessage(ev.data, '*', ev.ports || undefined);
-        }
+        // @ts-ignore
+        postMessage(ev.data, '*', ev.ports || undefined);
       }
     }
-  });
+  }
+}
+
+export const addWorker = (worker: Worker) => {
+  worker.addEventListener('message', workerEventHandler.bind(worker));
+};
+
+export const removeWorker = (worker: Worker) => {
+  worker.removeEventListener('message', workerEventHandler.bind(worker));
 };

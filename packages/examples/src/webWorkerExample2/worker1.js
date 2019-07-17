@@ -9,7 +9,7 @@ const ms1 = sc.createMicroservice({
       definition: definitions.remoteServiceDefinition,
     },
   ],
-  address: 'worker',
+  address: 'ms1',
 });
 
 const ms2 = sc.createMicroservice({
@@ -19,13 +19,13 @@ const ms2 = sc.createMicroservice({
       definition: definitions.remoteServiceDefinition3,
     },
   ],
-  address: 'worker3',
-  seedAddress: 'worker',
+  address: 'ms3',
+  seedAddress: 'ms1',
 });
 
 const ms3 = sc.createMicroservice({
-  address: 'empty',
-  seedAddress: 'worker',
+  address: 'ms4',
+  seedAddress: 'ms1',
 });
 
 const { awaitProxyName, awaitProxyName3 } = ms3.createProxies({

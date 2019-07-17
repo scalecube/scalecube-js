@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     addWorker(worker);
     addWorker(worker2);
 
-    const localMS = createMicroservice({ services: [], address: 'main', seedAddress: 'worker' });
+    const localMS = createMicroservice({ services: [], address: 'ms', seedAddress: 'ms2' });
     const proxyConfig = {
       proxies: [
         {
