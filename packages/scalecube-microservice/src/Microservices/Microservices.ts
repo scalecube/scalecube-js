@@ -12,7 +12,7 @@ import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
 import { check, getAddress } from '@scalecube/utils';
-import { destroyAllTransportClients } from '../TransportProviders/MicroserviceClient';
+import { destroyAllClientConnections } from '../TransportProviders/MicroserviceClient';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
@@ -173,7 +173,7 @@ const destroy = ({
       remoteRegistry.destroy();
     }
 
-    destroyAllTransportClients(connectionManager);
+    destroyAllClientConnections(connectionManager);
     serverStop && serverStop();
 
     discovery &&

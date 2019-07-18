@@ -73,7 +73,7 @@ export const remoteResponse = ({
 
       socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
         if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
-          destroyAddress(getFullAddress(address), connectionManager);
+          destoryClientConnection(getFullAddress(address), connectionManager);
           observer.error(error);
         }
       });
@@ -128,7 +128,7 @@ const createClient = ({
   });
 };
 
-export const destroyAddress = (fullAddress: string, connectionManager: ConnectionManager) => {
+export const destoryClientConnection = (fullAddress: string, connectionManager: ConnectionManager) => {
   const connection = connectionManager.getConnection(fullAddress);
   if (connection) {
     connection.then((socket: RSocketClientSocket) => {
@@ -142,5 +142,5 @@ export const destroyAddress = (fullAddress: string, connectionManager: Connectio
   }
 };
 
-export const destroyAllTransportClients = (connectionManager: ConnectionManager) =>
-  Object.keys(connectionManager.getAllConnections()).forEach((key) => destroyAddress(key, connectionManager));
+export const destroyAllClientConnections = (connectionManager: ConnectionManager) =>
+  Object.keys(connectionManager.getAllConnections()).forEach((key) => destoryClientConnection(key, connectionManager));
