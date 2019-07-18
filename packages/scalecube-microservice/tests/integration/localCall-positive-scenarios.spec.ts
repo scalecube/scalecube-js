@@ -20,17 +20,6 @@ describe(`Test positive-scenarios of usage
   const defaultUser = 'defaultUser';
   const GreetingServiceObject = { hello, greet$ };
 
-  const microservicesList: MicroserviceApi.Microservice[] = [];
-
-  // @ts-ignore
-  afterEach(async (done) => {
-    while (microservicesList.length > 0) {
-      const ms = microservicesList.pop();
-      ms && (await ms.destroy());
-    }
-    done();
-  });
-
   describe.each([
     {
       definition: greetingServiceDefinition,
@@ -58,8 +47,6 @@ describe(`Test positive-scenarios of usage
         services: [service],
         address: getAddress('B'),
       });
-
-      microservicesList.push(microserviceWithServices);
 
       test(`
           Scenario: Testing proxy[createProxy] for a successful response.

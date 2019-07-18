@@ -11,8 +11,8 @@ export const getServiceCall = ({
   router,
   microserviceContext,
   transportClientProvider,
+  connectionManager,
 }: CreateServiceCallOptions): ServiceCall => {
-  const openConnections = {};
   return ({ message, asyncModel, messageFormat }: ServiceCallOptions): ServiceCallResponse => {
     try {
       validateMessage(message);
@@ -23,7 +23,7 @@ export const getServiceCall = ({
     const localService = microserviceContext.localRegistry.lookUp({ qualifier: message.qualifier });
     const res$: Observable<any> = localService
       ? localCall({ localService, asyncModel, messageFormat, message })
-      : remoteCall({ router, microserviceContext, message, asyncModel, openConnections, transportClientProvider });
+      : remoteCall({ router, microserviceContext, message, asyncModel, transportClientProvider, connectionManager });
 
     return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.pipe(take(1)).toPromise() : res$;
   };

@@ -12,7 +12,8 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "rollup -c",
+    "build": "yarn build-rollup",
+    "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env",

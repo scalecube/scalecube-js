@@ -1,8 +1,113 @@
-import { TransportApi, Address } from '@scalecube/api';
+import { TransportApi, Address, MicroserviceApi } from '@scalecube/api';
 // @ts-ignore
-import { RSocketClient, DuplexConnection } from 'rsocket-core';
+import { RSocketClient, DuplexConnection, RSocketClientSocket } from 'rsocket-core';
+// @ts-ignore
+import { Flowable, Single } from 'rsocket-flowable';
+// @ts-ignore
+import { ISubscription } from 'rsocket-types';
 
-export const createClient = ({
+import { getFullAddress } from '@scalecube/utils';
+import { Observable } from 'rxjs';
+import { ConnectionManager, RsocketEventsPayload } from '../helpers/types';
+import { ASYNC_MODEL_TYPES } from '..';
+import { RSocketConnectionStatus } from '../helpers/constants';
+
+export const remoteResponse = ({
+  address,
+  asyncModel,
+  message,
+  transportClientProvider,
+  connectionManager,
+}: {
+  address: Address;
+  asyncModel: string;
+  message: MicroserviceApi.Message;
+  transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
+}) => {
+  return new Observable((observer) => {
+    const connection: Promise<RSocketClientSocket> = getClientConnection({
+      address,
+      transportClientProvider,
+      connectionManager,
+    });
+
+    connection.then((socket: RSocketClientSocket) => {
+      const socketConnect: Single | Flowable = socket[asyncModel]({
+        data: message,
+        metadata: '',
+      });
+
+      const flowableNext = ({ data, metadata }: RsocketEventsPayload) => {
+        const { data: response } = data;
+        observer.next(response);
+      };
+      const flowableError = (err: { source: { message: string } }) =>
+        observer.error(
+          err ? (err.source ? new Error(err.source.message) : err) : new Error('RemoteCall exception occur.')
+        );
+
+      switch (asyncModel) {
+        case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
+          socketConnect.subscribe({
+            onComplete: flowableNext,
+            onError: flowableError,
+          }); // Single type
+          break;
+
+        case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+          const max = socketConnect._max;
+          socketConnect.subscribe({
+            onNext: flowableNext,
+            onError: flowableError,
+            onComplete: () => observer.complete(),
+            onSubscribe(subscription: ISubscription) {
+              subscription.request(max);
+            },
+          }); // Flowable type
+          break;
+
+        default:
+          observer.error(new Error('Unable to find asyncModel'));
+      }
+
+      socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
+        if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
+          destoryClientConnection(getFullAddress(address), connectionManager);
+          observer.error(error);
+        }
+      });
+    });
+  });
+};
+
+const getClientConnection = ({
+  address,
+  transportClientProvider,
+  connectionManager,
+}: {
+  address: Address;
+  transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
+}) => {
+  const fullAddress = getFullAddress(address);
+  let connection: Promise<RSocketClientSocket> = connectionManager.getConnection(fullAddress);
+
+  if (!connection) {
+    const client = createClient({ address, transportClientProvider });
+    connection = new Promise((resolve, reject) => {
+      client.connect().subscribe({
+        onComplete: (socket: RSocketClientSocket) => resolve(socket),
+        onError: (error: Error) => reject(error),
+      });
+    });
+    connectionManager.setConnection(fullAddress, connection);
+  }
+
+  return connection;
+};
+
+const createClient = ({
   address,
   transportClientProvider,
 }: {
@@ -11,7 +116,6 @@ export const createClient = ({
 }) => {
   const { factoryOptions, clientFactory, serializers } = transportClientProvider;
 
-  // TODO pick RSocketClient base on transport-browser type <PM || WS>
   return new RSocketClient({
     serializers,
     setup: {
@@ -23,3 +127,20 @@ export const createClient = ({
     transport: clientFactory({ address, factoryOptions }),
   });
 };
+
+export const destoryClientConnection = (fullAddress: string, connectionManager: ConnectionManager) => {
+  const connection = connectionManager.getConnection(fullAddress);
+  if (connection) {
+    connection.then((socket: RSocketClientSocket) => {
+      try {
+        socket.close();
+      } catch (e) {
+        console.warn('RSocket unable to close connection ' + e);
+      }
+      connectionManager.removeConnection(fullAddress);
+    });
+  }
+};
+
+export const destroyAllClientConnections = (connectionManager: ConnectionManager) =>
+  Object.keys(connectionManager.getAllConnections()).forEach((key) => destoryClientConnection(key, connectionManager));

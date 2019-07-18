@@ -26,6 +26,7 @@
     "rollup": "^1.14.6",
     "rollup-plugin-typescript2": "^0.21.1",
     "rollup-plugin-visualizer": "^2.2.0",
+    "rollup-plugin-filesize": "^6.1.1",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typescript": "^3.2.4"
@@ -34,7 +35,7 @@
     "@scalecube/api": "^0.0.2-alpha.6",
     "@scalecube/utils": "^0.0.2-alpha.6",
     "rsocket-core": "^0.0.10",
-    "rsocket-events-client": "^0.0.16",
-    "rsocket-events-server": "^0.0.16"
+    "rsocket-events-client": "^0.0.16-6",
+    "rsocket-events-server": "^0.0.16-6"
   }
 }

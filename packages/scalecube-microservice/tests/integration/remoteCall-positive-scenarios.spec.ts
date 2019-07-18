@@ -20,207 +20,219 @@ describe(`Test positive-scenarios of usage
   const microservicesList: MicroserviceApi.Microservice[] = [];
 
   // @ts-ignore
-  beforeEach(async (done) => {
-    while (microservicesList.length > 0) {
-      const ms = microservicesList.pop();
-      ms && (await ms.destroy());
-    }
-    done();
-  });
-
-  describe(`
-        Background
-	      Given  a service as
-	             | class       | # class without static methods
-               | static class| # class not object with static methods
-               | Plan Object | # Object format is [key]: function
-        And    serviceDefinition that define the contract of the service`, () => {
-    const service = {
-      definition: greetingServiceDefinition,
-      reference: GreetingServiceObject,
+  beforeEach((done) => {
+    const removeNext = () => {
+      if (microservicesList.length > 0) {
+        const ms: any = microservicesList.pop();
+        ms &&
+          ms
+            .destroy()
+            .then(() => {
+              removeNext();
+            })
+            .catch(console.warn);
+      } else {
+        done();
+      }
     };
 
-    const serviceDefinition = service.definition;
-    const microserviceWithServices = createMicroservice({
-      services: [service],
-      address: getAddress('B'),
-    });
-    microservicesList.push(microserviceWithServices);
+    removeNext();
+  });
 
-    test(`
+  const service = {
+    definition: greetingServiceDefinition,
+    reference: GreetingServiceObject,
+  };
+
+  const serviceDefinition = service.definition;
+  createMicroservice({
+    services: [service],
+    address: getAddress('B'),
+  });
+
+  test(`
           Scenario: Testing proxy[createProxy] for a successful response.
             When  invoking requestResponse's method with valid data
             Then  successful RequestResponse is received
               `, (done) => {
-      expect.assertions(2);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('createProxy-requestResponse'),
-        seedAddress: getAddress('B'),
-      });
-
-      microservicesList.push(microserviceWithoutServices);
-
-      const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
-      proxy.hello(defaultUser).catch((e: Error) => {
-        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
-      });
-
-      setTimeout(() => {
-        proxy.hello(defaultUser).then((res: string) => {
-          expect(res).toMatch(`Hello ${defaultUser}`);
-          done();
-        });
-      }, 1000);
+    expect.assertions(2);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('createProxy-requestResponse'),
+      seedAddress: getAddress('B'),
     });
 
-    test(`
+    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
+    proxy.hello(defaultUser).catch((e: Error) => {
+      expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
+    });
+
+    setTimeout(() => {
+      proxy.hello(defaultUser).then((res: string) => {
+        expect(res).toMatch(`Hello ${defaultUser}`);
+        microservicesList.push(microserviceWithoutServices);
+
+        done();
+      });
+    }, 1000);
+  });
+
+  test(`
           Scenario: Testing proxy[createProxy] for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
             `, (done) => {
-      expect.assertions(2);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('createProxy-RequestStream'),
-        seedAddress: getAddress('B'),
-      });
-      microservicesList.push(microserviceWithoutServices);
-
-      const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
-      proxy.greet$([defaultUser]).subscribe(
-        (res: string) => {},
-        (e: Error) => {
-          expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
-        }
-      );
-
-      setTimeout(() => {
-        proxy.greet$([defaultUser]).subscribe((response: any) => {
-          expect(response).toEqual(`greetings ${defaultUser}`);
-          done();
-        });
-      }, 1000);
+    expect.assertions(2);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('createProxy-RequestStream'),
+      seedAddress: getAddress('B'),
     });
+    microservicesList.push(microserviceWithoutServices);
 
-    test(`
+    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
+    proxy.greet$([defaultUser]).subscribe(
+      (res: string) => {},
+      (e: Error) => {
+        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
+      }
+    );
+
+    setTimeout(() => {
+      const subscription = proxy.greet$([defaultUser]).subscribe((response: any) => {
+        expect(response).toEqual(`greetings ${defaultUser}`);
+        subscription.unsubscribe();
+        done();
+      });
+    }, 1000);
+  });
+
+  test(`
           Scenario: Testing proxy[createProxies] for a successful response.
             When  invoking requestResponse's method with valid data
             Then  successful RequestResponse is received
-              `, async () => {
-      expect.assertions(1);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('createProxies-requestResponse'),
-        seedAddress: getAddress('B'),
-      });
-      microservicesList.push(microserviceWithoutServices);
-
-      const { awaitProxy } = microserviceWithoutServices.createProxies({
-        proxies: [
-          {
-            serviceDefinition,
-            proxyName: 'awaitProxy',
-          },
-        ],
-        isAsync: true,
-      });
-      const { proxy } = await awaitProxy;
-      return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
+              `, (done) => {
+    expect.assertions(1);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('createProxies-requestResponse'),
+      seedAddress: getAddress('B'),
     });
+    microservicesList.push(microserviceWithoutServices);
 
-    test(`
+    const { awaitProxy } = microserviceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
+    awaitProxy.then(({ proxy }: { proxy: any }) => {
+      proxy.hello(defaultUser).then((res: any) => {
+        expect(res).toEqual(`Hello ${defaultUser}`);
+        done();
+      });
+    });
+  });
+
+  test(`
           Scenario: Testing proxy[createProxies] for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
             `, (done) => {
-      expect.assertions(1);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('createProxies-RequestStream'),
-        seedAddress: getAddress('B'),
-      });
-      microservicesList.push(microserviceWithoutServices);
-      const { awaitProxy } = microserviceWithoutServices.createProxies({
-        proxies: [
-          {
-            serviceDefinition,
-            proxyName: 'awaitProxy',
-          },
-        ],
-        isAsync: true,
-      });
-      awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
-        proxy.greet$([defaultUser]).subscribe((response: any) => {
-          expect(response).toEqual(`greetings ${defaultUser}`);
-          done();
-        });
+    expect.assertions(1);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('createProxies-RequestStream'),
+      seedAddress: getAddress('B'),
+    });
+    microservicesList.push(microserviceWithoutServices);
+
+    const { awaitProxy } = microserviceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition,
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
+    awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
+      const subscription = proxy.greet$([defaultUser]).subscribe((response: any) => {
+        expect(response).toEqual(`greetings ${defaultUser}`);
+        subscription.unsubscribe();
+        done();
       });
     });
+  });
 
-    test(`
+  test(`
           Scenario: Testing serviceCall for a successful response.
             When  invoking serviceCall's requestResponse method with valid message
             Then  successful RequestResponse is received
             `, (done) => {
-      expect.assertions(2);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('serviceCall-requestResponse'),
-        seedAddress: getAddress('B'),
-      });
+    expect.assertions(2);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('serviceCall-requestResponse'),
+      seedAddress: getAddress('B'),
+    });
+    microservicesList.push(microserviceWithoutServices);
 
-      microservicesList.push(microserviceWithoutServices);
-      const message: MicroserviceApi.Message = {
-        qualifier: `${serviceDefinition.serviceName}/hello`,
-        data: [`${defaultUser}`],
-      };
-      const serviceCall = microserviceWithoutServices.createServiceCall({});
+    const message: MicroserviceApi.Message = {
+      qualifier: `${serviceDefinition.serviceName}/hello`,
+      data: [`${defaultUser}`],
+    };
+    const serviceCall = microserviceWithoutServices.createServiceCall({});
 
-      serviceCall.requestResponse(message).catch((e: Error) => {
-        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
-      });
-
-      setTimeout(() => {
-        serviceCall.requestResponse(message).then((res: MicroserviceApi.Message) => {
-          expect(res).toMatch(`Hello ${defaultUser}`);
-          done();
-        });
-      }, 1000);
+    serviceCall.requestResponse(message).catch((e: Error) => {
+      expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
     });
 
-    test(`
+    setTimeout(() => {
+      serviceCall.requestResponse(message).then((res: MicroserviceApi.Message) => {
+        expect(res).toMatch(`Hello ${defaultUser}`);
+        done();
+      });
+    }, 1000);
+  });
+
+  test(`
           Scenario: Testing serviceCall for a successful subscription (array).
             When  subscribe to RequestStream's method with valid data/message
             Then  successful RequestStream is emitted
                   `, (done) => {
-      expect.assertions(2);
-      const microserviceWithoutServices = createMicroservice({
-        services: [],
-        address: getAddress('serviceCall-RequestStream'),
-        seedAddress: getAddress('B'),
-      });
-
-      microservicesList.push(microserviceWithoutServices);
-      const message: MicroserviceApi.Message = {
-        qualifier: `${serviceDefinition.serviceName}/greet$`,
-        data: [[`${defaultUser}`]],
-      };
-      const serviceCall = microserviceWithoutServices.createServiceCall({});
-
-      serviceCall.requestStream(message).subscribe(
-        (res: MicroserviceApi.Message) => {},
-        (e: Error) => {
-          expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
-        }
-      );
-
-      setTimeout(() => {
-        serviceCall.requestStream(message).subscribe((response: MicroserviceApi.Message) => {
-          expect(response).toEqual(`greetings ${defaultUser}`);
-          done();
-        });
-      }, 1000);
+    expect.assertions(2);
+    const microserviceWithoutServices = createMicroservice({
+      services: [],
+      address: getAddress('serviceCall-RequestStream'),
+      seedAddress: getAddress('B'),
     });
+
+    microservicesList.push(microserviceWithoutServices);
+
+    const message: MicroserviceApi.Message = {
+      qualifier: `${serviceDefinition.serviceName}/greet$`,
+      data: [[`${defaultUser}`]],
+    };
+    const serviceCall = microserviceWithoutServices.createServiceCall({});
+
+    serviceCall.requestStream(message).subscribe(
+      (res: MicroserviceApi.Message) => {},
+      (e: Error) => {
+        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
+      }
+    );
+
+    setTimeout(() => {
+      const subscription = serviceCall.requestStream(message).subscribe((response: MicroserviceApi.Message) => {
+        expect(response).toEqual(`greetings ${defaultUser}`);
+
+        subscription.unsubscribe();
+        done();
+      });
+    }, 1000);
   });
 });

@@ -5,13 +5,15 @@ import { defaultRouter } from '../Routers/default';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
-import { MicroserviceContext } from '../helpers/types';
+import { ConnectionManager, MicroserviceContext } from '../helpers/types';
 import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
 import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
 import { check, getAddress } from '@scalecube/utils';
+import { destroyAllClientConnections } from '../TransportProviders/MicroserviceClient';
+import { createConnectionManager } from '../TransportProviders/ConnectionManager';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -37,6 +39,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   // TODO: add address, customTransport, customDiscovery  to the validation process
   validateMicroserviceOptions(microserviceOptions);
 
+  const connectionManager = createConnectionManager();
   const { services, transport, discovery } = microserviceOptions;
   const address = microserviceOptions.address as Address;
   const seedAddress = microserviceOptions.seedAddress as Address;
@@ -69,15 +72,17 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     router: defaultRouter,
     microserviceContext,
     transportClientProvider,
+    connectionManager,
   });
 
   // if address is not available then microservice can't start a server and get serviceCall requests
-  address &&
-    startServer({
-      address,
-      serviceCall: defaultLocalCall,
-      transportServerProvider: (transport as TransportApi.Transport).serverProvider,
-    });
+  const serverStop = address
+    ? startServer({
+        address,
+        serviceCall: defaultLocalCall,
+        transportServerProvider: (transport as TransportApi.Transport).serverProvider,
+      })
+    : null;
 
   discoveryInstance.discoveredItems$().subscribe(remoteRegistry.update);
 
@@ -89,20 +94,28 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 
   return Object.freeze({
     createProxies: (createProxiesOptions: MicroserviceApi.CreateProxiesOptions) =>
-      createProxies({ createProxiesOptions, microserviceContext, isServiceAvailable, transportClientProvider }),
+      createProxies({
+        createProxiesOptions,
+        microserviceContext,
+        isServiceAvailable,
+        transportClientProvider,
+        connectionManager,
+      }),
     createProxy: (proxyOptions: MicroserviceApi.ProxyOptions) =>
       createProxy({
         ...proxyOptions,
         microserviceContext,
         transportClientProvider,
+        connectionManager,
       }),
     createServiceCall: ({ router }: { router: MicroserviceApi.Router }) =>
       createServiceCall({
         router,
         microserviceContext,
         transportClientProvider,
+        connectionManager,
       }),
-    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance }),
+    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop, connectionManager }),
   } as MicroserviceApi.Microservice);
 };
 
@@ -110,16 +123,18 @@ const createServiceCall = ({
   router = defaultRouter,
   microserviceContext,
   transportClientProvider,
+  connectionManager,
 }: {
   router?: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
-  const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
+  const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider, connectionManager });
   return Object.freeze({
     requestStream: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
       serviceCall({
@@ -139,25 +154,31 @@ const createServiceCall = ({
 const destroy = ({
   microserviceContext,
   discovery,
+  serverStop,
+  connectionManager,
 }: {
   microserviceContext: MicroserviceContext | null;
   discovery: DiscoveryApi.Discovery;
+  serverStop: any;
+  connectionManager: ConnectionManager;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
   return new Promise((resolve, reject) => {
-    microserviceContext = null;
+    if (microserviceContext) {
+      const { localRegistry, remoteRegistry } = microserviceContext;
+      localRegistry.destroy();
+      remoteRegistry.destroy();
+    }
+
+    destroyAllClientConnections(connectionManager);
+    serverStop && serverStop();
+
     discovery &&
       discovery.destroy().then(() => {
-        // Object.values(microserviceContext).forEach(
-        //   (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
-        // );
-
-        // TODO: destroy server
-        // TODO: destroy client
-        // TODO: destroy registry
+        microserviceContext = null;
         resolve('');
       });
   });

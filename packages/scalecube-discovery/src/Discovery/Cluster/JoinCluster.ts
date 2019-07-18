@@ -4,7 +4,7 @@ import { getFullAddress } from '@scalecube/utils';
 import { Cluster, MemberEventType, MembersMap } from '../../helpers/types';
 import { server } from './Server';
 import { client } from './Client';
-import { utils } from './utils';
+import { setLocalAddress, utils } from './utils';
 
 interface JoinCluster {
   address: Address;
@@ -15,13 +15,10 @@ interface JoinCluster {
     timeout: number;
   };
   debug?: boolean;
-  logger?: {
-    namespace: string;
-  };
 }
 
 export const joinCluster = (options: JoinCluster): Cluster => {
-  const { address, seedAddress, itemsToPublish, transport, retry, debug, logger } = options;
+  const { address, seedAddress, itemsToPublish, transport, retry, debug } = options;
   const { port1, port2 } = new MessageChannel();
   const membersStatus: MembersMap = {
     membersPort: {},
@@ -33,6 +30,7 @@ export const joinCluster = (options: JoinCluster): Cluster => {
 
   const rSubjectMembers = new ReplaySubject<ClusterEvent>(1);
   const whoAmI = getFullAddress(address);
+  setLocalAddress(whoAmI);
 
   let clientPort: any;
 
@@ -47,7 +45,6 @@ export const joinCluster = (options: JoinCluster): Cluster => {
     getMembershipEvent,
     port1,
     seed: seedAddress ? getFullAddress(seedAddress) : undefined,
-    logger,
     debug,
   });
 
@@ -64,7 +61,6 @@ export const joinCluster = (options: JoinCluster): Cluster => {
     retry: retry || {
       timeout: 500,
     },
-    logger,
     debug,
     seedAddress,
   });
