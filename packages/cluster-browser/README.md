@@ -2,26 +2,4 @@
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
-# API
-
-Define API for Scalecube
-
-#### common
-
-All interfaces that are shared between scalecube's different modules 
-
-#### microservice
-
-Microservice's interface
-
-#### discovery
-
-Discovery's interface
-
-#### cluster
-
-Cluster's interface
-
-#### transport
-
-Transport's interface
+# event-base cluster for browsers

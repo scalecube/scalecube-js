@@ -1,13 +1,12 @@
 import { getFullAddress, validateAddress, check } from '@scalecube/utils';
-import { Address, DiscoveryApi } from '@scalecube/api';
-import { ClusterEvent, joinCluster } from './Cluster/JoinCluster';
+import { Address, DiscoveryApi, ClusterApi } from '@scalecube/api';
+import { joinCluster } from '@scalecube/cluster-browser';
 import {
   getAddressCollision,
   getDiscoverySuccessfullyDestroyedMessage,
   INVALID_ITEMS_TO_PUBLISH,
 } from '../helpers/constants';
 import { ReplaySubject } from 'rxjs';
-import { Cluster, MembersData } from '../helpers/types';
 
 export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
   address,
@@ -28,7 +27,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
 
   const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
-  const cluster: Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, debug });
+  const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, debug });
 
   const clusterListener = cluster.listen$();
   let subscription: any;
@@ -47,7 +46,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
     discoveredItems$: () => {
       cluster
         .getCurrentMemberStates()
-        .then((currentMembersState: MembersData) => {
+        .then((currentMembersState: ClusterApi.MembersData) => {
           const members = Object.keys(currentMembersState);
           members.forEach((member: string) => {
             const memberItem = currentMembersState[member];
@@ -71,7 +70,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
         .catch((error: any) => discoveredItemsSubject.error(error));
 
       subscription = clusterListener.subscribe(
-        (clusterEvent: ClusterEvent) => {
+        (clusterEvent: ClusterApi.ClusterEvent) => {
           const { type, items, from } = clusterEvent;
           if (items.length > 0) {
             if (type === 'REMOVED' && membersState[from]) {

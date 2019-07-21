@@ -1,29 +1,26 @@
-import { ClusterEvent } from './JoinCluster';
-import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
-import { Address } from '@scalecube/api';
+import { Address, ClusterApi } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 import {
   MEMBERSHIP_EVENT,
-  saveToLogs,
   INIT,
   MESSAGE,
   REMOVED,
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
   ADDED,
-  genericPostMessage,
-} from './utils';
+} from '../helpers/constants';
+import { genericPostMessage, saveToLogs } from '../helpers/utils';
 
 interface ClusterClient {
   whoAmI: string;
-  membersStatus: MembersMap;
+  membersStatus: ClusterApi.MembersMap;
   updateConnectedMember: (...data: any[]) => any;
   getMembershipEvent: (...data: any[]) => any;
   itemsToPublish: any[];
   port1: MessagePort;
   port2: MessagePort;
-  rSubjectMembers: ReplaySubject<ClusterEvent>;
+  rSubjectMembers: ReplaySubject<ClusterApi.ClusterEvent>;
   retry: {
     timeout: number;
   };

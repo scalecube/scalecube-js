@@ -1,9 +1,5 @@
-import { ClusterEvent } from './JoinCluster';
-import { MembersMap } from '../../helpers/types';
 import { ReplaySubject } from 'rxjs';
 import {
-  saveToLogs,
-  getKeysAsArray,
   MEMBERSHIP_EVENT,
   INIT,
   MESSAGE,
@@ -11,15 +7,15 @@ import {
   ADDED,
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
-  genericPostMessage,
-} from './utils';
+} from '../helpers/constants';
 import { ClusterApi } from '@scalecube/api';
+import { genericPostMessage, getKeysAsArray, saveToLogs } from '../helpers/utils';
 
 interface ClusterServer {
   whoAmI: string;
   itemsToPublish: any[];
-  rSubjectMembers: ReplaySubject<ClusterEvent>;
-  membersStatus: MembersMap;
+  rSubjectMembers: ReplaySubject<ClusterApi.ClusterEvent>;
+  membersStatus: ClusterApi.MembersMap;
   updateConnectedMember: (...data: any[]) => any;
   port1: MessagePort;
   seed?: string;
