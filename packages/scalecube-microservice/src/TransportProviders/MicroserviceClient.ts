@@ -8,25 +8,29 @@ import { ISubscription } from 'rsocket-types';
 
 import { getFullAddress } from '@scalecube/utils';
 import { Observable } from 'rxjs';
-import { RsocketEventsPayload } from '../helpers/types';
+import { ConnectionManager, RsocketEventsPayload } from '../helpers/types';
 import { ASYNC_MODEL_TYPES } from '..';
 import { RSocketConnectionStatus } from '../helpers/constants';
-
-const openConnections: { [key: string]: any } = {};
 
 export const remoteResponse = ({
   address,
   asyncModel,
   message,
   transportClientProvider,
+  connectionManager,
 }: {
   address: Address;
   asyncModel: string;
   message: MicroserviceApi.Message;
   transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }) => {
   return new Observable((observer) => {
-    const connection: Promise<RSocketClientSocket> = getClientConnection({ address, transportClientProvider });
+    const connection: Promise<RSocketClientSocket> = getClientConnection({
+      address,
+      transportClientProvider,
+      connectionManager,
+    });
 
     connection.then((socket: RSocketClientSocket) => {
       const socketConnect: Single | Flowable = socket[asyncModel]({
@@ -69,7 +73,7 @@ export const remoteResponse = ({
 
       socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
         if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
-          destroyAddress(getFullAddress(address));
+          destoryClientConnection(getFullAddress(address), connectionManager);
           observer.error(error);
         }
       });
@@ -80,14 +84,16 @@ export const remoteResponse = ({
 const getClientConnection = ({
   address,
   transportClientProvider,
+  connectionManager,
 }: {
   address: Address;
   transportClientProvider: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }) => {
-  let connection: Promise<RSocketClientSocket>;
   const fullAddress = getFullAddress(address);
+  let connection: Promise<RSocketClientSocket> = connectionManager.getConnection(fullAddress);
 
-  if (!openConnections[fullAddress]) {
+  if (!connection) {
     const client = createClient({ address, transportClientProvider });
     connection = new Promise((resolve, reject) => {
       client.connect().subscribe({
@@ -95,9 +101,7 @@ const getClientConnection = ({
         onError: (error: Error) => reject(error),
       });
     });
-    openConnections[fullAddress] = connection;
-  } else {
-    connection = openConnections[fullAddress];
+    connectionManager.setConnection(fullAddress, connection);
   }
 
   return connection;
@@ -124,16 +128,19 @@ const createClient = ({
   });
 };
 
-export const destroyAddress = (fullAddress: string) => {
-  openConnections[fullAddress] &&
-    openConnections[fullAddress].then((socket: RSocketClientSocket) => {
+export const destoryClientConnection = (fullAddress: string, connectionManager: ConnectionManager) => {
+  const connection = connectionManager.getConnection(fullAddress);
+  if (connection) {
+    connection.then((socket: RSocketClientSocket) => {
       try {
         socket.close();
       } catch (e) {
         console.warn('RSocket unable to close connection ' + e);
       }
-      delete openConnections[fullAddress];
+      connectionManager.removeConnection(fullAddress);
     });
+  }
 };
 
-export const destroyAllTransportClients = () => Object.keys(openConnections).forEach((key) => destroyAddress(key));
+export const destroyAllClientConnections = (connectionManager: ConnectionManager) =>
+  Object.keys(connectionManager.getAllConnections()).forEach((key) => destoryClientConnection(key, connectionManager));

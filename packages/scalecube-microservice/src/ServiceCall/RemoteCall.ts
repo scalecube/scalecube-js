@@ -11,6 +11,7 @@ export const remoteCall = ({
   message,
   asyncModel,
   transportClientProvider,
+  connectionManager,
 }: RemoteCallOptions): Observable<any> => {
   const endPoint: MicroserviceApi.Endpoint | null = router.route({
     lookUp: microserviceContext.remoteRegistry.lookUp,
@@ -31,5 +32,5 @@ export const remoteCall = ({
     }) as Observable<any>;
   }
 
-  return remoteResponse({ address: endPoint.address, asyncModel, message, transportClientProvider });
+  return remoteResponse({ address: endPoint.address, asyncModel, message, transportClientProvider, connectionManager });
 };

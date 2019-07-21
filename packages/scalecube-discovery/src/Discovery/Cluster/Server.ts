@@ -13,6 +13,7 @@ import {
   MEMBERSHIP_EVENT_INIT_CLIENT,
   genericPostMessage,
 } from './utils';
+import { ClusterApi } from '@scalecube/api';
 
 interface ClusterServer {
   whoAmI: string;
@@ -24,9 +25,6 @@ interface ClusterServer {
   seed?: string;
   getMembershipEvent: (...data: any[]) => any;
   debug?: boolean;
-  logger?: {
-    namespace: string;
-  };
 }
 
 export const server = (options: ClusterServer) => {
@@ -39,7 +37,6 @@ export const server = (options: ClusterServer) => {
     getMembershipEvent,
     port1,
     seed,
-    logger,
     debug,
   } = options;
   const globalEventsHandler = (ev: any) => {
@@ -101,7 +98,6 @@ export const server = (options: ClusterServer) => {
           membersState: { ...membersStatus.membersState },
           membersPort: { ...membersStatus.membersPort },
         },
-        logger,
         debug
       );
     }
@@ -194,7 +190,6 @@ export const server = (options: ClusterServer) => {
         membersState: { ...membersStatus.membersState },
         membersPort: { ...membersStatus.membersPort },
       },
-      logger,
       debug
     );
   };
@@ -202,6 +197,13 @@ export const server = (options: ClusterServer) => {
   return {
     start: () => {
       addEventListener(MESSAGE, globalEventsHandler);
+
+      genericPostMessage({
+        detail: {
+          whoAmI,
+        },
+        type: 'ConnectWorkerEvent',
+      });
     },
     stop: () => {
       removeEventListener(MESSAGE, globalEventsHandler);

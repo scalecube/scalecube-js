@@ -29,9 +29,6 @@ interface ClusterClient {
   };
   seedAddress: Address | void;
   debug?: boolean;
-  logger?: {
-    namespace: string;
-  };
 }
 
 export const client = (options: ClusterClient) => {
@@ -44,7 +41,6 @@ export const client = (options: ClusterClient) => {
     rSubjectMembers,
     port1,
     port2,
-    logger,
     debug,
     retry,
     seedAddress,
@@ -92,7 +88,6 @@ export const client = (options: ClusterClient) => {
                   membersState: { ...membersStatus.membersState },
                   membersPort: { ...membersStatus.membersPort },
                 },
-                logger,
                 debug
               );
 
@@ -101,7 +96,7 @@ export const client = (options: ClusterClient) => {
                   rSubjectMembers.next({
                     type,
                     items: metadata[member],
-                    from: origin,
+                    from: member,
                   });
               });
             }
@@ -181,7 +176,6 @@ export const client = (options: ClusterClient) => {
           membersState: { ...membersStatus.membersState },
           membersPort: { ...membersStatus.membersPort },
         },
-        logger,
         debug
       );
     },

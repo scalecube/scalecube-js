@@ -1,5 +1,5 @@
 definitions = (function() {
-  var remoteServiceDefinition = {
+  var remoteServiceDefinition1 = {
     serviceName: 'RemoteService1',
     methods: {
       getInterval: {
@@ -26,9 +26,28 @@ definitions = (function() {
     },
   };
 
+  var remoteServiceDefinition4 = {
+    serviceName: 'RemoteService4',
+    methods: {
+      getInterval: {
+        asyncModel: 'requestStream',
+      },
+    },
+  };
+
+  var remoteServiceDefinition5 = {
+    serviceName: 'RemoteService5',
+    methods: {
+      getInterval: {
+        asyncModel: 'requestStream',
+      },
+    },
+  };
   return {
-    remoteServiceDefinition,
+    remoteServiceDefinition1,
     remoteServiceDefinition2,
     remoteServiceDefinition3,
+    remoteServiceDefinition4,
+    remoteServiceDefinition5,
   };
 })();
