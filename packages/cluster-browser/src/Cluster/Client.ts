@@ -1,5 +1,4 @@
-import { ReplaySubject } from 'rxjs';
-import { Address, ClusterApi } from '@scalecube/api';
+import { ClusterApi } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 import {
   MEMBERSHIP_EVENT,
@@ -12,23 +11,7 @@ import {
 } from '../helpers/constants';
 import { genericPostMessage, saveToLogs } from '../helpers/utils';
 
-interface ClusterClient {
-  whoAmI: string;
-  membersStatus: ClusterApi.MembersMap;
-  updateConnectedMember: (...data: any[]) => any;
-  getMembershipEvent: (...data: any[]) => any;
-  itemsToPublish: any[];
-  port1: MessagePort;
-  port2: MessagePort;
-  rSubjectMembers: ReplaySubject<ClusterApi.ClusterEvent>;
-  retry: {
-    timeout: number;
-  };
-  seedAddress: Address | void;
-  debug?: boolean;
-}
-
-export const client = (options: ClusterClient) => {
+export const client: ClusterApi.CreateClusterClient = (options) => {
   const {
     whoAmI,
     membersStatus,
