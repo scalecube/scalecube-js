@@ -7,6 +7,14 @@ export const createMember = (address: Address, membersStatus: ClusterApi.Members
   const whoAmI = getFullAddress(address);
   setLocalAddress(whoAmI);
 
+  /**
+   * membership event format
+   * @param from
+   * @param to
+   * @param metadata
+   * @param origin
+   * @param type
+   */
   const getMembershipEvent = ({ from, to, metadata, origin, type }: ClusterApi.MembershipEvent) => ({
     detail: {
       metadata,
@@ -17,6 +25,15 @@ export const createMember = (address: Address, membersStatus: ClusterApi.Members
     },
     type: MEMBERSHIP_EVENT,
   });
+
+  /**
+   * loop on all connected members and update them on the change
+   * @param type
+   * @param metadata
+   * @param from
+   * @param to
+   * @param origin
+   */
   const updateConnectedMember = ({
     type,
     metadata,

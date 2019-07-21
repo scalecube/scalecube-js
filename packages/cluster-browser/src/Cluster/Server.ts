@@ -1,3 +1,4 @@
+import { ClusterApi } from '@scalecube/api';
 import {
   MEMBERSHIP_EVENT,
   INIT,
@@ -7,10 +8,9 @@ import {
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
 } from '../helpers/constants';
-import { ClusterApi } from '@scalecube/api';
 import { genericPostMessage, getKeysAsArray, saveToLogs } from '../helpers/utils';
 
-export const server: ClusterApi.CreateClusterServer = (options) => {
+export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.ClusterServerOptions) => {
   const {
     whoAmI,
     itemsToPublish,

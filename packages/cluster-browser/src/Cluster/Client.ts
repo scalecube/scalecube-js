@@ -11,7 +11,7 @@ import {
 } from '../helpers/constants';
 import { genericPostMessage, saveToLogs } from '../helpers/utils';
 
-export const client: ClusterApi.CreateClusterClient = (options) => {
+export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.ClusterClientOptions) => {
   const {
     whoAmI,
     membersStatus,
@@ -27,11 +27,78 @@ export const client: ClusterApi.CreateClusterClient = (options) => {
   } = options;
 
   let seed = '';
-  let portEventsHandler = (ev: any) => {};
-
-  let globalEventsHandler = (ev: any) => {};
-
   let retryTimer: any = null;
+
+  const portEventsHandler = function(ev: any) {
+    const { type: evType, detail: membershipEvent } = ev.data;
+    if (evType === MEMBERSHIP_EVENT) {
+      const { metadata, type, from, to, origin } = membershipEvent;
+
+      if (origin === whoAmI || from === whoAmI || from === to) {
+        return;
+      }
+
+      // console.log(`whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`);
+
+      if (type === INIT) {
+        clearInterval(retryTimer);
+        removeEventListener(MESSAGE, globalEventsHandler);
+        retryTimer = null;
+        // @ts-ignore
+        this.resolve ? this.resolve() : console.error('unable to resolve cluster client.');
+      }
+
+      membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+      updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
+
+      saveToLogs(
+        `${whoAmI} client received ${type} request from ${from}`,
+        {
+          membersState: { ...membersStatus.membersState },
+          membersPort: { ...membersStatus.membersPort },
+        },
+        debug
+      );
+
+      Object.keys(metadata).forEach((member: string) => {
+        rSubjectMembers &&
+          rSubjectMembers.next({
+            type,
+            items: metadata[member],
+            from: member,
+          });
+      });
+    }
+  };
+
+  const globalEventsHandler = function(ev: any) {
+    const { type: evType, detail: membershipEvent } = ev.data;
+    if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
+      const { from, origin } = membershipEvent;
+      if (from === seed && origin && origin === whoAmI) {
+        // @ts-ignore
+        port1.addEventListener(MESSAGE, portEventsHandler.bind(this));
+        port1.start();
+
+        clearInterval(retryTimer);
+        removeEventListener(MESSAGE, globalEventsHandler);
+        retryTimer = null;
+
+        genericPostMessage(
+          getMembershipEvent({
+            metadata: {
+              [whoAmI]: itemsToPublish,
+            },
+            type: INIT,
+            to: seed,
+            from: whoAmI,
+            origin: whoAmI,
+          }),
+          [port2]
+        );
+      }
+    }
+  };
 
   return Object.freeze({
     start: () =>
@@ -41,76 +108,11 @@ export const client: ClusterApi.CreateClusterClient = (options) => {
         } else {
           seed = getFullAddress(seedAddress);
 
-          portEventsHandler = (ev: any) => {
-            const { type: evType, detail: membershipEvent } = ev.data;
-            if (evType === MEMBERSHIP_EVENT) {
-              const { metadata, type, from, to, origin } = membershipEvent;
+          const ClusterStart = () => ({
+            resolve,
+          });
 
-              if (origin === whoAmI || from === whoAmI || from === to) {
-                return;
-              }
-
-              // console.log(`whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`);
-
-              if (type === INIT) {
-                clearInterval(retryTimer);
-                removeEventListener(MESSAGE, globalEventsHandler);
-                retryTimer = null;
-                resolve();
-              }
-
-              membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-              updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
-
-              saveToLogs(
-                `${whoAmI} client received ${type} request from ${from}`,
-                {
-                  membersState: { ...membersStatus.membersState },
-                  membersPort: { ...membersStatus.membersPort },
-                },
-                debug
-              );
-
-              Object.keys(metadata).forEach((member: string) => {
-                rSubjectMembers &&
-                  rSubjectMembers.next({
-                    type,
-                    items: metadata[member],
-                    from: member,
-                  });
-              });
-            }
-          };
-
-          globalEventsHandler = (ev: any) => {
-            const { type: evType, detail: membershipEvent } = ev.data;
-            if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
-              const { from, origin } = membershipEvent;
-              if (from === seed && origin && origin === whoAmI) {
-                port1.addEventListener(MESSAGE, portEventsHandler);
-                port1.start();
-
-                clearInterval(retryTimer);
-                removeEventListener(MESSAGE, globalEventsHandler);
-                retryTimer = null;
-
-                genericPostMessage(
-                  getMembershipEvent({
-                    metadata: {
-                      [whoAmI]: itemsToPublish,
-                    },
-                    type: INIT,
-                    to: seed,
-                    from: whoAmI,
-                    origin: whoAmI,
-                  }),
-                  [port2]
-                );
-              }
-            }
-          };
-
-          addEventListener(MESSAGE, globalEventsHandler);
+          addEventListener(MESSAGE, globalEventsHandler.bind(ClusterStart()));
 
           retryTimer = setInterval(() => {
             genericPostMessage({
