@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.1-alpha.26",
+  "version": "0.1.1-alpha.27",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
