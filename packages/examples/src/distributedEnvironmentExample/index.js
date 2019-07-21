@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     let msBtnCounter = 0;
     let subBtnCounter = 0;
 
-    const layout = canvasUtil.setLayeout();
+    const layout = canvasUtil.setLayout();
 
     layout.explanation(`Distributed environment example`, 300, 50, 20);
 

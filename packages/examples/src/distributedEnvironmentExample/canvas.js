@@ -146,7 +146,7 @@ canvasUtil = (() => {
   };
 
   return {
-    setLayeout: () => {
+    setLayout: () => {
       const canvas = document.getElementById('canvas');
       canvas.width = window.innerWidth * 0.75;
       canvas.height = window.innerHeight;
