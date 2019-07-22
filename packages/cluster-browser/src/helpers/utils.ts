@@ -7,13 +7,6 @@ export const setLocalAddress = (address: string) => {
   return localAddress;
 };
 
-export const saveToLogs = (msg: string, extra: { [key: string]: any }, debug?: boolean) => {
-  // tslint:disable
-  debug && extra && extra.membersState && console.log(msg, 'membersState: ', extra.membersState);
-  debug && extra && extra.membersPort && console.log(msg, 'membersPort: ', getKeysAsArray(extra.membersPort));
-  // tslint:enable
-};
-
 export const genericPostMessage = (data: any, transfer?: any[]) => {
   try {
     // @ts-ignore

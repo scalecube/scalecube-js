@@ -11,9 +11,10 @@ import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
-import { check, getAddress } from '@scalecube/utils';
+import { check, getAddress, getFullAddress, saveToLogs } from '@scalecube/utils';
 import { destroyAllClientConnections } from '../TransportProviders/MicroserviceClient';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
+import { tap } from 'rxjs/operators';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -60,8 +61,9 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       }) || []
     : [];
 
+  const fallBackAddress = address || getAddress(Date.now().toString());
   const discoveryInstance: DiscoveryApi.Discovery = createDiscoveryInstance({
-    address,
+    address: fallBackAddress,
     itemsToPublish: endPointsToPublishInCluster,
     seedAddress,
     discovery,
@@ -85,7 +87,24 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       })
     : null;
 
-  discoveryInstance.discoveredItems$().subscribe(remoteRegistry.update);
+  const printLogs = () =>
+    tap(
+      ({ type, items }: DiscoveryApi.ServiceDiscoveryEvent) =>
+        type !== 'IDLE' &&
+        saveToLogs(
+          getFullAddress(fallBackAddress),
+          `microservice has been received an updated`,
+          {
+            [type]: [...items],
+          },
+          debug
+        )
+    );
+
+  discoveryInstance
+    .discoveredItems$()
+    .pipe(printLogs())
+    .subscribe(remoteRegistry.update);
 
   const isServiceAvailable = isServiceAvailableInRegistry(
     endPointsToPublishInCluster,
@@ -195,14 +214,13 @@ const createMicroserviceContext = () => {
 };
 
 const createDiscoveryInstance = (opt: {
-  address?: Address;
+  address: Address;
   seedAddress?: Address;
   itemsToPublish: MicroserviceApi.Endpoint[];
   discovery: DiscoveryApi.CreateDiscovery;
   debug?: boolean;
 }): DiscoveryApi.Discovery => {
-  const { seedAddress, itemsToPublish, discovery, debug } = opt;
-  const address = opt.address || getAddress(Date.now().toString());
+  const { seedAddress, itemsToPublish, discovery, debug, address } = opt;
   const discoveryInstance = discovery({
     address,
     itemsToPublish,

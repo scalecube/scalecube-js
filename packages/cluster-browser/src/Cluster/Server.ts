@@ -1,4 +1,5 @@
 import { ClusterApi } from '@scalecube/api';
+import { saveToLogs } from '@scalecube/utils';
 import {
   MEMBERSHIP_EVENT,
   INIT,
@@ -8,7 +9,7 @@ import {
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
 } from '../helpers/constants';
-import { genericPostMessage, getKeysAsArray, saveToLogs } from '../helpers/utils';
+import { genericPostMessage, getKeysAsArray } from '../helpers/utils';
 
 export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.ClusterServerOptions) => {
   const {
@@ -76,10 +77,11 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
         });
 
       saveToLogs(
+        whoAmI,
         `${whoAmI} server received ${type} request from ${from}`,
         {
           membersState: { ...membersStatus.membersState },
-          membersPort: { ...membersStatus.membersPort },
+          membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
         },
         debug
       );
@@ -168,10 +170,11 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
     updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
 
     saveToLogs(
+      whoAmI,
       `${whoAmI} server received ${type} request from ${from}`,
       {
         membersState: { ...membersStatus.membersState },
-        membersPort: { ...membersStatus.membersPort },
+        membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
       },
       debug
     );
