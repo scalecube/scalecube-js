@@ -40,7 +40,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   validateMicroserviceOptions(microserviceOptions);
 
   const connectionManager = createConnectionManager();
-  const { services, transport, discovery } = microserviceOptions;
+  const { services, transport, discovery, debug } = microserviceOptions;
   const address = microserviceOptions.address as Address;
   const seedAddress = microserviceOptions.seedAddress as Address;
 
@@ -65,6 +65,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     itemsToPublish: endPointsToPublishInCluster,
     seedAddress,
     discovery,
+    debug,
   });
 
   // server use only localCall therefor, router is irrelevant
@@ -198,13 +199,15 @@ const createDiscoveryInstance = (opt: {
   seedAddress?: Address;
   itemsToPublish: MicroserviceApi.Endpoint[];
   discovery: DiscoveryApi.CreateDiscovery;
+  debug?: boolean;
 }): DiscoveryApi.Discovery => {
-  const { seedAddress, itemsToPublish, discovery } = opt;
+  const { seedAddress, itemsToPublish, discovery, debug } = opt;
   const address = opt.address || getAddress(Date.now().toString());
   const discoveryInstance = discovery({
     address,
     itemsToPublish,
     seedAddress,
+    debug,
   });
 
   validateDiscoveryInstance(discoveryInstance);

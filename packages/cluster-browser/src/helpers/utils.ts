@@ -1,6 +1,3 @@
-import { ClusterApi } from '@scalecube/api';
-import { MEMBERSHIP_EVENT } from './constants';
-
 export const getKeysAsArray = (obj: {}) => (obj && Object.keys(obj)) || [];
 
 let localAddress: any[] = [];

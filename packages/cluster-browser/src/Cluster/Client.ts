@@ -45,7 +45,7 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
         removeEventListener(MESSAGE, globalEventsHandler);
         retryTimer = null;
         // @ts-ignore
-        this.resolve ? this.resolve() : console.error('unable to resolve cluster client.');
+        this.resolveClusterStart ? this.resolveClusterStart() : console.error('unable to resolve cluster client.');
       }
 
       membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
@@ -109,7 +109,7 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
           seed = getFullAddress(seedAddress);
 
           const ClusterStart = () => ({
-            resolve,
+            resolveClusterStart: resolve,
           });
 
           addEventListener(MESSAGE, globalEventsHandler.bind(ClusterStart()));
