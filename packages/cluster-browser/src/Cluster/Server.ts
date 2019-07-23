@@ -23,24 +23,100 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
     seed,
     debug,
   } = options;
-  const globalEventsHandler = (ev: any) => {
-    const { type: evType, detail: membershipEvent } = ev.data;
-    if (evType === MEMBERSHIP_EVENT) {
-      const { metadata, type, to, from, origin } = membershipEvent;
+  const eventHandlers = {
+    [`globalEventsHandler${whoAmI}`]: (ev: any) => {
+      const { type: evType, detail: membershipEvent } = ev.data;
+      if (evType === MEMBERSHIP_EVENT) {
+        const { metadata, type, to, from, origin } = membershipEvent;
 
-      if (origin === whoAmI || from === whoAmI || from === to || to !== whoAmI) {
+        if (origin === whoAmI || from === whoAmI || from === to || to !== whoAmI) {
+          return;
+        }
+
+        if (membersStatus.membersState[origin]) {
+          console.error(`Address collusion ${origin} already exists`);
+          return;
+        }
+
+        // console.log('Server listen to global', { ...membersStatus.membersState },metadata, whoAmI)
+        const mPort: MessagePort = ev && ev.ports && ev.ports[0];
+        if (!mPort) {
+          console.error(`Address collusion ${whoAmI} and ${from}`);
+        }
+
+        mPort.addEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`]);
+        mPort.start();
+
+        // 1. update seed with the new metadata
+        seed &&
+          port1.postMessage(
+            getMembershipEvent({
+              from: whoAmI,
+              to: seed,
+              origin,
+              metadata,
+              type: ADDED,
+            })
+          );
+
+        // 2. response to initiator of the contact with all members data
+        mPort.postMessage(
+          getMembershipEvent({
+            from: whoAmI,
+            to: from,
+            origin: whoAmI,
+            metadata: { ...membersStatus.membersState, [whoAmI]: itemsToPublish },
+            type: INIT,
+          })
+        );
+
+        // 3. update membersState
+        membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+        updateConnectedMember({ metadata, type: ADDED, from, to, origin });
+        // 4. update ports
+        membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
+
+        rSubjectMembers &&
+          rSubjectMembers.next({
+            type,
+            items: metadata[origin],
+            from: origin,
+          });
+
+        saveToLogs(
+          whoAmI,
+          `${whoAmI} server received ${type} request from ${from}`,
+          {
+            membersState: { ...membersStatus.membersState },
+            membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
+          },
+          debug
+        );
+      }
+
+      if (evType === MEMBERSHIP_EVENT_INIT_SERVER) {
+        const { to, origin } = membershipEvent;
+        if (to === whoAmI && to !== origin) {
+          genericPostMessage({
+            detail: {
+              from: whoAmI,
+              to: origin,
+              origin,
+            },
+            type: MEMBERSHIP_EVENT_INIT_CLIENT,
+          });
+        }
+      }
+    },
+    [`portEventsHandler${whoAmI}`]: (ev: any) => {
+      const { type: evType, detail: membershipEvent } = ev.data;
+      const { metadata, type, from, to, origin } = membershipEvent;
+
+      if (origin === whoAmI || from === whoAmI || to !== whoAmI) {
         return;
       }
 
-      const mPort: MessagePort = ev && ev.ports && ev.ports[0];
-      if (!mPort) {
-        console.error(`Address collusion ${whoAmI} and ${from}`);
-      }
-
-      mPort.addEventListener(MESSAGE, portEventsHandler);
-      mPort.start();
-
-      // 1. update seed with the new metadata
+      // update seed with the change in members
       seed &&
         port1.postMessage(
           getMembershipEvent({
@@ -48,33 +124,56 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
             to: seed,
             origin,
             metadata,
-            type: ADDED,
+            type,
           })
         );
 
-      // 2. response to initiator of the contact with all members data
-      mPort.postMessage(
-        getMembershipEvent({
-          from: whoAmI,
-          to: from,
-          origin: whoAmI,
-          metadata: { ...membersStatus.membersState, [whoAmI]: itemsToPublish },
-          type: INIT,
-        })
-      );
+      switch (type) {
+        case INIT:
+          break;
+        case ADDED:
+          membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
 
-      // 3. update membersState
-      membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-      updateConnectedMember({ metadata, type: ADDED, from, to, origin });
-      // 4. update ports
-      membersStatus.membersPort = { ...membersStatus.membersPort, [from]: mPort };
+          rSubjectMembers &&
+            rSubjectMembers.next({
+              type,
+              items: metadata[origin],
+              from: origin,
+            });
+          break;
+        case REMOVED:
+          if (membersStatus.membersState[from]) {
+            delete membersStatus.membersState[from];
+          }
 
-      rSubjectMembers &&
-        rSubjectMembers.next({
-          type,
-          items: metadata[origin],
-          from: origin,
-        });
+          const mPort = membersStatus.membersPort[from];
+          if (mPort) {
+            mPort.postMessage(
+              getMembershipEvent({
+                type: 'CLOSE',
+                metadata: {},
+                to: from,
+                from: to,
+                origin: whoAmI,
+              })
+            );
+
+            membersStatus.membersPort[from].close();
+
+            rSubjectMembers &&
+              rSubjectMembers.next({
+                type,
+                items: metadata[origin],
+                from: origin,
+              });
+          }
+          break;
+        default:
+          console.warn('Not supported membership event type');
+          return;
+      }
+
+      updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
 
       saveToLogs(
         whoAmI,
@@ -85,104 +184,12 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
         },
         debug
       );
-    }
-
-    if (evType === MEMBERSHIP_EVENT_INIT_SERVER) {
-      const { to, origin } = membershipEvent;
-      if (to === whoAmI && to !== origin) {
-        genericPostMessage({
-          detail: {
-            from: whoAmI,
-            to: origin,
-            origin,
-          },
-          type: MEMBERSHIP_EVENT_INIT_CLIENT,
-        });
-      }
-    }
-  };
-
-  const portEventsHandler = (ev: any) => {
-    const { type: evType, detail: membershipEvent } = ev.data;
-    const { metadata, type, from, to, origin } = membershipEvent;
-
-    if (origin === whoAmI || from === whoAmI || to !== whoAmI) {
-      return;
-    }
-
-    // update seed with the change in members
-    seed &&
-      port1.postMessage(
-        getMembershipEvent({
-          from: whoAmI,
-          to: seed,
-          origin,
-          metadata,
-          type,
-        })
-      );
-
-    switch (type) {
-      case INIT:
-        break;
-      case ADDED:
-        membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-
-        rSubjectMembers &&
-          rSubjectMembers.next({
-            type,
-            items: metadata[origin],
-            from: origin,
-          });
-        break;
-      case REMOVED:
-        if (membersStatus.membersState[from]) {
-          delete membersStatus.membersState[from];
-        }
-
-        const mPort = membersStatus.membersPort[from];
-        if (mPort) {
-          mPort.postMessage(
-            getMembershipEvent({
-              type: 'CLOSE',
-              metadata: {},
-              to: from,
-              from: to,
-              origin: whoAmI,
-            })
-          );
-
-          membersStatus.membersPort[from].close();
-
-          rSubjectMembers &&
-            rSubjectMembers.next({
-              type,
-              items: metadata[origin],
-              from: origin,
-            });
-        }
-        break;
-      default:
-        console.warn('Not supported membership event type');
-        return;
-    }
-
-    updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
-
-    saveToLogs(
-      whoAmI,
-      `${whoAmI} server received ${type} request from ${from}`,
-      {
-        membersState: { ...membersStatus.membersState },
-        membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
-      },
-      debug
-    );
+    },
   };
 
   return {
     start: () => {
-      addEventListener(MESSAGE, globalEventsHandler);
+      addEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
 
       genericPostMessage({
         detail: {
@@ -192,7 +199,7 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
       });
     },
     stop: () => {
-      removeEventListener(MESSAGE, globalEventsHandler);
+      removeEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
 
       const membersList = getKeysAsArray({ ...membersStatus.membersPort });
       membersList.forEach((to) => {
@@ -210,7 +217,7 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
             })
           );
 
-        mPort.removeEventListener(MESSAGE, portEventsHandler);
+        mPort.removeEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`]);
         mPort.close();
       });
 

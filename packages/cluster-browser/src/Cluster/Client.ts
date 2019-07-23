@@ -29,76 +29,90 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
   let seed = '';
   let retryTimer: any = null;
 
-  const portEventsHandler = function(ev: any) {
-    const { type: evType, detail: membershipEvent } = ev.data;
-    if (evType === MEMBERSHIP_EVENT) {
-      const { metadata, type, from, to, origin } = membershipEvent;
+  const eventHandlers = {
+    // tslint:disable-next-line
+    [`globalEventsHandler${whoAmI}`]: function(ev: any) {
+      const { type: evType, detail: membershipEvent } = ev.data;
+      if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
+        const { from, origin } = membershipEvent;
+        if (from === seed && origin && origin === whoAmI) {
+          // @ts-ignore
+          port1.addEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`].bind(this));
+          port1.start();
 
-      if (origin === whoAmI || from === whoAmI || from === to) {
-        return;
+          clearInterval(retryTimer);
+          removeEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
+          retryTimer = null;
+
+          genericPostMessage(
+            getMembershipEvent({
+              metadata: {
+                [whoAmI]: itemsToPublish,
+              },
+              type: INIT,
+              to: seed,
+              from: whoAmI,
+              origin: whoAmI,
+            }),
+            [port2]
+          );
+        }
       }
+    },
+    // tslint:disable-next-line
+    [`portEventsHandler${whoAmI}`]: function(ev: any) {
+      const { type: evType, detail: membershipEvent } = ev.data;
+      if (evType === MEMBERSHIP_EVENT) {
+        const { metadata, type, from, to, origin } = membershipEvent;
 
-      // console.log(`whoAmI ${whoAmI} seed ${seed} type ${type} from ${from} to ${to} metadata ${metadata}`);
+        if (origin === whoAmI || from === whoAmI || from === to) {
+          return;
+        }
 
-      if (type === INIT) {
-        clearInterval(retryTimer);
-        removeEventListener(MESSAGE, globalEventsHandler);
-        retryTimer = null;
-        // @ts-ignore
-        this.resolveClusterStart ? this.resolveClusterStart() : console.error('unable to resolve cluster client.');
-      }
+        switch (type) {
+          case INIT:
+            clearInterval(retryTimer);
+            removeEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
+            retryTimer = null;
+            membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+            // @ts-ignore
+            this.resolveClusterStart ? this.resolveClusterStart() : console.error('unable to resolve cluster client.');
+            break;
 
-      membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
-      updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
+          case ADDED:
+            membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
+            break;
+          case REMOVED:
+            if (membersStatus.membersState[from]) {
+              delete membersStatus.membersState[from];
+            }
 
-      saveToLogs(
-        whoAmI,
-        `${whoAmI} client received ${type} request from ${from}`,
-        {
-          membersState: { ...membersStatus.membersState },
-          membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
-        },
-        debug
-      );
+            break;
+        }
 
-      Object.keys(metadata).forEach((member: string) => {
-        rSubjectMembers &&
-          rSubjectMembers.next({
-            type,
-            items: metadata[member],
-            from: member,
-          });
-      });
-    }
-  };
+        updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
 
-  const globalEventsHandler = function(ev: any) {
-    const { type: evType, detail: membershipEvent } = ev.data;
-    if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
-      const { from, origin } = membershipEvent;
-      if (from === seed && origin && origin === whoAmI) {
-        // @ts-ignore
-        port1.addEventListener(MESSAGE, portEventsHandler.bind(this));
-        port1.start();
+        saveToLogs(
+          whoAmI,
+          `${whoAmI} client received ${type} request from ${from}`,
+          {
+            membersState: { ...membersStatus.membersState },
+            membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
+          },
+          debug
+        );
 
-        clearInterval(retryTimer);
-        removeEventListener(MESSAGE, globalEventsHandler);
-        retryTimer = null;
-
-        genericPostMessage(
-          getMembershipEvent({
-            metadata: {
-              [whoAmI]: itemsToPublish,
-            },
-            type: INIT,
-            to: seed,
-            from: whoAmI,
-            origin: whoAmI,
-          }),
-          [port2]
+        Object.keys(metadata).forEach(
+          (member: string) =>
+            rSubjectMembers &&
+            rSubjectMembers.next({
+              type,
+              items: metadata[member],
+              from: member,
+            })
         );
       }
-    }
+    },
   };
 
   return Object.freeze({
@@ -113,7 +127,7 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
             resolveClusterStart: resolve,
           });
 
-          addEventListener(MESSAGE, globalEventsHandler.bind(ClusterStart()));
+          addEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`].bind(ClusterStart()));
 
           retryTimer = setInterval(() => {
             genericPostMessage({
@@ -149,8 +163,8 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
         })
       );
 
-      removeEventListener(MESSAGE, globalEventsHandler);
-      port1.removeEventListener(MESSAGE, portEventsHandler);
+      removeEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
+      port1.removeEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`]);
       port1.close();
       port2.close();
       saveToLogs(

@@ -1,5 +1,5 @@
 import { Address } from '..';
-import { ClusterEvent, MembersMap } from './index';
+import { ClusterEvent, MembersData } from './index';
 import { Observable } from 'rxjs';
 
 /**
@@ -30,7 +30,7 @@ export interface ClusterOptions {
   /**
    * @property transport
    */
-  transport: any;
+  transport?: any;
   /**
    * @property retry
    * retry configuration for connecting members
@@ -52,7 +52,7 @@ export interface Cluster {
    * @property getCurrentMemberStates
    * resolve with current member state
    */
-  getCurrentMemberStates: () => Promise<MembersMap>;
+  getCurrentMemberStates: () => Promise<MembersData>;
   /**
    * @property listen$
    * subscribe to changes in the members state

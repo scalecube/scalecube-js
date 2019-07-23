@@ -59,21 +59,34 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   });
 
   return Object.freeze({
-    getCurrentMemberStates: () => Promise.resolve({ ...membersStatus.membersState }),
     listen$: () => rSubjectMembers.asObservable(),
+    getCurrentMemberStates: () =>
+      new Promise<ClusterApi.MembersData>((resolve, reject) => {
+        const getMemberStateCluster = () => {
+          resolve({ ...membersStatus.membersState });
+        };
+        if (!isConnected) {
+          delayedActions.push(getMemberStateCluster);
+        } else {
+          getMemberStateCluster();
+        }
+      }),
     destroy: () => {
       return new Promise((resolve, reject) => {
-        const destroyCluster = () => {
-          clientPort && clientPort.stop();
-          serverPort.stop();
+        const destroyCluster = async () => {
+          await serverPort.stop();
+          (await clientPort) && clientPort.stop();
           rSubjectMembers.complete();
+          membersStatus.membersPort = {};
+          membersStatus.membersState = {};
+
           resolve('');
         };
 
         if (!isConnected) {
           delayedActions.push(destroyCluster);
         } else {
-          destroyCluster();
+          return destroyCluster();
         }
       });
     },

@@ -88,13 +88,6 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
                 items,
               });
             }
-          } else {
-            if (type === 'INIT') {
-              discoveredItemsSubject.next({
-                type: 'IDLE',
-                items: [],
-              });
-            }
           }
         },
         (error: any) => discoveredItemsSubject.error(error),
