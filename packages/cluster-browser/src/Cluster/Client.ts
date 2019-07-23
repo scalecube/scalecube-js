@@ -8,6 +8,7 @@ import {
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
   ADDED,
+  getMultiInitClientFromServer,
 } from '../helpers/constants';
 import { genericPostMessage, getKeysAsArray } from '../helpers/utils';
 
@@ -28,7 +29,7 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
 
   let seed = '';
   let retryTimer: any = null;
-
+  let countServers = 0;
   const eventHandlers = {
     // tslint:disable-next-line
     [`globalEventsHandler${whoAmI}`]: function(ev: any) {
@@ -36,6 +37,13 @@ export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.Clust
       if (evType === MEMBERSHIP_EVENT_INIT_CLIENT) {
         const { from, origin } = membershipEvent;
         if (from === seed && origin && origin === whoAmI) {
+          countServers++;
+
+          if (countServers > 1) {
+            console.warn(getMultiInitClientFromServer(whoAmI, from));
+            return;
+          }
+
           // @ts-ignore
           port1.addEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`].bind(this));
           port1.start();

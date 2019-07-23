@@ -8,6 +8,7 @@ import {
   ADDED,
   MEMBERSHIP_EVENT_INIT_SERVER,
   MEMBERSHIP_EVENT_INIT_CLIENT,
+  getMultiInitClientFromServer,
 } from '../helpers/constants';
 import { genericPostMessage, getKeysAsArray } from '../helpers/utils';
 
@@ -34,14 +35,14 @@ export const server: ClusterApi.CreateClusterServer = (options: ClusterApi.Clust
         }
 
         if (membersStatus.membersState[origin]) {
-          console.error(`Address collusion ${origin} already exists`);
+          console.warn(getMultiInitClientFromServer(whoAmI, origin));
           return;
         }
 
         // console.log('Server listen to global', { ...membersStatus.membersState },metadata, whoAmI)
         const mPort: MessagePort = ev && ev.ports && ev.ports[0];
         if (!mPort) {
-          console.error(`Address collusion ${whoAmI} and ${from}`);
+          console.error(`${whoAmI} unable to receive port from ${from}`);
         }
 
         mPort.addEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`]);
