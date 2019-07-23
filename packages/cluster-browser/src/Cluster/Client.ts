@@ -1,4 +1,3 @@
-import { ClusterApi } from '@scalecube/api';
 import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import {
   MEMBERSHIP_EVENT,
@@ -11,8 +10,9 @@ import {
   getMultiInitClientFromServer,
 } from '../helpers/constants';
 import { genericPostMessage, getKeysAsArray } from '../helpers/utils';
+import { ClusterClientOptions, CreateClusterClient } from '../helpers/types';
 
-export const client: ClusterApi.CreateClusterClient = (options: ClusterApi.ClusterClientOptions) => {
+export const client: CreateClusterClient = (options: ClusterClientOptions) => {
   const {
     whoAmI,
     membersStatus,

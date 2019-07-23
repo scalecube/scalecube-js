@@ -11,10 +11,10 @@ Scalecube provides tools like:
 [Microservice](packages/scalecube-microservice/README.md),  
 [Router](<>),  
 [Discovery](packages/scalecube-discovery/README.md),  
-[Transport-browser](packages/transport-browser/README.md),   
+[Transport-browser](packages/transport-browser/README.md),  
 [Transport-nodejs](packages/transport-nodejs/README.md),  
 [Gateway](<>),  
-[Cluster-browser](<packages/cluster-browser/README.md>),  
+[Cluster-browser](packages/cluster-browser/README.md),  
 [Cluster-nodejs](<>).
 
 ## Basic Usage
