@@ -74,8 +74,12 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
     destroy: () => {
       return new Promise((resolve, reject) => {
         const destroyCluster = async () => {
-          await serverPort.stop();
-          (await clientPort) && clientPort.stop();
+          try {
+            await serverPort.stop();
+            clientPort && (await clientPort.stop());
+          } catch (e) {
+            console.warn(`unable to destroy ${whoAmI}: ${e}`);
+          }
           rSubjectMembers.complete();
           membersStatus.membersPort = {};
           membersStatus.membersState = {};
