@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/utils",
-  "version": "0.0.2-alpha.7",
+  "version": "0.0.2-alpha.8",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -34,6 +34,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.7"
+    "@scalecube/api": "^0.0.2-alpha.8"
   }
 }
