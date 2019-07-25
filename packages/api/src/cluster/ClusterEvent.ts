@@ -7,7 +7,7 @@ import { MemberEventType } from './index';
 export interface ClusterEvent {
   /**
    * @property
-   * 'ADDED' | 'REMOVED' | 'INIT' | 'CLOSE'
+   * 'ADDED' | 'REMOVED' | 'INIT'
    */
   type: MemberEventType;
   /**

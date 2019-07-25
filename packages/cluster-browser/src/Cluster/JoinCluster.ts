@@ -6,7 +6,7 @@ import { client } from './Client';
 import { createMember } from './Member';
 
 export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
-  const { address, seedAddress, itemsToPublish, transport, retry, debug } = options;
+  const { address, seedAddress, itemsToPublish, retry, debug } = options;
   const { port1, port2 } = new MessageChannel();
   const membersStatus: ClusterApi.MembersMap = {
     membersPort: {},

@@ -27,7 +27,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
 
   const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
-  const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, transport: null, debug });
+  const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, debug });
 
   const clusterListener = cluster.listen$();
   let subscription: any;

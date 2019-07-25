@@ -28,10 +28,6 @@ export interface ClusterOptions {
    */
   itemsToPublish: any;
   /**
-   * @property transport
-   */
-  transport?: any;
-  /**
    * @property retry
    * retry configuration for connecting members
    */
