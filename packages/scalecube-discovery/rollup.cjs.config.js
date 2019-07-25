@@ -11,14 +11,8 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      name: 'discovery',
       file: pkg.main,
       format: 'cjs',
-    },
-    {
-      name: 'discovery',
-      file: pkg.module,
-      format: 'es',
     },
   ],
   external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
@@ -31,7 +25,8 @@ export default {
     resolve(),
     commonjs({ include: 'node_modules/**' }),
     visualizer({
-      filename: 'report.html',
+      filename: 'report.cjs.html',
+      title: 'Discovery - cjs',
     }),
     typescript({
       typescript: tscompile,

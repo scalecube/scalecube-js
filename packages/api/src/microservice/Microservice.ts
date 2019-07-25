@@ -77,4 +77,9 @@ export interface MicroserviceOptions {
    * discovery responsible to exchange data in the distributed env.
    */
   discovery?: (opt: DiscoveryOptions) => Discovery;
+  /**
+   * @property
+   * add logs to the microservice container
+   */
+  debug?: boolean;
 }

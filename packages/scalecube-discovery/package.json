@@ -12,8 +12,9 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "yarn build-rollup",
-    "build-rollup": "rollup -c",
+    "build": "rimraf .cache && yarn build:es && yarn build:cjs",
+    "build:es": "rimraf es && rollup -c rollup.es.config.js",
+    "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env",
@@ -42,6 +43,7 @@
   "dependencies": {
     "@scalecube/api": "^0.0.2-alpha.7",
     "@scalecube/utils": "^0.0.2-alpha.7",
+    "@scalecube/cluster-browser": "^0.0.1",
     "rxjs": "^6.4.0"
   }
 }

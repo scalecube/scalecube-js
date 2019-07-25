@@ -107,8 +107,8 @@ describe('Test discovery success scenarios', () => {
     // @ts-ignore
     expect.assertions(3);
 
-    const aAddress = getAddress('A');
-    const bAddress = getAddress('B');
+    const aAddress = getAddress('A2');
+    const bAddress = getAddress('B2');
     const bItem = 'bItemData';
     const discoveryB = createDiscovery({
       address: bAddress,

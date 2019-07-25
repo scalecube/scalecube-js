@@ -7,7 +7,15 @@
 # Scalecube
 
 Scalecube is a toolkit for creating microservices based systems.  
-Scalecube provides tools like: [Microservice](packages/scalecube-microservice/README.md), [Router](<>), [Discovery](packages/scalecube-discovery/README.md), [Transport-browser](packages/transport-browser/README.md), [Transport-nodejs](packages/transport-nodejs/README.md), [Gateway](<>), [Cluster](<>).
+Scalecube provides tools like:  
+[Microservice](packages/scalecube-microservice/README.md),  
+[Router](<>),  
+[Discovery](packages/scalecube-discovery/README.md),  
+[Transport-browser](packages/transport-browser/README.md),  
+[Transport-nodejs](packages/transport-nodejs/README.md),  
+[Gateway](<>),  
+[Cluster-browser](packages/cluster-browser/README.md),  
+[Cluster-nodejs](<>).
 
 ## Basic Usage
 
@@ -33,7 +41,7 @@ const microserviceInstance = createMicroservice({
   services: [{
         definition: greetingsDefinition,
         reference: { hello : (name) => `Hello ${name}!` }
-  }]
+  }],
   address : 'remoteService1'
 });
 ```

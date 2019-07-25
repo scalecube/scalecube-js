@@ -1,7 +1,6 @@
 import { Address } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 
-export const ADDRESS_DESTROYED = 'address already been removed';
 export const INVALID_ITEMS_TO_PUBLISH = 'itemsToPublish are not of type Array';
 
 export const getAddressCollision = (address: string, seedAddress: string) =>

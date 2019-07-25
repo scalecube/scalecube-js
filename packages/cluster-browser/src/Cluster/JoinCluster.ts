@@ -1,26 +1,14 @@
 import { ReplaySubject } from 'rxjs';
-import { Address } from '@scalecube/api';
+import { ClusterApi } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
-import { Cluster, MemberEventType, MembersMap } from '../../helpers/types';
 import { server } from './Server';
 import { client } from './Client';
-import { setLocalAddress, utils } from './utils';
+import { createMember } from './Member';
 
-interface JoinCluster {
-  address: Address;
-  seedAddress?: Address;
-  itemsToPublish: any;
-  transport: any;
-  retry?: {
-    timeout: number;
-  };
-  debug?: boolean;
-}
-
-export const joinCluster = (options: JoinCluster): Cluster => {
-  const { address, seedAddress, itemsToPublish, transport, retry, debug } = options;
+export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
+  const { address, seedAddress, itemsToPublish, retry, debug } = options;
   const { port1, port2 } = new MessageChannel();
-  const membersStatus: MembersMap = {
+  const membersStatus: ClusterApi.MembersMap = {
     membersPort: {},
     membersState: {},
   };
@@ -28,13 +16,11 @@ export const joinCluster = (options: JoinCluster): Cluster => {
   const delayedActions: any[] = [];
   let isConnected = !seedAddress;
 
-  const rSubjectMembers = new ReplaySubject<ClusterEvent>(1);
-  const whoAmI = getFullAddress(address);
-  setLocalAddress(whoAmI);
+  const rSubjectMembers = new ReplaySubject<ClusterApi.ClusterEvent>(1);
 
   let clientPort: any;
 
-  const { updateConnectedMember, getMembershipEvent } = utils(whoAmI, membersStatus);
+  const { updateConnectedMember, getMembershipEvent, whoAmI } = createMember(address, membersStatus);
 
   const serverPort = server({
     whoAmI,
@@ -73,29 +59,40 @@ export const joinCluster = (options: JoinCluster): Cluster => {
   });
 
   return Object.freeze({
-    getCurrentMemberStates: () => Promise.resolve({ ...membersStatus.membersState }),
     listen$: () => rSubjectMembers.asObservable(),
+    getCurrentMembersData: () =>
+      new Promise<ClusterApi.MembersData>((resolve, reject) => {
+        const getMemberStateCluster = () => {
+          resolve({ ...membersStatus.membersState });
+        };
+        if (!isConnected) {
+          delayedActions.push(getMemberStateCluster);
+        } else {
+          getMemberStateCluster();
+        }
+      }),
     destroy: () => {
       return new Promise((resolve, reject) => {
-        const destroyCluster = () => {
-          clientPort && clientPort.stop();
-          serverPort.stop();
+        const destroyCluster = async () => {
+          try {
+            await serverPort.stop();
+            clientPort && (await clientPort.stop());
+          } catch (e) {
+            console.warn(`unable to destroy ${whoAmI}: ${e}`);
+          }
           rSubjectMembers.complete();
+          membersStatus.membersPort = {};
+          membersStatus.membersState = {};
+
           resolve('');
         };
 
         if (!isConnected) {
           delayedActions.push(destroyCluster);
         } else {
-          destroyCluster();
+          return destroyCluster();
         }
       });
     },
-  }) as Cluster;
+  } as ClusterApi.Cluster);
 };
-
-export interface ClusterEvent {
-  type: MemberEventType;
-  items: [];
-  from: string;
-}
