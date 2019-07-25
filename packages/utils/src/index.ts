@@ -3,5 +3,6 @@ import { getFullAddress, validateAddress, getAddress } from './address';
 import * as constants from './constants';
 import { addWorker, removeWorker } from './connectWorkers';
 import { saveToLogs } from './logs';
+import { isNodejs } from './checkEnvironemnt';
 
-export { check, getFullAddress, validateAddress, constants, getAddress, addWorker, removeWorker, saveToLogs };
+export { check, getFullAddress, validateAddress, constants, getAddress, addWorker, removeWorker, saveToLogs, isNodejs };

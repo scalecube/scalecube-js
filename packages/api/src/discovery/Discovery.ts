@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { Item, ServiceDiscoveryEvent } from '.';
 import { Address } from '../common';
+import { Cluster, ClusterOptions } from '../cluster';
 
 /**
  * @interface CreateDiscovery
@@ -29,7 +30,13 @@ export interface DiscoveryOptions {
    * the address we want to use in-order to connect to the distributed environment.
    */
   seedAddress?: Address;
-
+  /**
+   * @method
+   * Pluggable cluster,
+   * a module that implements Cluster API
+   * cluster responsible to bootstrap the distributed env.
+   */
+  cluster?: (opt: ClusterOptions) => Cluster;
   /**
    * @property
    * enable discovery console.logs
