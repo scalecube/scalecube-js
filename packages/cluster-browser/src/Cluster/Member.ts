@@ -2,6 +2,7 @@ import { ClusterApi, Address } from '@scalecube/api';
 import { MEMBERSHIP_EVENT } from '../helpers/constants';
 import { getFullAddress } from '@scalecube/utils';
 import { setLocalAddress } from '../helpers/utils';
+import { MembershipEvent } from '../helpers/types';
 
 export const createMember = (address: Address, membersStatus: ClusterApi.MembersMap) => {
   const whoAmI = getFullAddress(address);
@@ -15,7 +16,7 @@ export const createMember = (address: Address, membersStatus: ClusterApi.Members
    * @param origin
    * @param type
    */
-  const getMembershipEvent = ({ from, to, metadata, origin, type }: ClusterApi.MembershipEvent) => ({
+  const getMembershipEvent = ({ from, to, metadata, origin, type }: MembershipEvent) => ({
     detail: {
       metadata,
       type,

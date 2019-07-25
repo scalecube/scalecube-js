@@ -1,5 +1,3 @@
-import { MemberEventType } from './index';
-
 /**
  * @interface ClusterEvent
  * Notification from Cluster to the subscriber
@@ -21,3 +19,5 @@ export interface ClusterEvent {
    */
   from: string;
 }
+
+export type MemberEventType = 'ADDED' | 'REMOVED' | 'INIT';

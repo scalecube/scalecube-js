@@ -45,7 +45,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
     },
     discoveredItems$: () => {
       cluster
-        .getCurrentMemberStates()
+        .getCurrentMembersData()
         .then((currentMembersState: ClusterApi.MembersData) => {
           const members = Object.keys(currentMembersState);
           members.forEach((member: string) => {

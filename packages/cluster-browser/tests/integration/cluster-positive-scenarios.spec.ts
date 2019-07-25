@@ -129,7 +129,7 @@ describe('cluster-positive-scenarios', () => {
       }
     };
 
-    client.getCurrentMemberStates().then((res: any) => {
+    client.getCurrentMembersData().then((res: any) => {
       expect(res).toMatchObject({ [getFullAddress(serverAddress)]: ['s1', 's2'] });
       clientFlag = true;
       isDone();

@@ -60,7 +60,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
 
   return Object.freeze({
     listen$: () => rSubjectMembers.asObservable(),
-    getCurrentMemberStates: () =>
+    getCurrentMembersData: () =>
       new Promise<ClusterApi.MembersData>((resolve, reject) => {
         const getMemberStateCluster = () => {
           resolve({ ...membersStatus.membersState });

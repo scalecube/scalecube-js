@@ -46,9 +46,9 @@ export interface ClusterOptions {
 export interface Cluster {
   /**
    * @property getCurrentMemberStates
-   * resolve with current member state
+   * resolve with the current information of the other members in the distributed environment
    */
-  getCurrentMemberStates: () => Promise<MembersData>;
+  getCurrentMembersData: () => Promise<MembersData>;
   /**
    * @property listen$
    * subscribe to changes in the members state
