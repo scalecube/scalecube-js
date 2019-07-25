@@ -1,19 +1,28 @@
-import { getFullAddress, validateAddress, check } from '@scalecube/utils';
+import { ReplaySubject, throwError } from 'rxjs';
+import { getFullAddress, validateAddress, check, isNodejs } from '@scalecube/utils';
 import { Address, DiscoveryApi, ClusterApi } from '@scalecube/api';
-import { joinCluster } from '@scalecube/cluster-browser';
+import { joinCluster as defaultJoinCluster } from '@scalecube/cluster-browser';
 import {
   getAddressCollision,
   getDiscoverySuccessfullyDestroyedMessage,
   INVALID_ITEMS_TO_PUBLISH,
+  NODEJS_MUST_PROVIDE_CLUSTER_IMPL,
 } from '../helpers/constants';
-import { ReplaySubject } from 'rxjs';
 
-export const createDiscovery: DiscoveryApi.CreateDiscovery = ({
-  address,
-  itemsToPublish,
-  seedAddress,
-  debug,
-}: DiscoveryApi.DiscoveryOptions): DiscoveryApi.Discovery => {
+export const createDiscovery: DiscoveryApi.CreateDiscovery = (
+  options: DiscoveryApi.DiscoveryOptions
+): DiscoveryApi.Discovery => {
+  const { address, itemsToPublish, seedAddress, debug } = options;
+  const joinCluster = options.cluster || (!isNodejs() ? defaultJoinCluster : undefined);
+
+  if (!joinCluster) {
+    console.warn(NODEJS_MUST_PROVIDE_CLUSTER_IMPL);
+    return {
+      destroy: () => Promise.reject(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
+      discoveredItems$: () => throwError(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
+    };
+  }
+
   const membersState: { [member: string]: boolean } = {};
 
   validateAddress(address, false);

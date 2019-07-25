@@ -9,5 +9,5 @@ module.exports = {
   globals: {
     isNodeEvn: false,
   },
-  setupFilesAfterEnv: ['<rootDir>/tests/messageChannelMock.ts'],
+  setupFilesAfterEnv: ['<rootDir>/tests/mockEnv.ts', '<rootDir>/tests/messageChannelMock.ts'],
 };

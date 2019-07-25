@@ -17,13 +17,12 @@ export const saveToLogs = (identifier: string, msg: string, extra: { [key: strin
   // tslint:disable
   if (debug) {
     const logColor = `color:${colorsMap[identifier]}`;
-    extra && console.log('%c************************', logColor);
+    extra && console.log(`%c******** address: ${identifier}********`, logColor);
     console.log(msg);
     extra &&
       Object.keys(extra).forEach((key: string) => {
-        console.log(`${key}: ${JSON.stringify(extra[key], null, 4)}`);
+        console.log(`${key}: ${JSON.stringify(extra[key], null, 2)}`);
       });
-    extra && console.log('%c************************', logColor);
   }
   // tslint:enable
 };

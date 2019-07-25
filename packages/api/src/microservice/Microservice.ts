@@ -1,5 +1,5 @@
 import { Address } from '../index';
-import { Discovery, DiscoveryOptions } from '../discovery';
+import { Cluster, ClusterOptions } from '../cluster';
 import { CreateProxies, CreateProxy, CreateServiceCall, Service } from '.';
 
 /**
@@ -72,11 +72,11 @@ export interface MicroserviceOptions {
   transport?: Transport;
   /**
    * @method
-   * Pluggable discovery,
-   * a module that implements discovery API
-   * discovery responsible to exchange data in the distributed env.
+   * Pluggable cluster,
+   * a module that implements Cluster API
+   * cluster responsible to bootstrap the distributed env.
    */
-  discovery?: (opt: DiscoveryOptions) => Discovery;
+  cluster?: (opt: ClusterOptions) => Cluster;
   /**
    * @property
    * add logs to the microservice container

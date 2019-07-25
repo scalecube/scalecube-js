@@ -21,7 +21,7 @@ export interface AvailableServices {
 export interface CreateServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
   connectionManager: ConnectionManager;
 }
 

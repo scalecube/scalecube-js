@@ -16,7 +16,7 @@ export const createProxy = ({
   router?: MicroserviceApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
   connectionManager: ConnectionManager;
 }) => {
   if (!microserviceContext) {
@@ -40,7 +40,7 @@ export const createProxies = ({
   createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: any;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
   connectionManager: ConnectionManager;
 }): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
