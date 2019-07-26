@@ -1,4 +1,4 @@
-import { ServiceCall } from '../helpers/types';
+import { MicroserviceApi } from '@scalecube/api';
 
 // interface GatewayOptions {
 //   port: number;
@@ -11,7 +11,7 @@ export interface Gateway {
    * start to listen on a port (ws/ rsocket/ ...)
    * handle incoming requests
    */
-  start: (options: { serviceCall: ServiceCall }) => void;
+  start: (options: { serviceCall: MicroserviceApi.ServiceCall }) => void;
   /**
    * stop gateway
    */

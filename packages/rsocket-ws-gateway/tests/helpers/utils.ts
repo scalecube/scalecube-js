@@ -38,8 +38,10 @@ export const makeConnection: makeConnectionType = (port = 8080) => {
   const gateway = new Gateway({ port });
   const ms = Microservices.create({
     services: [{ definition, reference: new ServiceA() }],
-    gateway,
+    // gateway,
   });
+  const serviceCall = ms.createServiceCall({});
+  gateway.start({ serviceCall });
   return new Promise((resolve, reject) => {
     const client = new RSocketClient({
       serializers: JsonSerializers,

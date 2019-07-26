@@ -42,14 +42,6 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   const address = microserviceOptions.address as Address;
   const seedAddress = microserviceOptions.seedAddress as Address;
 
-  if (options && options.gateway) {
-    const gatewayServiceCall = getServiceCall({
-      router: options.gatewayRouter || defaultRouter,
-      microserviceContext,
-      transportClientProvider: transport.clientProvider,
-    });
-    options.gateway.start({ serviceCall: gatewayServiceCall });
-  }
   const transportClientProvider = transport && (transport as TransportApi.Transport).clientProvider;
 
   // tslint:disable-next-line
