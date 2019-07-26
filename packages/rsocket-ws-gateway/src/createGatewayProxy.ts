@@ -38,8 +38,8 @@ const connect = (url) => {
       serializers: JsonSerializers,
       setup: {
         dataMimeType: 'application/json',
-        keepAlive: 1000,
-        lifetime: 1000,
+        keepAlive: 100000,
+        lifetime: 100000,
         metadataMimeType: 'application/json',
       },
       transport: new RSocketWebSocketClient({ url }),
