@@ -9,5 +9,7 @@ yarn-error.log
 
 lib/
 es/
-dist-min/
-dist/
+
+
+report.cjs.html
+report.es.html

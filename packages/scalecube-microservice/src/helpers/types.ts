@@ -1,21 +1,12 @@
+// @ts-ignore
+import { RSocketClientSocket } from 'rsocket-core';
 import { Observable } from 'rxjs';
-import { Address, TransportApi } from '@scalecube/api';
-import {
-  Router,
-  ServiceDefinition,
-  Service,
-  Message,
-  AsyncModel,
-  Endpoint,
-  Reference,
-  LookupOptions,
-  LookUp,
-} from '../api';
+import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube/api';
 
 export interface ServiceCallOptions {
-  message: Message;
-  asyncModel: AsyncModel;
-  includeMessage: boolean;
+  message: MicroserviceApi.Message;
+  asyncModel: MicroserviceApi.AsyncModel;
+  messageFormat: boolean;
 }
 
 export type ServiceCallResponse = Observable<any> | Promise<any>;
@@ -23,24 +14,20 @@ export type ServiceCallResponse = Observable<any> | Promise<any>;
 export type ServiceCall = (serviceCallRequest: ServiceCallOptions) => ServiceCallResponse;
 
 export interface AvailableServices {
-  services?: Service[];
-  address?: Address;
-}
-
-export interface AvailableService {
-  service: Service;
+  services?: MicroserviceApi.Service[];
   address?: Address;
 }
 
 export interface CreateServiceCallOptions {
-  router: Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }
 
 export interface GetProxyOptions {
   serviceCall: ServiceCall;
-  serviceDefinition: ServiceDefinition;
+  serviceDefinition: MicroserviceApi.ServiceDefinition;
 }
 
 export interface Qualifier {
@@ -48,73 +35,115 @@ export interface Qualifier {
   methodName: string;
 }
 
-export interface GetUpdatedServiceRegistryOptions {
-  serviceRegistryMap: ServiceRegistryMap | null;
-  endpoints: Endpoint[];
-}
-
-export interface GetUpdatedMethodRegistryOptions {
-  methodRegistryMap: MethodRegistryMap | null;
-  references: Reference[];
-}
-
 export interface LocalCallOptions {
   localService: Reference;
-  asyncModel: AsyncModel;
-  message: Message;
-  includeMessage: boolean;
+  asyncModel: MicroserviceApi.AsyncModel;
+  message: MicroserviceApi.Message;
+  messageFormat: boolean;
 }
 
 export interface RemoteCallOptions {
-  router: Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  message: Message;
-  asyncModel: AsyncModel;
+  message: MicroserviceApi.Message;
+  asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider: TransportApi.ClientProvider;
-  openConnections: { [key: string]: any };
+  connectionManager: ConnectionManager;
 }
 
 export interface InvokeMethodOptions {
   method: (...args: any[]) => any;
-  message: Message;
+  message: MicroserviceApi.Message;
 }
 
 export interface AddMessageToResponseOptions {
-  includeMessage: boolean;
-  message: Message;
-}
-
-export interface ServiceRegistryMap {
-  [qualifier: string]: Endpoint[];
-}
-
-export interface MethodRegistryMap {
-  [qualifier: string]: Reference;
-}
-
-export interface Registry {
-  destroy: () => null;
-}
-
-type AddServiceToRegistry<T> = ({ services, address }: AvailableServices) => T;
-
-export interface ServiceRegistry extends Registry {
-  lookUp: LookUp;
-  add: ({ endpoints }: { endpoints: Endpoint[] }) => ServiceRegistryMap;
-  createEndPoints: AddServiceToRegistry<Endpoint[]>;
-}
-
-export interface MethodRegistry extends Registry {
-  lookUp: ({ qualifier }: LookupOptions) => Reference | null;
-  add: AddServiceToRegistry<MethodRegistryMap>;
-}
-
-export interface MicroserviceContext {
-  serviceRegistry: ServiceRegistry;
-  methodRegistry: MethodRegistry;
+  messageFormat: boolean;
+  message: MicroserviceApi.Message;
 }
 
 export interface RsocketEventsPayload {
   data: any;
   metadata: any;
+}
+
+/**
+ * Defines local service data
+ */
+export interface Reference {
+  /**
+   * The combination of serviceName and methodName: <serviceName/methodName>
+   */
+  qualifier: string;
+  /**
+   * The name of a service, that is provided in serviceDefinition
+   */
+  serviceName: string;
+  /**
+   * The name of a method, that is provided in the methods map in serviceDefinition
+   */
+  methodName: string;
+  /**
+   * The map of the name of a method from a service and its implementation
+   */
+  reference?: {
+    [methodName: string]: (...args: any[]) => any;
+  };
+  /**
+   * Type of communication between a consumer and a provider
+   */
+  asyncModel: MicroserviceApi.AsyncModel;
+}
+
+export interface MicroserviceContext {
+  remoteRegistry: RemoteRegistry;
+  localRegistry: LocalRegistry;
+}
+
+export type CreateLocalRegistry = () => LocalRegistry;
+
+export interface LocalRegistry {
+  lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => Reference | null;
+  add: ({ services }: AvailableServices) => void;
+  destroy: () => void;
+}
+
+export interface LocalRegistryMap {
+  [qualifier: string]: Reference;
+}
+
+export type GetUpdatedLocalRegistry = (options: GetUpdatedLocalRegistryOptions) => LocalRegistryMap;
+
+export interface GetUpdatedLocalRegistryOptions {
+  localRegistryMap: LocalRegistryMap;
+  references: Reference[];
+}
+
+export type GetReferenceFromServices = (options: AvailableServices) => Reference[] | [];
+
+export type CreateRemoteRegistry = () => RemoteRegistry;
+
+export interface RemoteRegistry {
+  lookUp: MicroserviceApi.LookUp;
+  update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
+  createEndPoints: (options: AvailableServices) => MicroserviceApi.Endpoint[];
+  destroy: () => void;
+}
+
+export interface RemoteRegistryMap {
+  [qualifier: string]: MicroserviceApi.Endpoint[];
+}
+
+export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEvent {
+  type: DiscoveryApi.Type;
+  items: DiscoveryApi.Item[];
+  remoteRegistryMap: RemoteRegistryMap;
+}
+
+export type CreateConnectionManager = () => ConnectionManager;
+
+export interface ConnectionManager {
+  getConnection: (connectionAddress: string) => Promise<RSocketClientSocket>;
+  getAllConnections: () => { [key: string]: Promise<RSocketClientSocket> };
+  setConnection: (connectionAddress: string, value: Promise<RSocketClientSocket>) => void;
+  removeConnection: (connectionAddress: string) => void;
 }

@@ -1,6 +1,5 @@
-import { TransportApi } from '@scalecube/api';
-import { CreateProxiesOptions, ProxiesMap, ProxiesOptions, Router, ServiceDefinition } from '../api';
-import { MicroserviceContext } from '../helpers/types';
+import { TransportApi, MicroserviceApi } from '@scalecube/api';
+import { ConnectionManager, MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '../helpers/validation';
 import { getProxy } from './Proxy';
@@ -12,11 +11,13 @@ export const createProxy = ({
   serviceDefinition,
   microserviceContext,
   transportClientProvider,
+  connectionManager,
 }: {
-  router?: Router;
-  serviceDefinition: ServiceDefinition;
+  router?: MicroserviceApi.Router;
+  serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -24,7 +25,7 @@ export const createProxy = ({
   validateServiceDefinition(serviceDefinition);
 
   return getProxy({
-    serviceCall: getServiceCall({ router, microserviceContext, transportClientProvider }),
+    serviceCall: getServiceCall({ router, microserviceContext, transportClientProvider, connectionManager }),
     serviceDefinition,
   });
 };
@@ -34,19 +35,21 @@ export const createProxies = ({
   microserviceContext,
   isServiceAvailable,
   transportClientProvider,
+  connectionManager,
 }: {
-  createProxiesOptions: CreateProxiesOptions;
+  createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
-  isServiceAvailable: (serviceDefinition: ServiceDefinition) => Promise<boolean>;
-  transportClientProvider: TransportApi.ClientProvider;
-}): ProxiesMap => {
+  isServiceAvailable: any;
+  transportClientProvider?: TransportApi.ClientProvider;
+  connectionManager: ConnectionManager;
+}): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
   const { isAsync = false, proxies, router } = createProxiesOptions;
 
-  return proxies.reduce((proxiesMap: ProxiesMap, proxyOption: ProxiesOptions) => {
+  return proxies.reduce((proxiesMap: MicroserviceApi.ProxiesMap, proxyOption: MicroserviceApi.ProxiesOptions) => {
     const { proxyName, serviceDefinition } = proxyOption;
 
     if (proxiesMap[proxyName]) {
@@ -56,14 +59,26 @@ export const createProxies = ({
     if (isAsync) {
       proxiesMap[proxyName] = new Promise((resolve, reject) => {
         try {
-          const proxy = createProxy({ serviceDefinition, router, microserviceContext, transportClientProvider });
+          const proxy = createProxy({
+            serviceDefinition,
+            router,
+            microserviceContext,
+            transportClientProvider,
+            connectionManager,
+          });
           isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
         } catch (e) {
           reject(e);
         }
       });
     } else {
-      proxiesMap[proxyName] = createProxy({ serviceDefinition, router, microserviceContext, transportClientProvider });
+      proxiesMap[proxyName] = createProxy({
+        serviceDefinition,
+        router,
+        microserviceContext,
+        transportClientProvider,
+        connectionManager,
+      });
     }
 
     return proxiesMap;

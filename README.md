@@ -7,7 +7,15 @@
 # Scalecube
 
 Scalecube is a toolkit for creating microservices based systems.  
-Scalecube provides tools like: [Microservice](packages/scalecube-microservice/README.md), [Router](<>), [Discovery](packages/scalecube-discovery/README.md), [Transport-browser](packages/transport-browser/README.md), [Transport-nodejs](packages/transport-nodejs/README.md), [Gateway](<>), [Cluster](<>).
+Scalecube provides tools like:  
+[Microservice](packages/scalecube-microservice/README.md),  
+[Router](<>),  
+[Discovery](packages/scalecube-discovery/README.md),  
+[Transport-browser](packages/transport-browser/README.md),  
+[Transport-nodejs](packages/transport-nodejs/README.md),  
+[Gateway](<>),  
+[Cluster-browser](packages/cluster-browser/README.md),  
+[Cluster-nodejs](<>).
 
 ## Basic Usage
 
@@ -28,20 +36,23 @@ npm install @scalecube/scalecube-microservice
 **provider side** - create the service & publish it.
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
-const microserviceInstance = Microservices.create({
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+const microserviceInstance = createMicroservice({
   services: [{
         definition: greetingsDefinition,
         reference: { hello : (name) => `Hello ${name}!` }
-  }]
+  }],
+  address : 'remoteService1'
 });
 ```
 
 **consumer side** - use the service.
 
 ```typescript
-import { Microservices } from '@scalecube/scalecube-microservice';
-const greetingService = Microservices.create({}).createProxy({  serviceDefinition: greetingsDefinition });
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+const greetingService = createMicroservice({
+  seedAddress : 'remoteService1'
+}).createProxy({  serviceDefinition: greetingsDefinition });
 greetingService.hello('Me').then(console.log) // 'Hello Me!'
 ```
 

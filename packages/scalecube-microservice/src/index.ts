@@ -1,7 +1,5 @@
-import { Microservices } from './Microservices/Microservices';
+import { createMicroservice } from './Microservices/Microservices';
 import { ASYNC_MODEL_TYPES } from './helpers/constants';
-import * as Api from './api';
+import { addWorker, removeWorker } from '@scalecube/utils';
 
-export { Microservices, ASYNC_MODEL_TYPES, Api };
-
-export default Microservices;
+export { createMicroservice, ASYNC_MODEL_TYPES, addWorker, removeWorker };

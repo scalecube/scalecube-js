@@ -1,10 +1,9 @@
-import { Microservices, Api, ASYNC_MODEL_TYPES } from '../../src';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
-import { applyPostMessagePolyfill } from '../mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from '../mocks/utils/MessageChannelPolyfill';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
 import { getDefaultAddress } from '../../src/helpers/utils';
+import { MicroserviceApi } from '@scalecube/api';
 
 describe(`
      Background: Resolve createProxies ONLY when the service available in the registry
@@ -13,12 +12,6 @@ describe(`
                      | service1  | service1Definition   | greet : requestResponse |
                      | service2  | service2Definition   | hello : requestStream   |
      `, () => {
-  // @ts-ignore
-  if (!global.isNodeEvn) {
-    applyPostMessagePolyfill();
-    applyMessageChannelPolyfill();
-  }
-
   const service1Definition = {
     serviceName: 'service1',
     methods: {
@@ -27,7 +20,7 @@ describe(`
       },
     },
   };
-  const service1: Api.Service = {
+  const service1: MicroserviceApi.Service = {
     definition: service1Definition,
     reference: { hello },
   };
@@ -41,19 +34,19 @@ describe(`
     },
   };
 
-  const service2: Api.Service = {
+  const service2: MicroserviceApi.Service = {
     definition: service2Definition,
     reference: { greet$ },
   };
 
   const defaultUser = 'Me';
 
-  const microserviceWithServices = Microservices.create({
+  const microserviceWithServices = createMicroservice({
     services: [service1, service2],
     address: getDefaultAddress(1000),
     seedAddress: getDefaultAddress(8000),
   });
-  const microserviceWithoutSerrvices = Microservices.create({ seedAddress: getDefaultAddress(8000) });
+  const microserviceWithoutServices = createMicroservice({ seedAddress: getDefaultAddress(1000) });
   describe.each([
     // ################# LocalCall #################
     {
@@ -62,7 +55,7 @@ describe(`
     },
     // ################# RemoteCall ################
     {
-      sender: microserviceWithoutSerrvices,
+      sender: microserviceWithoutServices,
       isRemote: true,
     },
   ])(
@@ -147,7 +140,7 @@ describe(`
       });
 
       test(`
-           Scenario: creating multiple proxies [isAsync: true,]
+           Scenario: Creating multiple proxies [isAsync: true,]
            But       one of the serviceDefinition is invalid
            Given     microservice instance and serviceDefinitions
            When      requesting a Proxies from the microservice
@@ -155,7 +148,7 @@ describe(`
                      | proxy          | method                  | valid
                      | service1Proxy  | hello : requestResponse | yes
                      | service2Proxy  | greet$ : requestStream  | no
-           
+
   `, async () => {
         expect.assertions(2);
 

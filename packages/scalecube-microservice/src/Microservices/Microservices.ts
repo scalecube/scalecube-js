@@ -1,187 +1,157 @@
-import { from } from 'rxjs';
-import { Address, TransportApi } from '@scalecube/api';
+import { Address, TransportApi, DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
-// import { createDiscovery, Api as DiscoveryAPI } from '@scalecube/scalecube-discovery';
+import { check, getAddress, getFullAddress, saveToLogs, isNodejs } from '@scalecube/utils';
+import { tap } from 'rxjs/operators';
 import { defaultRouter } from '../Routers/default';
-import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { createServiceRegistry } from '../Registry/ServiceRegistry';
-import { createMethodRegistry } from '../Registry/MethodRegistry';
+import { createServiceCall, getServiceCall } from '../ServiceCall/ServiceCall';
+import { createRemoteRegistry } from '../Registry/RemoteRegistry';
+import { createLocalRegistry } from '../Registry/LocalRegistry';
 import { MicroserviceContext } from '../helpers/types';
 import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
-import {
-  Endpoint,
-  Message,
-  Microservice,
-  MicroserviceOptions,
-  Microservices as MicroservicesInterface,
-  ProxyOptions,
-  Router,
-  CreateProxiesOptions,
-} from '../api';
-import { ASYNC_MODEL_TYPES, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 import { createProxies, createProxy } from '../Proxy/createProxy';
+import { createConnectionManager } from '../TransportProviders/ConnectionManager';
+import { destroy } from './Destroy';
 
-export const Microservices: MicroservicesInterface = Object.freeze({
-  create: (options: MicroserviceOptions): Microservice => {
-    const microserviceOptions = {
-      services: [],
-      // discovery: createDiscovery,
-      transport: TransportBrowser,
-      ...options,
+export const createMicroservice: MicroserviceApi.CreateMicroservice = (
+  options: MicroserviceApi.MicroserviceOptions
+) => {
+  let microserviceOptions = {
+    services: [],
+    transport: !isNodejs() ? TransportBrowser : undefined,
+    ...options,
+  };
+
+  if (check.isString(microserviceOptions.address)) {
+    microserviceOptions = { ...microserviceOptions, address: getAddress(microserviceOptions.address as string) };
+  }
+
+  if (check.isString(microserviceOptions.seedAddress)) {
+    microserviceOptions = {
+      ...microserviceOptions,
+      seedAddress: getAddress(microserviceOptions.seedAddress as string),
     };
-    // TODO: add address, customTransport, customDiscovery  to the validation process
-    validateMicroserviceOptions(microserviceOptions);
-    const { services, seedAddress, address, transport, discovery } = microserviceOptions;
-    const transportClientProvider = transport.clientProvider;
+  }
 
-    // tslint:disable-next-line
-    let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
-    const { methodRegistry, serviceRegistry } = microserviceContext;
+  validateMicroserviceOptions(microserviceOptions);
 
-    methodRegistry.add({ services, address });
+  const connectionManager = createConnectionManager();
+  const { services, transport, cluster, debug } = microserviceOptions;
+  const address = microserviceOptions.address as Address;
+  const seedAddress = microserviceOptions.seedAddress as Address;
 
-    // if address is not available then microservice can't share services
-    const endPointsToPublishInCluster = address
-      ? serviceRegistry.createEndPoints({
-          services,
-          address,
-        }) || []
-      : [];
-
-    const discoveryInstance: any = {
-      destroy: () => Promise.resolve(),
-      discoveredItems$: () => from([]),
-    };
-    // const discoveryInstance: DiscoveryAPI.Discovery = createDiscoveryInstance({
-    //   address,
-    //   itemsToPublish: endPointsToPublishInCluster,
-    //   seedAddress,
-    //   discovery,
-    // });
-
-    // server use only localCall therefor, router is irrelevant
-    const defaultLocalCall = getServiceCall({
-      router: defaultRouter,
+  if (options && options.gateway) {
+    const gatewayServiceCall = getServiceCall({
+      router: options.gatewayRouter || defaultRouter,
       microserviceContext,
       transportClientProvider: transport.clientProvider,
     });
-    // if address is not available then microservice can't start a server and get serviceCall requests
-    address &&
-      startServer({
+    options.gateway.start({ serviceCall: gatewayServiceCall });
+  }
+  const transportClientProvider = transport && (transport as TransportApi.Transport).clientProvider;
+
+  // tslint:disable-next-line
+  let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
+  const { remoteRegistry, localRegistry } = microserviceContext;
+
+  localRegistry.add({ services, address });
+
+  // if address is not available then microservice can't share services
+  const endPointsToPublishInCluster = address
+    ? remoteRegistry.createEndPoints({
+        services,
         address,
-        serviceCall: defaultLocalCall,
-        transportServerProvider: transport.serverProvider,
-      });
-    if (options && options.gateway) {
-      const gatewayServiceCall = getServiceCall({
-        router: options.gatewayRouter || defaultRouter,
-        microserviceContext,
-        transportClientProvider: transport.clientProvider,
-      });
-      options.gateway.start({ serviceCall: gatewayServiceCall });
-    }
+      }) || []
+    : [];
 
-    discoveryInstance
-      .discoveredItems$()
-      .subscribe((discoveryEndpoints: any[]) => serviceRegistry.add({ endpoints: discoveryEndpoints as Endpoint[] }));
+  const fallBackAddress = address || getAddress(Date.now().toString());
+  const discoveryInstance = createDiscovery({
+    address: fallBackAddress,
+    itemsToPublish: endPointsToPublishInCluster,
+    seedAddress,
+    cluster,
+    debug,
+  });
 
-    const isServiceAvailable = isServiceAvailableInRegistry(
-      endPointsToPublishInCluster,
-      serviceRegistry,
-      discoveryInstance
+  validateDiscoveryInstance(discoveryInstance);
+
+  // server use only localCall therefor, router is irrelevant
+  const defaultLocalCall = getServiceCall({
+    router: defaultRouter,
+    microserviceContext,
+    transportClientProvider,
+    connectionManager,
+  });
+
+  // if address is not available then microservice can't start a server and get serviceCall requests
+  const serverStop =
+    address && transport
+      ? startServer({
+          address,
+          serviceCall: defaultLocalCall,
+          transportServerProvider: (transport as TransportApi.Transport).serverProvider,
+        })
+      : null;
+
+  const printLogs = () =>
+    tap(
+      ({ type, items }: DiscoveryApi.ServiceDiscoveryEvent) =>
+        type !== 'IDLE' &&
+        saveToLogs(
+          getFullAddress(fallBackAddress),
+          `microservice has been received an updated`,
+          {
+            [type]: [...items],
+          },
+          debug
+        )
     );
 
-    return Object.freeze({
-      createProxies: (createProxiesOptions: CreateProxiesOptions) =>
-        createProxies({ createProxiesOptions, microserviceContext, isServiceAvailable, transportClientProvider }),
-      createProxy: (proxyOptions: ProxyOptions) =>
-        createProxy({
-          ...proxyOptions,
-          microserviceContext,
-          transportClientProvider,
-        }),
-      createServiceCall: ({ router }) => createServiceCall({ router, microserviceContext, transportClientProvider }),
-      destroy: () => destroy({ microserviceContext, discovery }),
-    } as Microservice);
-  },
-});
+  discoveryInstance
+    .discoveredItems$()
+    .pipe(printLogs())
+    .subscribe(remoteRegistry.update);
 
-const createServiceCall = ({
-  router = defaultRouter,
-  microserviceContext,
-  transportClientProvider,
-}: {
-  router?: Router;
-  microserviceContext: MicroserviceContext | null;
-  transportClientProvider: TransportApi.ClientProvider;
-}) => {
-  if (!microserviceContext) {
-    throw new Error(MICROSERVICE_NOT_EXISTS);
-  }
-
-  const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
-  return Object.freeze({
-    requestStream: (message: Message, messageFormat: boolean = false) =>
-      serviceCall({
-        message,
-        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        includeMessage: messageFormat,
-      }),
-    requestResponse: (message: Message, messageFormat: boolean = false) =>
-      serviceCall({
-        message,
-        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-        includeMessage: messageFormat,
-      }),
-  });
-};
-
-const destroy = ({
-  microserviceContext,
-  discovery,
-}: {
-  microserviceContext: MicroserviceContext | null;
-  discovery: any;
-}) => {
-  if (!microserviceContext) {
-    throw new Error(MICROSERVICE_NOT_EXISTS);
-  }
-
-  discovery && discovery.destroy();
-
-  Object.values(microserviceContext).forEach(
-    (contextEntity) => typeof contextEntity.destroy === 'function' && contextEntity.destroy()
+  const isServiceAvailable = isServiceAvailableInRegistry(
+    endPointsToPublishInCluster,
+    remoteRegistry,
+    discoveryInstance
   );
-  microserviceContext = null;
 
-  return microserviceContext;
+  return Object.freeze({
+    createProxies: (createProxiesOptions: MicroserviceApi.CreateProxiesOptions) =>
+      createProxies({
+        createProxiesOptions,
+        microserviceContext,
+        isServiceAvailable,
+        transportClientProvider,
+        connectionManager,
+      }),
+    createProxy: (proxyOptions: MicroserviceApi.ProxyOptions) =>
+      createProxy({
+        ...proxyOptions,
+        microserviceContext,
+        transportClientProvider,
+        connectionManager,
+      }),
+    createServiceCall: ({ router }: { router: MicroserviceApi.Router }) =>
+      createServiceCall({
+        router,
+        microserviceContext,
+        transportClientProvider,
+        connectionManager,
+      }),
+    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop, connectionManager }),
+  } as MicroserviceApi.Microservice);
 };
 
 const createMicroserviceContext = () => {
-  const serviceRegistry = createServiceRegistry();
-  const methodRegistry = createMethodRegistry();
+  const remoteRegistry = createRemoteRegistry();
+  const localRegistry = createLocalRegistry();
   return {
-    serviceRegistry,
-    methodRegistry,
+    remoteRegistry,
+    localRegistry,
   };
 };
-
-// const createDiscoveryInstance = (opt: {
-//   address?: Address;
-//   seedAddress?: Address;
-//   itemsToPublish: Endpoint[];
-//   discovery: (...data: any[]) => DiscoveryAPI.Discovery;
-// }): DiscoveryAPI.Discovery => {
-//   const { address, seedAddress, itemsToPublish, discovery } = opt;
-//   const discoveryInstance = discovery({
-//     address,
-//     itemsToPublish,
-//     seedAddress,
-//   });
-
-//   validateDiscoveryInstance(discoveryInstance);
-
-//   return discoveryInstance;
-// };

@@ -1,4 +1,5 @@
 import { check, validateAddress } from '@scalecube/utils';
+import { MicroserviceApi } from '@scalecube/api';
 import {
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
@@ -24,7 +25,6 @@ import {
   getServiceReferenceNotProvidedError,
 } from './constants';
 import { getQualifier } from './serviceData';
-import ServiceDefinition from '../api/ServiceDefinition';
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
@@ -66,7 +66,7 @@ export const validateAsyncModel = (qualifier: string, val: any) => {
   check.assertOneOf(ASYNC_MODEL_TYPES, asyncModel, getInvalidAsyncModelError(qualifier));
 };
 
-export const validateServiceReference = (reference: any, definition: ServiceDefinition) => {
+export const validateServiceReference = (reference: any, definition: MicroserviceApi.ServiceDefinition) => {
   const { serviceName } = definition;
   check.assertObject(reference, getInvalidServiceReferenceError(serviceName));
   Object.keys(definition.methods).forEach((methodName) => {

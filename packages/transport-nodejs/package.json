@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/transport-nodejs",
-  "version": "0.0.2-alpha.2",
+  "version": "0.0.2-alpha.9",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -16,16 +16,15 @@
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "jest --config jest.config.js",
-    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
+    "test": "jest --config jest.config.js"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.0.2-alpha.1",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
+    "rollup-plugin-filesize": "^6.1.1",
     "rollup-plugin-typescript2": "^0.21.1",
     "rollup-plugin-visualizer": "^2.2.0",
     "ts-jest": "^23.10.5",
@@ -33,7 +32,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/utils": "^0.0.2-alpha.1",
+    "@scalecube/api": "^0.0.2-alpha.8",
+    "@scalecube/utils": "^0.0.2-alpha.8",
     "rsocket-core": "^0.0.10",
     "rsocket-tcp-client": "^0.0.10",
     "rsocket-tcp-server": "^0.0.10",

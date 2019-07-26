@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     document.body.remove();
   });
 
-  (function(Microservices, ASYNC_MODEL_TYPES) {
+  (function(createMicroservice, ASYNC_MODEL_TYPES) {
     function MyEl() {
       return Reflect.construct(HTMLElement, [], this.constructor);
     }
@@ -49,7 +49,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       },
     };
 
-    var proxyName = Microservices.create({
+    var proxyName = createMicroservice({
       services: [
         {
           definition: definition,
@@ -63,5 +63,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
     proxyName.render();
-  })(window.sc.Microservices, window.sc.ASYNC_MODEL_TYPES);
+  })(window.sc.createMicroservice, window.sc.ASYNC_MODEL_TYPES);
 });

@@ -1,4 +1,4 @@
-import { getFullAddress, validateAddress } from '../src';
+import { getAddress, getFullAddress, validateAddress } from '../src';
 import {
   NOT_VALID_ADDRESS,
   NOT_VALID_HOST,
@@ -35,7 +35,7 @@ describe('Test address', () => {
     }
   });
 
-  const getAddress = ({ host = 'defaultHost', path = 'defaultPath', port = 8080, protocol = 'pm' }) => ({
+  const buildAddress = ({ host = 'defaultHost', path = 'defaultPath', port = 8080, protocol = 'pm' }) => ({
     host,
     path,
     port,
@@ -58,7 +58,7 @@ describe('Test address', () => {
       expect.assertions(1);
 
       try {
-        validateAddress(getAddress({ host }));
+        validateAddress(buildAddress({ host }));
       } catch (e) {
         expect(e.message).toMatch(NOT_VALID_HOST);
       }
@@ -81,7 +81,7 @@ describe('Test address', () => {
       expect.assertions(1);
 
       try {
-        validateAddress(getAddress({ path }));
+        validateAddress(buildAddress({ path }));
       } catch (e) {
         expect(e.message).toMatch(NOT_VALID_PATH);
       }
@@ -104,7 +104,7 @@ describe('Test address', () => {
       expect.assertions(1);
 
       try {
-        validateAddress(getAddress({ port }));
+        validateAddress(buildAddress({ port }));
       } catch (e) {
         expect(e.message).toMatch(NOT_VALID_PORT);
       }
@@ -128,7 +128,7 @@ describe('Test address', () => {
       expect.assertions(1);
 
       try {
-        validateAddress(getAddress({ protocol }));
+        validateAddress(buildAddress({ protocol }));
       } catch (e) {
         expect(e.message).toMatch(NOT_VALID_PROTOCOL);
       }
@@ -139,10 +139,11 @@ describe('Test address', () => {
     Given valid address
     When calling getFullAddress(address)
     Then fullAddress will be received
+    [protocol]://[hos]t:[port]/[path]
   `, () => {
     expect.assertions(1);
 
-    const address = getAddress({});
+    const address = buildAddress({});
     const fullAddress = getFullAddress(address);
     expect(fullAddress).toMatch(`${address.protocol}://${address.host}:${address.port}/${address.path}`);
   });
@@ -160,5 +161,21 @@ describe('Test address', () => {
     } catch (e) {
       expect(e.message).toMatch(NOT_VALID_ADDRESS);
     }
+  });
+
+  test(`
+  Given a string
+  When calling getAddress with the given string
+  Then result will be of type Address
+  `, () => {
+    const address = getAddress('randomPath');
+    expect(address).toMatchObject(
+      expect.objectContaining({
+        protocol: expect.any(String),
+        path: expect.any(String),
+        host: expect.any(String),
+        port: expect.any(Number),
+      })
+    );
   });
 });
