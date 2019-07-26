@@ -44,8 +44,7 @@ test('fail requestResponse', (done) => {
     })
     .subscribe({
       onError: (e: any) => {
-        // console.error('ERR', e.source);
-        expect(e.source.message).toEqual('methodB error');
+        expect(JSON.parse(e.source.message)).toEqual({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
         done();
       },
     });
@@ -81,6 +80,7 @@ test('fail requestStream', (done) => {
     .requestStream({
       data: {
         qualifier: 'serviceA/methodD',
+        // qualifier: 'serviceA/methodE',
         data: [{ request: 'ping' }],
       },
     })
@@ -95,7 +95,8 @@ test('fail requestStream', (done) => {
         done.fail();
       },
       onError: (e: any) => {
-        expect(e.source.message).toEqual('methodD error');
+        // expect(e.source.message).toEqual('methodD error');
+        expect(JSON.parse(e.source.message)).toEqual({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
         done();
       },
     });

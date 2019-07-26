@@ -14,8 +14,11 @@ class ServiceA {
   public methodC() {
     return from([1, 2]);
   }
+  // public methodD() {
+  //   return throwError(new Error('methodD error'));
+  // }
   public methodD() {
-    return throwError(new Error('methodD error'));
+    return throwError({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
   }
 }
 

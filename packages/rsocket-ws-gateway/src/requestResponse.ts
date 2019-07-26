@@ -1,4 +1,5 @@
 import { Single } from 'rsocket-flowable';
+import { packError } from './utils';
 
 export const requestResponse = (payload, serviceCall) => {
   const { data, metadata } = payload;
@@ -15,7 +16,7 @@ export const requestResponse = (payload, serviceCall) => {
         subscriber.onComplete({ data: JSON.stringify(resp) });
       })
       .catch((err: any) => {
-        subscriber.onError(err);
+        subscriber.onError(packError(err));
       });
   });
 };
