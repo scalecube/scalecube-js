@@ -15,18 +15,18 @@ afterAll(() => {
 });
 
 test('requestResponse', () => {
-  return proxy['methodA']().then((resp) => {
+  return proxy.methodA().then((resp) => {
     expect(resp).toEqual({ id: 1 });
   });
 });
 test('fail requestResponse', () => {
-  return proxy['methodB']().catch((e) => {
+  return proxy.methodB().catch((e) => {
     expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
   });
 });
 test('requestStream', (done) => {
   const responses = [1, 2];
-  proxy['methodC']().subscribe(
+  proxy.methodC().subscribe(
     (resp) => {
       expect(resp).toEqual(responses.shift());
     },
@@ -39,7 +39,7 @@ test('requestStream', (done) => {
 
 test('fail requestStream', (done) => {
   const responses = [1, 2];
-  proxy['methodD']().subscribe(
+  proxy.methodD().subscribe(
     done.fail,
     (e) => {
       expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
