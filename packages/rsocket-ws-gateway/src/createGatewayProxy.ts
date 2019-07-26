@@ -46,7 +46,7 @@ const connect = (url) => {
     });
     client.connect().subscribe({
       onComplete: (socket: any) => {
-        console.log('Connected to ' + url);
+        // console.log('Connected to ' + url);
         resolve(socket);
       },
       onError: (error: any) => {
