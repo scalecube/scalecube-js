@@ -1,7 +1,7 @@
 import { from, throwError } from 'rxjs';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
-import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../../src/Gateway';
 
 class ServiceA {
@@ -22,7 +22,7 @@ class ServiceA {
   }
 }
 
-const definition = {
+export const definition = {
   serviceName: 'serviceA',
   methods: {
     methodA: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
@@ -36,7 +36,7 @@ type makeConnectionType = (port?: number) => Promise<{ gateway: any; socket: any
 
 export const makeConnection: makeConnectionType = (port = 8080) => {
   const gateway = new Gateway({ port });
-  const ms = Microservices.create({
+  const ms = createMicroservice({
     services: [{ definition, reference: new ServiceA() }],
     // gateway,
   });
@@ -64,4 +64,14 @@ export const makeConnection: makeConnectionType = (port = 8080) => {
       },
     });
   });
+};
+export const runGateway = (port = 8080) => {
+  const gateway = new Gateway({ port });
+  const ms = createMicroservice({
+    services: [{ definition, reference: new ServiceA() }],
+    // gateway,
+  });
+  const serviceCall = ms.createServiceCall({});
+  gateway.start({ serviceCall });
+  return gateway;
 };

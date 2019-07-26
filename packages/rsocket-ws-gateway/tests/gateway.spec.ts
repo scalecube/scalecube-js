@@ -1,7 +1,6 @@
 import { Observable, from } from 'rxjs';
 import { RSocketClient } from 'rsocket-core';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
-import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../src/Gateway';
 import { makeConnection } from './helpers/utils';
 
@@ -12,7 +11,9 @@ beforeAll(async () => {
   ({ gateway, socket } = await makeConnection());
 });
 
-afterAll(() => gateway.stop());
+afterAll(() => {
+  gateway.stop();
+});
 
 test('success requestResponse', (done) => {
   socket

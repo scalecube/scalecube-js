@@ -10,8 +10,9 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
-    "build": "yarn build-rollup",
+    "build": "yarn build-rollup && yarn build:dist",
     "build-rollup": "rollup -c",
+    "build:dist": "tsc -p tsconfig.json",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest --config jest.config.js",
@@ -19,8 +20,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "rsocket-websocket-client": "^0.0.10",
-    "@scalecube/scalecube-microservice": "0.1.3-snapshot.1562236272.16",
+    "@scalecube/scalecube-microservice": "0.1.3-alpha.28",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
@@ -39,6 +39,7 @@
     "@scalecube/utils": "^0.0.2-alpha.1",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
+    "rsocket-websocket-client": "^0.0.10",
     "rsocket-websocket-server": "^0.0.10",
     "ws": ">=3.3.1"
   }

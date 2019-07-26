@@ -1,10 +1,10 @@
 import { RSocketServer } from 'rsocket-core';
 import RSocketWebSocketServer from 'rsocket-websocket-server';
-import { Api } from '@scalecube/scalecube-microservice';
+import { Gateway as GatewayInterface } from './api/Gateway';
 import { requestResponse } from './requestResponse';
 import { requestStream } from './requestStream';
 
-export class Gateway implements Api.Gateway {
+export class Gateway implements GatewayInterface {
   private port: number;
   private server;
   private transport;
