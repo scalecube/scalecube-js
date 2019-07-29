@@ -36,8 +36,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.1",
-    "@scalecube/utils": "^0.0.2-alpha.1",
+    "@scalecube/api": "^0.0.2-alpha.8",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
     "rsocket-websocket-client": "^0.0.10",
