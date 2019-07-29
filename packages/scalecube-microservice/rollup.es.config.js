@@ -27,7 +27,7 @@ export default {
     commonjs({ include: 'node_modules/**' }),
     visualizer({
       filename: 'report.es.html',
-      title: 'ROLLUP - es',
+      title: 'Microservice - es',
     }),
     typescript({
       typescript: tscompile,

@@ -7,12 +7,12 @@
  */
 
 window.addEventListener('DOMContentLoaded', (event) => {
-  ((createMicroservice, addWorker, ASYNC_MODEL_TYPES, definitions, canvasUtil) => {
+  ((createMicroservice, workers, ASYNC_MODEL_TYPES, definitions, canvasUtil) => {
     const worker = new Worker('worker1.js');
     const worker2 = new Worker('worker2.js');
 
-    addWorker(worker);
-    addWorker(worker2);
+    workers.addWorker(worker);
+    workers.addWorker(worker2);
 
     let firstFlag = false;
 
@@ -271,5 +271,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
       btn.addEventListener('click', btnEventHandler);
     }
-  })(window.sc.createMicroservice, window.sc.addWorker, window.sc.ASYNC_MODEL_TYPES, definitions, canvasUtil);
+  })(window.sc.createMicroservice, window.sc.workers, window.sc.ASYNC_MODEL_TYPES, definitions, canvasUtil);
 });
