@@ -5,6 +5,7 @@ import tscompile from 'typescript';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import global from 'rollup-plugin-node-globals';
 import pkg from './package.json';
 
 export default {
@@ -26,13 +27,13 @@ export default {
     commonjs({ include: 'node_modules/**' }),
     visualizer({
       filename: 'report.cjs.html',
-      title: 'ROLLUP - cjs',
+      title: 'Microservice - cjs',
     }),
     typescript({
       typescript: tscompile,
       clean: true,
     }),
-
+    global(),
     filesize(),
   ],
 };

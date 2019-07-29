@@ -5,4 +5,6 @@ import { addWorker, removeWorker } from './connectWorkers';
 import { saveToLogs } from './logs';
 import { isNodejs } from './checkEnvironemnt';
 
-export { check, getFullAddress, validateAddress, constants, getAddress, addWorker, removeWorker, saveToLogs, isNodejs };
+const workers = !isNodejs() ? { addWorker, removeWorker } : {};
+
+export { check, getFullAddress, validateAddress, constants, getAddress, workers, saveToLogs, isNodejs };

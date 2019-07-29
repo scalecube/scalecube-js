@@ -35,7 +35,7 @@ export default {
     }),
     visualizer({
       filename: 'report.iffe.html',
-      title: 'ROLLUP - iife',
+      title: 'Microservice - iife',
     }),
     typescript({
       typescript: tscompile,
