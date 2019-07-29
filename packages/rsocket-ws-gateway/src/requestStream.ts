@@ -7,17 +7,12 @@ export const requestStream = (payload, serviceCall) => {
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
     const message = JSON.parse(data);
-    serviceCall
-      .requestStream(
-        message
-        // asyncModel: 'requestStream',
-      )
-      .subscribe(
-        (response: any) => {
-          subscriber.onNext({ data: JSON.stringify(response) });
-        },
-        (error: any) => subscriber.onError(packError(error)),
-        () => subscriber.onComplete()
-      );
+    serviceCall.requestStream(message).subscribe(
+      (response: any) => {
+        subscriber.onNext({ data: JSON.stringify(response) });
+      },
+      (error: any) => subscriber.onError(packError(error)),
+      () => subscriber.onComplete()
+    );
   });
 };
