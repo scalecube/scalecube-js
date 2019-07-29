@@ -13,7 +13,7 @@
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
     "build": "yarn build-rollup && yarn build:dist",
     "build-rollup": "rollup -c",
-    "build:dist": "tsc -p tsconfig.json",
+    "build:dist": "tsc -p tsconfig.json --module CommonJS",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "jest --config jest.config.js",
