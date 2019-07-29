@@ -19,7 +19,14 @@
     "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
-    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'"
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
+    "runNodejs01": "whoAmI=localHost:1000 seed=localHost:2000 node src/nodejs/index.js -port 1000",
+    "runNodejs02": "whoAmI=localHost:2000 node src/nodejs/index.js -port 2000",
+    "runNodejs03": "whoAmI=localHost:3000 seed=localHost:2000 node src/nodejs/index.js -port 3000",
+    "runNodejs04": "whoAmI=localHost:4000 seed=localHost:3000 node src/nodejs/index.js -port 4000",
+    "runNodejs05": "whoAmI=localHost:5000 seed=localHost:2000 node src/nodejs/index.js -port 5000",
+    "runNodejs06": "whoAmI=localHost:6000 seed=localHost:5000 node src/nodejs/index.js -port 6000",
+    "runNodejs07": "whoAmI=localHost:7000 seed=localHost:5000 node src/nodejs/index.js -port 7000"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
@@ -28,10 +35,15 @@
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-bundle-visualiser": "^1.2.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
   },
   "dependencies": {
     "@scalecube/api": "^0.0.2-alpha.8",
-    "@scalecube/scalecube-microservice": "^0.1.3-alpha.28"
+    "@scalecube/utils": "^0.0.2-alpha.8",
+    "@scalecube/cluster-nodejs": "^0.0.1",
+    "@scalecube/scalecube-microservice": "^0.1.3-alpha.28",
+    "@scalecube/transport-nodejs": "^0.0.2-alpha.9"
   }
 }
