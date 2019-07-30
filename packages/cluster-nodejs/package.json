@@ -1,0 +1,44 @@
+{
+  "name": "@scalecube/cluster-nodejs",
+  "version": "0.0.1",
+  "private": false,
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "es"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
+    "build": "yarn clean && yarn build-rollup",
+    "build-rollup": "rollup -c",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": ""
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "10.1.4",
+    "jest": "^24.6.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-visualizer": "^2.2.0",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/api": "^0.0.2-alpha.8",
+    "@scalecube/utils": "^0.0.2-alpha.8",
+    "swim": "^0.6.0",
+    "rxjs": "^6.4.0"
+  }
+}
