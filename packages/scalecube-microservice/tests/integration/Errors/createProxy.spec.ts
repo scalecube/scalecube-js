@@ -130,7 +130,7 @@ describe('validation test for create proxy from microservice', () => {
   );
 
   // @ts-ignore
-  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new class {}()])(
+  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new (class {})()])(
     `
     Scenario: serviceDefinition with invalid 'asyncModel' value
     Given     a 'asyncModel'

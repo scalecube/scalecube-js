@@ -3,7 +3,6 @@ import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
 import { check, getAddress, getFullAddress, saveToLogs, isNodejs } from '@scalecube/utils';
 import { tap } from 'rxjs/operators';
-
 import { defaultRouter } from '../Routers/default';
 import { createServiceCall, getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
