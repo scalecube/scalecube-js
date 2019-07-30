@@ -6,9 +6,9 @@ let gateway: Gateway;
 let proxy: any;
 
 beforeAll(async () => {
-  gateway = runGateway();
+  gateway = runGateway(8081);
   // gateway.start();
-  proxy = await createGatewayProxy('ws://localhost:8080', definition);
+  proxy = await createGatewayProxy('ws://localhost:8081', definition);
 });
 afterAll(() => {
   gateway.stop();

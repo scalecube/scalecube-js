@@ -1,4 +1,4 @@
-import { ReplaySubject, empty } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { getFullAddress, validateAddress, check, isNodejs } from '@scalecube/utils';
 import { Address, DiscoveryApi, ClusterApi } from '@scalecube/api';
 import { joinCluster as defaultJoinCluster } from '@scalecube/cluster-browser';
@@ -15,11 +15,14 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
   const { address, itemsToPublish, seedAddress, debug } = options;
   const joinCluster = options.cluster || (!isNodejs() ? defaultJoinCluster : undefined);
 
+  const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
+
   if (!joinCluster) {
     console.warn(NODEJS_MUST_PROVIDE_CLUSTER_IMPL);
+    discoveredItemsSubject.complete();
     return {
       destroy: () => Promise.resolve(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
-      discoveredItems$: () => empty(),
+      discoveredItems$: () => discoveredItemsSubject.asObservable(),
     };
   }
 
@@ -33,8 +36,6 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
   }
 
   check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
-
-  const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
   const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, debug });
 

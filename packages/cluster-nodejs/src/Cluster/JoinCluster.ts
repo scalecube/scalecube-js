@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 // @ts-ignore
 import Swim from 'swim';
 import { ClusterApi } from '@scalecube/api';
-import { saveToLogs } from '@scalecube/utils';
+import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { SwimEvent } from '../helpers/types';
 
 export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
@@ -13,7 +13,10 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   const opts = {
     local: {
       host: `${address.host}:${address.port}`,
-      meta: itemsToPublish, // optional
+      meta: {
+        from: getFullAddress(address),
+        items: itemsToPublish,
+      }, // optional
     },
     codec: 'msgpack', // optional
     disseminationFactor: 15, // optional
@@ -57,22 +60,24 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
 
   // update on membership, e.g. node recovered or update on meta data
   swim.on(Swim.EventType.Update, function onUpdate({ state, meta, host }: SwimEvent) {
+    const { from, items } = meta;
+
     switch (state) {
       case 0: // SwimEventAlive
-        membersStatus = { ...membersStatus, [host]: meta };
+        membersStatus = { ...membersStatus, [from]: items };
         break;
       case 1: // SwimEventSuspect
         break;
       case 2: // SwimEventFaulty
-        delete membersStatus[host];
+        delete membersStatus[from];
         break;
     }
 
     // @ts-ignore
     sMembers.next({
       type: swimStatusConverter[state],
-      items: meta,
-      from: host,
+      items,
+      from,
     });
 
     saveToLogs(
@@ -90,7 +95,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
     getCurrentMembersData: () =>
       new Promise<ClusterApi.MembersData>((resolve, reject) => {
         const getMemberStateCluster = () => {
-          resolve({ ...membersStatus.membersState });
+          resolve({ ...membersStatus });
         };
         if (!isConnected) {
           delayedActions.push(getMemberStateCluster);

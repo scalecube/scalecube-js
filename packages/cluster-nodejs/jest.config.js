@@ -4,6 +4,6 @@ module.exports = {
   },
   testRegex: '(\\.|/)spec\\.ts$',
   testPathIgnorePatterns: ['<rootDir>/es/', '<rootDir>/lib/', '<rootDir>/node_modules/'],
-  moduleFileExtensions: ['ts', 'tsx', 'js'],
-  moduleDirectories: ['node_modules', 'app/src'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'node'],
+  moduleDirectories: ['node_modules', '<rootDir>/src', '<rootDir>/node_modules/'],
 };
