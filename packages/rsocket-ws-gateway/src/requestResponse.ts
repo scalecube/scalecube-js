@@ -6,16 +6,11 @@ export const requestResponse = (payload, serviceCall) => {
   // console.log('Request:', data, metadata);
   return new Single((subscriber) => {
     subscriber.onSubscribe();
-    const message = JSON.parse(data);
     serviceCall
-      .requestResponse(
-        message
-        // asyncModel: 'requestResponse',
-        // includeMessage: true,
-      )
+      .requestResponse(data)
       .then((resp: any) => {
         // console.log('RESP', resp);
-        subscriber.onComplete({ data: JSON.stringify(resp) });
+        subscriber.onComplete({ data: resp });
       })
       .catch((err: any) => {
         subscriber.onError(packError(err));

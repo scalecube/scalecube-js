@@ -6,10 +6,9 @@ export const requestStream = (payload, serviceCall) => {
   const { data, metadata } = payload;
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
-    const message = JSON.parse(data);
-    serviceCall.requestStream(message).subscribe(
+    serviceCall.requestStream(data).subscribe(
       (response: any) => {
-        subscriber.onNext({ data: JSON.stringify(response) });
+        subscriber.onNext({ data: response });
       },
       (error: any) => subscriber.onError(packError(error)),
       () => subscriber.onComplete()

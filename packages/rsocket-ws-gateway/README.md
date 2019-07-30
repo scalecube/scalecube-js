@@ -15,23 +15,14 @@ interface Gateway {
 # Usage
 
 ```typescript
-import { Microservices, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { createMicroservice } from '@scalecube/scalecube-microservice';
 import { Gateway } from '@scalecube/rsocket-ws-gateway';
 
-class ServiceA {
-  public method1() {
-    return Promise.resolve({ id: 1 });
-  }
-}
-const definition = {
-  serviceName: 'serviceA',
-  methods: {
-    method1: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
-  },
-};
 const gateway = new Gateway({ port: 3000 });
-const ms = Microservices.create({
-  services: [{ definition, reference: new ServiceA() }],
+const ms = createMicroservice({
+  services: [{ definition, reference: new Service() }],
   gateway,
 });
+const serviceCall = ms.createServiceCall({});
+gateway.start({ serviceCall });
 ```

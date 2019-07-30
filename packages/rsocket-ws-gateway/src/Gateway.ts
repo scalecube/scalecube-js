@@ -1,8 +1,9 @@
-import { RSocketServer } from 'rsocket-core';
+import { RSocketServer, JsonSerializers } from 'rsocket-core';
 import RSocketWebSocketServer from 'rsocket-websocket-server';
-import { Gateway as GatewayInterface } from './api/Gateway';
+import { Gateway as GatewayInterface, GatewayStartOptions } from './api/Gateway';
 import { requestResponse } from './requestResponse';
 import { requestStream } from './requestStream';
+import { RsocketEventsPayload } from './api/types';
 
 export class Gateway implements GatewayInterface {
   private port: number;
@@ -13,13 +14,14 @@ export class Gateway implements GatewayInterface {
     this.port = port;
     this.transport = new RSocketWebSocketServer({ port });
   }
-  public start(opts) {
+  public start(opts: GatewayStartOptions) {
     const { serviceCall } = opts;
     this.server = new RSocketServer({
+      serializers: JsonSerializers,
       getRequestHandler: (socket) => {
         return {
-          requestResponse: (payload) => requestResponse(payload, serviceCall),
-          requestStream: (payload) => requestStream(payload, serviceCall),
+          requestResponse: (payload: RsocketEventsPayload) => requestResponse(payload, serviceCall),
+          requestStream: (payload: RsocketEventsPayload) => requestStream(payload, serviceCall),
         };
       },
       transport: this.transport,
