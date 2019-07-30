@@ -1,4 +1,4 @@
-import { ReplaySubject, throwError } from 'rxjs';
+import { ReplaySubject, empty } from 'rxjs';
 import { getFullAddress, validateAddress, check, isNodejs } from '@scalecube/utils';
 import { Address, DiscoveryApi, ClusterApi } from '@scalecube/api';
 import { joinCluster as defaultJoinCluster } from '@scalecube/cluster-browser';
@@ -18,8 +18,8 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
   if (!joinCluster) {
     console.warn(NODEJS_MUST_PROVIDE_CLUSTER_IMPL);
     return {
-      destroy: () => Promise.reject(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
-      discoveredItems$: () => throwError(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
+      destroy: () => Promise.resolve(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),
+      discoveredItems$: () => empty(),
     };
   }
 
