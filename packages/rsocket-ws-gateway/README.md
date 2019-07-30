@@ -19,10 +19,7 @@ import { createMicroservice } from '@scalecube/scalecube-microservice';
 import { Gateway } from '@scalecube/rsocket-ws-gateway';
 
 const gateway = new Gateway({ port: 3000 });
-const ms = createMicroservice({
-  services: [{ definition, reference: new Service() }],
-  gateway,
-});
+const ms = createMicroservice();
 const serviceCall = ms.createServiceCall({});
 gateway.start({ serviceCall });
 ```
