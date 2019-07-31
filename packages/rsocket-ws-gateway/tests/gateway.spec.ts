@@ -1,103 +1,64 @@
-import { RSocketClient } from 'rsocket-core';
-import { Gateway } from '../src/Gateway';
-import { makeConnection } from './helpers/utils';
+/*
+  Given microservice with gateway
+    And   start method was called and the microservice start listening 
+    And   a <service>
+         |    <service>        |  asyncModel        | success response
+         |ServiceA/methodA | requestResponse | true
+         |ServiceA/methodB | requestResponse | false
+         |ServiceA/methodC | requestStream     | true
+         |ServiceA/methodD | requestStream     | false
+    When  a client wants to access the service
+    And   the client sends a request to the gateway
+    Then  microservice fulfill the request using serviceCall to invoke the service
+*/
+
+import { runGateway, definition } from './helpers/utils';
+import { Gateway } from '../src/api/Gateway';
+import { createGatewayProxy } from '../src/createGatewayProxy';
 
 let gateway: Gateway;
-let socket;
+let proxy: any;
 
-// @ts-ignore
 beforeAll(async () => {
-  ({ gateway, socket } = await makeConnection());
+  gateway = runGateway(8081);
+  // gateway.start();
+  proxy = await createGatewayProxy('ws://localhost:8081', definition);
 });
-
 afterAll(() => {
-  gateway.stop();
+  return gateway.stop();
 });
 
-test('success requestResponse', (done) => {
-  socket
-    .requestResponse({
-      data: {
-        qualifier: 'serviceA/methodA',
-        data: [{ request: 'ping' }],
-      },
-    })
-    .subscribe({
-      onComplete: ({ data }) => {
-        // console.log('Response', data, metadata);
-        expect(data).toEqual({ id: 1 });
-        done();
-      },
-      onError: (e: any) => {
-        done.fail(e);
-      },
-    });
+test('requestResponse', () => {
+  return proxy.methodA().then((resp) => {
+    expect(resp).toEqual({ id: 1 });
+  });
 });
-
-test('fail requestResponse', (done) => {
-  socket
-    .requestResponse({
-      data: {
-        qualifier: 'serviceA/methodB',
-        data: [{ request: 'ping' }],
-      },
-    })
-    .subscribe({
-      onError: (e: any) => {
-        expect(JSON.parse(e.source.message)).toEqual({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
-        done();
-      },
-    });
+test('fail requestResponse', () => {
+  return proxy.methodB().catch((e) => {
+    expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
+  });
 });
-
-test('success requestStream', (done) => {
+test('requestStream', (done) => {
   const responses = [1, 2];
-  socket
-    .requestStream({
-      data: {
-        qualifier: 'serviceA/methodC',
-        data: [{ request: 'ping' }],
-      },
-    })
-    .subscribe({
-      onSubscribe(subscription) {
-        subscription.request(2);
-      },
-      onNext: ({ data }) => {
-        expect(data).toEqual(responses.shift());
-      },
-      onComplete: () => {
-        done();
-      },
-      onError: (e: any) => {
-        done.fail(e);
-      },
-    });
+  proxy.methodC().subscribe(
+    (resp) => {
+      expect(resp).toEqual(responses.shift());
+    },
+    (e) => {
+      throw e;
+    },
+    done
+  );
 });
 
 test('fail requestStream', (done) => {
-  socket
-    .requestStream({
-      data: {
-        qualifier: 'serviceA/methodD',
-        // qualifier: 'serviceA/methodE',
-        data: [{ request: 'ping' }],
-      },
-    })
-    .subscribe({
-      onSubscribe(subscription) {
-        subscription.request(2);
-      },
-      onNext: () => {
-        done.fail();
-      },
-      onComplete: () => {
-        done.fail();
-      },
-      onError: (e: any) => {
-        // expect(e.source.message).toEqual('methodD error');
-        expect(JSON.parse(e.source.message)).toEqual({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
-        done();
-      },
-    });
+  const responses = [1, 2];
+  proxy.methodD().subscribe(
+    done.fail,
+    (e) => {
+      expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
+      done();
+    },
+    done.fail
+  );
 });

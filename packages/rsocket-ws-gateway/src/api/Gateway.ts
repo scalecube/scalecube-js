@@ -1,5 +1,9 @@
 import { MicroserviceApi } from '@scalecube/api';
 
+export interface GatewayOptions {
+  port: number;
+}
+
 export interface GatewayStartOptions {
   serviceCall: MicroserviceApi.ServiceCall;
 }
