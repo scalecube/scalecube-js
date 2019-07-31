@@ -2,7 +2,7 @@ import { MicroserviceApi } from '@scalecube/api';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions } from '../helpers/types';
 import { throwErrorFromServiceCall } from './ServiceCall';
-import { getNotFoundByRouterError, ASYNC_MODEL_TYPES } from '../helpers/constants';
+import { getNotFoundByRouterError, ASYNC_MODEL_TYPES, TRANSPORT_NOT_PROVIDED } from '../helpers/constants';
 import { remoteResponse } from '../TransportProviders/MicroserviceClient';
 
 export const remoteCall = ({
@@ -29,6 +29,14 @@ export const remoteCall = ({
     return throwErrorFromServiceCall({
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       errorMessage: `asyncModel is not correct, expected ${asyncModel} but received ${asyncModelProvider}`,
+      microserviceContext,
+    }) as Observable<any>;
+  }
+
+  if (!transportClientProvider) {
+    return throwErrorFromServiceCall({
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      errorMessage: TRANSPORT_NOT_PROVIDED,
       microserviceContext,
     }) as Observable<any>;
   }

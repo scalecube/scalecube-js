@@ -14,7 +14,7 @@ import { validateMessage } from '../helpers/validation';
 import { ASYNC_MODEL_TYPES } from '..';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
-import { MICROSERVICE_NOT_EXISTS, TRANSPORT_NOT_PROVIDED } from '../helpers/constants';
+import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { defaultRouter } from '../Routers/default';
 import { saveToLogs } from '@scalecube/utils';
 
@@ -33,9 +33,7 @@ export const getServiceCall = ({
     const localService = microserviceContext.localRegistry.lookUp({ qualifier: message.qualifier });
     const res$: Observable<any> = localService
       ? localCall({ localService, asyncModel, messageFormat, message, microserviceContext })
-      : transportClientProvider
-      ? remoteCall({ router, microserviceContext, message, asyncModel, transportClientProvider })
-      : throwError(TRANSPORT_NOT_PROVIDED);
+      : remoteCall({ router, microserviceContext, message, asyncModel, transportClientProvider });
 
     return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.pipe(take(1)).toPromise() : res$;
   };
