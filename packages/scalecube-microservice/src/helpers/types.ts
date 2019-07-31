@@ -47,7 +47,7 @@ export interface RemoteCallOptions {
   microserviceContext: MicroserviceContext;
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.ClientProvider;
 }
 
 export interface InvokeMethodOptions {
