@@ -7,7 +7,7 @@ import { defaultRouter } from '../Routers/default';
 import { createServiceCall, getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
-import { MicroserviceContext } from '../helpers/types';
+import { ConnectionManager, MicroserviceContext } from '../helpers/types';
 import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { isServiceAvailableInRegistry } from '../helpers/serviceData';
@@ -43,9 +43,14 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   const seedAddress = microserviceOptions.seedAddress as Address;
 
   const transportClientProvider = transport && (transport as TransportApi.Transport).clientProvider;
+  const fallBackAddress = address || getAddress(Date.now().toString());
 
   // tslint:disable-next-line
-  let microserviceContext: MicroserviceContext | null = createMicroserviceContext();
+  let microserviceContext: MicroserviceContext | null = createMicroserviceContext({
+    address: fallBackAddress,
+    debug: debug || false,
+    connectionManager,
+  });
   const { remoteRegistry, localRegistry } = microserviceContext;
 
   localRegistry.add({ services, address });
@@ -58,7 +63,6 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       }) || []
     : [];
 
-  const fallBackAddress = address || getAddress(Date.now().toString());
   const discoveryInstance = createDiscovery({
     address: fallBackAddress,
     itemsToPublish: endPointsToPublishInCluster,
@@ -74,7 +78,6 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     router: defaultRouter,
     microserviceContext,
     transportClientProvider,
-    connectionManager,
   });
 
   // if address is not available then microservice can't start a server and get serviceCall requests
@@ -119,31 +122,39 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
         microserviceContext,
         isServiceAvailable,
         transportClientProvider,
-        connectionManager,
       }),
     createProxy: (proxyOptions: MicroserviceApi.ProxyOptions) =>
       createProxy({
         ...proxyOptions,
         microserviceContext,
         transportClientProvider,
-        connectionManager,
       }),
     createServiceCall: ({ router }: { router: MicroserviceApi.Router }) =>
       createServiceCall({
         router,
         microserviceContext,
         transportClientProvider,
-        connectionManager,
       }),
-    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop, connectionManager }),
+    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
   } as MicroserviceApi.Microservice);
 };
 
-const createMicroserviceContext = () => {
+const createMicroserviceContext = ({
+  address,
+  debug,
+  connectionManager,
+}: {
+  address: Address;
+  debug: boolean;
+  connectionManager: ConnectionManager;
+}) => {
   const remoteRegistry = createRemoteRegistry();
   const localRegistry = createLocalRegistry();
   return {
     remoteRegistry,
     localRegistry,
+    debug,
+    whoAmI: getFullAddress(address),
+    connectionManager,
   };
 };

@@ -22,7 +22,6 @@ export interface CreateServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
   transportClientProvider?: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
 }
 
 export interface GetProxyOptions {
@@ -40,6 +39,7 @@ export interface LocalCallOptions {
   asyncModel: MicroserviceApi.AsyncModel;
   message: MicroserviceApi.Message;
   messageFormat: boolean;
+  microserviceContext: MicroserviceContext;
 }
 
 export interface RemoteCallOptions {
@@ -48,7 +48,6 @@ export interface RemoteCallOptions {
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
 }
 
 export interface InvokeMethodOptions {
@@ -97,6 +96,9 @@ export interface Reference {
 export interface MicroserviceContext {
   remoteRegistry: RemoteRegistry;
   localRegistry: LocalRegistry;
+  connectionManager: ConnectionManager;
+  whoAmI: string;
+  debug: boolean;
 }
 
 export type CreateLocalRegistry = () => LocalRegistry;

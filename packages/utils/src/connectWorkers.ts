@@ -5,7 +5,7 @@ const workersMap: { [key: string]: Worker } = {};
 if (!isNodejs()) {
   // @ts-ignore
   if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
-    console.warn(`Don't use this on webworkers, only on the main thread`);
+    console.error(`Don't use this on webworkers, only on the main thread`);
   } else {
     addEventListener('message', (ev) => {
       if (ev && ev.data && !ev.data.workerId) {

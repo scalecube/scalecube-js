@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs';
-import { getFullAddress, validateAddress, check, isNodejs } from '@scalecube/utils';
+import { getFullAddress, validateAddress, check, isNodejs, saveToLogs } from '@scalecube/utils';
 import { Address, DiscoveryApi, ClusterApi } from '@scalecube/api';
 import { joinCluster as defaultJoinCluster } from '@scalecube/cluster-browser';
 import {
@@ -18,7 +18,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
   const discoveredItemsSubject = new ReplaySubject<DiscoveryApi.ServiceDiscoveryEvent>();
 
   if (!joinCluster) {
-    console.warn(NODEJS_MUST_PROVIDE_CLUSTER_IMPL);
+    saveToLogs(getFullAddress(address), NODEJS_MUST_PROVIDE_CLUSTER_IMPL, {}, debug, 'warn');
     discoveredItemsSubject.complete();
     return {
       destroy: () => Promise.resolve(NODEJS_MUST_PROVIDE_CLUSTER_IMPL),

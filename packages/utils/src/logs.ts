@@ -9,7 +9,13 @@ const getRandomColor = () => {
   return color;
 };
 
-export const saveToLogs = (identifier: string, msg: string, extra: { [key: string]: any }, debug?: boolean) => {
+export const saveToLogs = (
+  identifier: string,
+  msg: string,
+  extra: { [key: string]: any },
+  debug?: boolean,
+  type: 'log' | 'warn' = 'log'
+) => {
   if (!colorsMap[identifier]) {
     colorsMap[identifier] = getRandomColor();
   }
@@ -17,11 +23,11 @@ export const saveToLogs = (identifier: string, msg: string, extra: { [key: strin
   // tslint:disable
   if (debug) {
     const logColor = `color:${colorsMap[identifier]}`;
-    extra && console.log(`%c******** address: ${identifier}********`, logColor);
-    console.log(msg);
+    extra && console[type](`%c******** address: ${identifier}********`, logColor);
+    console[type](msg);
     extra &&
       Object.keys(extra).forEach((key: string) => {
-        console.log(`${key}: ${JSON.stringify(extra[key], null, 2)}`);
+        console[type](`${key}: ${JSON.stringify(extra[key], null, 2)}`);
       });
   }
   // tslint:enable

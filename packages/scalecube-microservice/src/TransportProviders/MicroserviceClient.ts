@@ -6,9 +6,9 @@ import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
 import { ISubscription } from 'rsocket-types';
 
-import { getFullAddress } from '@scalecube/utils';
+import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { Observable } from 'rxjs';
-import { ConnectionManager, RsocketEventsPayload } from '../helpers/types';
+import { MicroserviceContext, RsocketEventsPayload } from '../helpers/types';
 import { ASYNC_MODEL_TYPES } from '..';
 import { RSocketConnectionStatus } from '../helpers/constants';
 
@@ -17,19 +17,19 @@ export const remoteResponse = ({
   asyncModel,
   message,
   transportClientProvider,
-  connectionManager,
+  microserviceContext,
 }: {
   address: Address;
   asyncModel: string;
   message: MicroserviceApi.Message;
   transportClientProvider: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
+  microserviceContext: MicroserviceContext;
 }) => {
   return new Observable((observer) => {
     const connection: Promise<RSocketClientSocket> = getClientConnection({
       address,
       transportClientProvider,
-      connectionManager,
+      microserviceContext,
     });
 
     connection.then((socket: RSocketClientSocket) => {
@@ -73,7 +73,7 @@ export const remoteResponse = ({
 
       socket.connectionStatus().subscribe(({ kind, error }: { kind: string; error?: Error }) => {
         if (kind.toUpperCase() === RSocketConnectionStatus.ERROR) {
-          destoryClientConnection(getFullAddress(address), connectionManager);
+          destoryClientConnection(getFullAddress(address), microserviceContext);
           observer.error(error);
         }
       });
@@ -84,13 +84,14 @@ export const remoteResponse = ({
 const getClientConnection = ({
   address,
   transportClientProvider,
-  connectionManager,
+  microserviceContext,
 }: {
   address: Address;
   transportClientProvider: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
+  microserviceContext: MicroserviceContext;
 }) => {
   const fullAddress = getFullAddress(address);
+  const { connectionManager } = microserviceContext;
   let connection: Promise<RSocketClientSocket> = connectionManager.getConnection(fullAddress);
 
   if (!connection) {
@@ -128,19 +129,24 @@ const createClient = ({
   });
 };
 
-export const destoryClientConnection = (fullAddress: string, connectionManager: ConnectionManager) => {
+export const destoryClientConnection = (fullAddress: string, microserviceContext: MicroserviceContext) => {
+  const { connectionManager, whoAmI, debug } = microserviceContext;
   const connection = connectionManager.getConnection(fullAddress);
   if (connection) {
     connection.then((socket: RSocketClientSocket) => {
       try {
         socket.close();
       } catch (e) {
-        console.warn('RSocket unable to close connection ' + e);
+        saveToLogs(whoAmI, `RSocket unable to close connection ${e}`, {}, debug, 'warn');
       }
       connectionManager.removeConnection(fullAddress);
     });
   }
 };
 
-export const destroyAllClientConnections = (connectionManager: ConnectionManager) =>
-  Object.keys(connectionManager.getAllConnections()).forEach((key) => destoryClientConnection(key, connectionManager));
+export const destroyAllClientConnections = (microserviceContext: MicroserviceContext) => {
+  const { connectionManager } = microserviceContext;
+  Object.keys(connectionManager.getAllConnections()).forEach((key) =>
+    destoryClientConnection(key, microserviceContext)
+  );
+};

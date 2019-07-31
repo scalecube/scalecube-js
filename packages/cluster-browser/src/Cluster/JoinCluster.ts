@@ -1,6 +1,6 @@
-import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ClusterApi } from '@scalecube/api';
-import { getFullAddress } from '@scalecube/utils';
+import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { server } from './Server';
 import { client } from './Client';
 import { createMember } from './Member';
@@ -16,7 +16,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   const delayedActions: any[] = [];
   let isConnected = !seedAddress;
 
-  const rSubjectMembers = new ReplaySubject<ClusterApi.ClusterEvent>(1);
+  const rSubjectMembers = new Subject<ClusterApi.ClusterEvent>();
 
   let clientPort: any;
 
@@ -78,7 +78,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
             await serverPort.stop();
             clientPort && (await clientPort.stop());
           } catch (e) {
-            console.warn(`unable to destroy ${whoAmI}: ${e}`);
+            saveToLogs(whoAmI, `unable to destroy ${whoAmI}: ${e}`, {}, debug, 'warn');
           }
           rSubjectMembers.complete();
           membersStatus.membersPort = {};

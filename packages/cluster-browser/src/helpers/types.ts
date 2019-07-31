@@ -1,5 +1,5 @@
 import { Address, ClusterApi } from '@scalecube/api';
-import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 /**
  * @interface CreateClusterServer
@@ -43,7 +43,7 @@ export interface ClusterServerOptions {
    * @property
    * replay subject for update subscribers
    */
-  rSubjectMembers: ReplaySubject<ClusterApi.ClusterEvent>;
+  rSubjectMembers: Subject<ClusterApi.ClusterEvent>;
   /**
    * @property
    * cluster member state
@@ -118,7 +118,7 @@ export interface ClusterClientOptions {
    * @property
    * replay subject for update subscribers
    */
-  rSubjectMembers: ReplaySubject<ClusterApi.ClusterEvent>;
+  rSubjectMembers: Subject<ClusterApi.ClusterEvent>;
   /**
    * @property
    * cluster member state

@@ -2,8 +2,8 @@ import { createMicroservice, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
 import { Observable } from 'rxjs';
 import { getServiceNameInvalid } from '../../src/helpers/constants';
-import { getDefaultAddress } from '../../src/helpers/utils';
 import { MicroserviceApi } from '@scalecube/api';
+import { getAddress } from '@scalecube/utils';
 
 describe(`
      Background: Resolve createProxies ONLY when the service available in the registry
@@ -43,10 +43,10 @@ describe(`
 
   const microserviceWithServices = createMicroservice({
     services: [service1, service2],
-    address: getDefaultAddress(1000),
-    seedAddress: getDefaultAddress(8000),
+    address: getAddress('1000'),
+    seedAddress: getAddress('8000'),
   });
-  const microserviceWithoutServices = createMicroservice({ seedAddress: getDefaultAddress(1000) });
+  const microserviceWithoutServices = createMicroservice({ seedAddress: getAddress('1000') });
   describe.each([
     // ################# LocalCall #################
     {
