@@ -19,6 +19,7 @@ describe('Test address collusion - 2 members with the same address that connect 
     const server = joinCluster({
       address: serverAddress,
       itemsToPublish: ['s1', 's2'],
+      debug: true,
     });
 
     const client = joinCluster({
@@ -34,7 +35,7 @@ describe('Test address collusion - 2 members with the same address that connect 
     });
 
     client.listen$().subscribe((res: any) => {
-      expect(spy.mock.calls[0][0]).toMatch(
+      expect(spy.mock.calls[1][0]).toMatch(
         getMultiInitClientFromServer(getFullAddress(serverAddress), getFullAddress(clientAddress))
       );
       spy.mockRestore();

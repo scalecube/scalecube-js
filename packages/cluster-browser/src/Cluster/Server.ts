@@ -35,7 +35,7 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
         }
 
         if (membersStatus.membersState[origin]) {
-          console.warn(getMultiInitClientFromServer(whoAmI, origin));
+          saveToLogs(whoAmI, getMultiInitClientFromServer(whoAmI, origin), {}, debug, 'warn');
           return;
         }
 
@@ -170,7 +170,7 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
           }
           break;
         default:
-          console.warn('Not supported membership event type');
+          saveToLogs(whoAmI, 'Not supported membership event type', {}, debug, 'warn');
           return;
       }
 

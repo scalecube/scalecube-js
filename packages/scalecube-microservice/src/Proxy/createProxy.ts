@@ -1,5 +1,5 @@
 import { TransportApi, MicroserviceApi } from '@scalecube/api';
-import { ConnectionManager, MicroserviceContext } from '../helpers/types';
+import { MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '../helpers/validation';
 import { getProxy } from './Proxy';
@@ -11,13 +11,11 @@ export const createProxy = ({
   serviceDefinition,
   microserviceContext,
   transportClientProvider,
-  connectionManager,
 }: {
   router?: MicroserviceApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -25,7 +23,7 @@ export const createProxy = ({
   validateServiceDefinition(serviceDefinition);
 
   return getProxy({
-    serviceCall: getServiceCall({ router, microserviceContext, transportClientProvider, connectionManager }),
+    serviceCall: getServiceCall({ router, microserviceContext, transportClientProvider }),
     serviceDefinition,
   });
 };
@@ -35,13 +33,11 @@ export const createProxies = ({
   microserviceContext,
   isServiceAvailable,
   transportClientProvider,
-  connectionManager,
 }: {
   createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: any;
   transportClientProvider?: TransportApi.ClientProvider;
-  connectionManager: ConnectionManager;
 }): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -64,7 +60,6 @@ export const createProxies = ({
             router,
             microserviceContext,
             transportClientProvider,
-            connectionManager,
           });
           isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
         } catch (e) {
@@ -77,7 +72,6 @@ export const createProxies = ({
         router,
         microserviceContext,
         transportClientProvider,
-        connectionManager,
       });
     }
 

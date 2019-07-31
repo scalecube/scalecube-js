@@ -30,10 +30,11 @@ describe('Test address collusion - 2 members with the same address that act as s
       address: clientAddress,
       seedAddress: serverAddress,
       itemsToPublish: ['s1', 'c2'],
+      debug: true,
     });
 
     client.listen$().subscribe((res: any) => {
-      expect(spy.mock.calls[0][0]).toMatch(
+      expect(spy.mock.calls[1][0]).toMatch(
         getMultiInitClientFromServer(getFullAddress(clientAddress), getFullAddress(serverAddress))
       );
       spy.mockRestore();

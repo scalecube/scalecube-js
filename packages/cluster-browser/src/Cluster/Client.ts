@@ -40,7 +40,7 @@ export const client: CreateClusterClient = (options: ClusterClientOptions) => {
           countServers++;
 
           if (countServers > 1) {
-            console.warn(getMultiInitClientFromServer(whoAmI, from));
+            saveToLogs(whoAmI, getMultiInitClientFromServer(whoAmI, from), {}, debug, 'warn');
             return;
           }
 

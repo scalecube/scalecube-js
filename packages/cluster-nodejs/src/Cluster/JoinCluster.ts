@@ -46,7 +46,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   swim.bootstrap(hostsToJoin);
   // bootstrap error handling
   swim.on(Swim.EventType.Error, function onError(err: Error) {
-    console.warn(`swim-js error: ${err}`);
+    saveToLogs(whoAmI, `swim-js error: ${err}`, {}, debug, 'warn');
   });
 
   // bootstrap ready
