@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.2-alpha.9",
-    "@scalecube/utils": "^0.0.2-alpha.9"
+    "@scalecube/utils": "^0.0.2-alpha.9",
+    "rxjs": "^6.4.0"
   }
 }

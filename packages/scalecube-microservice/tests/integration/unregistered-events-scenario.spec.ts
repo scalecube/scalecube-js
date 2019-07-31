@@ -20,7 +20,8 @@ describe(`
   Scenario: destroy msB (registry doesn't have any 'hello' service)
     When    msB is destroyed.
     And     msA try to do removeCall to the service 'hello'
-    Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => { // @ts-ignore
+    Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => {
+    // @ts-ignore
     expect.assertions(2);
 
     const service = {
@@ -90,7 +91,8 @@ describe(`
   Scenario: destroy msA (registry doesn't have any 'hello' service)
       When  msA is destroyed.
       And   msA try to do removeCall to the service 'hello'
-      Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => { // @ts-ignore
+      Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => {
+    // @ts-ignore
     expect.assertions(3);
 
     const service = {

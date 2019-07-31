@@ -1,12 +1,11 @@
-import { Observable, from } from 'rxjs';
 import { RSocketClient } from 'rsocket-core';
-import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { Gateway } from '../src/Gateway';
 import { makeConnection } from './helpers/utils';
 
 let gateway: Gateway;
 let socket;
 
+// @ts-ignore
 beforeAll(async () => {
   ({ gateway, socket } = await makeConnection());
 });

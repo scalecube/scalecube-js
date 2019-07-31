@@ -2,15 +2,15 @@
 
 > **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
 
-# Cluster-browser
+# Cluster-nodejs
 
-This package provides a default cluster implementation for browser.
-it uses native browser message event for creating the distributed environment.
+This package provides a default cluster implementation for node-js.
+it uses SWIM protocol for discovering members in distributed environment.
 
 ## Basic Usage
 
 ```javascript
-import { joinCluster } from '@scalecube/cluster-browser';
+import { joinCluster } from '@scalecube/cluster-nodejs';
 
 const clusterOptions = {
   seedAddress,
