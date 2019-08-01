@@ -1,6 +1,4 @@
 import { from, throwError } from 'rxjs';
-import { RSocketClient, JsonSerializers } from 'rsocket-core';
-import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../../src/Gateway';
 
@@ -32,39 +30,6 @@ export const definition = {
   },
 };
 
-type makeConnectionType = (port?: number) => Promise<{ gateway: any; socket: any }>;
-
-export const makeConnection: makeConnectionType = (port = 8080) => {
-  const gateway = new Gateway({ port });
-  const ms = createMicroservice({
-    services: [{ definition, reference: new ServiceA() }],
-    // gateway,
-  });
-  const serviceCall = ms.createServiceCall({});
-  gateway.start({ serviceCall });
-  return new Promise((resolve, reject) => {
-    const client = new RSocketClient({
-      serializers: JsonSerializers,
-      setup: {
-        dataMimeType: 'application/json',
-        keepAlive: 1000,
-        lifetime: 1000,
-        metadataMimeType: 'application/json',
-      },
-      transport: new RSocketWebSocketClient({ url: `ws://localhost:${port}` }),
-    });
-    client.connect().subscribe({
-      onComplete: (socket: any) => {
-        // console.log('Connected');
-        resolve({ gateway, socket });
-      },
-      onError: (error: any) => {
-        // console.log('Err', error);
-        reject(new Error('Connection error'));
-      },
-    });
-  });
-};
 export const runGateway = (port = 8080) => {
   const gateway = new Gateway({ port });
   const ms = createMicroservice({
