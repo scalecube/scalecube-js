@@ -1,6 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
+import { getAsyncModelMissmatch } from '../../../src/helpers/constants';
 
 const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
@@ -152,5 +153,78 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         done();
       });
     });
+  });
+
+  test(`
+    Scenario: service emit instead of resolve.
+    Given     proxy
+      And     remoteService
+              | method               | asyncModel definition | asyncModel definition|
+              | incorrectAsyncModel  | requestResponse       | requestStream       |
+    When      remoteService emit values
+    Then      proxy receive only first emit
+  `, (done) => {
+    expect.assertions(1);
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: {
+            serviceName: 'GreetingService',
+            methods: {
+              hello: {
+                asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+              },
+            },
+          },
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
+
+    awaitProxy.then(({ proxy: serviceProxy }: any) => {
+      serviceProxy.hello().subscribe(
+        () => {},
+        (error: Error) => {
+          expect(error.message).toMatch(
+            getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_STREAM, ASYNC_MODEL_TYPES.REQUEST_RESPONSE)
+          );
+          done();
+        }
+      );
+    });
+  });
+
+  test(`
+    Scenario: service resolve instead of emit.
+    Given     proxy
+      And     remoteService
+              | method                | asyncModel definition | asyncModel definition|
+              | incorrectAsyncModel$  | requestStream         | requestResponse     |
+    When      remoteService return value
+    Then      proxy receive the value
+  `, async () => {
+    expect.assertions(1);
+    const { awaitProxy } = microServiceWithoutServices.createProxies({
+      proxies: [
+        {
+          serviceDefinition: {
+            serviceName: 'GreetingService',
+            methods: {
+              greet$: {
+                asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+              },
+            },
+          },
+          proxyName: 'awaitProxy',
+        },
+      ],
+      isAsync: true,
+    });
+
+    const { proxy } = await awaitProxy;
+    return expect(proxy.greet$(['Me'])).rejects.toMatchObject(
+      new Error(getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM))
+    );
   });
 });
