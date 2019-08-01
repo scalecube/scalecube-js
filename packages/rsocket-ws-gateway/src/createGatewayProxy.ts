@@ -3,8 +3,14 @@ import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
 
-export const createGatewayProxy = (url, definition) => {
-  const proxy = {};
+type createGatewayProxyType = (url: string, definitions: any) => Promise<any>;
+
+export const createGatewayProxy = (url, definitions) => {
+  const isDefinitionsArray = Array.isArray(definitions);
+  if (!isDefinitionsArray) {
+    definitions = [definitions];
+  }
+  const proxies: Array<any> = [];
   let socket;
   return new Promise(async (resolve, reject) => {
     try {
@@ -13,22 +19,27 @@ export const createGatewayProxy = (url, definition) => {
       // console.log('Err', e);
       reject(e);
     }
-    const { serviceName, methods } = definition;
-    Object.keys(methods).forEach((method) => {
-      const asyncModel = methods[method].asyncModel;
-      const qualifier = `${serviceName}/${method}`;
-      proxy[method] = (() => {
-        switch (asyncModel) {
-          case 'requestResponse':
-            return requestResponse(socket, qualifier);
-          case 'requestStream':
-            return requestStream(socket, qualifier);
-          default:
-            reject(new Error('Unknown asyncModel'));
-        }
-      })();
+    definitions.forEach((definition) => {
+      const { serviceName, methods } = definition;
+      const proxy = {};
+      Object.keys(methods).forEach((method) => {
+        const asyncModel = methods[method].asyncModel;
+        const qualifier = `${serviceName}/${method}`;
+        proxy[method] = (() => {
+          switch (asyncModel) {
+            case 'requestResponse':
+              return requestResponse(socket, qualifier);
+            case 'requestStream':
+              return requestStream(socket, qualifier);
+            default:
+              reject(new Error('Unknown asyncModel'));
+          }
+        })();
+      });
+      proxies.push(proxy);
     });
-    resolve(proxy);
+
+    resolve(isDefinitionsArray ? proxies : proxies[0]);
   });
 };
 
