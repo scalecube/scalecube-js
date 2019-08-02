@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
-import { createGatewayProxyType, Proxy } from './api/createGatewayProxy';
 import { MicroserviceApi } from '@scalecube/api';
 import { validateServiceDefinition } from '@scalecube/utils';
 
