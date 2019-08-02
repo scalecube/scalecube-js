@@ -7,13 +7,15 @@
  *    Check validity - proxy - serviceDefinition asyncModel value      - https://github.com/scalecube/scalecube-js/issues/103
  *****/
 import { createMicroservice } from '../../../src';
-import {
+import { constants as utilsConstants } from '@scalecube/utils';
+
+const {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
   SERVICE_NAME_NOT_PROVIDED,
   getIncorrectMethodValueError,
   getServiceNameInvalid,
-} from '../../../src/helpers/constants';
+} = utilsConstants;
 
 describe('validation test for create proxy from microservice', () => {
   const ms = createMicroservice({});
@@ -130,7 +132,7 @@ describe('validation test for create proxy from microservice', () => {
   );
 
   // @ts-ignore
-  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new (class {})()])(
+  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new class {}()])(
     `
     Scenario: serviceDefinition with invalid 'asyncModel' value
     Given     a 'asyncModel'

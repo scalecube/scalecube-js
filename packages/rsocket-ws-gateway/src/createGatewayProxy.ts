@@ -2,15 +2,18 @@ import { Observable } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
+import { createGatewayProxyType, Proxy } from './api/createGatewayProxy';
+import { MicroserviceApi } from '@scalecube/api';
 
-type createGatewayProxyType = (url: string, definitions: any) => Promise<any>;
-
-export const createGatewayProxy = (url, definitions) => {
+export const createGatewayProxy: createGatewayProxyType = (url, definitions) => {
   const isDefinitionsArray = Array.isArray(definitions);
+  let defs: MicroserviceApi.ServiceDefinition[];
   if (!isDefinitionsArray) {
-    definitions = [definitions];
+    defs = [definitions];
+  } else {
+    defs = definitions;
   }
-  const proxies: Array<any> = [];
+  const proxies: Proxy[] = [];
   let socket;
   return new Promise(async (resolve, reject) => {
     try {
@@ -19,9 +22,9 @@ export const createGatewayProxy = (url, definitions) => {
       // console.log('Err', e);
       reject(e);
     }
-    definitions.forEach((definition) => {
+    defs.forEach((definition) => {
       const { serviceName, methods } = definition;
-      const proxy = {};
+      const proxy: Proxy = {};
       Object.keys(methods).forEach((method) => {
         const asyncModel = methods[method].asyncModel;
         const qualifier = `${serviceName}/${method}`;

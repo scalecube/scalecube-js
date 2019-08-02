@@ -14,12 +14,38 @@ interface Gateway {
 
 # Usage
 
+## Server side
+
 ```typescript
 import { createMicroservice } from '@scalecube/scalecube-microservice';
 import { Gateway } from '@scalecube/rsocket-ws-gateway';
 
-const gateway = new Gateway({ port: 3000 });
-const ms = createMicroservice();
+const definition = {
+  serviceName: 'serviceA',
+  methods: {
+    methodA: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
+  },
+};
+const service = { methodA: () => Promise.resolve('ok') };
+const services = [{ definition, reference: serviceA }];
+const ms = createMicroservice({ services });
 const serviceCall = ms.createServiceCall({});
+const gateway = new Gateway({ port: 3000 });
 gateway.start({ serviceCall });
+```
+
+## Client side
+
+```typescript
+import { createGatewayProxy } from '@scalecube/rsocket-ws-gateway/dist/createGatewayProxy';
+
+
+const definition = {
+  serviceName: 'serviceA',
+  methods: {
+    methodA: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
+  },
+};
+  const proxy = await createGatewayProxy('ws://localhost:3000', definition);
+  const resp = await proxy.methodA() // => 'ok'
 ```

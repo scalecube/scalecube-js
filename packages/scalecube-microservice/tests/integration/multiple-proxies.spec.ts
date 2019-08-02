@@ -1,9 +1,11 @@
 import { createMicroservice, ASYNC_MODEL_TYPES } from '../../src';
 import { hello, greet$ } from '../mocks/GreetingService';
 import { Observable } from 'rxjs';
-import { getServiceNameInvalid } from '../../src/helpers/constants';
 import { MicroserviceApi } from '@scalecube/api';
 import { getAddress } from '@scalecube/utils';
+import { constants as utilsConstants } from '@scalecube/utils';
+
+const { getServiceNameInvalid } = utilsConstants;
 
 describe(`
      Background: Resolve createProxies ONLY when the service available in the registry

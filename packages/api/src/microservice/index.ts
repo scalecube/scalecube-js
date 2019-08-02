@@ -10,3 +10,4 @@ export { RouterOptions, Router } from './Router';
 export { Service } from './Service';
 export { ServiceDefinition } from './ServiceDefinition';
 export { ServiceReference } from './ServiceReference';
+export { Qualifier } from './Qualifier';

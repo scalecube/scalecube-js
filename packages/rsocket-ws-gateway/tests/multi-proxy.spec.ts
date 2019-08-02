@@ -23,10 +23,10 @@ const serviceCall = ms.createServiceCall({});
 const gateway = new Gateway({ port: 8080 });
 gateway.start({ serviceCall });
 
-let proxyA, proxyB;
+let proxyA;
+let proxyB;
 
 beforeAll(async () => {
-  // @ts-ignore
   [proxyA, proxyB] = await createGatewayProxy('ws://localhost:8080', [definitionA, definitionB]);
 });
 afterAll(() => gateway.stop());

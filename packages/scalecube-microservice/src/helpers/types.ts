@@ -29,10 +29,7 @@ export interface GetProxyOptions {
   serviceDefinition: MicroserviceApi.ServiceDefinition;
 }
 
-export interface Qualifier {
-  serviceName: string;
-  methodName: string;
-}
+export const { Qualifier } = MicroserviceApi.Qualifer;
 
 export interface LocalCallOptions {
   localService: Reference;

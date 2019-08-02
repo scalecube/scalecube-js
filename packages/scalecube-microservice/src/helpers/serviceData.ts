@@ -1,9 +1,8 @@
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
-import { Qualifier, RemoteRegistry } from './types';
-
-export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
+import { RemoteRegistry } from './types';
+export { getQualifier } from '@scalecube/utils';
 
 export const getReferencePointer = ({
   reference,
