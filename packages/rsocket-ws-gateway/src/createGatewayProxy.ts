@@ -6,7 +6,13 @@ import { createGatewayProxyType, Proxy } from './api/createGatewayProxy';
 import { MicroserviceApi } from '@scalecube/api';
 import { validateServiceDefinition } from '@scalecube/utils';
 
-export const createGatewayProxy: createGatewayProxyType = (url, definitions) => {
+interface Proxy {
+  [state: string]: any;
+}
+
+export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition): Promise<Proxy>;
+export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition[]): Promise<Proxy[]>;
+export function createGatewayProxy(url: string, definitions: any): any {
   const isDefinitionsArray = Array.isArray(definitions);
   let defs: MicroserviceApi.ServiceDefinition[];
   if (!isDefinitionsArray) {
@@ -46,7 +52,7 @@ export const createGatewayProxy: createGatewayProxyType = (url, definitions) => 
 
     resolve(isDefinitionsArray ? proxies : proxies[0]);
   });
-};
+}
 
 const connect = (url) => {
   return new Promise((resolve, reject) => {
