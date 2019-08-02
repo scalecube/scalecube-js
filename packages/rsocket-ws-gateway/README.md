@@ -26,8 +26,8 @@ const definition = {
     methodA: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
   },
 };
-const service = { methodA: () => Promise.resolve('ok') };
-const services = [{ definition, reference: serviceA }];
+const reference = { methodA: () => Promise.resolve('ok') };
+const services = [{ definition, reference }];
 const ms = createMicroservice({ services });
 const serviceCall = ms.createServiceCall({});
 const gateway = new Gateway({ port: 3000 });

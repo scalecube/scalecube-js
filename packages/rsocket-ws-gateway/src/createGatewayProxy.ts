@@ -3,7 +3,7 @@ import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
 import { MicroserviceApi } from '@scalecube/api';
-import { validateServiceDefinition } from '@scalecube/utils';
+import { validateServiceDefinition, getQualifier } from '@scalecube/utils';
 
 interface Proxy {
   [state: string]: any;
@@ -34,7 +34,7 @@ export function createGatewayProxy(url: string, definitions: any): any {
       const proxy: Proxy = {};
       Object.keys(methods).forEach((method) => {
         const asyncModel = methods[method].asyncModel;
-        const qualifier = `${serviceName}/${method}`;
+        const qualifier = getQualifier({ serviceName, methodName: method });
         proxy[method] = (() => {
           switch (asyncModel) {
             case 'requestResponse':
