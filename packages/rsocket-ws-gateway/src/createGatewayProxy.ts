@@ -4,6 +4,7 @@ import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
 import { createGatewayProxyType, Proxy } from './api/createGatewayProxy';
 import { MicroserviceApi } from '@scalecube/api';
+import { validateServiceDefinition } from '@scalecube/utils';
 
 export const createGatewayProxy: createGatewayProxyType = (url, definitions) => {
   const isDefinitionsArray = Array.isArray(definitions);
@@ -24,6 +25,7 @@ export const createGatewayProxy: createGatewayProxyType = (url, definitions) => 
     }
     defs.forEach((definition) => {
       const { serviceName, methods } = definition;
+      validateServiceDefinition(definition);
       const proxy: Proxy = {};
       Object.keys(methods).forEach((method) => {
         const asyncModel = methods[method].asyncModel;
