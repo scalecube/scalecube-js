@@ -135,23 +135,17 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
         case ADDED:
           membersStatus.membersState = { ...membersStatus.membersState, ...metadata };
 
-          rSubjectMembers &&
-            rSubjectMembers.next({
-              type,
-              items: metadata[origin],
-              from: origin,
-            });
           break;
         case REMOVED:
-          if (membersStatus.membersState[from]) {
-            delete membersStatus.membersState[from];
+          if (membersStatus.membersState[origin]) {
+            delete membersStatus.membersState[origin];
           }
 
-          const mPort = membersStatus.membersPort[from];
+          const mPort = membersStatus.membersPort[origin];
           if (mPort) {
             mPort.postMessage(
               getMembershipEvent({
-                type: 'CLOSE',
+                type: REMOVED,
                 metadata: {},
                 to: from,
                 from: to,
@@ -159,20 +153,21 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
               })
             );
 
-            membersStatus.membersPort[from].close();
-
-            rSubjectMembers &&
-              rSubjectMembers.next({
-                type,
-                items: metadata[origin],
-                from: origin,
-              });
+            membersStatus.membersPort[origin].close();
           }
+
           break;
         default:
           saveToLogs(whoAmI, 'Not supported membership event type', {}, debug, 'warn');
           return;
       }
+
+      rSubjectMembers &&
+        rSubjectMembers.next({
+          type,
+          items: metadata[origin],
+          from: origin,
+        });
 
       updateConnectedMember({ metadata, type: type === INIT ? ADDED : type, from, to, origin });
 
