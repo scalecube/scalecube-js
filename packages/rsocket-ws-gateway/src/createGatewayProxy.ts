@@ -2,9 +2,24 @@ import { Observable } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { unpackError } from './utils';
+import { MicroserviceApi } from '@scalecube/api';
+import { validateServiceDefinition, getQualifier } from '@scalecube/utils';
 
-export const createGatewayProxy = (url, definition) => {
-  const proxy = {};
+interface Proxy {
+  [state: string]: any;
+}
+
+export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition): Promise<Proxy>;
+export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition[]): Promise<Proxy[]>;
+export function createGatewayProxy(url: string, definitions: any): any {
+  const isDefinitionsArray = Array.isArray(definitions);
+  let defs: MicroserviceApi.ServiceDefinition[];
+  if (!isDefinitionsArray) {
+    defs = [definitions];
+  } else {
+    defs = definitions;
+  }
+  const proxies: Proxy[] = [];
   let socket;
   return new Promise(async (resolve, reject) => {
     try {
@@ -13,24 +28,30 @@ export const createGatewayProxy = (url, definition) => {
       // console.log('Err', e);
       reject(e);
     }
-    const { serviceName, methods } = definition;
-    Object.keys(methods).forEach((method) => {
-      const asyncModel = methods[method].asyncModel;
-      const qualifier = `${serviceName}/${method}`;
-      proxy[method] = (() => {
-        switch (asyncModel) {
-          case 'requestResponse':
-            return requestResponse(socket, qualifier);
-          case 'requestStream':
-            return requestStream(socket, qualifier);
-          default:
-            reject(new Error('Unknown asyncModel'));
-        }
-      })();
+    defs.forEach((definition) => {
+      const { serviceName, methods } = definition;
+      validateServiceDefinition(definition);
+      const proxy: Proxy = {};
+      Object.keys(methods).forEach((method) => {
+        const asyncModel = methods[method].asyncModel;
+        const qualifier = getQualifier({ serviceName, methodName: method });
+        proxy[method] = (() => {
+          switch (asyncModel) {
+            case 'requestResponse':
+              return requestResponse(socket, qualifier);
+            case 'requestStream':
+              return requestStream(socket, qualifier);
+            default:
+              reject(new Error('Unknown asyncModel'));
+          }
+        })();
+      });
+      proxies.push(proxy);
     });
-    resolve(proxy);
+
+    resolve(isDefinitionsArray ? proxies : proxies[0]);
   });
-};
+}
 
 const connect = (url) => {
   return new Promise((resolve, reject) => {

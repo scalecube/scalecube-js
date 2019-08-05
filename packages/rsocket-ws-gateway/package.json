@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.2-alpha.9",
+    "@scalecube/utils": "^0.0.2-alpha.9",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
     "rsocket-websocket-client": "^0.0.10",

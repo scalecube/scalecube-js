@@ -8,18 +8,22 @@ import { constants } from '@scalecube/utils';
 import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
 import {
   getInvalidMethodReferenceError,
-  getIncorrectMethodValueError,
-  getInvalidAsyncModelError,
-  DEFINITION_MISSING_METHODS,
-  getServiceNameInvalid,
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
-  SERVICE_NAME_NOT_PROVIDED,
-  getAsynModelNotProvidedError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
 } from '../../../src/helpers/constants';
 import { getQualifier } from '../../../src/helpers/serviceData';
+import { constants as utilsConstants } from '@scalecube/utils';
+
+const {
+  getIncorrectMethodValueError,
+  getInvalidAsyncModelError,
+  DEFINITION_MISSING_METHODS,
+  getServiceNameInvalid,
+  SERVICE_NAME_NOT_PROVIDED,
+  getAsynModelNotProvidedError,
+} = utilsConstants;
 
 describe('Test the creation of Microservice', () => {
   const baseServiceDefinition = {

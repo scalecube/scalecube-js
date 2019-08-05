@@ -1,13 +1,10 @@
-import { check, validateAddress } from '@scalecube/utils';
+import { check, validateAddress, validateServiceDefinition } from '@scalecube/utils';
 import { MicroserviceApi } from '@scalecube/api';
 import {
   SERVICES_IS_NOT_ARRAY,
   SERVICE_IS_NOT_OBJECT,
   MICROSERVICE_OPTIONS_IS_NOT_OBJECT,
   SERVICE_DEFINITION_NOT_PROVIDED,
-  SERVICE_NAME_NOT_PROVIDED,
-  DEFINITION_MISSING_METHODS,
-  INVALID_METHODS,
   MESSAGE_NOT_PROVIDED,
   WRONG_DATA_FORMAT_IN_MESSAGE,
   QUALIFIER_IS_NOT_STRING,
@@ -15,12 +12,8 @@ import {
   INVALID_MESSAGE,
   MESSAGE_QUALIFIER_NOT_PROVIDED,
   MESSAGE_DATA_NOT_PROVIDED,
-  getServiceNameInvalid,
   ASYNC_MODEL_TYPES,
-  getIncorrectMethodValueError,
   getInvalidMethodReferenceError,
-  getAsynModelNotProvidedError,
-  getInvalidAsyncModelError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
 } from './constants';
@@ -43,27 +36,6 @@ export const validateService = (service: any) => {
   const { serviceName } = definition;
   check.assertDefined(reference, getServiceReferenceNotProvidedError(serviceName));
   validateServiceReference(reference, definition);
-};
-
-export const validateServiceDefinition = (definition: any) => {
-  check.assertNonEmptyObject(definition);
-  const { serviceName, methods } = definition;
-  check.assertDefined(serviceName, SERVICE_NAME_NOT_PROVIDED);
-  check.assertNonEmptyString(serviceName, getServiceNameInvalid(serviceName));
-  check.assertDefined(methods, DEFINITION_MISSING_METHODS);
-  check.assertNonEmptyObject(methods, INVALID_METHODS);
-  Object.keys(methods).forEach((methodName) => {
-    check.assertNonEmptyString(methodName);
-    const qualifier = getQualifier({ serviceName, methodName });
-    validateAsyncModel(qualifier, methods[methodName]);
-  });
-};
-
-export const validateAsyncModel = (qualifier: string, val: any) => {
-  check.assertNonEmptyObject(val, getIncorrectMethodValueError(qualifier));
-  const { asyncModel } = val;
-  check.assertDefined(asyncModel, getAsynModelNotProvidedError(qualifier));
-  check.assertOneOf(ASYNC_MODEL_TYPES, asyncModel, getInvalidAsyncModelError(qualifier));
 };
 
 export const validateServiceReference = (reference: any, definition: MicroserviceApi.ServiceDefinition) => {
