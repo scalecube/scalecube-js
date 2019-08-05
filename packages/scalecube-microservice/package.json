@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "0.1.3-alpha.32",
+  "version": "0.1.3-alpha.33",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
@@ -52,10 +52,10 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.9",
-    "@scalecube/scalecube-discovery": "^0.1.1-alpha.16",
-    "@scalecube/transport-browser": "^0.0.2-alpha.11",
-    "@scalecube/utils": "^0.0.2-alpha.10",
+    "@scalecube/api": "^0.0.2-alpha.10",
+    "@scalecube/scalecube-discovery": "^0.1.1-alpha.17",
+    "@scalecube/transport-browser": "^0.0.2-alpha.12",
+    "@scalecube/utils": "^0.0.2-alpha.11",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
     "rxjs": "^6.4.0"
