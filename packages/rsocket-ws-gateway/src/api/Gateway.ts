@@ -2,6 +2,8 @@ import { MicroserviceApi } from '@scalecube/api';
 
 export interface GatewayOptions {
   port: number;
+  requestResponse?: any;
+  requestStream?: any;
 }
 
 export interface GatewayStartOptions {

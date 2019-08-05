@@ -10,10 +10,14 @@ export class Gateway implements GatewayInterface {
   private started = false;
   private server;
   private transport;
+  private requestResponse;
+  private requestStream;
   constructor(opts: GatewayOptions) {
     const { port } = opts;
     this.port = port || 3000;
     this.transport = new RSocketWebSocketServer({ port: this.port });
+    this.requestResponse = opts.requestResponse;
+    this.requestStream = opts.requestStream;
   }
   public start(opts: GatewayStartOptions) {
     if (this.started) {
@@ -28,8 +32,9 @@ export class Gateway implements GatewayInterface {
       serializers: JsonSerializers,
       getRequestHandler: (socket) => {
         return {
-          requestResponse: (payload: RsocketEventsPayload) => requestResponse(payload, serviceCall),
-          requestStream: (payload: RsocketEventsPayload) => requestStream(payload, serviceCall),
+          requestResponse: (payload: RsocketEventsPayload) =>
+            requestResponse(payload, serviceCall, this.requestResponse),
+          requestStream: (payload: RsocketEventsPayload) => requestStream(payload, serviceCall, this.requestStream),
         };
       },
       transport: this.transport,

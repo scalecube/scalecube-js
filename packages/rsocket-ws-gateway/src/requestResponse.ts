@@ -1,9 +1,11 @@
 import { Single } from 'rsocket-flowable';
 import { packError } from './utils';
 
-export const requestResponse = (payload, serviceCall) => {
+export const requestResponse = (payload, serviceCall, customCb) => {
   const { data, metadata } = payload;
-  // console.log('Request:', data, metadata);
+  if (customCb) {
+    return new Single(customCb.bind(null, serviceCall, data));
+  }
   return new Single((subscriber) => {
     subscriber.onSubscribe();
     serviceCall
