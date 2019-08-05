@@ -19,17 +19,16 @@ const serviceA = { methodA: (arg) => Promise.resolve(arg + '_ok') };
 const serviceB = { methodB: (arg) => from([arg + '_good', arg + '_night']) };
 const services = [{ definition: definitionA, reference: serviceA }, { definition: definitionB, reference: serviceB }];
 
-const customServerReqResp = (serviceCall, data, subscriber) => {
-  console.log('req DATA', data);
+const customServerReqResp = (servCall, data, subscriber) => {
   subscriber.onSubscribe();
   data.data = data.data.req; // unpack
-  serviceCall.requestResponse(data).then((resp: any) => {
+  servCall.requestResponse(data).then((resp: any) => {
     subscriber.onComplete({ data: { resp: 'custom cb used' } });
   });
 };
-const customServerReqStream = (serviceCall, data, subscriber) => {
+const customServerReqStream = (servCall, data, subscriber) => {
   subscriber.onSubscribe();
-  serviceCall.requestStream(data.req).subscribe(
+  servCall.requestStream(data.req).subscribe(
     (response: any) => {
       subscriber.onNext({ data: { resp: response + '_custom' } });
     },
@@ -57,7 +56,6 @@ const customClientRequestResponse = (socket, qualifier) => {
         })
         .subscribe({
           onComplete: ({ data }) => {
-            console.log('resp Data', data);
             resolve(data.resp);
           },
           onError: (e: any) => {
