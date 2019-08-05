@@ -27,14 +27,14 @@ describe(`
       address,
       seedAddress,
       itemsToPublish: items,
-      // debug: true
+      // debug: name === 'member0'
     });
 
     const fullAddress = getFullAddress(address);
     return [address, member, fullAddress, items];
   };
 
-  const [member0Address, member0, member0FullAddress, items0] = buildCluster('member0', ['s1', 's2']);
+  const [member0Address, member0, member0FullAddress, items0] = buildCluster('member0', ['s1', 's5']);
   const [member1Address, member1, member1FullAddress, items1] = buildCluster(
     'member1',
     ['s1', 's2'],
@@ -160,7 +160,7 @@ describe(`
     };
 
     const subscription0 = (member0 as ClusterApi.Cluster).listen$().subscribe(({ type, items, from }: ClusterEvent) => {
-      if (type === 'REMOVED' && from === member1FullAddress) {
+      if (type === 'REMOVED') {
         delete emitsMap[member0FullAddress.toString()];
         expect(items).toEqual(expect.arrayContaining(items1 as []));
         expect(from).toMatch(member1FullAddress.toString());
@@ -169,7 +169,7 @@ describe(`
     });
 
     const subscription3 = (member3 as ClusterApi.Cluster).listen$().subscribe(({ type, items, from }: ClusterEvent) => {
-      if (type === 'REMOVED' && from === member1FullAddress) {
+      if (type === 'REMOVED') {
         delete emitsMap[member3FullAddress.toString()];
         expect(items).toEqual(expect.arrayContaining(items1 as []));
         expect(from).toMatch(member1FullAddress.toString());
