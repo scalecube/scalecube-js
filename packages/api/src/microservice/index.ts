@@ -6,3 +6,4 @@ export { Microservice, CreateMicroservice, MicroserviceOptions } from './Microse
 export { Service } from './Service';
 export { ServiceDefinition } from './ServiceDefinition';
 export { ServiceReference } from './ServiceReference';
+export { Qualifier } from './Qualifier';

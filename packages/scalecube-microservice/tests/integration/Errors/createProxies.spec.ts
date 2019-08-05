@@ -9,16 +9,18 @@
 import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
 import { MicroserviceApi } from '@scalecube/api';
 
-import {
+import { DUPLICATE_PROXY_NAME } from '../../../src/helpers/constants';
+
+import { greetingServiceDefinition } from '../../mocks/GreetingService';
+import { constants as utilsConstants } from '@scalecube/utils';
+
+const {
   DEFINITION_MISSING_METHODS,
   INVALID_METHODS,
   SERVICE_NAME_NOT_PROVIDED,
   getIncorrectMethodValueError,
   getServiceNameInvalid,
-  DUPLICATE_PROXY_NAME,
-} from '../../../src/helpers/constants';
-
-import { greetingServiceDefinition } from '../../mocks/GreetingService';
+} = utilsConstants;
 
 describe('validation test for create proxy from microservice', () => {
   const ms = createMicroservice({});
@@ -156,7 +158,7 @@ describe('validation test for create proxy from microservice', () => {
   );
 
   // @ts-ignore
-  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new (class {})()])(
+  test.each([[], 'methods', true, false, 10, null, undefined, Symbol(), new class {}()])(
     `
     Scenario: serviceDefinition with invalid 'asyncModel' value
     Given     a 'asyncModel'

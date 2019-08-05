@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.1-alpha.31",
+  "version": "0.1.1-alpha.33",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -40,9 +40,9 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.9",
-    "@scalecube/scalecube-microservice": "^0.1.3-alpha.31",
-    "@scalecube/transport-nodejs": "^0.0.2-alpha.12",
-    "@scalecube/utils": "^0.0.2-alpha.10"
+    "@scalecube/api": "^0.0.2-alpha.10",
+    "@scalecube/scalecube-microservice": "^0.1.3-alpha.33",
+    "@scalecube/transport-nodejs": "^0.0.2-alpha.13",
+    "@scalecube/utils": "^0.0.2-alpha.11"
   }
 }
