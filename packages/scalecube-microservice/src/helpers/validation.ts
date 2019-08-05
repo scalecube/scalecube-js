@@ -1,5 +1,4 @@
 import { check, validateAddress, validateServiceDefinition } from '@scalecube/utils';
-export { validateServiceDefinition };
 import { MicroserviceApi } from '@scalecube/api';
 import {
   SERVICES_IS_NOT_ARRAY,

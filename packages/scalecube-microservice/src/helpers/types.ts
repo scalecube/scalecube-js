@@ -29,8 +29,6 @@ export interface GetProxyOptions {
   serviceDefinition: MicroserviceApi.ServiceDefinition;
 }
 
-export const { Qualifier } = MicroserviceApi.Qualifer;
-
 export interface LocalCallOptions {
   localService: Reference;
   asyncModel: MicroserviceApi.AsyncModel;
