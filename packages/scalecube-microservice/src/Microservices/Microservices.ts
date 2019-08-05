@@ -1,9 +1,9 @@
-import { Address, TransportApi, DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { Address, TransportApi, DiscoveryApi, MicroserviceApi, RouterApi } from '@scalecube/api';
 import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
 import { check, getAddress, getFullAddress, saveToLogs, isNodejs } from '@scalecube/utils';
 import { tap } from 'rxjs/operators';
-import { defaultRouter } from '../Routers/default';
+import { defaultRouter } from '@scalecube/routers';
 import { createServiceCall, getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
@@ -129,7 +129,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
         microserviceContext,
         transportClientProvider,
       }),
-    createServiceCall: ({ router }: { router: MicroserviceApi.Router }) =>
+    createServiceCall: ({ router }: { router: RouterApi.Router }) =>
       createServiceCall({
         router,
         microserviceContext,

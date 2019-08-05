@@ -1,5 +1,5 @@
-import { Router, ServiceDefinition } from '.';
-
+import { ServiceDefinition } from '.';
+import { RouterApi } from '..';
 /**
  * @interface CreateProxies
  *
@@ -21,7 +21,7 @@ export interface CreateProxiesOptions {
    * optional router to provide extra logic (remoteCall)
    * default is defaultRouter
    */
-  router?: Router;
+  router?: RouterApi.Router;
   /**
    * @property
    * optional flag to resolve the proxy asynchronous way

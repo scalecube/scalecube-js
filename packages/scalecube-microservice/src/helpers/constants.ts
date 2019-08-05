@@ -1,4 +1,4 @@
-import { MicroserviceApi } from '@scalecube/api';
+import { Message, MicroserviceApi } from '@scalecube/api';
 
 export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
 export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
@@ -32,7 +32,7 @@ export const getAsynModelNotProvidedError = (qualifier: string) =>
   `Async model is not provided in service definition for ${qualifier}`;
 export const getInvalidAsyncModelError = (qualifier: string) =>
   `Invalid async model in service definition for ${qualifier}`;
-export const getMethodNotFoundError = (message: MicroserviceApi.Message) => `Can't find method ${message.qualifier}`;
+export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
 export const getInvalidMethodReferenceError = (qualifier: string) =>
   `${qualifier} has valid definition but reference is not a function.`;
 

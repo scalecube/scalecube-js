@@ -1,7 +1,7 @@
 import { Observable, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { MicroserviceApi, TransportApi } from '@scalecube/api';
+import { Message, MicroserviceApi, RouterApi, TransportApi } from '@scalecube/api';
 
 import {
   ServiceCall,
@@ -15,7 +15,7 @@ import { ASYNC_MODEL_TYPES } from '..';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { defaultRouter } from '../Routers/default';
+import { defaultRouter } from '@scalecube/routers';
 import { saveToLogs } from '@scalecube/utils';
 
 export const getServiceCall = ({
@@ -44,7 +44,7 @@ export const createServiceCall = ({
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: MicroserviceApi.Router;
+  router?: RouterApi.Router;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.ClientProvider;
 }) => {
@@ -54,13 +54,13 @@ export const createServiceCall = ({
 
   const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
   return Object.freeze({
-    requestStream: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
+    requestStream: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
         messageFormat,
       }),
-    requestResponse: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
+    requestResponse: (message: Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,

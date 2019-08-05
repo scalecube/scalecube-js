@@ -1,4 +1,4 @@
-import { TransportApi, Address, MicroserviceApi } from '@scalecube/api';
+import { TransportApi, Address, Message } from '@scalecube/api';
 // @ts-ignore
 import { RSocketClient, DuplexConnection, RSocketClientSocket } from 'rsocket-core';
 // @ts-ignore
@@ -21,7 +21,7 @@ export const remoteResponse = ({
 }: {
   address: Address;
   asyncModel: string;
-  message: MicroserviceApi.Message;
+  message: Message;
   transportClientProvider: TransportApi.ClientProvider;
   microserviceContext: MicroserviceContext;
 }) => {

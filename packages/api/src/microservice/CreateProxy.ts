@@ -1,4 +1,5 @@
-import { Router, ServiceDefinition } from '.';
+import { ServiceDefinition } from '.';
+import { RouterApi } from '..';
 
 /**
  * @interface CreateProxy
@@ -15,7 +16,7 @@ export interface ProxyOptions {
    * @method
    * Custom router specifies the logic of choosing the appropriate remoteService
    */
-  router?: Router;
+  router?: RouterApi.Router;
   /**
    * @property
    * The metadata for a service container, that includes the name of a service and the map of methods that are

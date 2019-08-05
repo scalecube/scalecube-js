@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { DiscoveryApi, Endpoint, MicroserviceApi } from '@scalecube/api';
 import { Qualifier, RemoteRegistry } from './types';
 
 export const getQualifier = ({ serviceName, methodName }: Qualifier) => `${serviceName}/${methodName}`;
@@ -21,11 +21,11 @@ export const getReferencePointer = ({
 };
 
 const confirmMethods = (
-  endPoints: MicroserviceApi.Endpoint[],
+  endPoints: Endpoint[],
   serviceDefinition: MicroserviceApi.ServiceDefinition,
   unConfirmedMethods: string[]
 ) => {
-  endPoints.forEach((endPoint: MicroserviceApi.Endpoint) => {
+  endPoints.forEach((endPoint: Endpoint) => {
     if (endPoint.serviceName === serviceDefinition.serviceName) {
       const removeAt = unConfirmedMethods.indexOf(endPoint.methodName);
       if (removeAt !== -1) {
@@ -52,7 +52,7 @@ const confirmInRegistry = (
 };
 
 export const isServiceAvailableInRegistry = (
-  endPointsToPublishInCluster: MicroserviceApi.Endpoint[],
+  endPointsToPublishInCluster: Endpoint[],
   remoteRegistry: RemoteRegistry,
   discovery: {
     discoveredItems$: () => Observable<any>;
@@ -78,7 +78,7 @@ export const isServiceAvailableInRegistry = (
           takeWhile((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
             if (discoveryEvent.type === 'REGISTERED') {
               const discoveryEndpoints = discoveryEvent.items;
-              confirmMethods(discoveryEndpoints as MicroserviceApi.Endpoint[], serviceDefinition, unConfirmedMethods);
+              confirmMethods(discoveryEndpoints as Endpoint[], serviceDefinition, unConfirmedMethods);
             }
 
             if (unConfirmedMethods.length === 0) {

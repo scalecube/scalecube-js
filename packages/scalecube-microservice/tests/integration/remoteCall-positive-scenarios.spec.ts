@@ -2,7 +2,7 @@ import { greetingServiceDefinition, hello, greet$, GreetingService } from '../mo
 import { createMicroservice } from '../../src';
 import { getAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
-import { MicroserviceApi } from '@scalecube/api';
+import { Message, MicroserviceApi } from '@scalecube/api';
 
 describe(`Test positive-scenarios of usage
           RemoteCall - a microservice instance use other microservice's services.
@@ -181,7 +181,7 @@ describe(`Test positive-scenarios of usage
     });
     microservicesList.push(microserviceWithoutServices);
 
-    const message: MicroserviceApi.Message = {
+    const message: Message = {
       qualifier: `${serviceDefinition.serviceName}/hello`,
       data: [`${defaultUser}`],
     };
@@ -192,7 +192,7 @@ describe(`Test positive-scenarios of usage
     });
 
     setTimeout(() => {
-      serviceCall.requestResponse(message).then((res: MicroserviceApi.Message) => {
+      serviceCall.requestResponse(message).then((res: Message) => {
         expect(res).toMatch(`Hello ${defaultUser}`);
         done();
       });
@@ -213,21 +213,21 @@ describe(`Test positive-scenarios of usage
 
     microservicesList.push(microserviceWithoutServices);
 
-    const message: MicroserviceApi.Message = {
+    const message: Message = {
       qualifier: `${serviceDefinition.serviceName}/greet$`,
       data: [[`${defaultUser}`]],
     };
     const serviceCall = microserviceWithoutServices.createServiceCall({});
 
     serviceCall.requestStream(message).subscribe(
-      (res: MicroserviceApi.Message) => {},
+      (res: Message) => {},
       (e: Error) => {
         expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
       }
     );
 
     setTimeout(() => {
-      const subscription = serviceCall.requestStream(message).subscribe((response: MicroserviceApi.Message) => {
+      const subscription = serviceCall.requestStream(message).subscribe((response: Message) => {
         expect(response).toEqual(`greetings ${defaultUser}`);
 
         subscription.unsubscribe();

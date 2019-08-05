@@ -1,4 +1,4 @@
-import { Address, DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { Address, DiscoveryApi, Endpoint, LookupOptions, MicroserviceApi } from '@scalecube/api';
 import {
   AvailableServices,
   CreateRemoteRegistry,
@@ -14,7 +14,7 @@ export const createRemoteRegistry: CreateRemoteRegistry = (): RemoteRegistry => 
   let remoteRegistryMap: RemoteRegistryMap | null = {};
 
   return Object.freeze({
-    lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => {
+    lookUp: ({ qualifier }: LookupOptions) => {
       if (!remoteRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
@@ -25,7 +25,7 @@ export const createRemoteRegistry: CreateRemoteRegistry = (): RemoteRegistry => 
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }
 
-      return getEndpointsFromServices(options) as MicroserviceApi.Endpoint[]; // all services => endPoints[]
+      return getEndpointsFromServices(options) as Endpoint[]; // all services => endPoints[]
     },
     update: ({ type, items }: DiscoveryApi.ServiceDiscoveryEvent) => {
       if (type === 'IDLE') {
@@ -46,11 +46,11 @@ export const createRemoteRegistry: CreateRemoteRegistry = (): RemoteRegistry => 
 
 // Helpers
 
-export const getEndpointsFromServices = (options: AvailableServices): MicroserviceApi.Endpoint[] | [] => {
+export const getEndpointsFromServices = (options: AvailableServices): Endpoint[] | [] => {
   const { services, address } = options;
   return services && address
     ? services.reduce(
-        (res: MicroserviceApi.Endpoint[], service: MicroserviceApi.Service) => [
+        (res: Endpoint[], service: MicroserviceApi.Service) => [
           ...res,
           ...getEndpointsFromService({ service, address }),
         ],
@@ -63,7 +63,7 @@ export const updatedRemoteRegistry = ({ type, items, remoteRegistryMap }: Update
   switch (type) {
     case 'REGISTERED':
       remoteRegistryMap = items.reduce(
-        (res: RemoteRegistryMap, endpoint: MicroserviceApi.Endpoint) => ({
+        (res: RemoteRegistryMap, endpoint: Endpoint) => ({
           ...res,
           [endpoint.qualifier]: [...(res[endpoint.qualifier] || []), endpoint],
         }),
@@ -72,9 +72,9 @@ export const updatedRemoteRegistry = ({ type, items, remoteRegistryMap }: Update
 
       break;
     case 'UNREGISTERED':
-      items.forEach((unregisteredEndpoint: MicroserviceApi.Endpoint) => {
+      items.forEach((unregisteredEndpoint: Endpoint) => {
         remoteRegistryMap[unregisteredEndpoint.qualifier] = remoteRegistryMap[unregisteredEndpoint.qualifier].filter(
-          (registryEndpoint: MicroserviceApi.Endpoint) =>
+          (registryEndpoint: Endpoint) =>
             getFullAddress(registryEndpoint.address) !== getFullAddress(unregisteredEndpoint.address)
         );
       });
@@ -90,7 +90,7 @@ export const getEndpointsFromService = ({
 }: {
   service: MicroserviceApi.Service;
   address: Address;
-}): MicroserviceApi.Endpoint[] => {
+}): Endpoint[] => {
   const { definition } = service;
   const { serviceName, methods } = definition;
   return (

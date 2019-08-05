@@ -1,10 +1,10 @@
-import { TransportApi, MicroserviceApi } from '@scalecube/api';
+import { TransportApi, MicroserviceApi, RouterApi } from '@scalecube/api';
 import { MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '../helpers/validation';
 import { getProxy } from './Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { defaultRouter } from '../Routers/default';
+import { defaultRouter } from '@scalecube/routers';
 
 export const createProxy = ({
   router = defaultRouter,
@@ -12,7 +12,7 @@ export const createProxy = ({
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: MicroserviceApi.Router;
+  router?: RouterApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.ClientProvider;
