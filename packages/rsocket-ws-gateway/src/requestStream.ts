@@ -1,7 +1,7 @@
 import { Flowable } from 'rsocket-flowable';
-import { GatewayPluginType } from './api/Gateway';
+import { RequestHandler } from './api/Gateway';
 
-const flowableHandler: GatewayPluginType = (serviceCall, data, subscriber) => {
+const flowableHandler: RequestHandler = (serviceCall, data, subscriber) => {
   subscriber.onSubscribe();
   serviceCall.requestStream(data).subscribe(
     (response: any) => {
