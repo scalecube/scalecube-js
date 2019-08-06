@@ -7,7 +7,8 @@
     "ordered-imports": false,
     "no-unused-expression": [true, "allow-fast-null-checks", "allow-new"],
     "no-empty": [true, "allow-empty-functions"],
-    "no-console": [true, "log"]
+    "no-console": [true, "log"],
+    "max-classes-per-file": false
   },
   "jsRules": true
 }

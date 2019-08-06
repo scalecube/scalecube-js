@@ -102,9 +102,6 @@ const ms = createMicroservice({ services: [{ definition, reference: new ServiceA
 const serviceCall = ms.createServiceCall({});
 const gateway = new Gateway({ port, requestResponse: customServerReqResp, requestStream: customServerReqStream });
 
-let proxyA;
-let proxyB;
-
 const customClientRequestResponse = (socket, qualifier) => {
   return (...args) => {
     return new Promise((resolve, reject) => {
