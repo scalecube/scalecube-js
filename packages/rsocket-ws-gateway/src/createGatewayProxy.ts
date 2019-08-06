@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
-import { unpackError } from './utils';
 import { MicroserviceApi } from '@scalecube/api';
 import { validateServiceDefinition, getQualifier } from '@scalecube/utils';
 
@@ -110,7 +109,7 @@ const requestResponse = (socket, qualifier) => {
             resolve(data);
           },
           onError: (e: any) => {
-            reject(unpackError(e));
+            reject(e);
           },
         });
     });
@@ -138,7 +137,7 @@ const requestStream = (socket, qualifier) => {
             observer.complete();
           },
           onError: (e: any) => {
-            observer.error(unpackError(e));
+            observer.error(e);
           },
         });
     });

@@ -1,9 +1,11 @@
 import { MicroserviceApi } from '@scalecube/api';
 
+export type GatewayPluginType = (serviceCall: MicroserviceApi.ServiceCall, data: any, subscriber: any) => void;
+
 export interface GatewayOptions {
   port: number;
-  requestResponse?: any;
-  requestStream?: any;
+  requestResponse?: GatewayPluginType;
+  requestStream?: GatewayPluginType;
 }
 
 export interface GatewayStartOptions {
