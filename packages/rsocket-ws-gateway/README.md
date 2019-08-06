@@ -6,7 +6,7 @@ This package provides gateway implementation for NodeJS based on rsocket websock
 
 ```typescript
 interface Gateway {
-  constructor(options: {port: number});
+  constructor(options: {port: number, requestResponse?: RequestHandler, requestStream?: RequestHandler});
   start: (options: { serviceCall: ServiceCall }) => void;
   stop: () => void;
 }
