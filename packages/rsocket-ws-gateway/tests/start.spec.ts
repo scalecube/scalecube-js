@@ -1,7 +1,7 @@
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
-import { SERVICE_CALL_MUST_BE_FUNCTION } from '../src/helpers/constants';
+import { SERVICE_CALL_MUST_BE_OBJECT } from '../src/helpers/constants';
 
 const definition = {
   serviceName: 'serviceA',
@@ -34,7 +34,7 @@ Then  a error message 'Gateway start requires "serviceCall" argument should be t
   const ms = createMicroservice({});
   const serviceCall = ms.createServiceCall({});
   // @ts-ignore
-  expect(() => gateway.start({})).toThrow(Error(SERVICE_CALL_MUST_BE_FUNCTION));
+  expect(() => gateway.start({})).toThrow(Error(SERVICE_CALL_MUST_BE_OBJECT));
 });
 
 test(` Given microservices with gateway

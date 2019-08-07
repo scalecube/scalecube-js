@@ -1,8 +1,8 @@
 import { Gateway } from '../../src/Gateway';
 import {
   SERVICE_CALL_MUST_BE_OBJECT,
-  REQUST_STREAM_MUST_BE_FUNCTION,
-  REQUST_RESPONSE_MUST_BE_FUNCTION,
+  REQUEST_RESPONSE_MUST_BE_FUNCTION,
+  REQUEST_STREAM_MUST_BE_FUNCTION,
 } from '../../src/helpers/constants';
 
 const port = 8088;
@@ -62,7 +62,7 @@ test.each(['', [], {}, true, false, 10, null, undefined])(
         },
       });
     } catch (e) {
-      expect(e.message).toMatch(REQUST_STREAM_MUST_BE_FUNCTION);
+      expect(e.message).toMatch(REQUEST_STREAM_MUST_BE_FUNCTION);
     }
   }
 );
@@ -95,8 +95,7 @@ test.each(['', [], {}, true, false, 10, null, undefined])(
         },
       });
     } catch (e) {
-      gateway.stop();
-      expect(e.message).toMatch(REQUST_RESPONSE_MUST_BE_FUNCTION);
+      expect(e.message).toMatch(REQUEST_RESPONSE_MUST_BE_FUNCTION);
     }
   }
 );
