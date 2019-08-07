@@ -4,8 +4,8 @@
      success:                      {ok: true, data}
      fail with AppServiceError:    {ok: false, data}
      exeption with regular Error:    new Error(msg)
-  
-    And   start method was called and the microservice start listening 
+
+    And   start method was called and the microservice start listening
     And   a <service>
          |    <service>        |  asyncModel        | success response
          |ServiceA/methodA     | requestResponse    | true
@@ -97,7 +97,7 @@ const customServerReqStream = (servCall, data, subscriber) => {
   );
 };
 
-const port = 8080;
+const port = 8032;
 const ms = createMicroservice({ services: [{ definition, reference: new ServiceA() }] });
 const serviceCall = ms.createServiceCall({});
 const gateway = new Gateway({ port, requestResponse: customServerReqResp, requestStream: customServerReqStream });

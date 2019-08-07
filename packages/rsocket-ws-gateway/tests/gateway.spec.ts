@@ -1,6 +1,6 @@
 /*
   Given microservice with gateway
-    And   start method was called and the microservice start listening 
+    And   start method was called and the microservice start listening
     And   a <service>
          |    <service>        |  asyncModel        | success response
          |ServiceA/methodA | requestResponse | true
@@ -43,7 +43,7 @@ export const definition = {
   },
 };
 
-const port = 8080;
+const port = 8480;
 
 const gateway: GatewayInterface = new Gateway({ port });
 const ms = createMicroservice({
