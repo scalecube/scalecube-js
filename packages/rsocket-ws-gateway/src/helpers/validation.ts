@@ -1,5 +1,10 @@
 import { check } from '@scalecube/utils';
-import { getInvalidRequestHandler, SERVICE_CALL_MUST_BE_FUNCTION } from './constants';
+import {
+  getInvalidRequestHandler,
+  REQUST_STREAM_MUST_BE_FUNCTION,
+  REQUST_RESPONSE_MUST_BE_FUNCTION,
+  SERVICE_CALL_MUST_BE_OBJECT,
+} from './constants';
 
 export const validateCustomHandlers = (name: string, customHandler: any) => {
   if (!check.isDefined(customHandler)) {
@@ -9,8 +14,9 @@ export const validateCustomHandlers = (name: string, customHandler: any) => {
 };
 
 export const validateServiceCall = (serviceCall: any) => {
-  check.assertObject(serviceCall, SERVICE_CALL_MUST_BE_FUNCTION);
+  check.assertObject(serviceCall, SERVICE_CALL_MUST_BE_OBJECT);
   const { requestResponse, requestStream } = serviceCall;
-  check.assertFunction(requestResponse);
-  check.assertFunction(requestStream);
+  check.assertFunction(requestResponse, REQUST_RESPONSE_MUST_BE_FUNCTION);
+  check.assertFunction(requestStream, REQUST_STREAM_MUST_BE_FUNCTION);
+  console.log('$$$$$$$$$$$$', requestResponse, requestStream);
 };
