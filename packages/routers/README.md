@@ -4,7 +4,7 @@
 
 # Index
 
-Index is responsible for picking the right Item from a Item[].
+Index is responsible for picking the right Item from a Item\[].
 
 #### Default
 
