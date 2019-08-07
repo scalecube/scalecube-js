@@ -1,4 +1,4 @@
-import { check, validateAddress, validateServiceDefinition } from '@scalecube/utils';
+import { check, validateAddress, validateServiceDefinition, getQualifier } from '@scalecube/utils';
 import { MicroserviceApi } from '@scalecube/api';
 import {
   SERVICES_IS_NOT_ARRAY,
@@ -16,7 +16,6 @@ import {
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
 } from './constants';
-import { getQualifier } from './serviceData';
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);

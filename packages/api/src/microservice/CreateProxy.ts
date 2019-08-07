@@ -1,4 +1,4 @@
-import { ServiceDefinition, Router } from '.';
+import { Router, ServiceDefinition } from '.';
 
 /**
  * @interface CreateProxy
