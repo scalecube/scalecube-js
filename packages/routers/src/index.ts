@@ -1,2 +1,4 @@
-export { defaultRouter } from './Default/default';
-export { roundRobin } from './RoundRobin/roundRobin';
+import { defaultRouter } from './Default/default';
+import { roundRobin } from './RoundRobin/roundRobin';
+
+export { defaultRouter, roundRobin };
