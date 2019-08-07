@@ -1,10 +1,10 @@
 // @ts-ignore
 import { RSocketClientSocket } from 'rsocket-core';
 import { Observable } from 'rxjs';
-import { Address, TransportApi, MicroserviceApi, DiscoveryApi, Message, RouterApi, Endpoint } from '@scalecube/api';
+import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube/api';
 
 export interface ServiceCallOptions {
-  message: Message;
+  message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
   messageFormat: boolean;
 }
@@ -19,7 +19,7 @@ export interface AvailableServices {
 }
 
 export interface CreateServiceCallOptions {
-  router: RouterApi.Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
   transportClientProvider?: TransportApi.ClientProvider;
 }
@@ -32,27 +32,27 @@ export interface GetProxyOptions {
 export interface LocalCallOptions {
   localService: Reference;
   asyncModel: MicroserviceApi.AsyncModel;
-  message: Message;
+  message: MicroserviceApi.Message;
   messageFormat: boolean;
   microserviceContext: MicroserviceContext;
 }
 
 export interface RemoteCallOptions {
-  router: RouterApi.Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  message: Message;
+  message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
   transportClientProvider?: TransportApi.ClientProvider;
 }
 
 export interface InvokeMethodOptions {
   method: (...args: any[]) => any;
-  message: Message;
+  message: MicroserviceApi.Message;
 }
 
 export interface AddMessageToResponseOptions {
   messageFormat: boolean;
-  message: Message;
+  message: MicroserviceApi.Message;
 }
 
 export interface RsocketEventsPayload {
@@ -122,12 +122,12 @@ export type CreateRemoteRegistry = () => RemoteRegistry;
 export interface RemoteRegistry {
   lookUp: MicroserviceApi.LookUp;
   update: (discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => void;
-  createEndPoints: (options: AvailableServices) => Endpoint[];
+  createEndPoints: (options: AvailableServices) => MicroserviceApi.Endpoint[];
   destroy: () => void;
 }
 
 export interface RemoteRegistryMap {
-  [qualifier: string]: Endpoint[];
+  [qualifier: string]: MicroserviceApi.Endpoint[];
 }
 
 export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEvent {

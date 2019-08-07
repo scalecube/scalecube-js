@@ -1,4 +1,4 @@
-import { Endpoint, LookUp, Message } from '..';
+import { Endpoint, LookUp, Message } from '.';
 
 /**
  * @interface Router

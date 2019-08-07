@@ -1,9 +1,9 @@
-import { Endpoint, RouterApi } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import { getFullAddress } from '@scalecube/utils';
 
 const lastEndPointMap: { [qualifier: string]: string } = {};
 
-export const roundRobin: RouterApi.Router = (options) => {
+export const roundRobin: MicroserviceApi.Router = (options) => {
   const { message, lookUp } = options;
   const { qualifier } = message;
 
@@ -16,7 +16,7 @@ export const roundRobin: RouterApi.Router = (options) => {
       return endpoints[0];
     } else {
       const lastEndPointIdentifier = lastEndPointMap[qualifier];
-      const lastIndex = endpoints.findIndex((endpoint: Endpoint) => {
+      const lastIndex = endpoints.findIndex((endpoint: MicroserviceApi.Endpoint) => {
         return getFullAddress(endpoint.address) === lastEndPointIdentifier;
       });
 

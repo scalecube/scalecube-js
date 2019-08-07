@@ -1,4 +1,4 @@
-import { Message, MicroserviceApi } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import { constants } from '@scalecube/utils';
 
 export const { ASYNC_MODEL_TYPES } = constants;
@@ -25,7 +25,7 @@ export const getAsyncModelMissmatch = (
   expectedAsyncModel: MicroserviceApi.AsyncModel,
   receivedAsyncModel: MicroserviceApi.AsyncModel
 ) => `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
-export const getMethodNotFoundError = (message: Message) => `Can't find method ${message.qualifier}`;
+export const getMethodNotFoundError = (message: MicroserviceApi.Message) => `Can't find method ${message.qualifier}`;
 export const getInvalidMethodReferenceError = (qualifier: string) =>
   `${qualifier} has valid definition but reference is not a function.`;
 

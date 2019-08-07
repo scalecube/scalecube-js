@@ -12,7 +12,6 @@ import {
   INVALID_MESSAGE,
   MESSAGE_QUALIFIER_NOT_PROVIDED,
   MESSAGE_DATA_NOT_PROVIDED,
-  ASYNC_MODEL_TYPES,
   getInvalidMethodReferenceError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,

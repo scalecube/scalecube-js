@@ -1,6 +1,6 @@
-import { RouterApi } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 
-export const defaultRouter: RouterApi.Router = (options) => {
+export const defaultRouter: MicroserviceApi.Router = (options) => {
   const { message, lookUp } = options;
   const { qualifier } = message;
   const endpoints = lookUp({ qualifier });

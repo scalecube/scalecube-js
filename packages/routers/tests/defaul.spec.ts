@@ -1,5 +1,5 @@
 import { defaultRouter } from '../src';
-import { Endpoint } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import { getAddress } from '@scalecube/utils';
 
 const qualifier = 'serviceName/methodName';
@@ -17,11 +17,11 @@ test(`Given Endpoint[]
   expect.assertions(2);
 
   // @ts-ignore
-  const endpont1: Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont1: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
   // @ts-ignore
-  const endpont2: Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont2: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
   // @ts-ignore
-  const endpont3: Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont3: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
 
   expect(endpont1).toMatchObject(endpont2);
   expect(endpont1).toMatchObject(endpont3);

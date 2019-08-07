@@ -1,4 +1,4 @@
-import { Endpoint } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions } from '../helpers/types';
 import { throwErrorFromServiceCall } from './ServiceCall';
@@ -17,7 +17,7 @@ export const remoteCall = ({
   asyncModel,
   transportClientProvider,
 }: RemoteCallOptions): Observable<any> => {
-  const endPoint: Endpoint | null = router({
+  const endPoint: MicroserviceApi.Endpoint | null = router({
     lookUp: microserviceContext.remoteRegistry.lookUp,
     message,
   });

@@ -1,4 +1,4 @@
-import { LookupOptions, MicroserviceApi } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import {
   AvailableServices,
   CreateLocalRegistry,
@@ -15,7 +15,7 @@ export const createLocalRegistry: CreateLocalRegistry = (): LocalRegistry => {
   let localRegistryMap: LocalRegistryMap | null = {};
 
   return Object.freeze({
-    lookUp: ({ qualifier }: LookupOptions) => {
+    lookUp: ({ qualifier }: MicroserviceApi.LookupOptions) => {
       if (!localRegistryMap) {
         throw new Error(MICROSERVICE_NOT_EXISTS);
       }

@@ -13,8 +13,7 @@ import {
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
 } from '../../../src/helpers/constants';
-import { getQualifier } from '../../../src/helpers/serviceData';
-import { constants as utilsConstants } from '@scalecube/utils';
+import { getQualifier, constants as commonConstants } from '@scalecube/utils';
 
 const {
   getIncorrectMethodValueError,
@@ -23,7 +22,7 @@ const {
   getServiceNameInvalid,
   SERVICE_NAME_NOT_PROVIDED,
   getAsynModelNotProvidedError,
-} = utilsConstants;
+} = commonConstants;
 
 describe('Test the creation of Microservice', () => {
   const baseServiceDefinition = {

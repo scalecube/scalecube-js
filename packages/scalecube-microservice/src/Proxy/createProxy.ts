@@ -1,4 +1,4 @@
-import { TransportApi, MicroserviceApi, RouterApi } from '@scalecube/api';
+import { TransportApi, MicroserviceApi } from '@scalecube/api';
 import { MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 import { validateServiceDefinition } from '@scalecube/utils';
@@ -12,7 +12,7 @@ export const createProxy = ({
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: RouterApi.Router;
+  router?: MicroserviceApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.ClientProvider;

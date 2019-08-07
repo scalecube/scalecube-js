@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Message, RouterApi } from '..';
+import { Message, Router } from '.';
 
 /**
  * @interface CreateServiceCall
@@ -15,7 +15,7 @@ export default interface CreateServiceCallOptions {
    * @method
    * Custom router specifies the logic of choosing the appropriate remoteService
    */
-  router?: RouterApi.Router;
+  router?: Router;
 }
 
 /**

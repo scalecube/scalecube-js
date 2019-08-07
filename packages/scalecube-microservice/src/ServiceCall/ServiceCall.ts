@@ -1,7 +1,7 @@
 import { Observable, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { Message, MicroserviceApi, RouterApi, TransportApi } from '@scalecube/api';
+import { MicroserviceApi, TransportApi } from '@scalecube/api';
 
 import {
   ServiceCall,
@@ -44,7 +44,7 @@ export const createServiceCall = ({
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: RouterApi.Router;
+  router?: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.ClientProvider;
 }) => {
@@ -54,13 +54,13 @@ export const createServiceCall = ({
 
   const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
   return Object.freeze({
-    requestStream: (message: Message, messageFormat: boolean = false) =>
+    requestStream: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
         messageFormat,
       }),
-    requestResponse: (message: Message, messageFormat: boolean = false) =>
+    requestResponse: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,

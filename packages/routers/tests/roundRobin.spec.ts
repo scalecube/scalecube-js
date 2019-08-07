@@ -1,5 +1,5 @@
 import { roundRobin } from '../src';
-import { Endpoint } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 import { getAddress } from '@scalecube/utils';
 
 const qualifier = 'serviceName/methodName';
@@ -20,7 +20,7 @@ test(`Given Endpoint[]
 
   for (let i = 0; i < 9; i++) {
     // @ts-ignore
-    const endpoint: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+    const endpoint: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
     expect(endpoint.address).toMatchObject(getAddress(`${i === 8 ? 0 : i}`));
   }
 });
@@ -36,17 +36,17 @@ test(`Given Endpoint[]
   registry = ['a', 'b', 'c', 'd', 'e'].map((v) => ({ address: getAddress(`${v}`) }));
 
   // @ts-ignore
-  const endpoint: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint.address).toMatchObject(getAddress(`a`));
 
   registry = ['c', 'd', 'e'].map((v) => ({ address: getAddress(`${v}`) }));
 
   // @ts-ignore
-  const endpoint2: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint2: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint2.address).toMatchObject(getAddress(`c`));
 
   // @ts-ignore
-  const endpoint3: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint3: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint3.address).toMatchObject(getAddress(`d`));
 });
 
@@ -59,17 +59,17 @@ test(`Given Endpoint[]
   registry = ['a', 'b'].map((v) => ({ address: getAddress(`${v}`) }));
 
   // @ts-ignore
-  const endpoint: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint.address).toMatchObject(getAddress(`a`));
 
   registry = ['1', '2', '3', 'a', 'c', 'd', 'e'].map((v) => ({ address: getAddress(`${v}`) }));
 
   // @ts-ignore
-  const endpoint2: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint2: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint2.address).toMatchObject(getAddress(`c`));
 
   // @ts-ignore
-  const endpoint3: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint3: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint3.address).toMatchObject(getAddress(`d`));
 });
 
@@ -82,10 +82,10 @@ test(`Given Endpoint[] that contain only 1 Endpoint
   registry = ['a'].map((v) => ({ address: getAddress(`${v}`) }));
 
   // @ts-ignore
-  const endpoint: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint.address).toMatchObject(getAddress(`a`));
 
   // @ts-ignore
-  const endpoint3: Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
+  const endpoint3: MicroserviceApi.Endpoint = roundRobin({ message: { qualifier, data: [] }, lookUp });
   expect(endpoint3.address).toMatchObject(getAddress(`a`));
 });

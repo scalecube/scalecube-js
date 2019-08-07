@@ -1,5 +1,5 @@
 import { Address } from '..';
-import { AsyncModel } from '../microservice';
+import { AsyncModel } from '.';
 
 /**
  * @interface Endpoint
