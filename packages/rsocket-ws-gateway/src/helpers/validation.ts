@@ -18,5 +18,4 @@ export const validateServiceCall = (serviceCall: any) => {
   const { requestResponse, requestStream } = serviceCall;
   check.assertFunction(requestResponse, REQUST_RESPONSE_MUST_BE_FUNCTION);
   check.assertFunction(requestStream, REQUST_STREAM_MUST_BE_FUNCTION);
-  console.log('$$$$$$$$$$$$', requestResponse, requestStream);
 };
