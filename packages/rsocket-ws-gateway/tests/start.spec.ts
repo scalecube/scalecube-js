@@ -1,6 +1,7 @@
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
+import { SERVICE_CALL_MUST_BE_OBJECT } from '../src/helpers/constants';
 
 const definition = {
   serviceName: 'serviceA',
@@ -17,9 +18,9 @@ test(`Given microservices with gateway
     And   the client sends a request to the gateway
     Then  gateway doesn't receive the request`, async () => {
   try {
-    const gateway = new Gateway({ port: 8080 });
+    const gateway = new Gateway({ port: 8050 });
     // gateway.start({ serviceCall });
-    const proxy: any = await createGatewayProxy('ws://localhost:8080', definition);
+    const proxy: any = await createGatewayProxy('ws://localhost:8050', definition);
   } catch (e) {
     expect(e.message).toBe('Connection error');
   }
@@ -28,19 +29,19 @@ test(`Given microservices with gateway
 test(` Given microservices with gateway
     And   start method was called without serviceCall argument
 Then  a error message 'Gateway start requires "serviceCall" argument should be thrown`, async () => {
-  const gateway = new Gateway({ port: 8080 });
+  const gateway = new Gateway({ port: 8051 });
   gateway.warn = jest.fn();
   const ms = createMicroservice({});
   const serviceCall = ms.createServiceCall({});
   // @ts-ignore
-  expect(() => gateway.start({})).toThrow(Error('Gateway start requires "serviceCall" argument'));
+  expect(() => gateway.start({})).toThrow(Error(SERVICE_CALL_MUST_BE_OBJECT));
 });
 
 test(` Given microservices with gateway
     And   start method was called and the microservice start listening
     When  start method is called again	
 Then  a message informing that gateway has already been activated is returned`, async () => {
-  const gateway = new Gateway({ port: 8080 });
+  const gateway = new Gateway({ port: 8052 });
   gateway.warn = jest.fn();
   const ms = createMicroservice({});
   const serviceCall = ms.createServiceCall({});
@@ -59,11 +60,11 @@ test(`Given microservices with gateway
     And   microservice handles the incoming request`, async () => {
   const ms = createMicroservice({ services });
   const serviceCall = ms.createServiceCall({});
-  const gateway = new Gateway({ port: 8080 });
+  const gateway = new Gateway({ port: 8053 });
   gateway.start({ serviceCall });
   gateway.stop();
   gateway.start({ serviceCall });
-  const proxy: any = await createGatewayProxy('ws://localhost:8080', definition);
+  const proxy: any = await createGatewayProxy('ws://localhost:8053', definition);
   const resp = await proxy.methodA();
   expect(resp).toEqual('ok');
   gateway.stop();

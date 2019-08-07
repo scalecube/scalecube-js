@@ -1,17 +1,17 @@
 import { Flowable } from 'rsocket-flowable';
-import { packError } from './utils';
+import { RequestHandler } from './api/Gateway';
 
-export const requestStream = (payload, serviceCall) => {
-  // console.log('request payload: ', payload);
-  const { data, metadata } = payload;
-  return new Flowable((subscriber: any) => {
-    subscriber.onSubscribe();
-    serviceCall.requestStream(data).subscribe(
-      (response: any) => {
-        subscriber.onNext({ data: response });
-      },
-      (error: any) => subscriber.onError(packError(error)),
-      () => subscriber.onComplete()
-    );
-  });
+const flowableHandler: RequestHandler = (serviceCall, data, subscriber) => {
+  subscriber.onSubscribe();
+  serviceCall.requestStream(data).subscribe(
+    (response: any) => {
+      subscriber.onNext({ data: response });
+    },
+    (error: any) => subscriber.onError(error),
+    () => subscriber.onComplete()
+  );
+};
+
+export const requestStream = ({ data }, serviceCall, handler = flowableHandler) => {
+  return new Flowable(handler.bind(null, serviceCall, data));
 };

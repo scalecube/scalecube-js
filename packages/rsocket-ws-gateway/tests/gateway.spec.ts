@@ -1,6 +1,6 @@
 /*
   Given microservice with gateway
-    And   start method was called and the microservice start listening 
+    And   start method was called and the microservice start listening
     And   a <service>
          |    <service>        |  asyncModel        | success response
          |ServiceA/methodA | requestResponse | true
@@ -12,20 +12,53 @@
     Then  microservice fulfill the request using serviceCall to invoke the service
 */
 
-import { runGateway, definition } from './helpers/utils';
-import { Gateway } from '../src/api/Gateway';
+import { Gateway as GatewayInterface } from '../src/api/Gateway';
+import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
+import { from, throwError } from 'rxjs';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
 
-let gateway: Gateway;
+class ServiceA {
+  public methodA() {
+    return Promise.resolve({ id: 1 });
+  }
+  public methodB() {
+    return Promise.reject(new Error('methodB error'));
+  }
+  public methodC() {
+    return from([1, 2]);
+  }
+  public methodD() {
+    return throwError(new Error('methodD error'));
+  }
+}
+
+export const definition = {
+  serviceName: 'serviceA',
+  methods: {
+    methodA: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
+    methodB: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
+    methodC: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
+    methodD: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
+  },
+};
+
+const port = 8480;
+
+const gateway: GatewayInterface = new Gateway({ port });
+const ms = createMicroservice({
+  services: [{ definition, reference: new ServiceA() }],
+});
+const serviceCall = ms.createServiceCall({});
+
 let proxy: any;
 
 beforeAll(async () => {
-  gateway = runGateway(8081);
-  // gateway.start();
-  proxy = await createGatewayProxy('ws://localhost:8081', definition);
+  gateway.start({ serviceCall });
+  proxy = await createGatewayProxy(`ws://localhost:${port}`, definition);
 });
 afterAll(() => {
-  return gateway.stop();
+  gateway.stop();
 });
 
 test('requestResponse', () => {
@@ -35,7 +68,7 @@ test('requestResponse', () => {
 });
 test('fail requestResponse', () => {
   return proxy.methodB().catch((e) => {
-    expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodB error' });
+    expect(e.source.message).toBe('methodB error');
   });
 });
 test('requestStream', (done) => {
@@ -56,7 +89,7 @@ test('fail requestStream', (done) => {
   proxy.methodD().subscribe(
     done.fail,
     (e) => {
-      expect(e).toMatchObject({ code: 'ERR_NOT_FOUND', message: 'methodD error' });
+      expect(e.source.message).toBe('methodD error');
       done();
     },
     done.fail

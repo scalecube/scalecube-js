@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
-import { unpackError } from './utils';
 import { MicroserviceApi } from '@scalecube/api';
 import { validateServiceDefinition, getQualifier } from '@scalecube/utils';
 
@@ -9,9 +8,24 @@ interface Proxy {
   [state: string]: any;
 }
 
-export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition): Promise<Proxy>;
-export function createGatewayProxy(url: string, definition: MicroserviceApi.ServiceDefinition[]): Promise<Proxy[]>;
-export function createGatewayProxy(url: string, definitions: any): any {
+export function createGatewayProxy(
+  url: string,
+  definition: MicroserviceApi.ServiceDefinition,
+  requestResponse?: any,
+  requestStream?: any
+): Promise<Proxy>;
+export function createGatewayProxy(
+  url: string,
+  definition: MicroserviceApi.ServiceDefinition[],
+  requestResponse?: any,
+  requestStream?: any
+): Promise<Proxy[]>;
+export function createGatewayProxy(
+  url: string,
+  definitions: any,
+  customRequestResponse?: any,
+  customRequestStream?: any
+): any {
   const isDefinitionsArray = Array.isArray(definitions);
   let defs: MicroserviceApi.ServiceDefinition[];
   if (!isDefinitionsArray) {
@@ -38,9 +52,11 @@ export function createGatewayProxy(url: string, definitions: any): any {
         proxy[method] = (() => {
           switch (asyncModel) {
             case 'requestResponse':
-              return requestResponse(socket, qualifier);
+              return customRequestResponse
+                ? customRequestResponse(socket, qualifier)
+                : requestResponse(socket, qualifier);
             case 'requestStream':
-              return requestStream(socket, qualifier);
+              return customRequestStream ? customRequestStream(socket, qualifier) : requestStream(socket, qualifier);
             default:
               reject(new Error('Unknown asyncModel'));
           }
@@ -93,7 +109,7 @@ const requestResponse = (socket, qualifier) => {
             resolve(data);
           },
           onError: (e: any) => {
-            reject(unpackError(e));
+            reject(e);
           },
         });
     });
@@ -121,7 +137,7 @@ const requestStream = (socket, qualifier) => {
             observer.complete();
           },
           onError: (e: any) => {
-            observer.error(unpackError(e));
+            observer.error(e);
           },
         });
     });

@@ -1,19 +1,19 @@
 import { Single } from 'rsocket-flowable';
-import { packError } from './utils';
+import { RequestHandler } from './api/Gateway';
 
-export const requestResponse = (payload, serviceCall) => {
-  const { data, metadata } = payload;
-  // console.log('Request:', data, metadata);
-  return new Single((subscriber) => {
-    subscriber.onSubscribe();
-    serviceCall
-      .requestResponse(data)
-      .then((resp: any) => {
-        // console.log('RESP', resp);
-        subscriber.onComplete({ data: resp });
-      })
-      .catch((err: any) => {
-        subscriber.onError(packError(err));
-      });
-  });
+const singleHandler: RequestHandler = (serviceCall, data, subscriber) => {
+  subscriber.onSubscribe();
+  serviceCall
+    .requestResponse(data)
+    .then((resp: any) => {
+      // console.log('RESP', resp);
+      subscriber.onComplete({ data: resp });
+    })
+    .catch((err: any) => {
+      subscriber.onError(err);
+    });
+};
+
+export const requestResponse = ({ data }, serviceCall, handler = singleHandler) => {
+  return new Single(handler.bind(null, serviceCall, data));
 };
