@@ -9,13 +9,13 @@
 Scalecube is a toolkit for creating microservices based systems.  
 Scalecube provides tools like:  
 [Microservice](packages/scalecube-microservice/README.md),  
-[Router](<>),  
+[Router](packages/routers/README.md),  
 [Discovery](packages/scalecube-discovery/README.md),  
 [Transport-browser](packages/transport-browser/README.md),  
 [Transport-nodejs](packages/transport-nodejs/README.md),  
-[Gateway](<>),  
+[Gateway](packages/rsocket-ws-gateway/README.md),  
 [Cluster-browser](packages/cluster-browser/README.md),  
-[Cluster-nodejs](<>).
+[Cluster-nodejs](packages/cluster-nodejs/README.md).
 
 ## Basic Usage
 

@@ -18,9 +18,9 @@ test(`Given microservices with gateway
     Then  gateway doesn't receive the request`, async () => {
   const ms = createMicroservice({ services });
   const serviceCall = ms.createServiceCall({});
-  const gateway = new Gateway({ port: 8080 });
+  const gateway = new Gateway({ port: 1081 });
   gateway.start({ serviceCall });
-  const proxy: any = await createGatewayProxy('ws://localhost:8080', definition);
+  const proxy: any = await createGatewayProxy('ws://localhost:1081', definition);
   const resp = await proxy.methodA();
   expect(resp).toEqual('ok');
   gateway.stop();
@@ -34,7 +34,7 @@ test(`Given microservices with gateway
     And   stop method is called and gateway stopped receiving requests
     When  stop method is called again
     Then  a message informing that gateway is not active is returned`, async () => {
-  const gateway = new Gateway({ port: 8080 });
+  const gateway = new Gateway({ port: 1081 });
   gateway.warn = jest.fn();
   const ms = createMicroservice({});
   const serviceCall = ms.createServiceCall({});

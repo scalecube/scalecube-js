@@ -2,12 +2,12 @@ export { AsyncModel, RequestResponseAsyncModel, RequestStreamAsyncModel } from '
 export { CreateProxies, CreateProxiesOptions, ProxiesMap, ProxiesOptions } from './CreateProxies';
 export { CreateProxy, ProxyOptions } from './CreateProxy';
 export { CreateServiceCall, ServiceCall } from './CreateServiceCall';
-export { Endpoint } from './Endpoint';
-export { LookUp, LookupOptions } from './LookUp';
-export { Message } from './Message';
 export { Microservice, CreateMicroservice, MicroserviceOptions } from './Microservice';
-export { RouterOptions, Router } from './Router';
 export { Service } from './Service';
 export { ServiceDefinition } from './ServiceDefinition';
 export { ServiceReference } from './ServiceReference';
 export { Qualifier } from './Qualifier';
+export { Endpoint } from './Endpoint';
+export { Message } from './Message';
+export { LookupOptions, LookUp } from './LookUp';
+export { Router } from './Router';

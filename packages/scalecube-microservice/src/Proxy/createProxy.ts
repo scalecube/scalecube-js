@@ -4,7 +4,7 @@ import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/consta
 import { validateServiceDefinition } from '@scalecube/utils';
 import { getProxy } from './Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
-import { defaultRouter } from '../Routers/default';
+import { defaultRouter } from '@scalecube/routers';
 
 export const createProxy = ({
   router = defaultRouter,
