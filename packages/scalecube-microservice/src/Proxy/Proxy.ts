@@ -1,6 +1,6 @@
 import { MicroserviceApi } from '@scalecube/api';
 import { GetProxyOptions } from '../helpers/types';
-import { getQualifier } from '../helpers/serviceData';
+import { getQualifier } from '@scalecube/utils';
 import { getServiceMethodIsMissingError } from '../helpers/constants';
 
 export const getProxy = ({ serviceCall, serviceDefinition }: GetProxyOptions) =>

@@ -2,16 +2,9 @@ import { Endpoint, LookUp, Message } from '.';
 
 /**
  * @interface Router
- * Specifies logic for picking the most appropriate remoteService
+ * Specifies logic for picking the most appropriate Endpoint from Endpoint[]
  */
-export interface Router {
-  /**
-   * @method
-   * The method that returns the appropriate remoteService for the provided search criteria. Returns null if no
-   * appropriate remoteService was found
-   */
-  route: (options: RouterOptions) => Endpoint | null;
-}
+export type Router = (options: RouterOptions) => Endpoint | null;
 
 /**
  * @interface RouteOptions
@@ -20,12 +13,12 @@ export interface Router {
 export interface RouterOptions {
   /**
    * @method
-   * The function that finds removeService by given criteria
+   * The function that finds Endpoint by given criteria
    */
   lookUp: LookUp;
   /**
    * @property
-   * Data that is used for executing the call of service method
+   * metadata, contain criteria for picking the Endpoint
    */
   message: Message;
 }

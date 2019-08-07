@@ -15,7 +15,7 @@ import { ASYNC_MODEL_TYPES } from '..';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { defaultRouter } from '../Routers/default';
+import { defaultRouter } from '@scalecube/routers';
 import { saveToLogs } from '@scalecube/utils';
 
 export const getServiceCall = ({

@@ -1,4 +1,4 @@
-import { Address } from '../index';
+import { Address } from '..';
 import { AsyncModel } from '.';
 
 /**

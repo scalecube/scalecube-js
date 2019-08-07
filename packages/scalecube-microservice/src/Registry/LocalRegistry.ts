@@ -8,7 +8,8 @@ import {
   LocalRegistryMap,
   Reference,
 } from '../helpers/types';
-import { getQualifier, getReferencePointer } from '../helpers/serviceData';
+import { getQualifier } from '@scalecube/utils';
+import { getReferencePointer } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
 
 export const createLocalRegistry: CreateLocalRegistry = (): LocalRegistry => {

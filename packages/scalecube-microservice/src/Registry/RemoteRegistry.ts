@@ -6,9 +6,8 @@ import {
   RemoteRegistryMap,
   UpdatedRemoteRegistry,
 } from '../helpers/types';
-import { getQualifier } from '../helpers/serviceData';
 import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { getFullAddress } from '@scalecube/utils';
+import { getQualifier, getFullAddress } from '@scalecube/utils';
 
 export const createRemoteRegistry: CreateRemoteRegistry = (): RemoteRegistry => {
   let remoteRegistryMap: RemoteRegistryMap | null = {};
