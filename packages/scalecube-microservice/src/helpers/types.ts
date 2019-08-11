@@ -144,3 +144,30 @@ export interface ConnectionManager {
   setConnection: (connectionAddress: string, value: Promise<RSocketClientSocket>) => void;
   removeConnection: (connectionAddress: string) => void;
 }
+
+export interface MicroserviceContextOptions {
+  address: Address;
+  debug: boolean;
+  connectionManager: ConnectionManager;
+}
+
+export interface SetMicroserviceInstanceOptions {
+  address: Address;
+  debug?: boolean;
+  microserviceContext: MicroserviceContext;
+  endPointsToPublishInCluster: MicroserviceApi.Endpoint[] | [];
+  transportClientProvider?: TransportApi.ClientProvider;
+  discoveryInstance: DiscoveryApi.Discovery;
+  serverStop: (() => void) | null;
+}
+
+export interface GetServiceFactoryOptions {
+  microserviceContext: MicroserviceContext;
+  transportClientProvider?: TransportApi.ClientProvider;
+}
+
+export interface FlatteningServices {
+  services?: MicroserviceApi.Service[];
+  microserviceContext: MicroserviceContext;
+  transportClientProvider?: TransportApi.ClientProvider;
+}

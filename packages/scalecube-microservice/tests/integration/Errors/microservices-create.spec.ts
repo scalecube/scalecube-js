@@ -122,7 +122,7 @@ describe('Test the creation of Microservice', () => {
           And   serviceDefinition has invalid 'serviceName' values
 
                 |definition      | value
-                |empty string	   | []
+                |empty string	   | ''
                 |array	         | []
                 |object	         | {}
                 |boolean	       | false
@@ -315,13 +315,15 @@ describe('Test the creation of Microservice', () => {
       expect(error.message).toMatch(getServiceReferenceNotProvidedError(baseServiceDefinition.serviceName));
     }
   });
-  test.each([() => {}, null, 'hello', 3, true, false, []])(
+  test.each([() => 'test', () => 123456, () => true, () => [], null, 'hello', 3, true, false, []])(
     `
     Scenario: Testing reference format
 
-        type      |	value               |
-        function  | const hello = ()=>{}    |
-        null	  | const hello = null	    |
+        type      |	value                   |
+        function  | ()=>'test'              |
+        function  | ()=>123456              |
+        function  | ()=>true                |
+        null	    | const hello = null	    |
         string    | const hello = 'hello'   |
         number    | const hello = 3         |
         boolean   | const hello = true      |
@@ -360,8 +362,8 @@ describe('Test the creation of Microservice', () => {
     `
     Scenario: Testing service reference method format
 
-        type      |	value               |
-        null	  | const hello = null	    |
+        type      |	value                   |
+        null	    | const hello = null	    |
         undefined |const hello = undefined  |
         string    | const hello = 'hello'   |
         number    | const hello = 3         |

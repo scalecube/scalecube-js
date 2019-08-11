@@ -5,7 +5,7 @@ export { CreateServiceCall, ServiceCall } from './CreateServiceCall';
 export { Microservice, CreateMicroservice, MicroserviceOptions } from './Microservice';
 export { Service } from './Service';
 export { ServiceDefinition } from './ServiceDefinition';
-export { ServiceReference } from './ServiceReference';
+export { ServiceReference, ServiceFactoryOptions, ServiceFactory, ServiceObject } from './ServiceReference';
 export { Qualifier } from './Qualifier';
 export { Endpoint } from './Endpoint';
 export { Message } from './Message';

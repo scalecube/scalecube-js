@@ -1,14 +1,15 @@
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
-import { getQualifier } from '@scalecube/utils';
-import { RemoteRegistry } from './types';
+import { check, getQualifier } from '@scalecube/utils';
+import { FlatteningServices, RemoteRegistry } from './types';
+import { getServiceFactoryOptions } from '../Microservices/Microservice';
 
 export const getReferencePointer = ({
   reference,
   methodName,
 }: {
-  reference: MicroserviceApi.ServiceReference;
+  reference: MicroserviceApi.ServiceObject;
   methodName: string;
 }): ((...args: any[]) => any) => {
   const methodRef = reference[methodName];
@@ -90,4 +91,21 @@ export const isServiceAvailableInRegistry = (
         .subscribe();
     });
   };
+};
+
+export const flatteningServices = ({ services, microserviceContext, transportClientProvider }: FlatteningServices) => {
+  const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
+  return services && Array.isArray(services)
+    ? services.map((service: MicroserviceApi.Service) => {
+        if (!service) {
+          return service;
+        }
+        const { reference, definition } = service;
+        if (check.isFunction(reference)) {
+          return { reference: (reference as (...data: any[]) => any)(serviceFactoryOptions), definition };
+        } else {
+          return { reference, definition };
+        }
+      })
+    : services;
 };

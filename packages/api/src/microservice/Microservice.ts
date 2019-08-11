@@ -17,7 +17,7 @@ export interface Microservice {
    * @method destroy
    * The method is used to delete a microservice and close all the subscriptions related with it
    */
-  destroy: () => Promise<string>;
+  destroy: () => Promise<any>;
 
   /**
    * @method createProxies

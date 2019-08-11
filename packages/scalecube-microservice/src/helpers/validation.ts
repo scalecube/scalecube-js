@@ -19,9 +19,12 @@ import {
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
-  const { services, seedAddress, address } = microserviceOptions;
+  const { seedAddress, address } = microserviceOptions;
   validateAddress(seedAddress, true);
   validateAddress(address, true);
+};
+
+export const validateMicroserviceServices = (services: any) => {
   check.assertArray(services, SERVICES_IS_NOT_ARRAY);
   services.forEach(validateService);
 };
