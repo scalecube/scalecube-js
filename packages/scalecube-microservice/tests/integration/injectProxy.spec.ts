@@ -46,11 +46,10 @@ test(`
         if (!this.serviceAProxy) {
           reject('serviceAProxy is not available yet');
         } else {
-          try {
-            this.serviceAProxy.getDefaultName().then((res: string) => resolve(`hello ${res}`));
-          } catch (e) {
-            reject(e);
-          }
+          this.serviceAProxy
+            .getDefaultName()
+            .then((res: string) => resolve(`hello ${res}`))
+            .catch((e: Error) => reject(e));
         }
       });
     }
