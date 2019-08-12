@@ -40,6 +40,26 @@ createMicroservice({
 });
 ```
 
+##### example of working with dependencies
+
+```typescript
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+import { greetingServiceDefinition } from './definitions';
+
+createMicroservice({
+  service : [{
+    definition: greetingServiceDefinition,
+    reference: ({ createProxy, createServiceCall }) => {
+      // callback response with createProxy or createServiceCall
+      // it is possible to inject the proxy/serviceCall to the service
+      const proxy = createProxy({ serviceDefinition: remoteServiceDefinition});
+      return new GreetingService(proxy);
+    }
+   }],
+   address : 'seed'
+});
+```
+
 #### Use the service
 
 ```typescript

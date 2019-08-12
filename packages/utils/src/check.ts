@@ -60,10 +60,18 @@ export const assertOneOf = (
   assert(isOneOf(collection, val), msg);
 };
 
-export const isFunction = (val: any) => typeof val === 'function';
+export const isFunction = (val: any) =>
+  typeof val === 'function' && !/^class\s/.test(Function.prototype.toString.call(val));
+
+export const isFunctionConstructor = (val: any) =>
+  typeof val === 'function' && /^class\s/.test(Function.prototype.toString.call(val));
 
 export const assertFunction = (val: any, msg = 'Expected to be a function') => {
   assert(isFunction(val), msg);
+};
+
+export const assertClass = (val: any, msg = 'Expected to be a class') => {
+  assert(isFunctionConstructor(val), msg);
 };
 
 export const assertNumber = (val: any, msg = 'Expected to be a number') => {
