@@ -34,6 +34,28 @@ test(`
 
   const defaultName = 'defaultName';
 
+  class ServiceB {
+    public serviceAProxy: { getDefaultName: () => Promise<any> };
+
+    constructor(serviceAProxy: { getDefaultName: () => Promise<any> }) {
+      this.serviceAProxy = serviceAProxy;
+    }
+
+    public hello() {
+      return new Promise((resolve, reject) => {
+        if (!this.serviceAProxy) {
+          reject('serviceAProxy is not available yet');
+        } else {
+          try {
+            this.serviceAProxy.getDefaultName().then((res: string) => resolve(`hello ${res}`));
+          } catch (e) {
+            reject(e);
+          }
+        }
+      });
+    }
+  }
+
   const ms = createMicroservice({
     services: [
       {
@@ -60,9 +82,7 @@ test(`
               });
           }, 0);
 
-          return {
-            hello: () => proxyA.getDefaultName().then((res: string) => `hello ${res}`),
-          };
+          return new ServiceB(proxyA);
         },
         definition: definitionB,
       },

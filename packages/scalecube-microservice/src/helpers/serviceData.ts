@@ -4,6 +4,7 @@ import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
 import { check, getQualifier } from '@scalecube/utils';
 import { FlatteningServices, RemoteRegistry } from './types';
 import { getServiceFactoryOptions } from '../Microservices/Microservice';
+import { validateServiceReference } from './validation';
 
 export const getReferencePointer = ({
   reference,
@@ -97,13 +98,13 @@ export const flatteningServices = ({ services, microserviceContext, transportCli
   const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
   return services && Array.isArray(services)
     ? services.map((service: MicroserviceApi.Service) => {
-        if (!service) {
-          return service;
-        }
         const { reference, definition } = service;
         if (check.isFunction(reference)) {
-          return { reference: (reference as (...data: any[]) => any)(serviceFactoryOptions), definition };
+          const ref = (reference as (...data: any[]) => any)(serviceFactoryOptions);
+          validateServiceReference(ref, definition);
+          return { reference: ref, definition };
         } else {
+          validateServiceReference(reference, definition);
           return { reference, definition };
         }
       })

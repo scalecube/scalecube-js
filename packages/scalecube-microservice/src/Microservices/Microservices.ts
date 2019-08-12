@@ -7,11 +7,7 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
 import { MicroserviceContext, MicroserviceContextOptions } from '../helpers/types';
-import {
-  validateDiscoveryInstance,
-  validateMicroserviceOptions,
-  validateMicroserviceServices,
-} from '../helpers/validation';
+import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { flatteningServices } from '../helpers/serviceData';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
@@ -64,8 +60,6 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
         transportClientProvider,
       })
     : [];
-
-  validateMicroserviceServices(services);
 
   localRegistry.add({ services, address });
 

@@ -19,9 +19,10 @@ import {
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
-  const { seedAddress, address } = microserviceOptions;
+  const { services, seedAddress, address } = microserviceOptions;
   validateAddress(seedAddress, true);
   validateAddress(address, true);
+  validateMicroserviceServices(services);
 };
 
 export const validateMicroserviceServices = (services: any) => {
@@ -36,7 +37,6 @@ export const validateService = (service: any) => {
   validateServiceDefinition(definition);
   const { serviceName } = definition;
   check.assertDefined(reference, getServiceReferenceNotProvidedError(serviceName));
-  validateServiceReference(reference, definition);
 };
 
 export const validateServiceReference = (reference: any, definition: MicroserviceApi.ServiceDefinition) => {
