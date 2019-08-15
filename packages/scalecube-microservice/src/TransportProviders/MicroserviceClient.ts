@@ -22,7 +22,7 @@ export const remoteResponse = ({
   address: Address;
   asyncModel: string;
   message: MicroserviceApi.Message;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider: TransportApi.Provider;
   microserviceContext: MicroserviceContext;
 }) => {
   return new Observable((observer) => {
@@ -87,7 +87,7 @@ const getClientConnection = ({
   microserviceContext,
 }: {
   address: Address;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider: TransportApi.Provider;
   microserviceContext: MicroserviceContext;
 }) => {
   const fullAddress = getFullAddress(address);
@@ -113,9 +113,9 @@ const createClient = ({
   transportClientProvider,
 }: {
   address: Address;
-  transportClientProvider: TransportApi.ClientProvider;
+  transportClientProvider: TransportApi.Provider;
 }) => {
-  const { factoryOptions, clientFactory, serializers } = transportClientProvider;
+  const { factoryOptions, providerFactory, serializers } = transportClientProvider;
 
   return new RSocketClient({
     serializers,
@@ -125,7 +125,7 @@ const createClient = ({
       lifetime: 1000000,
       metadataMimeType: 'text/plain',
     },
-    transport: clientFactory({ address, factoryOptions }),
+    transport: providerFactory({ address, factoryOptions }),
   });
 };
 

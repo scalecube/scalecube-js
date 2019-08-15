@@ -46,7 +46,7 @@ export const createServiceCall = ({
 }: {
   router?: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext | null;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);

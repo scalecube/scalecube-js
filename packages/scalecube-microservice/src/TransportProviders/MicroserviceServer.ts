@@ -15,9 +15,9 @@ export const startServer = ({
 }: {
   address: Address;
   serviceCall: ServiceCall;
-  transportServerProvider: TransportApi.ServerProvider;
+  transportServerProvider: TransportApi.Provider;
 }) => {
-  const { factoryOptions, serverFactory, serializers } = transportServerProvider;
+  const { factoryOptions, providerFactory, serializers } = transportServerProvider;
   const server = new RSocketServer({
     getRequestHandler: (socket: any) => {
       return {
@@ -26,7 +26,7 @@ export const startServer = ({
       };
     },
     serializers,
-    transport: serverFactory({ address, factoryOptions }),
+    transport: providerFactory({ address, factoryOptions }),
   });
 
   server.start();

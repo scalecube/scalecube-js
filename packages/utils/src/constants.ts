@@ -14,11 +14,11 @@ export const ASYNC_MODEL_TYPES: {
   REQUEST_STREAM: 'requestStream',
 };
 
-export const SERVICE_NAME_NOT_PROVIDED = '(serviceDefinition.serviceName) is not defined';
-export const DEFINITION_MISSING_METHODS = 'Definition missing methods:object';
-export const INVALID_METHODS = 'service definition methods should be non empty object';
+export const SERVICE_NAME_NOT_PROVIDED = 'MS0020 - Invalid format, definition must contain valid serviceName';
+export const DEFINITION_MISSING_METHODS = 'MS0021 - Invalid format, definition must contain valid methods';
+export const INVALID_METHODS = 'MS0022 - Invalid format, definition must contain valid methods';
 export const getServiceNameInvalid = (serviceName: any) =>
-  `serviceName is not valid, must be none empty string but received type ${typeof serviceName}`;
+  `MS0023 - Invalid format, serviceName must be not empty string but received type ${typeof serviceName}`;
 
 export const getIncorrectMethodValueError = (qualifier: string) =>
   `Method value for ${qualifier} definition should be non empty object`;

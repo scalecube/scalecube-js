@@ -15,7 +15,7 @@ export const createProxy = ({
   router?: MicroserviceApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }) => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -37,7 +37,7 @@ export const createProxies = ({
   createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: any;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);

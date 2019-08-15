@@ -21,7 +21,7 @@ export interface AvailableServices {
 export interface CreateServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }
 
 export interface GetProxyOptions {
@@ -42,7 +42,7 @@ export interface RemoteCallOptions {
   microserviceContext: MicroserviceContext;
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }
 
 export interface InvokeMethodOptions {
@@ -156,18 +156,18 @@ export interface SetMicroserviceInstanceOptions {
   debug?: boolean;
   microserviceContext: MicroserviceContext;
   endPointsToPublishInCluster: MicroserviceApi.Endpoint[] | [];
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
   discoveryInstance: DiscoveryApi.Discovery;
   serverStop: (() => void) | null;
 }
 
 export interface GetServiceFactoryOptions {
   microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }
 
 export interface FlatteningServices {
   services?: MicroserviceApi.Service[];
   microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.ClientProvider;
+  transportClientProvider?: TransportApi.Provider;
 }

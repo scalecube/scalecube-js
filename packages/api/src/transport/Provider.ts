@@ -2,14 +2,14 @@ import { ProviderFactory } from '.';
 import { PayloadSerializers } from './Transport';
 
 /**
- * @interface ServerProvider
+ * @interface Provider
  */
-export default interface ServerProvider {
+export default interface Provider {
   /**
    * @method
-   * Factory for creating RSocket server transport provider
+   * Factory for creating RSocket client transport provider
    */
-  serverFactory: ProviderFactory;
+  providerFactory: ProviderFactory;
   /**
    * @property
    * Extra configuration to pass to the factory

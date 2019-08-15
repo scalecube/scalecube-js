@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { Message, Router } from '.';
 
 /**
- * @interface CreateServiceCall
+ * @function CreateServiceCall
  */
 export type CreateServiceCall = (options: CreateServiceCallOptions) => ServiceCall;
 

@@ -6,7 +6,6 @@ export { Microservice, CreateMicroservice, MicroserviceOptions } from './Microse
 export { Service } from './Service';
 export { ServiceDefinition } from './ServiceDefinition';
 export { ServiceReference, ServiceFactoryOptions, ServiceFactory, ServiceObject } from './ServiceReference';
-export { Qualifier } from './Qualifier';
 export { Endpoint } from './Endpoint';
 export { Message } from './Message';
 export { LookupOptions, LookUp } from './LookUp';

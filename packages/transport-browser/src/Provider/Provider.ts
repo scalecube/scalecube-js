@@ -15,12 +15,12 @@ const serializers = {
 
 export const TransportBrowser: TransportApi.Transport = {
   clientProvider: {
-    clientFactory,
+    providerFactory: clientFactory,
     serializers,
     factoryOptions: null,
   },
   serverProvider: {
-    serverFactory,
+    providerFactory: serverFactory,
     serializers,
     factoryOptions: null,
   },

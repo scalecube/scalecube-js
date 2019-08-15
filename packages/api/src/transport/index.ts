@@ -1,7 +1,6 @@
 import Transport from './Transport';
-import ClientProvider from './ClientProvider';
-import ServerProvider from './ServerProvider';
+import Provider from './Provider';
 import { ProviderFactory } from './ProviderFactory';
 import { Address } from '..';
 
-export { Address, Transport, ClientProvider, ServerProvider, ProviderFactory };
+export { Address, Transport, Provider, ProviderFactory };
