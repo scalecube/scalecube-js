@@ -50,7 +50,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
         cluster
           .destroy()
           .then(() => resolve(getDiscoverySuccessfullyDestroyedMessage(address)))
-          .catch((error: any) => reject(error));
+          .catch((error: Error) => reject(error));
       });
     },
     discoveredItems$: () => {

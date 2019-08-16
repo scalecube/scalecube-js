@@ -23,6 +23,12 @@
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "dependencies": {
+    "@scalecube/api": "^0.0.2-alpha.12",
+    "@scalecube/cluster-browser": "^0.0.2-alpha.7",
+    "@scalecube/utils": "^0.0.2-alpha.13",
+    "rxjs": "^6.4.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@types/jest": "^23.3.13",
@@ -39,11 +45,5 @@
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.2.4"
-  },
-  "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.12",
-    "@scalecube/cluster-browser": "^0.0.2-alpha.7",
-    "@scalecube/utils": "^0.0.2-alpha.13",
-    "rxjs": "^6.4.0"
   }
 }
