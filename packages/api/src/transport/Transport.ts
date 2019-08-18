@@ -1,4 +1,4 @@
-import { ClientProvider, ServerProvider } from '.';
+import { Provider } from '.';
 
 /**
  * @interface Provider
@@ -9,12 +9,12 @@ export default interface Transport {
    * @property
    * transport provider for the client
    */
-  clientProvider: ClientProvider;
+  clientProvider: Provider;
   /**
    * @property
    * transport provider for the server
    */
-  serverProvider: ServerProvider;
+  serverProvider: Provider;
 }
 
 /**

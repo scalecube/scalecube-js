@@ -2,36 +2,37 @@ import { MicroserviceApi } from '@scalecube/api';
 import { constants } from '@scalecube/utils';
 
 export const { ASYNC_MODEL_TYPES } = constants;
-export const MICROSERVICE_NOT_EXISTS = 'microservice does not exists';
-export const MESSAGE_NOT_PROVIDED = 'Message has not been provided';
-export const MESSAGE_DATA_NOT_PROVIDED = 'Message data has not been provided';
-export const MESSAGE_QUALIFIER_NOT_PROVIDED = 'Message qualifier has not been provided';
-export const INVALID_MESSAGE = 'Message expected to be non empty object';
-export const INVALID_QUALIFIER = 'Qualifier expected to be service/method fomat';
-export const SERVICE_DEFINITION_NOT_PROVIDED = '(serviceDefinition) is not defined';
-export const WRONG_DATA_FORMAT_IN_MESSAGE = 'Message format error: data must be Array';
-export const SERVICES_IS_NOT_ARRAY = 'services is not array';
-export const SERVICE_IS_NOT_OBJECT = 'service is not object';
-export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'microservice options is not object';
-export const QUALIFIER_IS_NOT_STRING = 'qualifier should be none empty string';
-export const DUPLICATE_PROXY_NAME = 'When createProxies, proxyName must be unique';
-export const TRANSPORT_NOT_PROVIDED = 'Must provide transport provider';
+export const MICROSERVICE_NOT_EXISTS = 'MS0000 - microservice does not exists';
+export const MESSAGE_NOT_PROVIDED = 'MS0001 - Message has not been provided';
+export const MESSAGE_DATA_NOT_PROVIDED = 'MS0002 - Message data has not been provided';
+export const MESSAGE_QUALIFIER_NOT_PROVIDED = 'MS0003 - Message qualifier has not been provided';
+export const INVALID_MESSAGE = 'MS0004 - Message should not to be empty object';
+export const INVALID_QUALIFIER = 'MS0005 - qualifier expected to be service/method format';
+export const SERVICE_DEFINITION_NOT_PROVIDED = 'MS0006 - Service missing definition';
+export const WRONG_DATA_FORMAT_IN_MESSAGE = 'MS0007 - Message format error: data must be Array';
+export const SERVICES_IS_NOT_ARRAY = 'MS0008 - Not valid format, services must be an Array';
+export const SERVICE_IS_NOT_OBJECT = 'MS0009 - Not valid format, service must be an Object';
+export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'MS0000 - Not valid format, MicroserviceOptions must be an Object';
+export const QUALIFIER_IS_NOT_STRING = 'MS0011 - qualifier should not be empty string';
+export const DUPLICATE_PROXY_NAME = 'MS0012 - Invalid createProxies configuration, proxyName must be unique';
+export const TRANSPORT_NOT_PROVIDED = 'MS0013 - Transport provider is not define';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
-  `service method '${methodName}' missing in the serviceDefinition`;
+  `MS0014 - service method '${methodName}' missing in the serviceDefinition`;
 export const getNotFoundByRouterError = (qualifier: string) =>
-  `can't find services with the request: '${JSON.stringify(qualifier)}'`;
+  `MS0015 - can't find services that match the give criteria: '${JSON.stringify(qualifier)}'`;
 export const getAsyncModelMissmatch = (
   expectedAsyncModel: MicroserviceApi.AsyncModel,
   receivedAsyncModel: MicroserviceApi.AsyncModel
-) => `asyncModel miss match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
+) => `MS0016 - asyncModel does not match, expect ${expectedAsyncModel}, but received ${receivedAsyncModel}`;
 export const getMethodNotFoundError = (message: MicroserviceApi.Message) => `Can't find method ${message.qualifier}`;
 export const getInvalidMethodReferenceError = (qualifier: string) =>
-  `${qualifier} has valid definition but reference is not a function.`;
+  `MS0017 - service (${qualifier}) has valid definition but reference is not a function.`;
 
-export const getServiceReferenceNotProvidedError = (serviceName: string) => `${serviceName} reference is not provided`;
+export const getServiceReferenceNotProvidedError = (serviceName: string) =>
+  `MS0018 - service does not uphold the contract, ${serviceName} is not provided`;
 export const getInvalidServiceReferenceError = (serviceName: string) =>
-  `${serviceName} reference expected to be an object`;
+  `MS0019 - Not valid format, ${serviceName} reference must be an Object`;
 
 export const RSocketConnectionStatus = {
   NOT_CONNECTED: 'NOT_CONNECTED',

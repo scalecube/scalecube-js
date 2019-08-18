@@ -59,11 +59,11 @@ describe(`
   describe.each([
     {
       mock: mockServer,
-      providerFactory: TransportNodeJS.serverProvider.serverFactory,
+      providerFactory: TransportNodeJS.serverProvider.providerFactory,
     },
     {
       mock: mockClient,
-      providerFactory: TransportNodeJS.clientProvider.clientFactory,
+      providerFactory: TransportNodeJS.clientProvider.providerFactory,
     },
   ])(
     `
@@ -122,7 +122,7 @@ describe(`
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
           try {
-            TransportNodeJS.serverProvider.serverFactory({
+            TransportNodeJS.serverProvider.providerFactory({
               factoryOptions: null,
               address,
             });

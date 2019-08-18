@@ -43,11 +43,11 @@ describe(`
   describe.each([
     {
       mock: mockServer,
-      providerFactory: TransportBrowser.serverProvider.serverFactory,
+      providerFactory: TransportBrowser.serverProvider.providerFactory,
     },
     {
       mock: mockClient,
-      providerFactory: TransportBrowser.clientProvider.clientFactory,
+      providerFactory: TransportBrowser.clientProvider.providerFactory,
     },
   ])(
     `
@@ -106,7 +106,7 @@ describe(`
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
           try {
-            TransportBrowser.serverProvider.serverFactory({
+            TransportBrowser.serverProvider.providerFactory({
               factoryOptions: null,
               address,
             });

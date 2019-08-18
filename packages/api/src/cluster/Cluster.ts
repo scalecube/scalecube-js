@@ -3,7 +3,7 @@ import { ClusterEvent, MembersData } from './index';
 import { Observable } from 'rxjs';
 
 /**
- * @interface JoinCluster
+ * @function JoinCluster
  * factory for creating a cluster instance
  */
 export type JoinCluster = (options: ClusterOptions) => Cluster;

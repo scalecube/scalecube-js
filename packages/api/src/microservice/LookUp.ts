@@ -1,7 +1,7 @@
 import { Endpoint } from '.';
 
 /**
- * @interface LookUp
+ * @function LookUp
  * The function that finds all the appropriate endpoints for a given criteria
  */
 export type LookUp = (options: LookupOptions) => Endpoint[] | [];

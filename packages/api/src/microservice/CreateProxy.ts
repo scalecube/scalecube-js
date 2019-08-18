@@ -1,7 +1,7 @@
 import { Router, ServiceDefinition } from '.';
 
 /**
- * @interface CreateProxy
+ * @function CreateProxy
  *
  */
 export type CreateProxy = <T = any>(options: ProxyOptions) => T;

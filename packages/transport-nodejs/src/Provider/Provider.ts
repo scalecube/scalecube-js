@@ -9,12 +9,12 @@ const serializers = JsonSerializers;
 
 export const TransportNodeJS: TransportApi.Transport = {
   clientProvider: {
-    clientFactory,
+    providerFactory: clientFactory,
     serializers,
     factoryOptions: null,
   },
   serverProvider: {
-    serverFactory,
+    providerFactory: serverFactory,
     serializers,
     factoryOptions: null,
   },

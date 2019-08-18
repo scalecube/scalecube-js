@@ -22,13 +22,13 @@ Scalecube provides tools like:
 npm:
 
 ```text
-yarn add @scalecube/scalecube-microservice
+npm install @scalecube/scalecube-microservice
 ```
 
 yarn:
 
 ```text
-npm install @scalecube/scalecube-microservice
+yarn add @scalecube/scalecube-microservice
 ```
 
 ### Usage

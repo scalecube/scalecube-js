@@ -3,7 +3,7 @@ import { Cluster, ClusterOptions } from '../cluster';
 import { CreateProxies, CreateProxy, CreateServiceCall, Service } from '.';
 
 /**
- * @interface CreateMicroservice
+ * @function CreateMicroservice
  * The factory for the creation of microservice containers
  */
 export type CreateMicroservice = (options: MicroserviceOptions) => Microservice;

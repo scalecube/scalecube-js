@@ -1,7 +1,7 @@
 import { Endpoint, LookUp, Message } from '.';
 
 /**
- * @interface Router
+ * @function Router
  * Specifies logic for picking the most appropriate Endpoint from Endpoint[]
  */
 export type Router = (options: RouterOptions) => Endpoint | null;

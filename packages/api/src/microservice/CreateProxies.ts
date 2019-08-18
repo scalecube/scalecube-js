@@ -1,7 +1,7 @@
 import { Router, ServiceDefinition } from '.';
 
 /**
- * @interface CreateProxies
+ * @function CreateProxies
  *
  */
 export type CreateProxies = (options: CreateProxiesOptions) => ProxiesMap;

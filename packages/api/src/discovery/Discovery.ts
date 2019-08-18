@@ -4,7 +4,7 @@ import { Address } from '../common';
 import { Cluster, ClusterOptions } from '../cluster';
 
 /**
- * @interface CreateDiscovery
+ * @function CreateDiscovery
  * factory for creating discovery instance
  */
 export type CreateDiscovery = (options: DiscoveryOptions) => Discovery;

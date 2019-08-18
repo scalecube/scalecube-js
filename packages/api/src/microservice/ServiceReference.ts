@@ -2,7 +2,7 @@ import { CreateProxy } from './CreateProxy';
 import { CreateServiceCall } from './CreateServiceCall';
 
 /**
- * @interface ServiceReference
+ * @function ServiceReference
  * Map: key<method>  and value<reference>(to service method)
  */
 export type ServiceReference = ServiceFactory | ServiceObject;

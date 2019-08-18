@@ -1,6 +1,7 @@
 import { Address } from '.';
 
 /**
+ * @function
  * RSocket transport provider factory
  * DuplexConnection - https://github.com/rsocket/rsocket-js/blob/master/packages/rsocket-core/src/RSocketClient.js
  */
