@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/cluster-nodejs",
-  "version": "0.0.2-alpha.4",
+  "version": "0.0.2-alpha.5",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -36,8 +36,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.12",
-    "@scalecube/utils": "^0.0.2-alpha.13",
+    "@scalecube/api": "^0.0.2-alpha.13",
+    "@scalecube/utils": "^0.0.2-alpha.14",
     "rxjs": "^6.4.0",
     "swim": "^0.6.0"
   }
