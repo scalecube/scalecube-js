@@ -52,11 +52,11 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.12",
-    "@scalecube/routers": "^0.0.2-alpha.1",
-    "@scalecube/scalecube-discovery": "^0.1.1-alpha.19",
-    "@scalecube/transport-browser": "^0.0.2-alpha.14",
-    "@scalecube/utils": "^0.0.2-alpha.13",
+    "@scalecube/api": "0.0.2-alpha.12",
+    "@scalecube/routers": "0.0.2-alpha.1",
+    "@scalecube/scalecube-discovery": "0.1.1-alpha.19",
+    "@scalecube/transport-browser": "0.0.2-alpha.14",
+    "@scalecube/utils": "0.0.2-alpha.13",
     "rsocket-core": "^0.0.10",
     "rsocket-flowable": "^0.0.10",
     "rxjs": "^6.4.0"

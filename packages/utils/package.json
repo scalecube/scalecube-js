@@ -35,6 +35,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.2-alpha.12"
+    "@scalecube/api": "0.0.2-alpha.12"
   }
 }
