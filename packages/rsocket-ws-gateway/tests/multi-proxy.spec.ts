@@ -20,14 +20,14 @@ const services = [{ definition: definitionA, reference: serviceA }, { definition
 
 const ms = createMicroservice({ services });
 const serviceCall = ms.createServiceCall({});
-const gateway = new Gateway({ port: 8080 });
+const gateway = new Gateway({ port: 8070 });
 
 let proxyA;
 let proxyB;
 
 beforeAll(async () => {
   gateway.start({ serviceCall });
-  [proxyA, proxyB] = await createGatewayProxy('ws://localhost:8080', [definitionA, definitionB]);
+  [proxyA, proxyB] = await createGatewayProxy('ws://localhost:8070', [definitionA, definitionB]);
 });
 afterAll(() => gateway.stop());
 
