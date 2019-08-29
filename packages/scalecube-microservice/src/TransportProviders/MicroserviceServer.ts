@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 
 import { RsocketEventsPayload, ServiceCall } from '../helpers/types';
 import { ASYNC_MODEL_TYPES } from '..';
+import { check } from '@scalecube/utils';
 
 export const startServer = ({
   address,
@@ -60,7 +61,7 @@ const requestResponse = ({
         subscriber.onComplete({ data: response, metadata: '' });
       })
       .catch((error: Error) => {
-        subscriber.onError(error);
+        subscriber.onError({ message: check.isObject(error) ? JSON.stringify(error) : error });
       });
   });
 };
@@ -76,7 +77,7 @@ const requestStream = ({ data, metadata, serviceCall }: { data: any; metadata: s
       (response: any) => {
         subscriber.onNext({ data: response, metadata: '' });
       },
-      (error) => subscriber.onError(error),
+      (error) => subscriber.onError({ message: check.isObject(error) ? JSON.stringify(error) : error }),
       () => subscriber.onComplete()
     );
   });
