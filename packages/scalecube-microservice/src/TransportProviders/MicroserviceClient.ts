@@ -38,19 +38,16 @@ export const remoteResponse = ({
         metadata: '',
       });
 
-      const flowableNext = ({ data, metadata }: RsocketEventsPayload) => {
+      const flowableNext = ({ data = {}, metadata = {} }: RsocketEventsPayload) => {
         const { data: response } = data;
-        observer.next(response);
+        const { status } = metadata;
+        status ? observer.next(response) : observer.error(response);
       };
-      const flowableError = (err: { source: { message: string } }) => {
-        let errorMsg: any;
-        try {
-          errorMsg = JSON.parse(err.source.message);
-        } catch (e) {
-          errorMsg = err.source.message || 'RemoteCall exception occur.';
-        }
-        return errorMsg instanceof Error ? observer.error(errorMsg) : observer.error(new Error(errorMsg));
-      };
+
+      const flowableError = (err: { source: { message: string } }) =>
+        observer.error(
+          err ? (err.source ? new Error(err.source.message) : err) : new Error('RemoteCall exception occur.')
+        );
 
       switch (asyncModel) {
         case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
