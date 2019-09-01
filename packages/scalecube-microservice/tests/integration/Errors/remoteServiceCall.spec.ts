@@ -3,7 +3,7 @@ import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
 import { GreetingService } from '../../mocks/GreetingService';
 import { getAsyncModelMissmatch } from '../../../src/helpers/constants';
 
-const errorMessage = new Error('mockError');
+const errorMessage = 'mockError';
 const emptyMessage = 'mockEmpty';
 
 describe(`Test RSocket doesn't hide remoteService errors`, () => {
@@ -31,10 +31,10 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         definition: greetingServiceDefinition,
         reference: {
           // @ts-ignore
-          hello: () => Promise.reject(errorMessage),
+          hello: () => Promise.reject(new Error(errorMessage)),
           greet$: () =>
             new Observable((obs) => {
-              obs.error(errorMessage);
+              obs.error(new Error(errorMessage));
             }),
           incorrectAsyncModel: () => of({ emptyMessage }),
           // @ts-ignore
