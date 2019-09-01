@@ -11,7 +11,7 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
 
-    lerna publish --canary --dist-tag snapshot --preid snapshot.$(date +%s) --yes
+    lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
@@ -24,7 +24,7 @@ elif [[ "$TRAVIS_BRANCH" == "develop" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false"
 
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git checkout develop
-    lerna publish prerelease --dist-tag next --yes -m '[skip ci]'
+    lerna publish prerelease --dist-tag next --preid next --yes -m '[skip ci]'
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
