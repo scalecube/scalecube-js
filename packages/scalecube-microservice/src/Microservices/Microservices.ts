@@ -18,6 +18,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 ) => {
   let microserviceOptions = {
     services: [],
+    debug: false,
     transport: !isNodejs() ? TransportBrowser : undefined,
     ...options,
   };
@@ -89,6 +90,8 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
           // server use only localCall therefor, router is irrelevant
           serviceCall: getServiceCall({ router: defaultRouter, microserviceContext, transportClientProvider }),
           transportServerProvider: transport.serverProvider,
+          debug,
+          whoAmI: getFullAddress(fallBackAddress),
         })
       : null;
 

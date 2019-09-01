@@ -7,22 +7,27 @@ import { Observable } from 'rxjs';
 
 import { RsocketEventsPayload, ServiceCall } from '../helpers/types';
 import { ASYNC_MODEL_TYPES } from '..';
+import { saveToLogs } from '@scalecube/utils';
 
 export const startServer = ({
   address,
   serviceCall,
   transportServerProvider,
+  debug = false,
+  whoAmI,
 }: {
   address: Address;
   serviceCall: ServiceCall;
   transportServerProvider: TransportApi.Provider;
+  debug: boolean;
+  whoAmI: string;
 }) => {
   const { factoryOptions, providerFactory, serializers } = transportServerProvider;
   const server = new RSocketServer({
     getRequestHandler: (socket: any) => {
       return {
-        requestResponse: (payload: RsocketEventsPayload) => requestResponse({ ...payload, serviceCall }),
-        requestStream: (payload: RsocketEventsPayload) => requestStream({ ...payload, serviceCall }),
+        requestResponse: (payload: RsocketEventsPayload) => requestResponse({ ...payload, serviceCall, debug, whoAmI }),
+        requestStream: (payload: RsocketEventsPayload) => requestStream({ ...payload, serviceCall, debug, whoAmI }),
       };
     },
     serializers,
@@ -44,10 +49,14 @@ const requestResponse = ({
   data,
   metadata,
   serviceCall,
+  debug,
+  whoAmI,
 }: {
   data: any;
   metadata: string;
   serviceCall: ServiceCall;
+  debug: boolean;
+  whoAmI: string;
 }) => {
   return new Single((subscriber: any) => {
     subscriber.onSubscribe();
@@ -60,12 +69,28 @@ const requestResponse = ({
         subscriber.onComplete({ data: response, metadata: { status: true } });
       })
       .catch((error: Error) => {
-        subscriber.onComplete({ data: { data: error }, metadata: { status: false } });
+        saveToLogs(whoAmI, error.message, error, debug, 'warn');
+        subscriber.onComplete({
+          data: { data: { message: error.message, ...data } },
+          metadata: { status: false },
+        });
       });
   });
 };
 
-const requestStream = ({ data, metadata, serviceCall }: { data: any; metadata: string; serviceCall: ServiceCall }) => {
+const requestStream = ({
+  data,
+  metadata,
+  serviceCall,
+  debug,
+  whoAmI,
+}: {
+  data: any;
+  metadata: string;
+  serviceCall: ServiceCall;
+  debug: boolean;
+  whoAmI: string;
+}) => {
   return new Flowable((subscriber: any) => {
     subscriber.onSubscribe();
     (serviceCall({
@@ -77,7 +102,11 @@ const requestStream = ({ data, metadata, serviceCall }: { data: any; metadata: s
         subscriber.onNext({ data: response, metadata: { status: true } });
       },
       (error) => {
-        subscriber.onNext({ data: { data: error }, metadata: { status: false } });
+        saveToLogs(whoAmI, error.message, error, debug, 'warn');
+        subscriber.onNext({
+          data: { data: { message: error.message, ...data } },
+          metadata: { status: false },
+        });
         subscriber.onComplete();
       },
       () => subscriber.onComplete()
