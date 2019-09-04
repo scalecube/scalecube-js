@@ -71,11 +71,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     });
     const { proxy: service } = await awaitProxy;
 
-    return expect(service.hello('Me')).rejects.toMatchObject({
-      message: errorMessage,
-      data: ['Me'],
-      qualifier: `${greetingServiceDefinition.serviceName}/hello`,
-    });
+    return expect(service.hello('Me')).rejects.toMatch(errorMessage.message);
   });
 
   test(`
@@ -100,11 +96,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       proxy.greet$(['Me']).subscribe(
         (response: any) => {},
         (error: any) => {
-          expect(error).toMatchObject({
-            message: errorMessage,
-            data: [['Me']],
-            qualifier: `${greetingServiceDefinition.serviceName}/greet$`,
-          });
+          expect(error).toMatch(errorMessage.message);
           done();
         }
       );
