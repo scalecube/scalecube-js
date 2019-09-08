@@ -45,7 +45,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
     port1,
     port2,
     retry: retry || {
-      timeout: 500,
+      timeout: 10,
     },
     debug,
     seedAddress,
