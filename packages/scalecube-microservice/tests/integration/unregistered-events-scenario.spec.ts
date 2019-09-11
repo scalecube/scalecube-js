@@ -1,6 +1,7 @@
 import { greetingServiceDefinition, greet$, hello } from '../mocks/GreetingService';
 import { createMicroservice } from '../../src';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
+import { getAddress, getFullAddress } from '@scalecube/utils';
 
 describe(`
   Background:
@@ -30,6 +31,7 @@ describe(`
     };
 
     const serviceDefinition = service.definition;
+    const address = getAddress('A');
     const msB = createMicroservice({
       services: [service],
       address: 'B',
@@ -37,7 +39,7 @@ describe(`
     });
 
     const msA = createMicroservice({
-      address: 'A',
+      address,
     });
 
     const { awaitProxyB } = await msA.createProxies({
@@ -55,7 +57,9 @@ describe(`
         expect(res).toMatch('Hello ME');
         msB.destroy().then(() => {
           proxy.hello('ME').catch((e: Error) => {
-            expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
+            expect(e.message).toMatch(
+              getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
+            );
             msA.destroy();
             done();
           });
@@ -113,8 +117,9 @@ describe(`
       seedAddress: 'C1',
     });
 
+    const address = getAddress('C1');
     const msC = createMicroservice({
-      address: 'C1',
+      address,
     });
 
     const { awaitProxy } = await msC.createProxies({
@@ -135,7 +140,9 @@ describe(`
             expect(res2).toMatch('Hello ME');
             msA.destroy().then(() => {
               proxy.hello('ME').catch((e: Error) => {
-                expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
+                expect(e.message).toMatch(
+                  getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
+                );
                 msC.destroy();
                 done();
               });
