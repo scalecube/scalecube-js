@@ -1,6 +1,6 @@
 import { greetingServiceDefinition, hello, greet$, GreetingService } from '../mocks/GreetingService';
 import { createMicroservice } from '../../src';
-import { getAddress } from '@scalecube/utils';
+import { getAddress, getFullAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
 import { MicroserviceApi } from '@scalecube/api';
 
@@ -56,15 +56,18 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestResponse is received
               `, (done) => {
     expect.assertions(2);
+    const address = getAddress('createProxy-requestResponse');
     const microserviceWithoutServices = createMicroservice({
       services: [],
-      address: getAddress('createProxy-requestResponse'),
+      address,
       seedAddress: getAddress('B'),
     });
 
     const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
     proxy.hello(defaultUser).catch((e: Error) => {
-      expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
+      expect(e.message).toMatch(
+        getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
+      );
     });
 
     setTimeout(() => {
@@ -83,9 +86,10 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
             `, (done) => {
     expect.assertions(2);
+    const address = getAddress('createProxy-requestResponse');
     const microserviceWithoutServices = createMicroservice({
       services: [],
-      address: getAddress('createProxy-RequestStream'),
+      address,
       seedAddress: getAddress('B'),
     });
     microservicesList.push(microserviceWithoutServices);
@@ -94,7 +98,9 @@ describe(`Test positive-scenarios of usage
     proxy.greet$([defaultUser]).subscribe(
       (res: string) => {},
       (e: Error) => {
-        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
+        expect(e.message).toMatch(
+          getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/greet$`)
+        );
       }
     );
 
@@ -174,9 +180,10 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestResponse is received
             `, (done) => {
     expect.assertions(2);
+    const address = getAddress('serviceCall-requestResponse');
     const microserviceWithoutServices = createMicroservice({
       services: [],
-      address: getAddress('serviceCall-requestResponse'),
+      address,
       seedAddress: getAddress('B'),
     });
     microservicesList.push(microserviceWithoutServices);
@@ -188,7 +195,9 @@ describe(`Test positive-scenarios of usage
     const serviceCall = microserviceWithoutServices.createServiceCall({});
 
     serviceCall.requestResponse(message).catch((e: Error) => {
-      expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/hello`));
+      expect(e.message).toMatch(
+        getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
+      );
     });
 
     setTimeout(() => {
@@ -205,9 +214,10 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
                   `, (done) => {
     expect.assertions(2);
+    const address = getAddress('serviceCall-RequestStream');
     const microserviceWithoutServices = createMicroservice({
       services: [],
-      address: getAddress('serviceCall-RequestStream'),
+      address,
       seedAddress: getAddress('B'),
     });
 
@@ -222,7 +232,9 @@ describe(`Test positive-scenarios of usage
     serviceCall.requestStream(message).subscribe(
       (res: MicroserviceApi.Message) => {},
       (e: Error) => {
-        expect(e.message).toMatch(getNotFoundByRouterError(`${serviceDefinition.serviceName}/greet$`));
+        expect(e.message).toMatch(
+          getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/greet$`)
+        );
       }
     );
 

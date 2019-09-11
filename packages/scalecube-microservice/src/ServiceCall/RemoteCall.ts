@@ -24,7 +24,7 @@ export const remoteCall = ({
   if (!endPoint) {
     return throwErrorFromServiceCall({
       asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-      errorMessage: getNotFoundByRouterError(message.qualifier),
+      errorMessage: getNotFoundByRouterError(microserviceContext.whoAmI, message.qualifier),
       microserviceContext,
     }) as Observable<any>;
   }

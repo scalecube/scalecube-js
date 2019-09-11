@@ -19,8 +19,8 @@ export const TRANSPORT_NOT_PROVIDED = 'MS0013 - Transport provider is not define
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `MS0014 - service method '${methodName}' missing in the serviceDefinition`;
-export const getNotFoundByRouterError = (qualifier: string) =>
-  `MS0015 - can't find services that match the give criteria: '${JSON.stringify(qualifier)}'`;
+export const getNotFoundByRouterError = (whoAmI: string, qualifier: string) =>
+  `MS0015 - ${whoAmI} can't find services that match the give criteria: '${JSON.stringify(qualifier)}'`;
 export const getAsyncModelMissmatch = (
   expectedAsyncModel: MicroserviceApi.AsyncModel,
   receivedAsyncModel: MicroserviceApi.AsyncModel

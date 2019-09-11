@@ -6,8 +6,15 @@ import { saveToLogs } from './logs';
 import { isNodejs } from './checkEnvironemnt';
 import { validateServiceDefinition } from './serviceDefinition';
 import { getQualifier } from './qualifier';
+import { applyPostMessagePolyfill } from './mocks/PostMessageWithTransferPolyfill';
+import { applyMessageChannelPolyfill } from './mocks/MessageChannelPolyfill';
 
 const workers = !isNodejs() ? { addWorker, removeWorker } : {};
+
+const mockMessageChannel = () => {
+  applyPostMessagePolyfill();
+  applyMessageChannelPolyfill();
+};
 
 export {
   check,
@@ -20,4 +27,5 @@ export {
   isNodejs,
   validateServiceDefinition,
   getQualifier,
+  mockMessageChannel,
 };

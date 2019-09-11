@@ -1,5 +1,3 @@
-import { applyPostMessagePolyfill } from './mocks/utils/PostMessageWithTransferPolyfill';
-import { applyMessageChannelPolyfill } from './mocks/utils/MessageChannelPolyfill';
+import { mockMessageChannel } from '@scalecube/utils';
 
-applyPostMessagePolyfill();
-applyMessageChannelPolyfill();
+mockMessageChannel();
