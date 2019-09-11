@@ -43,9 +43,10 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       },
     ],
     address: 'seed',
+    debug: false,
   });
 
-  const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local' });
+  const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local', debug: true });
 
   // @ts-ignore
   if (global.isNodeEvn) {

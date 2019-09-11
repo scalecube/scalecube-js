@@ -26,7 +26,7 @@ export const setMicroserviceInstance = ({
 
   discoveryInstance
     .discoveredItems$()
-    .pipe(printLogs(address, debug))
+    .pipe(printLogs(microserviceContext.whoAmI, debug))
     .subscribe(remoteRegistry.update);
 
   const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
@@ -37,6 +37,7 @@ export const setMicroserviceInstance = ({
         microserviceContext,
         isServiceAvailable,
         transportClientProvider,
+        debug,
       }),
     destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
     ...serviceFactoryOptions,
@@ -59,15 +60,15 @@ export const getServiceFactoryOptions = ({ microserviceContext, transportClientP
       }),
   } as MicroserviceApi.ServiceFactoryOptions);
 
-const printLogs = (address: Address, debug?: boolean) =>
+const printLogs = (whoAmI: string, debug?: boolean) =>
   tap(
     ({ type, items }: DiscoveryApi.ServiceDiscoveryEvent) =>
       type !== 'IDLE' &&
       saveToLogs(
-        getFullAddress(address),
+        whoAmI,
         `microservice received an updated`,
         {
-          [type]: [...items],
+          [type]: items.map((item) => item.qualifier),
         },
         debug
       )
