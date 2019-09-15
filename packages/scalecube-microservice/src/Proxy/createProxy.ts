@@ -1,7 +1,7 @@
 import { TransportApi, MicroserviceApi } from '@scalecube/api';
 import { MicroserviceContext } from '../helpers/types';
 import { DUPLICATE_PROXY_NAME, MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
-import { validateServiceDefinition } from '@scalecube/utils';
+import { saveToLogs, validateServiceDefinition } from '@scalecube/utils';
 import { getProxy } from './Proxy';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { defaultRouter } from '@scalecube/routers';
@@ -33,11 +33,13 @@ export const createProxies = ({
   microserviceContext,
   isServiceAvailable,
   transportClientProvider,
+  debug,
 }: {
   createProxiesOptions: MicroserviceApi.CreateProxiesOptions;
   microserviceContext: MicroserviceContext | null;
   isServiceAvailable: any;
   transportClientProvider?: TransportApi.Provider;
+  debug?: boolean;
 }): MicroserviceApi.ProxiesMap => {
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
@@ -61,7 +63,10 @@ export const createProxies = ({
             microserviceContext,
             transportClientProvider,
           });
-          isServiceAvailable(serviceDefinition).then(() => resolve({ proxy }));
+          isServiceAvailable(serviceDefinition).then(() => {
+            saveToLogs(microserviceContext.whoAmI, `${serviceDefinition.serviceName} is ready`, {}, debug, 'log');
+            resolve({ proxy });
+          });
         } catch (e) {
           reject(e);
         }
