@@ -9,7 +9,7 @@ import {
   ADDED,
   getMultiInitClientFromServer,
 } from '../helpers/constants';
-import { genericPostMessage, getKeysAsArray } from '../helpers/utils';
+import { genericPostMessage } from '../helpers/utils';
 import { ClusterClientOptions, CreateClusterClient } from '../helpers/types';
 
 export const client: CreateClusterClient = (options: ClusterClientOptions) => {
@@ -103,10 +103,7 @@ export const client: CreateClusterClient = (options: ClusterClientOptions) => {
         saveToLogs(
           whoAmI,
           `${whoAmI} client received ${type} request from ${from}`,
-          {
-            membersState: { ...membersStatus.membersState },
-            membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
-          },
+          { ...membersStatus.membersState },
           debug
         );
 
@@ -175,15 +172,7 @@ export const client: CreateClusterClient = (options: ClusterClientOptions) => {
       port1.removeEventListener(MESSAGE, eventHandlers[`portEventsHandler${whoAmI}`]);
       port1.close();
       port2.close();
-      saveToLogs(
-        whoAmI,
-        `${whoAmI} close client`,
-        {
-          membersState: { ...membersStatus.membersState },
-          membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
-        },
-        debug
-      );
+      saveToLogs(whoAmI, `${whoAmI} close client`, { ...membersStatus.membersState }, debug);
     },
   });
 };

@@ -27,7 +27,13 @@ export const saveToLogs = (
     console[type](msg);
     extra &&
       Object.keys(extra).forEach((key: string) => {
-        console[type](`${key}: ${JSON.stringify(extra[key], null, 2)}`);
+        if (Array.isArray(extra[key])) {
+          Object.values(extra[key]).forEach((props: any) => {
+            console[type](`${key}: ${JSON.stringify(props.qualifier || props, null, 2)}`);
+          });
+        } else {
+          console[type](`${key}: ${JSON.stringify(extra[key], null, 2)}`);
+        }
       });
   }
   // tslint:enable

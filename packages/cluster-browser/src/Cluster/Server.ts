@@ -87,10 +87,7 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
         saveToLogs(
           whoAmI,
           `${whoAmI} server received ${type} request from ${from}`,
-          {
-            membersState: { ...membersStatus.membersState },
-            membersPort: getKeysAsArray({ ...membersStatus.membersPort }),
-          },
+          { ...membersStatus.membersState },
           debug
         );
       }
