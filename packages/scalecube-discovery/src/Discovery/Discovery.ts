@@ -37,7 +37,7 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
 
   check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
 
-  const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, debug: false });
+  const cluster: ClusterApi.Cluster = joinCluster({ address, seedAddress, itemsToPublish, debug });
 
   const clusterListener = cluster.listen$();
   let subscription: any;
