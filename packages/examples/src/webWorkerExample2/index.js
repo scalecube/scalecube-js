@@ -14,6 +14,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     waitMessage.innerText = 'Wait for service ~ 2s';
 
+    workers.initialize();
+
     const worker = new Worker('worker1.js');
     const worker2 = new Worker('worker2.js');
 

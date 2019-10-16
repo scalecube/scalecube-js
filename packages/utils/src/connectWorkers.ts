@@ -2,25 +2,27 @@ import { isNodejs } from './checkEnvironemnt';
 
 const workersMap: { [key: string]: Worker } = {};
 
-if (!isNodejs()) {
-  // @ts-ignore
-  if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
-    console.error(`Don't use this on webworkers, only on the main thread`);
-  } else {
-    addEventListener('message', (ev) => {
-      if (ev && ev.data && !ev.data.workerId) {
-        if (ev.data.detail) {
-          ev.data.workerId = 1;
-          const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
-          if (propogateTo) {
-            // @ts-ignore
-            propogateTo.postMessage(ev.data, ev.ports);
+export const initialize = () => {
+  if (!isNodejs()) {
+    // @ts-ignore
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+      console.warn(`Don't use this on webworkers, only on the main thread`);
+    } else {
+      addEventListener('message', (ev) => {
+        if (ev && ev.data && !ev.data.workerId) {
+          if (ev.data.detail) {
+            ev.data.workerId = 1;
+            const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
+            if (propogateTo) {
+              // @ts-ignore
+              propogateTo.postMessage(ev.data, ev.ports);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
-}
+};
 
 function workerEventHandler(ev: any) {
   if (ev.data && ev.data.detail && ev.data.type) {
