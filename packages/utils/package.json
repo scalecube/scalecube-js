@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/utils",
-  "version": "0.0.3-next.0",
+  "version": "0.0.3-next.1",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.2-next.0",
+  "version": "0.1.2-next.1",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -42,8 +42,8 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.0",
-    "@scalecube/cluster-browser": "^0.0.3-next.0",
-    "@scalecube/utils": "^0.0.3-next.0",
+    "@scalecube/cluster-browser": "^0.0.3-next.1",
+    "@scalecube/utils": "^0.0.3-next.1",
     "rxjs": "^6.4.0"
   }
 }
