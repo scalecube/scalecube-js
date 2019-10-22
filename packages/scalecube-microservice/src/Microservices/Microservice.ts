@@ -1,5 +1,5 @@
-import { Address, DiscoveryApi, MicroserviceApi } from '@scalecube/api';
-import { getFullAddress, saveToLogs } from '@scalecube/utils';
+import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
+import { saveToLogs } from '@scalecube/utils';
 import { tap } from 'rxjs/operators';
 import { GetServiceFactoryOptions, SetMicroserviceInstanceOptions } from '../helpers/types';
 import { createProxies, createProxy } from '../Proxy/createProxy';

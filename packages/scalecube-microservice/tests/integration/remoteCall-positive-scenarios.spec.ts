@@ -61,6 +61,7 @@ describe(`Test positive-scenarios of usage
       services: [],
       address,
       seedAddress: getAddress('B'),
+      // debug: true
     });
 
     const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
