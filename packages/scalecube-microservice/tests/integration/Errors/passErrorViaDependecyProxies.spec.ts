@@ -94,9 +94,9 @@ Then activeC should catch the exception
     debug: false,
   });
 
-  // @ts-ignore
   test.each(['reject with string', { data: 'reject as object' }, new Error('reject with new Error')])(
     'requesrResponse error',
+    // @ts-ignore
     async (e, done) => {
       error = e;
       const { proxy: proxyB } = await awaitProxyServiceB;
@@ -110,9 +110,9 @@ Then activeC should catch the exception
     }
   );
 
-  // @ts-ignore
   test.each(['reject with string', { data: 'reject as object' }, new Error('reject with new Error')])(
     'requestStream error',
+    // @ts-ignore
     async (e, done) => {
       error = e;
       const { proxy: proxyB } = await awaitProxyServiceB;
