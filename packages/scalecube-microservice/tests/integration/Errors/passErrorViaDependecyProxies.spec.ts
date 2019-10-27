@@ -10,8 +10,14 @@ Given 3 microservice containers A,B,C
 |B   | A          | C           |  activeB |
 |C   | B          | B           |  activeC |
 
-When activeA method reject and  throw exception
+
+When activeC calls activeB 
+And activeB calls activeA
+And activeA method reject and  throw exception
 Then activeC should catch the exception
+
+activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB => reject => activeC
+
 `, () => {
   // @ts-ignore
   if (global.isNodeEvn) {
