@@ -34,7 +34,7 @@
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.0",
     "@scalecube/utils": "^0.0.3-next.1",
-    "rsocket-core": "^0.0.10",
+    "rsocket-core": "^0.0.16",
     "rsocket-events-client": "^0.0.16-6",
     "rsocket-events-server": "^0.0.16-6"
   }

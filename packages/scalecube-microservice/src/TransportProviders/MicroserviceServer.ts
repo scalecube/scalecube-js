@@ -70,9 +70,8 @@ const requestResponse = ({
       })
       .catch((error: Error) => {
         saveToLogs(whoAmI, error.message, error, debug, 'warn');
-        subscriber.onComplete({
-          data: { data: { message: error.message || error, ...data } },
-          metadata: { status: false },
+        subscriber.onError({
+          message: error,
         });
       });
   });
@@ -103,11 +102,9 @@ const requestStream = ({
       },
       (error) => {
         saveToLogs(whoAmI, error.message, error, debug, 'warn');
-        subscriber.onNext({
-          data: { data: { message: error.message || error, ...data } },
-          metadata: { status: false },
+        subscriber.onError({
+          message: error,
         });
-        subscriber.onComplete();
       },
       () => subscriber.onComplete()
     );

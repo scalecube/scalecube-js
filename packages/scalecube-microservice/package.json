@@ -57,8 +57,8 @@
     "@scalecube/scalecube-discovery": "^0.1.2-next.1",
     "@scalecube/transport-browser": "^0.0.3-next.1",
     "@scalecube/utils": "^0.0.3-next.1",
-    "rsocket-core": "^0.0.10",
-    "rsocket-flowable": "^0.0.10",
+    "rsocket-core": "^0.0.16",
+    "rsocket-flowable": "^0.0.14",
     "rxjs": "^6.4.0"
   }
 }
