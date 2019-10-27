@@ -45,9 +45,7 @@ export const remoteResponse = ({
       };
 
       const flowableError = (err: { source: { message: string } }) =>
-        observer.error(
-          err ? (err.source ? new Error(err.source.message) : err) : new Error('RemoteCall exception occur.')
-        );
+        observer.error(err && err.source ? err.source.message : new Error('RemoteCall exception occur.'));
 
       switch (asyncModel) {
         case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:

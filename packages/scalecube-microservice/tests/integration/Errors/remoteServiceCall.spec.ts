@@ -46,7 +46,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     debug: false,
   });
 
-  const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local', debug: true });
+  const microServiceWithoutServices = createMicroservice({ seedAddress: 'seed', address: 'local', debug: false });
 
   // @ts-ignore
   if (global.isNodeEvn) {
@@ -72,7 +72,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     });
     const { proxy: service } = await awaitProxy;
 
-    return expect(service.hello('Me')).rejects.toMatch(errorMessage.message);
+    return expect(service.hello('Me')).rejects.toMatchObject(errorMessage);
   });
 
   test(`
@@ -97,7 +97,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       proxy.greet$(['Me']).subscribe(
         (response: any) => {},
         (error: any) => {
-          expect(error).toMatch(errorMessage.message);
+          expect(error).toMatchObject(errorMessage);
           done();
         }
       );

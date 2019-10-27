@@ -30,8 +30,8 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
       const server = new RSocketServer({
         getRequestHandler: (socket: any) => {
           return {
-            requestResponse: () => Single.error(new Error(errorMessage)),
-            requestStream: () => Flowable.error(new Error(errorMessage)),
+            requestResponse: () => Single.error({ message: new Error(errorMessage) }),
+            requestStream: () => Flowable.error({ message: new Error(errorMessage) }),
           };
         },
         serializers: serializers || undefined,
