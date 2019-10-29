@@ -1,12 +1,12 @@
 import { TransportApi, Address } from '@scalecube/api';
 // @ts-ignore
-import { RSocketServer } from 'rsocket-core';
+import RSocketServer from 'rsocket-core/build/RSocketServer';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 import { Observable } from 'rxjs';
 
 import { RsocketEventsPayload, ServiceCall } from '../helpers/types';
-import { ASYNC_MODEL_TYPES } from '..';
+import { ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { saveToLogs } from '@scalecube/utils';
 
 export const startServer = ({

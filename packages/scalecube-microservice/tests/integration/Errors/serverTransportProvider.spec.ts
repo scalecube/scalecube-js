@@ -1,6 +1,6 @@
 import { TransportApi } from '@scalecube/api';
 // @ts-ignore
-import { RSocketServer } from 'rsocket-core';
+import RSocketServer from 'rsocket-core/build/RSocketServer';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingService';

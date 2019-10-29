@@ -1,11 +1,9 @@
-import babel from 'rollup-plugin-babel';
 import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import tscompile from 'typescript';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import global from 'rollup-plugin-node-globals';
 import pkg from './package.json';
 
 export default {
@@ -14,17 +12,13 @@ export default {
     {
       file: pkg.module,
       format: 'es',
+      sourcemap: false,
     },
   ],
-  external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  external: ['rxjs'],
   plugins: [
-    babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      runtimeHelpers: true,
-    }),
     resolve(),
-    commonjs({ include: 'node_modules/**' }),
+    commonjs(),
     visualizer({
       filename: 'report.es.html',
       title: 'Microservice - es',
@@ -33,7 +27,7 @@ export default {
       typescript: tscompile,
       clean: true,
     }),
-    global(),
+    // global(),
     filesize(),
   ],
 };

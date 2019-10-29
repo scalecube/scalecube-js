@@ -1,7 +1,6 @@
 import { MicroserviceApi } from '@scalecube/api';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions } from '../helpers/types';
-import { throwErrorFromServiceCall } from './ServiceCall';
 import {
   getNotFoundByRouterError,
   ASYNC_MODEL_TYPES,
@@ -9,6 +8,7 @@ import {
   getAsyncModelMissmatch,
 } from '../helpers/constants';
 import { remoteResponse } from '../TransportProviders/MicroserviceClient';
+import { throwErrorFromServiceCall } from './ServiceCallUtils';
 
 export const remoteCall = ({
   router,

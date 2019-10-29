@@ -1,4 +1,3 @@
-import babel from 'rollup-plugin-babel';
 import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import tscompile from 'typescript';
@@ -20,14 +19,9 @@ export default {
     },
   ],
   plugins: [
-    babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      runtimeHelpers: true,
-    }),
     resolve({ jsnext: true, main: true }),
     commonjs({
-      include: [/node_modules/],
+      include: /node_modules/,
       browser: true,
     }),
     replace({

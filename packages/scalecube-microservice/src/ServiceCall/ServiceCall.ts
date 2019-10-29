@@ -1,4 +1,4 @@
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MicroserviceApi, TransportApi } from '@scalecube/api';
@@ -11,12 +11,11 @@ import {
   MicroserviceContext,
 } from '../helpers/types';
 import { validateMessage } from '../helpers/validation';
-import { ASYNC_MODEL_TYPES } from '..';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
-import { MICROSERVICE_NOT_EXISTS } from '../helpers/constants';
+import { MICROSERVICE_NOT_EXISTS, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { defaultRouter } from '@scalecube/routers';
-import { saveToLogs } from '@scalecube/utils';
+import { throwErrorFromServiceCall } from './ServiceCallUtils';
 
 export const getServiceCall = ({
   router,
@@ -67,21 +66,4 @@ export const createServiceCall = ({
         messageFormat,
       }),
   });
-};
-
-export const throwErrorFromServiceCall = ({
-  asyncModel,
-  errorMessage,
-  microserviceContext,
-}: {
-  asyncModel: MicroserviceApi.AsyncModel;
-  errorMessage: string;
-  microserviceContext: MicroserviceContext | null;
-}) => {
-  const error = new Error(errorMessage);
-  if (microserviceContext) {
-    const { whoAmI, debug } = microserviceContext;
-    saveToLogs(whoAmI, errorMessage, {}, debug, 'warn');
-  }
-  return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? Promise.reject(error) : throwError(error);
 };

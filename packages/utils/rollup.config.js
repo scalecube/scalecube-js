@@ -1,7 +1,6 @@
 import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import filesize from 'rollup-plugin-filesize';
-import global from 'rollup-plugin-node-globals';
 import pkg from './package.json';
 
 export default {
@@ -24,8 +23,8 @@ export default {
     }),
     visualizer({
       filename: 'report.html',
+      title: 'scalecube-utils',
     }),
-    global(),
     filesize(),
   ],
 };

@@ -1,6 +1,6 @@
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { throwErrorFromServiceCall } from './ServiceCall';
+import { throwErrorFromServiceCall } from './ServiceCallUtils';
 import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../helpers/types';
 import { getAsyncModelMissmatch, getMethodNotFoundError, ASYNC_MODEL_TYPES } from '../helpers/constants';
 

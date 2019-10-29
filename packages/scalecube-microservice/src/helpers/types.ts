@@ -1,5 +1,5 @@
 // @ts-ignore
-import { RSocketClientSocket } from 'rsocket-core';
+import { ReactiveSocket } from 'rsocket-types';
 import { Observable } from 'rxjs';
 import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube/api';
 
@@ -139,9 +139,9 @@ export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEven
 export type CreateConnectionManager = () => ConnectionManager;
 
 export interface ConnectionManager {
-  getConnection: (connectionAddress: string) => Promise<RSocketClientSocket>;
-  getAllConnections: () => { [key: string]: Promise<RSocketClientSocket> };
-  setConnection: (connectionAddress: string, value: Promise<RSocketClientSocket>) => void;
+  getConnection: (connectionAddress: string) => Promise<ReactiveSocket>;
+  getAllConnections: () => { [key: string]: Promise<ReactiveSocket> };
+  setConnection: (connectionAddress: string, value: Promise<ReactiveSocket>) => void;
   removeConnection: (connectionAddress: string) => void;
 }
 
