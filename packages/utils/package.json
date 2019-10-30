@@ -34,8 +34,5 @@
     "typedoc": "^0.14.2",
     "typescript": "^3.2.4",
     "@scalecube/api": "^0.0.3-next.0"
-  },
-  "dependencies": {
-    "rsocket-flowable": "^0.0.14"
   }
 }

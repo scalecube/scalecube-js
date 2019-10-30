@@ -1732,6 +1732,13 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
+"@scalecube/utils@0.0.3-alpha.1572428741.5":
+  version "0.0.3-alpha.1572428741.5"
+  resolved "https://registry.yarnpkg.com/@scalecube/utils/-/utils-0.0.3-alpha.1572428741.5.tgz#aaee18709f3837930a5e380fa5362628672bd0f7"
+  integrity sha512-xgdDNvP5s3XCxDeURtGqdOPQcVFFnEe5uyQyzzybbfEh4uw+AWlrruWrY8iTULOoN7d43kV8hG5jl65pz3uOaA==
+  dependencies:
+    rsocket-flowable "^0.0.14"
+
 "@types/babel__core@^7.1.0":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.1.tgz#ce9a9e5d92b7031421e1d0d74ae59f572ba48be6"
