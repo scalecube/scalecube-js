@@ -23,6 +23,9 @@ export default {
     commonjs({
       include: /node_modules/,
       browser: true,
+      namedExports: {
+        'rsocket-types': ['CONNECTION_STATUS'],
+      },
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),

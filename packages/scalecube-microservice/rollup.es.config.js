@@ -18,7 +18,11 @@ export default {
   external: ['rxjs'],
   plugins: [
     resolve(),
-    commonjs(),
+    commonjs({
+      namedExports: {
+        'rsocket-types': ['CONNECTION_STATUS'],
+      },
+    }),
     visualizer({
       filename: 'report.es.html',
       title: 'Microservice - es',

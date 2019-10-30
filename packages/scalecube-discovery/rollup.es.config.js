@@ -11,7 +11,7 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: pkg.module,
+      file: pkg.es,
       format: 'es',
     },
   ],

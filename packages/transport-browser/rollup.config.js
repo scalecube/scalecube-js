@@ -8,11 +8,11 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: pkg.main,
+      file: pkg.cjs,
       format: 'cjs',
     },
     {
-      file: pkg.module,
+      file: pkg.es,
       format: 'es',
     },
   ],

@@ -1,4 +1,3 @@
-import babel from 'rollup-plugin-babel';
 import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import tscompile from 'typescript';
@@ -22,6 +21,9 @@ export default {
     resolve({ jsnext: true, main: true }),
     commonjs({
       include: /node_modules/,
+      namedExports: {
+        'rsocket-types': ['CONNECTION_STATUS'],
+      },
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
