@@ -11,10 +11,6 @@ export default {
       file: pkg.main,
       format: 'cjs',
     },
-    {
-      file: pkg.module,
-      format: 'es',
-    },
   ],
   external: ['@scalecube/api', '@scalecube/utils', 'rsocket-core', 'rsocket-flowable'],
   plugins: [

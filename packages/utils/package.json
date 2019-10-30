@@ -3,12 +3,11 @@
   "version": "0.0.3-next.1",
   "private": false,
   "main": "cjs/index.js",
-  "module": "lib/index.js",
+  "module": "es/index.js",
   "types": "cjs/index.d.ts",
   "files": [
     "cjs",
-    "es",
-    "lib"
+    "es"
   ],
   "license": "MIT",
   "scripts": {

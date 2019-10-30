@@ -3,18 +3,16 @@
   "version": "0.1.2-next.1",
   "private": false,
   "main": "cjs/index.js",
-  "module": "lib/index.js",
+  "module": "es/index.js",
   "types": "cjs/index.d.ts",
   "files": [
     "cjs",
-    "es",
-    "lib"
+    "es"
   ],
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "rimraf .cache && yarn build:es && yarn build:cjs && tsc",
-    "build:es": "rimraf es && rollup -c rollup.es.config.js",
+    "build": "rimraf .cache && yarn build:cjs && tsc",
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
