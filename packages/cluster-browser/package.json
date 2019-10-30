@@ -2,14 +2,13 @@
   "name": "@scalecube/cluster-browser",
   "version": "0.0.3-next.1",
   "private": false,
-  "es": "es/index.js",
-  "cjs": "cjs/index.js",
+  "main": "cjs/index.js",
   "module": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "types": "cjs/index.d.ts",
   "files": [
-    "lib",
+    "cjs",
     "es",
-    "cjs"
+    "lib"
   ],
   "license": "MIT",
   "scripts": {

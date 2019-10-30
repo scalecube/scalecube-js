@@ -11,5 +11,6 @@ lib/
 es/
 cjs/
 
+
 report.cjs.html
 report.es.html
