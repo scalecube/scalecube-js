@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/routers",
-  "version": "0.0.3-next.1",
+  "version": "0.0.3-next.2",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.0",
-    "@scalecube/utils": "^0.0.3-next.1"
+    "@scalecube/utils": "^0.0.3-next.2"
   }
 }
