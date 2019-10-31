@@ -1,5 +1,1 @@
-export const isNodejs = () => typeof process === 'object' && checkNodeVersion() && !checkIfTest();
-
-const checkNodeVersion = () => typeof process.versions === 'object' && typeof process.versions.node !== 'undefined';
-
-const checkIfTest = () => process.env && process.env.NODE_ENV === 'test';
+export const isNodejs = () => !!navigator; // common api for main threat or worker in the browser
