@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/utils",
-  "version": "0.0.3-next.1",
+  "version": "0.0.3-next.3",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -21,6 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
+    "@scalecube/api": "^0.0.3-next.0",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
@@ -31,7 +32,6 @@
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.2.4",
-    "@scalecube/api": "^0.0.3-next.0"
+    "typescript": "^3.2.4"
   }
 }
