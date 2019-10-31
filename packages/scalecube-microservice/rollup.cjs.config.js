@@ -1,12 +1,11 @@
-import babel from 'rollup-plugin-babel';
 import visualizer from 'rollup-plugin-visualizer';
 import typescript from 'rollup-plugin-typescript2';
 import tscompile from 'typescript';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import global from 'rollup-plugin-node-globals';
 import pkg from './package.json';
+import replace from 'rollup-plugin-replace';
 
 export default {
   input: 'src/index.ts',
@@ -14,17 +13,21 @@ export default {
     {
       file: pkg.main,
       format: 'cjs',
+      sourcemap: false,
     },
   ],
-  external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})],
+  external: ['rxjs'],
   plugins: [
-    babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      runtimeHelpers: true,
+    resolve({ jsnext: true, main: true }),
+    commonjs({
+      include: /node_modules/,
+      namedExports: {
+        'rsocket-types': ['CONNECTION_STATUS'],
+      },
     }),
-    resolve(),
-    commonjs({ include: 'node_modules/**' }),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
     visualizer({
       filename: 'report.cjs.html',
       title: 'Microservice - cjs',
@@ -33,7 +36,7 @@ export default {
       typescript: tscompile,
       clean: true,
     }),
-    global(),
+    // global(),
     filesize(),
   ],
 };

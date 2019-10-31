@@ -1,16 +1,15 @@
 import { TransportApi, Address, MicroserviceApi } from '@scalecube/api';
 // @ts-ignore
-import { RSocketClient, DuplexConnection, RSocketClientSocket } from 'rsocket-core';
+import RSocketClient from 'rsocket-core/build/RSocketClient';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 // @ts-ignore
-import { ISubscription } from 'rsocket-types';
+import { ISubscription, ReactiveSocket, DuplexConnection } from 'rsocket-types';
 
 import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { Observable } from 'rxjs';
 import { MicroserviceContext, RsocketEventsPayload } from '../helpers/types';
-import { ASYNC_MODEL_TYPES } from '..';
-import { RSocketConnectionStatus } from '../helpers/constants';
+import { RSocketConnectionStatus, ASYNC_MODEL_TYPES } from '../helpers/constants';
 
 export const remoteResponse = ({
   address,
@@ -26,13 +25,13 @@ export const remoteResponse = ({
   microserviceContext: MicroserviceContext;
 }) => {
   return new Observable((observer) => {
-    const connection: Promise<RSocketClientSocket> = getClientConnection({
+    const connection: Promise<ReactiveSocket> = getClientConnection({
       address,
       transportClientProvider,
       microserviceContext,
     });
 
-    connection.then((socket: RSocketClientSocket) => {
+    connection.then((socket: ReactiveSocket) => {
       const socketConnect: Single | Flowable = socket[asyncModel]({
         data: message,
         metadata: '',
@@ -40,8 +39,7 @@ export const remoteResponse = ({
 
       const flowableNext = ({ data = {}, metadata = {} }: RsocketEventsPayload) => {
         const { data: response } = data;
-        const { status } = metadata;
-        status ? observer.next(response) : observer.error(response.message);
+        observer.next(response);
       };
 
       const flowableError = (err: { source: { message: string } }) =>
@@ -92,13 +90,13 @@ const getClientConnection = ({
 }) => {
   const fullAddress = getFullAddress(address);
   const { connectionManager } = microserviceContext;
-  let connection: Promise<RSocketClientSocket> = connectionManager.getConnection(fullAddress);
+  let connection: Promise<ReactiveSocket> = connectionManager.getConnection(fullAddress);
 
   if (!connection) {
     const client = createClient({ address, transportClientProvider });
     connection = new Promise((resolve, reject) => {
       client.connect().subscribe({
-        onComplete: (socket: RSocketClientSocket) => resolve(socket),
+        onComplete: (socket: ReactiveSocket) => resolve(socket),
         onError: (error: Error) => reject(error),
       });
     });
@@ -133,7 +131,7 @@ export const destoryClientConnection = (fullAddress: string, microserviceContext
   const { connectionManager, whoAmI, debug } = microserviceContext;
   const connection = connectionManager.getConnection(fullAddress);
   if (connection) {
-    connection.then((socket: RSocketClientSocket) => {
+    connection.then((socket: ReactiveSocket) => {
       try {
         socket.close();
       } catch (e) {

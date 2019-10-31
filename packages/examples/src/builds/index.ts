@@ -10,13 +10,26 @@ const greetingService: MicroserviceApi.Service = {
   reference,
 };
 
-const ms = createMicroservice({ services: [greetingService] });
-const greetingServiceProxy = ms.createProxy({
-  serviceDefinition: greetingServiceDefinition,
+const ms = createMicroservice({ address: 'localMS', seedAddress: 'seed', debug: true });
+
+const { greetProxy } = ms.createProxies({
+  proxies: [
+    {
+      serviceDefinition: greetingServiceDefinition,
+      proxyName: 'greetProxy',
+    },
+  ],
+  isAsync: true,
 });
 
-greetingServiceProxy.hello('User').then((result: string) => {
-  console.info('result from greeting service', result);
+greetProxy.then(({ proxy }: { proxy: any }) => {
+  proxy.hello('User').then((result: string) => {
+    console.info('result from greeting service - hello', result);
+  });
+
+  proxy.greet$(['User1', 'User2', 'User3']).subscribe((result: string) => {
+    console.info('result from greeting service - greet$', result);
+  });
 });
 
-console.info('Microservices from @scalecube/scalecube-microservice', createMicroservice);
+createMicroservice({ services: [greetingService], address: 'seed', debug: true });

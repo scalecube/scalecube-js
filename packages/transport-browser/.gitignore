@@ -1,7 +1,7 @@
 .cache
 node_modules
 
-lib/
 es/
+cjs/
 
 report.html
