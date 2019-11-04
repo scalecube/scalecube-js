@@ -2,17 +2,17 @@
   "name": "@scalecube/routers",
   "version": "0.0.3-next.4",
   "private": false,
-  "main": "lib/index.js",
+  "main": "cjs/index.js",
   "module": "es/index.js",
-  "types": "lib/index.d.ts",
+  "types": "cjs/index.d.ts",
   "files": [
-    "lib",
+    "cjs",
     "es"
   ],
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "yarn build-rollup",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf cjs && rimraf es",
+    "build": "yarn build-rollup && tsc",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
