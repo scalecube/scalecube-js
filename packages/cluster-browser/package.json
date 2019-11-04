@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/cluster-browser",
-  "version": "0.0.3-next.4",
+  "version": "0.0.3-next.5",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -32,8 +32,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.3-next.0",
-    "@scalecube/utils": "^0.0.3-next.4",
+    "@scalecube/api": "^0.0.3-next.1",
+    "@scalecube/utils": "^0.0.3-next.5",
     "rxjs": "^6.4.0"
   }
 }

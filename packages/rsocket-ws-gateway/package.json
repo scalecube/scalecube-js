@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/rsocket-ws-gateway",
-  "version": "0.0.3-next.4",
+  "version": "0.0.3-next.5",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,7 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/scalecube-microservice": "^0.1.4-next.4",
+    "@scalecube/scalecube-microservice": "^0.1.4-next.5",
     "@types/jest": "^23.3.13",
     "@types/node": "10.1.4",
     "jest": "^24.6.0",
@@ -36,8 +36,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.3-next.0",
-    "@scalecube/utils": "^0.0.3-next.4",
+    "@scalecube/api": "^0.0.3-next.1",
+    "@scalecube/utils": "^0.0.3-next.5",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",
     "rsocket-websocket-client": "^0.0.16",
