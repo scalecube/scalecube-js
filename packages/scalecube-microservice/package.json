@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "0.1.4-next.5",
+  "version": "0.1.4-next.6",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.1",
-    "@scalecube/routers": "^0.0.3-next.5",
+    "@scalecube/routers": "^0.0.3-next.6",
     "@scalecube/scalecube-discovery": "^0.1.2-next.5",
     "@scalecube/transport-browser": "^0.0.3-next.5",
     "@scalecube/utils": "^0.0.3-next.5",
