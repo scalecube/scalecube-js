@@ -13,15 +13,16 @@ const lookUp = () => {
 test(`Given Endpoint[]
       And a message:Message
       When call defaultRouter(message)
-      Then defaultRouter will retrieve the same Endpoint`, () => {
+      Then defaultRouter will retrieve the same Endpoint`, // @ts-ignore
+async () => {
   expect.assertions(2);
 
   // @ts-ignore
-  const endpont1: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont1: MicroserviceApi.Endpoint = await defaultRouter({ message: { qualifier, data: [] }, lookUp });
   // @ts-ignore
-  const endpont2: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont2: MicroserviceApi.Endpoint = await defaultRouter({ message: { qualifier, data: [] }, lookUp });
   // @ts-ignore
-  const endpont3: MicroserviceApi.Endpoint = defaultRouter({ message: { qualifier, data: [] }, lookUp });
+  const endpont3: MicroserviceApi.Endpoint = await defaultRouter({ message: { qualifier, data: [] }, lookUp });
 
   expect(endpont1).toMatchObject(endpont2);
   expect(endpont1).toMatchObject(endpont3);

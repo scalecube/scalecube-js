@@ -9,4 +9,4 @@ export { ServiceReference, ServiceFactoryOptions, ServiceFactory, ServiceObject 
 export { Endpoint } from './Endpoint';
 export { Message } from './Message';
 export { LookupOptions, LookUp } from './LookUp';
-export { Router } from './Router';
+export { Router, RouterOptions } from './Router';

@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MicroserviceApi, TransportApi } from '@scalecube/api';
@@ -15,7 +15,7 @@ import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { MICROSERVICE_NOT_EXISTS, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { defaultRouter } from '@scalecube/routers';
-import { throwErrorFromServiceCall } from './ServiceCallUtils';
+import { serviceCallError } from './ServiceCallUtils';
 
 export const getServiceCall = ({
   router,
@@ -26,7 +26,8 @@ export const getServiceCall = ({
     try {
       validateMessage(message);
     } catch (e) {
-      return throwErrorFromServiceCall({ asyncModel, errorMessage: e.message, microserviceContext });
+      const err = serviceCallError({ errorMessage: e.message, microserviceContext });
+      return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? Promise.reject(err) : throwError(err);
     }
 
     const localService = microserviceContext.localRegistry.lookUp({ qualifier: message.qualifier });

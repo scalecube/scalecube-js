@@ -3,17 +3,15 @@
   "version": "0.0.3-next.0",
   "private": false,
   "main": "lib/index.js",
-  "module": "es/index.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
-    "lib",
-    "es"
+    "lib"
   ],
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "rimraf lib && yarn build-rollup",
-    "build-rollup": "rollup -c",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
+    "build": "rimraf lib && tsc",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
@@ -22,9 +20,6 @@
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
     "@types/node": "10.1.4",
-    "rollup": "^1.14.6",
-    "rollup-plugin-filesize": "^6.1.1",
-    "rollup-plugin-typescript2": "^0.21.1",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.2.4"
