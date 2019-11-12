@@ -6,6 +6,10 @@
 
 This package provides Scalecube's implementation for microservices architecture.
 
+## documentation
+
+please [Read](http://scalecube.io/javascript-docs) before starting to work with scalecube.
+
 ## Usage
 
 #### Define a service
