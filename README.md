@@ -62,6 +62,10 @@ Scalecube provide us a way to publish the service from any platform and consume 
 
 For more details how to use it see [scalecube basic usage](packages/scalecube-microservice/README.md)
 
+## documentation
+
+please [Read](http://scalecube.io/javascript-docs) before starting to work with scalecube.
+
 ## Project Status
 
 currently we are working on version 0.2.x
@@ -78,48 +82,3 @@ for more details about 0.2.x go to <https://github.com/scalecube/scalecube-js/is
 **MINOR** version when you add functionality in a backwards-compatible manner, and
 
 **PATCH** version when you make backwards-compatible bug fixes.
-
-<!--
-
-Working with microservices allow you:
-- **Scale-up** 
-  - Scale develop capacity as your team grow.
-- **Technology agnostic**
-  - Avoiding tight-coupling between service implementation and technology.
- 
-With Scalecube it is also possible to create monolith,
-and change to microservice architecture when you are ready to scale.
-
-
-
-
-## Problems microservice solves:
-
-- Have you ever wanted to replace only part of your code as technology progress?
-- Have you ever had to develop the same (or similar) logic multiple times?
-- Have you ever had hard integration process between different teams?
-
-#### Solve integration problem
-Develop capacity scale as your team grows,
-
-but the integration between features/ change requests/ etc.. become harder.
-
-Scalecube approach for solving this problem:
-- define API for a service.
-- service must implement the given API.
-
-After service is defined, it is possible for the service provider and the service consumer to work independently.
-
-- once the service is production-ready the consumer doesn't need to have any integration phase. 
-
-#### Solve technology block
-Changing technology is never easy but almost always necessary.
-
-It is common that js libraries developed/changed over time.
-
-working with micro-services you will be able to replace/update small part of your code.
-
-with Scalecube you will be able to take it one step further.
-
-it will be possible to change the service between backEnd technology and frontEnd technology.
--->
