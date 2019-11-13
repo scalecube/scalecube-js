@@ -168,6 +168,8 @@ export interface GetServiceFactoryOptions {
 
 export interface FlatteningServices {
   services?: MicroserviceApi.Service[];
-  microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.Provider;
+  serviceFactoryOptions: {
+    createProxy: MicroserviceApi.CreateProxy;
+    createServiceCall: MicroserviceApi.CreateServiceCall;
+  };
 }

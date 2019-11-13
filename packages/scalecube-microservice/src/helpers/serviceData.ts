@@ -19,8 +19,7 @@ export const getReferencePointer = ({
   return reference.constructor && reference.constructor[methodName];
 };
 
-export const flatteningServices = ({ services, microserviceContext, transportClientProvider }: FlatteningServices) => {
-  const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
+export const flatteningServices = ({ services, serviceFactoryOptions }: FlatteningServices) => {
   return services && Array.isArray(services)
     ? services.map((service: MicroserviceApi.Service) => {
         const { reference, definition } = service;
