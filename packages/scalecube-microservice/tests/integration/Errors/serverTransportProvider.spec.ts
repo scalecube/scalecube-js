@@ -4,9 +4,8 @@ import RSocketServer from 'rsocket-core/build/RSocketServer';
 // @ts-ignore
 import { Flowable, Single } from 'rsocket-flowable';
 import { hello, greet$, greetingServiceDefinition } from '../../mocks/GreetingService';
-import { createMicroservice } from '../../../src';
+import { createMS } from '../../mocks/microserviceFactory';
 import { ServiceCall } from '../../../src/helpers/types';
-import { Observable } from 'rxjs';
 import { getAddress } from '@scalecube/utils';
 
 const errorMessage = 'mockError';
@@ -44,7 +43,7 @@ jest.mock('../../../src/TransportProviders/MicroserviceServer', () => {
 });
 
 describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
-  createMicroservice({
+  createMS({
     services: [
       {
         definition: greetingServiceDefinition,
@@ -54,19 +53,11 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
 
     address: 'seed',
   });
-  const localMicroservice = createMicroservice({
+  const localMicroservice = createMS({
     seedAddress: 'seed',
     address: getAddress('address'),
   });
-  const { awaitProxy } = localMicroservice.createProxies({
-    proxies: [
-      {
-        serviceDefinition: greetingServiceDefinition,
-        proxyName: 'awaitProxy',
-      },
-    ],
-    isAsync: true,
-  });
+  const proxy = localMicroservice.createProxy({ serviceDefinition: greetingServiceDefinition });
 
   test(`
     Scenario RSocketEventsServer send Single.error for requestResponse request
@@ -78,7 +69,6 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
     And      bubble it to the proxy
   `, async () => {
     expect.assertions(1);
-    const { proxy } = await awaitProxy;
     return expect(proxy.hello('Me')).rejects.toMatchObject(new Error(errorMessage));
   });
 
@@ -92,14 +82,12 @@ describe(` Test RSocket doesn't hide Flowable/Single errors`, () => {
     And      bubble it to the proxy
   `, (done) => {
     expect.assertions(1);
-    awaitProxy.then(({ proxy }: { proxy: { greet$: (...data: any[]) => Observable<any> } }) => {
-      proxy.greet$(['Me']).subscribe(
-        (res: any) => {},
-        (error: any) => {
-          expect(error).toMatchObject(new Error(errorMessage));
-          done();
-        }
-      );
-    });
+    proxy.greet$(['Me']).subscribe(
+      (res: any) => {},
+      (error: any) => {
+        expect(error).toMatchObject(new Error(errorMessage));
+        done();
+      }
+    );
   });
 });

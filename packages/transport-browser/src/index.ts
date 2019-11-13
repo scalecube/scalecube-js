@@ -1,1 +1,2 @@
-export { TransportBrowser } from './Provider/Provider';
+import { TransportBrowser } from './Provider/Provider';
+export { TransportBrowser };

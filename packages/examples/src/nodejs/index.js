@@ -44,27 +44,19 @@ if (myPort === '7000') {
 }
 
 console.log(address, seedAddress);
-const { awaitProxy1 } = createMicroservice({
+const proxy = createMicroservice({
   cluster: joinCluster,
   transport: TransportNodeJS,
   address,
   seedAddress,
   services,
   debug: true,
-}).createProxies({
-  isAsync: true,
-  proxies: [
-    {
-      serviceDefinition: definition,
-      proxyName: 'awaitProxy1',
-    },
-  ],
+}).createProxy({
+  serviceDefinition: definition,
 });
 
-awaitProxy1.then(({ proxy: serviceProxy1 }) => {
-  console.log(`${process.env.whoAmI} try to call hello`);
-  serviceProxy1
-    .hello('test')
-    .then(console.log)
-    .catch(console.error);
-});
+console.log(`${process.env.whoAmI} try to call hello`);
+proxy
+  .hello('test')
+  .then(console.log)
+  .catch(console.error);

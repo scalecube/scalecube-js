@@ -14,8 +14,8 @@ export const SERVICES_IS_NOT_ARRAY = 'MS0008 - Not valid format, services must b
 export const SERVICE_IS_NOT_OBJECT = 'MS0009 - Not valid format, service must be an Object';
 export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'MS0000 - Not valid format, MicroserviceOptions must be an Object';
 export const QUALIFIER_IS_NOT_STRING = 'MS0011 - qualifier should not be empty string';
-export const DUPLICATE_PROXY_NAME = 'MS0012 - Invalid createProxies configuration, proxyName must be unique';
 export const TRANSPORT_NOT_PROVIDED = 'MS0013 - Transport provider is not define';
+export const ROUTER_NOT_PROVIDED = 'MS0024 - Router is not define';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `MS0014 - service method '${methodName}' missing in the serviceDefinition`;

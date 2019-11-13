@@ -5,7 +5,7 @@
  * 3. We include here scenarios for various validation for definition.
  *****/
 import { constants } from '@scalecube/utils';
-import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
+import { createMS, ASYNC_MODEL_TYPES } from '../../mocks/microserviceFactory';
 import {
   getInvalidMethodReferenceError,
   SERVICES_IS_NOT_ARRAY,
@@ -80,7 +80,7 @@ describe('Test the creation of Microservice', () => {
 
       expect.assertions(1);
       try {
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(exceptionMsg);
       }
@@ -107,7 +107,7 @@ describe('Test the creation of Microservice', () => {
     };
     try {
       // @ts-ignore
-      createMicroservice({ services: [service] });
+      createMS({ services: [service] });
     } catch (error) {
       expect(error.message).toMatch(SERVICE_NAME_NOT_PROVIDED);
     }
@@ -144,7 +144,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(getServiceNameInvalid(serviceName));
       }
@@ -168,7 +168,7 @@ describe('Test the creation of Microservice', () => {
 
     try {
       // @ts-ignore
-      createMicroservice({ services: [service] });
+      createMS({ services: [service] });
     } catch (e) {
       expect(e.message).toBe(DEFINITION_MISSING_METHODS);
     }
@@ -210,7 +210,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(getIncorrectMethodValueError(qualifier));
       }
@@ -239,7 +239,7 @@ describe('Test the creation of Microservice', () => {
     };
     try {
       // @ts-ignore
-      createMicroservice({ services: [service] });
+      createMS({ services: [service] });
     } catch (error) {
       expect(error.message).toMatch(getAsynModelNotProvidedError(qualifier));
     }
@@ -281,7 +281,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(getInvalidAsyncModelError(qualifier));
       }
@@ -310,7 +310,7 @@ describe('Test the creation of Microservice', () => {
     };
     try {
       // @ts-ignore
-      createMicroservice({ services: [service] });
+      createMS({ services: [service] });
     } catch (error) {
       expect(error.message).toMatch(getServiceReferenceNotProvidedError(baseServiceDefinition.serviceName));
     }
@@ -351,7 +351,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(getInvalidServiceReferenceError(baseServiceDefinition.serviceName));
       }
@@ -392,7 +392,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(getInvalidMethodReferenceError(qualifier));
       }
@@ -426,7 +426,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services });
+        createMS({ services });
       } catch (error) {
         expect(error.message).toMatch(SERVICES_IS_NOT_ARRAY);
       }
@@ -451,7 +451,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [service] });
+        createMS({ services: [service] });
       } catch (error) {
         expect(error.message).toMatch(SERVICE_IS_NOT_OBJECT);
       }
@@ -474,7 +474,7 @@ describe('Test the creation of Microservice', () => {
       `,
     (microserviceOptions) => {
       expect.assertions(1);
-      expect(() => createMicroservice(microserviceOptions)).not.toThrow();
+      expect(() => createMS(microserviceOptions)).not.toThrow();
     }
   );
 
@@ -500,7 +500,7 @@ describe('Test the creation of Microservice', () => {
       expect.assertions(1);
       try {
         // @ts-ignore
-        createMicroservice({ services: [], seedAddress });
+        createMS({ services: [], seedAddress });
       } catch (error) {
         expect(error.message).toMatch(constants.NOT_VALID_ADDRESS);
       }

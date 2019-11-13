@@ -1,6 +1,6 @@
 import { Address } from '../index';
 import { Cluster, ClusterOptions } from '../cluster';
-import { CreateProxies, CreateProxy, CreateServiceCall, Service } from '.';
+import { CreateProxy, CreateServiceCall, Service } from '.';
 
 /**
  * @function CreateMicroservice
@@ -18,12 +18,6 @@ export interface Microservice {
    * The method is used to delete a microservice and close all the subscriptions related with it
    */
   destroy: () => Promise<any>;
-
-  /**
-   * @method createProxies
-   * Create a map of proxies or Promises to proxy. (deepened on configuration)
-   */
-  createProxies: CreateProxies;
 
   /**
    * @method createProxy

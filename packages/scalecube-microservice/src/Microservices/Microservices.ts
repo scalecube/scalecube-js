@@ -11,7 +11,7 @@ import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpe
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { flatteningServices } from '../helpers/serviceData';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
-import { setMicroserviceInstance } from './Microservice';
+import { getServiceFactoryOptions, setMicroserviceInstance } from './MicroserviceInstance';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -53,12 +53,11 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   });
 
   const { remoteRegistry, localRegistry } = microserviceContext;
-
+  const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
   const services = microserviceOptions
     ? flatteningServices({
         services: microserviceOptions.services,
-        microserviceContext,
-        transportClientProvider,
+        serviceFactoryOptions,
       })
     : [];
 

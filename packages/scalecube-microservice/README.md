@@ -75,49 +75,11 @@ const microservice = createMicroservice({
 });
 ```
 
-##### example of resolving the proxy only when the service is available
-
-```typescript
-// createProxies will return a map of <proxyName: Promise<Proxy(service)>>
-// this way we are able to request for multiple proxies in 1 function.
-const { awaitProxyName } = microservice.createProxies({
-      proxies: [{
-          serviceDefinition: remoteServiceDefinition,
-          proxyName: 'awaitProxyName',
-        },
-      ],
-      isAsync: true,
-});
-
-awaitProxyName.then(({proxy}) => {
-  proxy.hello('ME').then(console.log) // Hello ME
-});
-```
-
-##### example of resolving the proxy immediately
-
-```typescript
-// isAsync: false so createProxies will return a map of <proxyName: Proxy(service)>
-// this way we are able to request for multiple proxies in 1 function.
-// in this example we are not sure if the service is available to use.
-const { proxyName } = microservice.createProxies({
-      proxies: [{
-          serviceDefinition: remoteServiceDefinition,
-          proxyName: 'proxyName',
-        },
-      ],
-      // isAsync: false, 
-});
-
-proxyName.hello('ME').then(console.log) // Hello ME
-```
-
-##### example of resolving the single proxy immediately
+##### example of creating and using a proxy
 
 ```typescript
 // createProxy will return a Proxy(service)
-// in this example we are not sure if the service is available to use.
-const { proxyName } = microservice.createProxy({
+const proxyName = microservice.createProxy({
     serviceDefinition: remoteServiceDefinition
 });
 
