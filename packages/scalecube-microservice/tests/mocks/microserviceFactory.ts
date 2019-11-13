@@ -7,26 +7,20 @@ import { retryRouter } from '@scalecube/routers';
 export { ASYNC_MODEL_TYPES };
 
 export const createMS: MicroserviceApi.CreateMicroservice = (config) => {
-  const ms = createMicroservice({
+  return createMicroservice({
+    // @ts-ignore
+    transport: TransportBrowser,
+    cluster: joinCluster,
+    defaultRouter: retryRouter({ period: 10, maxRetry: 50 }),
+    ...config,
+  });
+};
+
+export const createMSNoRouter: MicroserviceApi.CreateMicroservice = (config) => {
+  return createMicroservice({
     // @ts-ignore
     transport: TransportBrowser,
     cluster: joinCluster,
     ...config,
   });
-
-  return {
-    createProxy: (options) => {
-      return ms.createProxy({
-        router: retryRouter({ period: 10, maxRetry: 50 }),
-        ...options,
-      });
-    },
-    createServiceCall: (options) => {
-      return ms.createServiceCall({
-        router: retryRouter({ period: 10, maxRetry: 50 }),
-        ...options,
-      });
-    },
-    destroy: ms.destroy,
-  };
 };

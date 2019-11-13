@@ -2,7 +2,6 @@
 import { createMS } from '../../mocks/microserviceFactory';
 import { Observable } from 'rxjs';
 import { greetingServiceDefinition } from '../../mocks/GreetingService';
-import { retryRouter } from '@scalecube/routers';
 
 describe(`
 Given 3 microservice containers A,B,C
@@ -55,7 +54,6 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
         reference: ({ createProxy }) => {
           const proxyA = createProxy({
             serviceDefinition: greetingServiceDefinition,
-            router: retryRouter({ period: 10 }),
           });
           return {
             hello: () => {

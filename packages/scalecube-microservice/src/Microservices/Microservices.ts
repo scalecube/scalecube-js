@@ -2,7 +2,6 @@ import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { TransportBrowser } from '@scalecube/transport-browser';
 import { check, getAddress, getFullAddress, isNodejs } from '@scalecube/utils';
-import { defaultRouter } from '@scalecube/routers';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
@@ -12,11 +11,15 @@ import { startServer } from '../TransportProviders/MicroserviceServer';
 import { flatteningServices } from '../helpers/serviceData';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
 import { getServiceFactoryOptions, setMicroserviceInstance } from './MicroserviceInstance';
+import { ROUTER_NOT_PROVIDED } from '../helpers/constants';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
 ) => {
   let microserviceOptions = {
+    defaultRouter: () => {
+      throw new Error(ROUTER_NOT_PROVIDED);
+    },
     services: [],
     debug: false,
     transport: !isNodejs() ? TransportBrowser : undefined,
@@ -53,7 +56,11 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   });
 
   const { remoteRegistry, localRegistry } = microserviceContext;
-  const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
+  const serviceFactoryOptions = getServiceFactoryOptions({
+    microserviceContext,
+    transportClientProvider,
+    defaultRouter: microserviceOptions.defaultRouter,
+  });
   const services = microserviceOptions
     ? flatteningServices({
         services: microserviceOptions.services,
@@ -87,7 +94,11 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
       ? startServer({
           address,
           // server use only localCall therefor, router is irrelevant
-          serviceCall: getServiceCall({ router: defaultRouter, microserviceContext, transportClientProvider }),
+          serviceCall: getServiceCall({
+            router: microserviceOptions.defaultRouter,
+            microserviceContext,
+            transportClientProvider,
+          }),
           transportServerProvider: transport.serverProvider,
           debug,
           whoAmI: getFullAddress(fallBackAddress),
@@ -102,6 +113,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     address: fallBackAddress,
     debug,
     endPointsToPublishInCluster,
+    defaultRouter: microserviceOptions.defaultRouter,
   }) as MicroserviceApi.Microservice;
 };
 

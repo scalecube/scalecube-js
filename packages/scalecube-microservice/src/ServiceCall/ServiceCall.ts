@@ -40,11 +40,11 @@ export const getServiceCall = ({
 };
 
 export const createServiceCall = ({
-  router = defaultRouter,
+  router,
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: MicroserviceApi.Router;
+  router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.Provider;
 }) => {

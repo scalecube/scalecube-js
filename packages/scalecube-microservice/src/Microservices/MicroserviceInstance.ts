@@ -14,6 +14,7 @@ export const setMicroserviceInstance = ({
   endPointsToPublishInCluster,
   address,
   debug,
+  defaultRouter,
 }: SetMicroserviceInstanceOptions): MicroserviceApi.Microservice => {
   const { remoteRegistry } = microserviceContext;
 
@@ -22,22 +23,31 @@ export const setMicroserviceInstance = ({
     .pipe(printLogs(microserviceContext.whoAmI, debug))
     .subscribe(remoteRegistry.update);
 
-  const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
+  const serviceFactoryOptions = getServiceFactoryOptions({
+    microserviceContext,
+    transportClientProvider,
+    defaultRouter,
+  });
   return Object.freeze({
     destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
     ...serviceFactoryOptions,
   });
 };
 
-export const getServiceFactoryOptions = ({ microserviceContext, transportClientProvider }: GetServiceFactoryOptions) =>
+export const getServiceFactoryOptions = ({
+  microserviceContext,
+  transportClientProvider,
+  defaultRouter,
+}: GetServiceFactoryOptions) =>
   ({
-    createProxy: (proxyOptions: MicroserviceApi.ProxyOptions) =>
+    createProxy: ({ serviceDefinition, router = defaultRouter }: MicroserviceApi.ProxyOptions) =>
       createProxy({
-        ...proxyOptions,
+        serviceDefinition,
+        router,
         microserviceContext,
         transportClientProvider,
       }),
-    createServiceCall: ({ router }: { router: MicroserviceApi.Router }) =>
+    createServiceCall: ({ router = defaultRouter }: { router: MicroserviceApi.Router }) =>
       createServiceCall({
         router,
         microserviceContext,

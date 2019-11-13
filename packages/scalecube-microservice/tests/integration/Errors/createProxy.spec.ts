@@ -6,8 +6,11 @@
  *    Check validity - proxy - serviceDefinition method format         - https://github.com/scalecube/scalecube-js/issues/104
  *    Check validity - proxy - serviceDefinition asyncModel value      - https://github.com/scalecube/scalecube-js/issues/103
  *****/
-import { createMS } from '../../mocks/microserviceFactory';
+import { createMS, createMSNoRouter } from '../../mocks/microserviceFactory';
 import { constants as utilsConstants } from '@scalecube/utils';
+import { GreetingService, greetingServiceDefinition } from '../../mocks/GreetingService';
+import { ROUTER_NOT_PROVIDED } from '../../../src/helpers/constants';
+import { retryRouter } from '@scalecube/routers';
 
 const {
   DEFINITION_MISSING_METHODS,
@@ -169,4 +172,47 @@ describe('validation test for create proxy from microservice', () => {
       }
     }
   );
+
+  test(`
+  Scenario: createProxy without providing a router
+  Given     a microservice container without setting defaultRouter
+  When      calling createProxy without providing a router
+  Then      exception will occur
+  `, (done) => {
+    expect.assertions(1);
+
+    const msNoRouter = createMSNoRouter({});
+    const proxy = msNoRouter.createProxy({ serviceDefinition: greetingServiceDefinition });
+    proxy.hello().catch((err: Error) => {
+      expect(err.message).toMatch(ROUTER_NOT_PROVIDED);
+      done();
+    });
+  });
+
+  test(`
+  Scenario: createProxy without providing a router (dependency hook)
+  Given     a microservice container without setting defaultRouter
+  When      calling createProxy  from dependencyHook without providing a router
+  Then      exception will occur
+  `, (done) => {
+    expect.assertions(1);
+
+    createMSNoRouter({
+      services: [
+        {
+          reference: ({ createProxy }) => {
+            const proxy = createProxy({ serviceDefinition: greetingServiceDefinition });
+
+            proxy.hello().catch((err: Error) => {
+              expect(err.message).toMatch(ROUTER_NOT_PROVIDED);
+              done();
+            });
+
+            return new GreetingService();
+          },
+          definition: greetingServiceDefinition,
+        },
+      ],
+    });
+  });
 });
