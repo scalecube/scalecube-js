@@ -1,73 +1,7 @@
 import { greetingServiceDefinition, greet$, hello } from '../mocks/GreetingService';
-import { createMicroservice } from '../../src';
+import { createMS } from '../mocks/microserviceFactory';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
 import { getAddress, getFullAddress } from '@scalecube/utils';
-
-describe(`
-  Background:
-
-    Given msB , msA
-    And   msA have a open connection with msB
-    And   msB have a open connection with msA
-    
-          | microservice | address | seedAddress | service |
-          | msB          | B       |  A          | hello   |
-          | msA          | A       |             |         |
-          
-    When msA try to do removeCall to the service hello('ME')
-    Then it will resolve 'Hello ME'
-    `, () => {
-  test(`
-  Scenario: destroy msB (registry doesn't have any 'hello' service)
-    When    msB is destroyed.
-    And     msA try to do removeCall to the service 'hello'
-    Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => {
-    // @ts-ignore
-    expect.assertions(2);
-
-    const service = {
-      definition: greetingServiceDefinition,
-      reference: { greet$, hello },
-    };
-
-    const serviceDefinition = service.definition;
-    const address = getAddress('A');
-    const msB = createMicroservice({
-      services: [service],
-      address: 'B',
-      seedAddress: 'A',
-    });
-
-    const msA = createMicroservice({
-      address,
-    });
-
-    const { awaitProxyB } = await msA.createProxies({
-      proxies: [
-        {
-          proxyName: 'awaitProxyB',
-          serviceDefinition,
-        },
-      ],
-      isAsync: true,
-    });
-
-    awaitProxyB.then(({ proxy }: { proxy: { hello: (data: any) => any } }) => {
-      proxy.hello('ME').then((res: any) => {
-        expect(res).toMatch('Hello ME');
-        msB.destroy().then(() => {
-          proxy.hello('ME').catch((e: Error) => {
-            expect(e.message).toMatch(
-              getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
-            );
-            msA.destroy();
-            done();
-          });
-        });
-      });
-    });
-  });
-});
 
 describe(`
   Background:
@@ -95,7 +29,7 @@ describe(`
   Scenario: destroy msA (registry doesn't have any 'hello' service)
       When  msA is destroyed.
       And   msA try to do removeCall to the service 'hello'
-      Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, async (done) => {
+      Then    exception will occur: 'can't find services with the request: 'GreetingService/hello'`, (done) => {
     // @ts-ignore
     expect.assertions(3);
 
@@ -105,47 +39,37 @@ describe(`
     };
 
     const serviceDefinition = service.definition;
-    const msB = createMicroservice({
+    const msB = createMS({
       services: [service],
       address: 'B1',
       seedAddress: 'C1',
     });
 
-    const msA = createMicroservice({
+    const msA = createMS({
       services: [service],
       address: 'A1',
       seedAddress: 'C1',
     });
 
     const address = getAddress('C1');
-    const msC = createMicroservice({
+    const msC = createMS({
       address,
     });
 
-    const { awaitProxy } = await msC.createProxies({
-      proxies: [
-        {
-          proxyName: 'awaitProxy',
-          serviceDefinition,
-        },
-      ],
-      isAsync: true,
-    });
+    const proxy = msC.createProxy({ serviceDefinition });
 
-    awaitProxy.then(({ proxy }: { proxy: { hello: (data: any) => any } }) => {
-      proxy.hello('ME').then((res: any) => {
-        expect(res).toMatch('Hello ME');
-        msB.destroy().then(() => {
-          proxy.hello('ME').then((res2: any) => {
-            expect(res2).toMatch('Hello ME');
-            msA.destroy().then(() => {
-              proxy.hello('ME').catch((e: Error) => {
-                expect(e.message).toMatch(
-                  getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
-                );
-                msC.destroy();
-                done();
-              });
+    proxy.hello('ME').then((res: any) => {
+      expect(res).toMatch('Hello ME');
+      msB.destroy().then(() => {
+        proxy.hello('ME').then((res2: any) => {
+          expect(res2).toMatch('Hello ME');
+          msA.destroy().then(() => {
+            proxy.hello('ME').catch((e: Error) => {
+              expect(e.message).toMatch(
+                getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
+              );
+              msC.destroy();
+              done();
             });
           });
         });

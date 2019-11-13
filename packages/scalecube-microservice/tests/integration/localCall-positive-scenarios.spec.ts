@@ -5,7 +5,7 @@ import {
   hello,
   greet$,
 } from '../mocks/GreetingService';
-import { createMicroservice } from '../../src';
+import { createMS } from '../mocks/microserviceFactory';
 import { MicroserviceApi } from '@scalecube/api';
 import { getAddress } from '@scalecube/utils';
 
@@ -43,7 +43,7 @@ describe(`Test positive-scenarios of usage
 		`,
     (service) => {
       const serviceDefinition = service.definition;
-      const microserviceWithServices = createMicroservice({
+      const microserviceWithServices = createMS({
         services: [service],
         address: getAddress('B'),
       });
@@ -66,46 +66,6 @@ describe(`Test positive-scenarios of usage
         proxy.greet$([defaultUser]).subscribe((response: any) => {
           expect(response).toEqual(`greetings ${defaultUser}`);
           done();
-        });
-      });
-
-      test(`
-          Scenario: Testing proxy[createProxies] for a successful response.
-            When  invoking requestResponse's method with valid data
-            Then  successful RequestResponse is received
-              `, async () => {
-        const { awaitProxy } = microserviceWithServices.createProxies({
-          proxies: [
-            {
-              serviceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
-        const { proxy } = await awaitProxy;
-        return expect(proxy.hello(defaultUser)).resolves.toEqual(`Hello ${defaultUser}`);
-      });
-
-      test(`
-          Scenario: Testing proxy[createProxies] for a successful subscription (array).
-            When  subscribe to RequestStream's method with valid data/message
-            Then  successful RequestStream is emitted
-            `, (done) => {
-        const { awaitProxy } = microserviceWithServices.createProxies({
-          proxies: [
-            {
-              serviceDefinition,
-              proxyName: 'awaitProxy',
-            },
-          ],
-          isAsync: true,
-        });
-        awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
-          proxy.greet$([defaultUser]).subscribe((response: any) => {
-            expect(response).toEqual(`greetings ${defaultUser}`);
-            done();
-          });
         });
       });
 

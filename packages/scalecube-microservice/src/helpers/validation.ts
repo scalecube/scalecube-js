@@ -15,6 +15,7 @@ import {
   getInvalidMethodReferenceError,
   getInvalidServiceReferenceError,
   getServiceReferenceNotProvidedError,
+  TRANSPORT_NOT_PROVIDED,
 } from './constants';
 
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
@@ -72,4 +73,11 @@ export const validateDiscoveryInstance = (discovery: any) => {
   const { discoveredItems$, destroy } = discovery;
   check.assertDefined(discoveredItems$, '');
   check.assertDefined(destroy, '');
+};
+
+export const validateTransport = (transport: any) => {
+  check.assertDefined(transport, TRANSPORT_NOT_PROVIDED);
+  const { clientProvider, serverProvider } = transport;
+  check.assertDefined(clientProvider, TRANSPORT_NOT_PROVIDED);
+  check.assertDefined(serverProvider, TRANSPORT_NOT_PROVIDED);
 };

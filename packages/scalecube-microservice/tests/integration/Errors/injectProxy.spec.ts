@@ -1,4 +1,4 @@
-import { ASYNC_MODEL_TYPES, createMicroservice } from '../../../src';
+import { createMS, ASYNC_MODEL_TYPES } from '../../mocks/microserviceFactory';
 import { getInvalidMethodReferenceError, getInvalidServiceReferenceError } from '../../../src/helpers/constants';
 import { getQualifier } from '@scalecube/utils';
 
@@ -42,7 +42,7 @@ describe('test injectProxy logic', () => {
       expect.assertions(1);
 
       try {
-        createMicroservice({
+        createMS({
           services: [
             {
               reference: {
@@ -78,7 +78,7 @@ describe('test injectProxy logic', () => {
     expect.assertions(1);
 
     try {
-      createMicroservice({
+      createMS({
         services: [
           {
             reference: {

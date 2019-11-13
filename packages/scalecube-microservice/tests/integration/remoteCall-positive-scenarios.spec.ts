@@ -1,8 +1,9 @@
-import { greetingServiceDefinition, hello, greet$, GreetingService } from '../mocks/GreetingService';
-import { createMicroservice } from '../../src';
+import { greetingServiceDefinition, hello, greet$ } from '../mocks/GreetingService';
+import { createMS } from '../mocks/microserviceFactory';
 import { getAddress, getFullAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
 import { MicroserviceApi } from '@scalecube/api';
+import { defaultRouter } from '@scalecube/routers';
 
 describe(`Test positive-scenarios of usage
           RemoteCall - a microservice instance use other microservice's services.
@@ -45,7 +46,7 @@ describe(`Test positive-scenarios of usage
   };
 
   const serviceDefinition = service.definition;
-  createMicroservice({
+  createMS({
     services: [service],
     address: getAddress('B'),
   });
@@ -57,14 +58,14 @@ describe(`Test positive-scenarios of usage
               `, (done) => {
     expect.assertions(2);
     const address = getAddress('createProxy-requestResponse');
-    const microserviceWithoutServices = createMicroservice({
+    const microserviceWithoutServices = createMS({
       services: [],
       address,
       seedAddress: getAddress('B'),
       // debug: true
     });
 
-    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
+    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition, router: defaultRouter });
     proxy.hello(defaultUser).catch((e: Error) => {
       expect(e.message).toMatch(
         getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/hello`)
@@ -88,14 +89,14 @@ describe(`Test positive-scenarios of usage
             `, (done) => {
     expect.assertions(2);
     const address = getAddress('createProxy-requestResponse');
-    const microserviceWithoutServices = createMicroservice({
+    const microserviceWithoutServices = createMS({
       services: [],
       address,
       seedAddress: getAddress('B'),
     });
     microservicesList.push(microserviceWithoutServices);
 
-    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition });
+    const proxy = microserviceWithoutServices.createProxy({ serviceDefinition, router: defaultRouter });
     proxy.greet$([defaultUser]).subscribe(
       (res: string) => {},
       (e: Error) => {
@@ -115,74 +116,13 @@ describe(`Test positive-scenarios of usage
   });
 
   test(`
-          Scenario: Testing proxy[createProxies] for a successful response.
-            When  invoking requestResponse's method with valid data
-            Then  successful RequestResponse is received
-              `, (done) => {
-    expect.assertions(1);
-    const microserviceWithoutServices = createMicroservice({
-      services: [],
-      address: getAddress('createProxies-requestResponse'),
-      seedAddress: getAddress('B'),
-    });
-    microservicesList.push(microserviceWithoutServices);
-
-    const { awaitProxy } = microserviceWithoutServices.createProxies({
-      proxies: [
-        {
-          serviceDefinition,
-          proxyName: 'awaitProxy',
-        },
-      ],
-      isAsync: true,
-    });
-    awaitProxy.then(({ proxy }: { proxy: any }) => {
-      proxy.hello(defaultUser).then((res: any) => {
-        expect(res).toEqual(`Hello ${defaultUser}`);
-        done();
-      });
-    });
-  });
-
-  test(`
-          Scenario: Testing proxy[createProxies] for a successful subscription (array).
-            When  subscribe to RequestStream's method with valid data/message
-            Then  successful RequestStream is emitted
-            `, (done) => {
-    expect.assertions(1);
-    const microserviceWithoutServices = createMicroservice({
-      services: [],
-      address: getAddress('createProxies-RequestStream'),
-      seedAddress: getAddress('B'),
-    });
-    microservicesList.push(microserviceWithoutServices);
-
-    const { awaitProxy } = microserviceWithoutServices.createProxies({
-      proxies: [
-        {
-          serviceDefinition,
-          proxyName: 'awaitProxy',
-        },
-      ],
-      isAsync: true,
-    });
-    awaitProxy.then(({ proxy }: { proxy: GreetingService }) => {
-      const subscription = proxy.greet$([defaultUser]).subscribe((response: any) => {
-        expect(response).toEqual(`greetings ${defaultUser}`);
-        subscription.unsubscribe();
-        done();
-      });
-    });
-  });
-
-  test(`
           Scenario: Testing serviceCall for a successful response.
             When  invoking serviceCall's requestResponse method with valid message
             Then  successful RequestResponse is received
             `, (done) => {
     expect.assertions(2);
     const address = getAddress('serviceCall-requestResponse');
-    const microserviceWithoutServices = createMicroservice({
+    const microserviceWithoutServices = createMS({
       services: [],
       address,
       seedAddress: getAddress('B'),
@@ -193,7 +133,7 @@ describe(`Test positive-scenarios of usage
       qualifier: `${serviceDefinition.serviceName}/hello`,
       data: [`${defaultUser}`],
     };
-    const serviceCall = microserviceWithoutServices.createServiceCall({});
+    const serviceCall = microserviceWithoutServices.createServiceCall({ router: defaultRouter });
 
     serviceCall.requestResponse(message).catch((e: Error) => {
       expect(e.message).toMatch(
@@ -216,7 +156,7 @@ describe(`Test positive-scenarios of usage
                   `, (done) => {
     expect.assertions(2);
     const address = getAddress('serviceCall-RequestStream');
-    const microserviceWithoutServices = createMicroservice({
+    const microserviceWithoutServices = createMS({
       services: [],
       address,
       seedAddress: getAddress('B'),
@@ -228,7 +168,7 @@ describe(`Test positive-scenarios of usage
       qualifier: `${serviceDefinition.serviceName}/greet$`,
       data: [[`${defaultUser}`]],
     };
-    const serviceCall = microserviceWithoutServices.createServiceCall({});
+    const serviceCall = microserviceWithoutServices.createServiceCall({ router: defaultRouter });
 
     serviceCall.requestStream(message).subscribe(
       (res: MicroserviceApi.Message) => {},

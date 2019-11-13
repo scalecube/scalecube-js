@@ -2,10 +2,9 @@ import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
 import { saveToLogs } from '@scalecube/utils';
 import { tap } from 'rxjs/operators';
 import { GetServiceFactoryOptions, SetMicroserviceInstanceOptions } from '../helpers/types';
-import { createProxies, createProxy } from '../Proxy/createProxy';
+import { createProxy } from '../Proxy/createProxy';
 import { destroy } from './Destroy';
 import { createServiceCall } from '../ServiceCall/ServiceCall';
-import { isServiceAvailableInRegistry } from '../helpers/serviceData';
 
 export const setMicroserviceInstance = ({
   microserviceContext,
@@ -18,12 +17,6 @@ export const setMicroserviceInstance = ({
 }: SetMicroserviceInstanceOptions): MicroserviceApi.Microservice => {
   const { remoteRegistry } = microserviceContext;
 
-  const isServiceAvailable = isServiceAvailableInRegistry(
-    endPointsToPublishInCluster,
-    remoteRegistry,
-    discoveryInstance
-  );
-
   discoveryInstance
     .discoveredItems$()
     .pipe(printLogs(microserviceContext.whoAmI, debug))
@@ -31,14 +24,6 @@ export const setMicroserviceInstance = ({
 
   const serviceFactoryOptions = getServiceFactoryOptions({ microserviceContext, transportClientProvider });
   return Object.freeze({
-    createProxies: (createProxiesOptions: MicroserviceApi.CreateProxiesOptions) =>
-      createProxies({
-        createProxiesOptions,
-        microserviceContext,
-        isServiceAvailable,
-        transportClientProvider,
-        debug,
-      }),
     destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
     ...serviceFactoryOptions,
   });

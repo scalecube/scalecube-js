@@ -1,5 +1,5 @@
 import { greet$, greetingServiceDefinition, hello } from '../mocks/GreetingService';
-import { createMicroservice } from '../../src';
+import { createMS } from '../mocks/microserviceFactory';
 import { retryRouter } from '@scalecube/routers';
 
 describe('Test retry router - distributed env.', () => {
@@ -10,21 +10,20 @@ describe('Test retry router - distributed env.', () => {
   When        doing a remoteCall
   And         only after that the remoteService is registered.
   Then        the remoteCall will be resolved.
-  `, // @ts-ignore
-  async (done) => {
+  `, async (done) => { // @ts-ignore
     const service = {
       definition: greetingServiceDefinition,
       reference: { greet$, hello },
     };
 
     setTimeout(() => {
-      createMicroservice({
+      createMS({
         services: [service],
         address: 'A',
       });
     }, 500);
 
-    const msA = createMicroservice({
+    const msA = createMS({
       address: 'B',
       seedAddress: 'A',
     });

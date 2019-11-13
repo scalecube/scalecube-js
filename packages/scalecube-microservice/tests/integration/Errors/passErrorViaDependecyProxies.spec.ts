@@ -1,7 +1,8 @@
 /* tslint:disable:no-console */
-import { createMicroservice } from '../../../src';
+import { createMS } from '../../mocks/microserviceFactory';
 import { Observable } from 'rxjs';
 import { greetingServiceDefinition } from '../../mocks/GreetingService';
+import { retryRouter } from '@scalecube/routers';
 
 describe(`
 Given 3 microservice containers A,B,C
@@ -28,7 +29,7 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
   const greetingServiceDefinitionB = { ...greetingServiceDefinition, serviceName: 'GreetingServiceB' };
   const greetingServiceDefinitionC = { ...greetingServiceDefinition, serviceName: 'GreetingServiceC' };
 
-  const { awaitProxyServiceC, awaitProxyServiceB } = createMicroservice({
+  const ms = createMS({
     services: [
       {
         definition: greetingServiceDefinition,
@@ -44,25 +45,18 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
     ],
     address: 'A',
     debug: false,
-  }).createProxies({
-    proxies: [
-      {
-        proxyName: 'awaitProxyServiceC',
-        serviceDefinition: greetingServiceDefinitionC,
-      },
-      {
-        proxyName: 'awaitProxyServiceB',
-        serviceDefinition: greetingServiceDefinitionB,
-      },
-    ],
-    isAsync: true,
   });
 
-  createMicroservice({
+  const proxyC = ms.createProxy({ serviceDefinition: greetingServiceDefinitionC });
+
+  createMS({
     services: [
       {
         reference: ({ createProxy }) => {
-          const proxyA = createProxy({ serviceDefinition: greetingServiceDefinition });
+          const proxyA = createProxy({
+            serviceDefinition: greetingServiceDefinition,
+            router: retryRouter({ period: 10 }),
+          });
           return {
             hello: () => {
               // console.log('serviceB');
@@ -79,17 +73,17 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
     debug: false,
   });
 
-  createMicroservice({
+  createMS({
     services: [
       {
         reference: ({ createProxy }) => {
-          const proxyB = createProxy({ serviceDefinition: greetingServiceDefinitionB });
+          const proxy = createProxy({ serviceDefinition: greetingServiceDefinitionB });
           return {
             hello: () => {
               // console.log('serviceC');
-              return proxyB.hello();
+              return proxy.hello();
             },
-            greet$: proxyB.greet$,
+            greet$: proxy.greet$,
           };
         },
         definition: greetingServiceDefinitionC,
@@ -105,8 +99,6 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
     // @ts-ignore
     async (e, done) => {
       error = e;
-      const { proxy: proxyB } = await awaitProxyServiceB;
-      const { proxy: proxyC } = await awaitProxyServiceC;
 
       proxyC.hello('').catch((err: any) => {
         // console.log('err', err);
@@ -121,8 +113,6 @@ activeC => remoteCall => activeB => remoteCall => activeA => reject => activeB =
     // @ts-ignore
     async (e, done) => {
       error = e;
-      const { proxy: proxyB } = await awaitProxyServiceB;
-      const { proxy: proxyC } = await awaitProxyServiceC;
 
       const subscriber = proxyC.greet$('').subscribe({
         error: (err: any) => {

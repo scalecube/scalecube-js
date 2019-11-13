@@ -11,7 +11,7 @@ import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpe
 import { startServer } from '../TransportProviders/MicroserviceServer';
 import { flatteningServices } from '../helpers/serviceData';
 import { createConnectionManager } from '../TransportProviders/ConnectionManager';
-import { setMicroserviceInstance } from './Microservice';
+import { setMicroserviceInstance } from './MicroserviceInstance';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions

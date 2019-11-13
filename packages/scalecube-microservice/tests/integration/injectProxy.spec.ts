@@ -1,4 +1,4 @@
-import { createMicroservice, ASYNC_MODEL_TYPES } from '../../src';
+import { createMS, ASYNC_MODEL_TYPES } from '../mocks/microserviceFactory';
 import { getQualifier } from '@scalecube/utils';
 import { MicroserviceApi } from '@scalecube/api';
 
@@ -55,7 +55,7 @@ test(`
     }
   }
 
-  const ms = createMicroservice({
+  const ms = createMS({
     services: [
       {
         reference: {

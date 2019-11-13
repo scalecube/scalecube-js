@@ -16,6 +16,7 @@ export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'MS0000 - Not valid format, Mi
 export const QUALIFIER_IS_NOT_STRING = 'MS0011 - qualifier should not be empty string';
 export const DUPLICATE_PROXY_NAME = 'MS0012 - Invalid createProxies configuration, proxyName must be unique';
 export const TRANSPORT_NOT_PROVIDED = 'MS0013 - Transport provider is not define';
+export const ROUTER_NOT_PROVIDED = 'MS0024 - Router is not define';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `MS0014 - service method '${methodName}' missing in the serviceDefinition`;
