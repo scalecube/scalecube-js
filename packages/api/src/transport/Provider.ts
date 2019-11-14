@@ -21,4 +21,20 @@ export default interface Provider {
    * Optional serialize functionality for the payload
    */
   serializers?: PayloadSerializers;
+
+  /**
+   * @property
+   * Optional setup configuration for the provider
+   */
+  setup?: ProviderSetup;
+}
+
+/**
+ * @interface ClientProviderSetup
+ */
+interface ProviderSetup {
+  dataMimeType?: string;
+  keepAlive?: number;
+  lifetime?: number;
+  metadataMimeType?: string;
 }
