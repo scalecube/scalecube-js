@@ -113,15 +113,15 @@ const createClient = ({
   address: Address;
   transportClientProvider: TransportApi.Provider;
 }) => {
-  const { factoryOptions, providerFactory, serializers } = transportClientProvider;
+  const { factoryOptions, providerFactory, serializers, setup } = transportClientProvider;
 
   return new RSocketClient({
     serializers,
     setup: {
-      dataMimeType: 'text/plain',
-      keepAlive: 1000000,
-      lifetime: 1000000,
-      metadataMimeType: 'text/plain',
+      dataMimeType: (setup && setup.dataMimeType) || 'text/plain',
+      keepAlive: (setup && setup.keepAlive) || 1000000,
+      lifetime: (setup && setup.lifetime) || 1000000,
+      metadataMimeType: (setup && setup.metadataMimeType) || 'text/plain',
     },
     transport: providerFactory({ address, factoryOptions }),
   });
