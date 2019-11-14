@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.2-next.6",
+  "version": "0.1.2-next.7",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -40,9 +40,9 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.3-next.2",
-    "@scalecube/cluster-browser": "^0.0.3-next.6",
-    "@scalecube/utils": "^0.0.3-next.6",
+    "@scalecube/api": "^0.0.3-next.3",
+    "@scalecube/cluster-browser": "^0.0.3-next.7",
+    "@scalecube/utils": "^0.0.3-next.7",
     "rxjs": "^6.4.0"
   }
 }
