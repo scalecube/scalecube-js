@@ -159,11 +159,13 @@ export interface SetMicroserviceInstanceOptions {
   transportClientProvider?: TransportApi.Provider;
   discoveryInstance: DiscoveryApi.Discovery;
   serverStop: (() => void) | null;
+  defaultRouter: MicroserviceApi.Router;
 }
 
 export interface GetServiceFactoryOptions {
   microserviceContext: MicroserviceContext;
   transportClientProvider?: TransportApi.Provider;
+  defaultRouter: MicroserviceApi.Router;
 }
 
 export interface FlatteningServices {

@@ -7,12 +7,12 @@ import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { defaultRouter } from '@scalecube/routers';
 
 export const createProxy = ({
-  router = defaultRouter,
+  router,
   serviceDefinition,
   microserviceContext,
   transportClientProvider,
 }: {
-  router?: MicroserviceApi.Router;
+  router: MicroserviceApi.Router;
   serviceDefinition: MicroserviceApi.ServiceDefinition;
   microserviceContext: MicroserviceContext | null;
   transportClientProvider?: TransportApi.Provider;

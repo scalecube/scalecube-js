@@ -1,6 +1,6 @@
 import { Address } from '../index';
 import { Cluster, ClusterOptions } from '../cluster';
-import { CreateProxy, CreateServiceCall, Service } from '.';
+import { CreateProxy, CreateServiceCall, Router, Service } from '.';
 
 /**
  * @function CreateMicroservice
@@ -37,6 +37,11 @@ export interface Microservice {
  * The options for the creation of a microservice container
  */
 export interface MicroserviceOptions {
+  /**
+   * @property
+   * set a default router for this microservice container
+   */
+  defaultRouter?: Router;
   /**
    * @property
    * An array of services, that will exist inside a microservice container
