@@ -41,7 +41,7 @@ export const localCall = ({
     switch (asyncModel) {
       case ASYNC_MODEL_TYPES.REQUEST_STREAM:
         typeof invoke.subscribe === 'function'
-          ? invoke.subscribe((data: any) => obs.next(data), (err: Error) => obs.error(err), () => obs.complete())
+          ? invoke.subscribe((...data: any) => obs.next(...data), (err: Error) => obs.error(err), () => obs.complete())
           : obs.error(
               serviceCallError({
                 errorMessage: getIncorrectServiceImplementForObservable(microserviceContext.whoAmI, message.qualifier),
@@ -52,8 +52,8 @@ export const localCall = ({
       case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
         typeof invoke.then === 'function'
           ? invoke
-              .then((data: any) => {
-                obs.next(data);
+              .then((...data: any) => {
+                obs.next(...data);
               })
               .catch((error: any) => {
                 obs.error(error);

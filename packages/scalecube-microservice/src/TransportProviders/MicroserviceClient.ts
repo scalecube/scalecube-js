@@ -37,7 +37,7 @@ export const remoteResponse = ({
         metadata: '',
       });
 
-      const flowableNext = ({ data = {}, metadata = {} }: RsocketEventsPayload) => {
+      const flowableNext = ({ data, metadata }: RsocketEventsPayload) => {
         observer.next(data);
       };
 
