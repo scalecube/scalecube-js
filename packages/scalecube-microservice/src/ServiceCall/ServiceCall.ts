@@ -14,7 +14,6 @@ import { validateMessage } from '../helpers/validation';
 import { localCall } from './LocalCall';
 import { remoteCall } from './RemoteCall';
 import { MICROSERVICE_NOT_EXISTS, ASYNC_MODEL_TYPES } from '../helpers/constants';
-import { defaultRouter } from '@scalecube/routers';
 import { serviceCallError } from './ServiceCallUtils';
 
 export const getServiceCall = ({

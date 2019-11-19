@@ -38,8 +38,7 @@ export const remoteResponse = ({
       });
 
       const flowableNext = ({ data = {}, metadata = {} }: RsocketEventsPayload) => {
-        const { data: response } = data;
-        observer.next(response);
+        observer.next(data);
       };
 
       const flowableError = (err: { source: { message: string } }) =>

@@ -74,6 +74,8 @@ export const assertClass = (val: any, msg = 'Expected to be a class') => {
   assert(isFunctionConstructor(val), msg);
 };
 
+export const isNumber = (val: any) => typeof val === 'number' && !isNaN(val);
+
 export const assertNumber = (val: any, msg = 'Expected to be a number') => {
-  assert(typeof val === 'number' && !isNaN(val), msg);
+  assert(isNumber(val), msg);
 };

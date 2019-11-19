@@ -88,14 +88,14 @@ describe('Test address', () => {
     }
   );
 
-  test.each([{}, [], null, '80', true])(
+  test.each([{}, [], null, 'sd', true])(
     `
     Given invalid port
     | type    | value |
     | object  | {}    |
     | array   | []    |
     | null    | null  |
-    | string  | '80'  |
+    | string  | 'sd'  |
     | boolean | true  |
     When  using the port in the address 
     And   validate the address
