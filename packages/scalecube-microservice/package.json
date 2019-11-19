@@ -22,7 +22,6 @@
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env",
     "test-dom-env": "jest --config jest.config-dom.js",
-    "test-node-env": "jest --config jest.config-node.js",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
@@ -49,13 +48,13 @@
     "rollup-plugin-visualizer": "^2.6.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "@scalecube/routers": "^0.0.3-next.9",
+    "@scalecube/scalecube-discovery": "^0.1.2-next.8",
+    "@scalecube/transport-browser": "^0.0.3-next.8"
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/routers": "^0.0.3-next.9",
-    "@scalecube/scalecube-discovery": "^0.1.2-next.8",
-    "@scalecube/transport-browser": "^0.0.3-next.8",
     "@scalecube/utils": "^0.0.3-next.8",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",

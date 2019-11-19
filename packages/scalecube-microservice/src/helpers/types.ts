@@ -6,7 +6,6 @@ import { Address, TransportApi, MicroserviceApi, DiscoveryApi } from '@scalecube
 export interface ServiceCallOptions {
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
-  messageFormat: boolean;
 }
 
 export type ServiceCallResponse = Observable<any> | Promise<any>;
@@ -18,10 +17,10 @@ export interface AvailableServices {
   address?: Address;
 }
 
-export interface CreateServiceCallOptions {
+export interface GetServiceCallOptions {
   router: MicroserviceApi.Router;
   microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.Provider;
+  transportClient: TransportApi.ClientTransport;
 }
 
 export interface GetProxyOptions {
@@ -33,7 +32,6 @@ export interface LocalCallOptions {
   localService: Reference;
   asyncModel: MicroserviceApi.AsyncModel;
   message: MicroserviceApi.Message;
-  messageFormat: boolean;
   microserviceContext: MicroserviceContext;
 }
 
@@ -42,17 +40,7 @@ export interface RemoteCallOptions {
   microserviceContext: MicroserviceContext;
   message: MicroserviceApi.Message;
   asyncModel: MicroserviceApi.AsyncModel;
-  transportClientProvider?: TransportApi.Provider;
-}
-
-export interface InvokeMethodOptions {
-  method: (...args: any[]) => any;
-  message: MicroserviceApi.Message;
-}
-
-export interface AddMessageToResponseOptions {
-  messageFormat: boolean;
-  message: MicroserviceApi.Message;
+  transportClient: TransportApi.ClientTransport;
 }
 
 export interface RsocketEventsPayload {
@@ -91,7 +79,6 @@ export interface Reference {
 export interface MicroserviceContext {
   remoteRegistry: RemoteRegistry;
   localRegistry: LocalRegistry;
-  connectionManager: ConnectionManager;
   whoAmI: string;
   debug: boolean;
 }
@@ -136,35 +123,23 @@ export interface UpdatedRemoteRegistry extends DiscoveryApi.ServiceDiscoveryEven
   remoteRegistryMap: RemoteRegistryMap;
 }
 
-export type CreateConnectionManager = () => ConnectionManager;
-
-export interface ConnectionManager {
-  getConnection: (connectionAddress: string) => Promise<ReactiveSocket>;
-  getAllConnections: () => { [key: string]: Promise<ReactiveSocket> };
-  setConnection: (connectionAddress: string, value: Promise<ReactiveSocket>) => void;
-  removeConnection: (connectionAddress: string) => void;
-}
-
 export interface MicroserviceContextOptions {
   address: Address;
   debug: boolean;
-  connectionManager: ConnectionManager;
 }
 
 export interface SetMicroserviceInstanceOptions {
-  address: Address;
   debug?: boolean;
   microserviceContext: MicroserviceContext;
-  endPointsToPublishInCluster: MicroserviceApi.Endpoint[] | [];
-  transportClientProvider?: TransportApi.Provider;
+  transportClient: TransportApi.ClientTransport;
   discoveryInstance: DiscoveryApi.Discovery;
-  serverStop: (() => void) | null;
+  serverStop: TransportApi.ServerStop;
   defaultRouter: MicroserviceApi.Router;
 }
 
 export interface GetServiceFactoryOptions {
   microserviceContext: MicroserviceContext;
-  transportClientProvider?: TransportApi.Provider;
+  transportClient: TransportApi.ClientTransport;
   defaultRouter: MicroserviceApi.Router;
 }
 
@@ -174,4 +149,24 @@ export interface FlatteningServices {
     createProxy: MicroserviceApi.CreateProxy;
     createServiceCall: MicroserviceApi.CreateServiceCall;
   };
+}
+
+export interface CreateProxy {
+  router: MicroserviceApi.Router;
+  serviceDefinition: MicroserviceApi.ServiceDefinition;
+  microserviceContext: MicroserviceContext | null;
+  transportClient: TransportApi.ClientTransport;
+}
+
+export interface CreateServiceCall {
+  router: MicroserviceApi.Router;
+  microserviceContext: MicroserviceContext | null;
+  transportClient: TransportApi.ClientTransport;
+}
+
+export interface Destroy {
+  microserviceContext: MicroserviceContext | null;
+  discovery: DiscoveryApi.Discovery;
+  serverStop: TransportApi.ServerStop;
+  transportClientDestroy: TransportApi.TDestroy;
 }

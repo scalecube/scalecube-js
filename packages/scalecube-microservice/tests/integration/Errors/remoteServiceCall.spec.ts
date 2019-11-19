@@ -1,6 +1,11 @@
 import { Observable, of } from 'rxjs';
 import { createMS, ASYNC_MODEL_TYPES } from '../../mocks/microserviceFactory';
-import { getAsyncModelMissmatch } from '../../../src/helpers/constants';
+import {
+  getAsyncModelMissmatch,
+  getIncorrectServiceImplementForObservable,
+  getIncorrectServiceImplementForPromise,
+} from '../../../src/helpers/constants';
+import { getAddress, getFullAddress } from '@scalecube/utils';
 
 const errorMessage = { message: 'mockError', extra: [1, 2, 3] };
 const emptyMessage = 'mockEmpty';
@@ -24,6 +29,8 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     },
   };
 
+  const seedAddress = getFullAddress(getAddress('seed'));
+
   createMS({
     services: [
       {
@@ -41,11 +48,11 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         },
       },
     ],
-    address: 'seed',
+    address: seedAddress,
     debug: false,
   });
 
-  const microServiceWithoutServices = createMS({ seedAddress: 'seed', address: 'local', debug: false });
+  const microServiceWithoutServices = createMS({ seedAddress, address: 'local', debug: false });
 
   // @ts-ignore
   if (global.isNodeEvn) {
@@ -58,13 +65,16 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
     When      remoteService reject
     Then      proxy receive the error message
 
-  `, async () => {
+  `, (done) => {
     expect.assertions(1);
     const proxy = microServiceWithoutServices.createProxy({
       serviceDefinition: greetingServiceDefinition,
     });
 
-    return expect(proxy.hello('Me')).rejects.toMatchObject(errorMessage);
+    proxy.hello('Me').catch((e: any) => {
+      expect(e).toMatchObject(errorMessage);
+      done();
+    });
   });
 
   test(`
@@ -96,13 +106,18 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
               | incorrectAsyncModel  | requestResponse       | requestStream       |
     When      remoteService emit values
     Then      proxy receive only first emit
-  `, async () => {
+  `, (done) => {
     expect.assertions(1);
     const proxy = microServiceWithoutServices.createProxy({
       serviceDefinition: greetingServiceDefinition,
     });
 
-    return expect(proxy.incorrectAsyncModel('Me')).resolves.toMatchObject({ emptyMessage });
+    proxy.incorrectAsyncModel('Me').catch((e: Error) => {
+      expect(e.message).toMatch(
+        getIncorrectServiceImplementForPromise(seedAddress, 'GreetingService/incorrectAsyncModel')
+      );
+      done();
+    });
   });
 
   test(`
@@ -119,10 +134,15 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       serviceDefinition: greetingServiceDefinition,
     });
 
-    proxy.incorrectAsyncModel$().subscribe((res: any) => {
-      expect(res).toMatchObject({ emptyMessage });
-      done();
-    });
+    proxy.incorrectAsyncModel$().subscribe(
+      () => {},
+      (e: Error) => {
+        expect(e.message).toMatch(
+          getIncorrectServiceImplementForObservable(seedAddress, 'GreetingService/incorrectAsyncModel$')
+        );
+        done();
+      }
+    );
   });
 
   test(`
@@ -165,7 +185,7 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
               | incorrectAsyncModel$  | requestStream         | requestResponse     |
     When      remoteService return value
     Then      proxy receive the value
-  `, async () => {
+  `, (done) => {
     expect.assertions(1);
     const proxy = microServiceWithoutServices.createProxy({
       serviceDefinition: {
@@ -177,9 +197,11 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
         },
       },
     });
-
-    return expect(proxy.greet$(['Me'])).rejects.toMatchObject(
-      new Error(getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM))
-    );
+    proxy.greet$(['Me']).catch((e: Error) => {
+      expect(e).toMatchObject(
+        new Error(getAsyncModelMissmatch(ASYNC_MODEL_TYPES.REQUEST_RESPONSE, ASYNC_MODEL_TYPES.REQUEST_STREAM))
+      );
+      done();
+    });
   });
 });

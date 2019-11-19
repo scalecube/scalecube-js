@@ -1,5 +1,6 @@
 import { Address } from '../index';
 import { Cluster, ClusterOptions } from '../cluster';
+import { Transport } from '../transport';
 import { CreateProxy, CreateServiceCall, Router, Service } from '.';
 
 /**

@@ -1,24 +1,62 @@
-import { MicroserviceApi } from '@scalecube/api';
+import { MicroserviceApi, TransportApi } from '@scalecube/api';
 import { Observable } from 'rxjs';
 import { RemoteCallOptions } from '../helpers/types';
-import { getNotFoundByRouterError, TRANSPORT_NOT_PROVIDED, getAsyncModelMissmatch } from '../helpers/constants';
-import { remoteResponse } from '../TransportProviders/MicroserviceClient';
+import {
+  getNotFoundByRouterError,
+  TRANSPORT_NOT_PROVIDED,
+  getAsyncModelMissmatch,
+  ASYNC_MODEL_TYPES,
+} from '../helpers/constants';
 import { serviceCallError } from './ServiceCallUtils';
+import { loggerUtil } from '../helpers/logger';
 
-export const remoteCall = ({
-  router,
-  microserviceContext,
-  message,
-  asyncModel,
-  transportClientProvider,
-}: RemoteCallOptions): Observable<any> => {
-  return new Observable((obs: any) => {
+export const remoteCall = (options: RemoteCallOptions) => {
+  const { asyncModel, transportClient, microserviceContext, message } = options;
+  const logger = loggerUtil(microserviceContext.whoAmI, microserviceContext.debug);
+
+  switch (asyncModel) {
+    case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+      return new Observable((obs: any) => {
+        getValidEndpoint(options)
+          .then((endpoint: MicroserviceApi.Endpoint) => {
+            transportClient
+              .start({ remoteAddress: endpoint.address, logger })
+              .then(({ requestStream }: TransportApi.RequestHandler) => {
+                requestStream(message).subscribe(obs);
+              })
+              .catch((error: Error) => obs.error(error));
+          })
+          .catch((error: Error) => obs.error(error));
+      });
+
+    case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
+      return new Promise((resolve, reject) => {
+        getValidEndpoint(options)
+          .then((endpoint: MicroserviceApi.Endpoint) => {
+            transportClient
+              .start({ remoteAddress: endpoint.address, logger })
+              .then(({ requestResponse }: TransportApi.RequestHandler) => {
+                requestResponse(message)
+                  .then((response) => resolve(response))
+                  .catch((e: Error) => reject(e));
+              })
+              .catch((e: Error) => reject(e));
+          })
+          .catch((e: Error) => reject(e));
+      });
+    default:
+      throw new Error('invalid async model');
+  }
+};
+
+const getValidEndpoint = ({ router, microserviceContext, message, asyncModel, transportClient }: RemoteCallOptions) =>
+  new Promise<MicroserviceApi.Endpoint>((resolve, reject) => {
     router({ lookUp: microserviceContext.remoteRegistry.lookUp, message })
       .then((endPoint: MicroserviceApi.Endpoint) => {
         const { asyncModel: asyncModelProvider } = endPoint;
 
         if (asyncModelProvider !== asyncModel) {
-          obs.error(
+          reject(
             serviceCallError({
               errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
               microserviceContext,
@@ -26,25 +64,19 @@ export const remoteCall = ({
           );
         }
 
-        if (!transportClientProvider) {
-          obs.error(
+        if (!transportClient) {
+          reject(
             serviceCallError({
               errorMessage: TRANSPORT_NOT_PROVIDED,
               microserviceContext,
             })
           );
-        } else {
-          remoteResponse({
-            address: endPoint.address,
-            asyncModel,
-            message,
-            transportClientProvider,
-            microserviceContext,
-          }).subscribe(obs);
         }
+
+        resolve(endPoint);
       })
       .catch(() => {
-        obs.error(
+        reject(
           serviceCallError({
             errorMessage: getNotFoundByRouterError(microserviceContext.whoAmI, message.qualifier),
             microserviceContext,
@@ -52,4 +84,3 @@ export const remoteCall = ({
         );
       });
   });
-};

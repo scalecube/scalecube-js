@@ -34,10 +34,8 @@ export const getServiceReferenceNotProvidedError = (serviceName: string) =>
 export const getInvalidServiceReferenceError = (serviceName: string) =>
   `MS0019 - Not valid format, ${serviceName} reference must be an Object`;
 
-export const RSocketConnectionStatus = {
-  NOT_CONNECTED: 'NOT_CONNECTED',
-  CONNECTING: 'CONNECTING',
-  CONNECTED: 'CONNECTED',
-  CLOSED: 'CLOSED',
-  ERROR: 'ERROR',
-};
+export const getIncorrectServiceImplementForPromise = (whoAmI: string, qualifier: string) =>
+  `MS0025 - ${whoAmI}'s service '${qualifier}' define as Promise but service return not Promise`;
+
+export const getIncorrectServiceImplementForObservable = (whoAmI: string, qualifier: string) =>
+  `MS0026 - ${whoAmI}'s service '${qualifier}' define as Observable but service return not Observable`;

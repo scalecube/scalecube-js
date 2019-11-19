@@ -1,4 +1,4 @@
-import { TransportNodeJS } from '../src';
+import { clientProvider, serverProvider } from '../src/Provider/Provider';
 import { constants } from '@scalecube/utils';
 /* tslint:disable */
 
@@ -59,11 +59,11 @@ describe(`
   describe.each([
     {
       mock: mockServer,
-      providerFactory: TransportNodeJS.serverProvider.providerFactory,
+      providerFactory: serverProvider.providerFactory,
     },
     {
       mock: mockClient,
-      providerFactory: TransportNodeJS.clientProvider.providerFactory,
+      providerFactory: clientProvider.providerFactory,
     },
   ])(
     `
@@ -122,7 +122,7 @@ describe(`
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
           try {
-            TransportNodeJS.serverProvider.providerFactory({
+            serverProvider.providerFactory({
               factoryOptions: null,
               address,
             });

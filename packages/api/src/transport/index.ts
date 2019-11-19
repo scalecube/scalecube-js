@@ -1,6 +1,11 @@
-import Transport from './Transport';
-import Provider from './Provider';
-import { ProviderFactory } from './ProviderFactory';
-import { Address } from '..';
-
-export { Address, Transport, Provider, ProviderFactory };
+export {
+  ServerTransportOptions,
+  ClientTransportOptions,
+  RequestHandler,
+  Transport,
+  ServerStop,
+  ClientTransport,
+  ServerTransport,
+  TDestroy,
+  TLogger,
+} from './Transport';
