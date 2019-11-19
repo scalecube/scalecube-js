@@ -9,10 +9,12 @@ export const validateAddress = (address: any, isOptional: boolean = true) => {
 
   check.assertNonEmptyObject(address, NOT_VALID_ADDRESS);
 
-  const { host, path, port, protocol } = address;
-
+  const { host, path, protocol } = address;
+  let { port } = address;
+  port = check.isString(port) ? Number(port) : port;
   check.assertString(host, NOT_VALID_HOST);
   check.assertString(path, NOT_VALID_PATH);
+
   check.assertNumber(port, NOT_VALID_PORT);
   check.assertString(protocol, NOT_VALID_PROTOCOL);
   check.assert(check.isOneOf(['pm', 'ws', 'wss', 'tcp'], protocol), NOT_VALID_PROTOCOL);
