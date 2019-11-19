@@ -4,6 +4,7 @@ import {
   getAsyncModelMissmatch,
   getIncorrectServiceImplementForObservable,
   getIncorrectServiceImplementForPromise,
+  getIncorrectServiceInvoke,
 } from '../../../src/helpers/constants';
 import { getAddress, getFullAddress } from '@scalecube/utils';
 
@@ -26,6 +27,12 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       incorrectAsyncModel$: {
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
       },
+      returnNull: {
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+      },
+      returnNull$: {
+        asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
+      },
     },
   };
 
@@ -45,6 +52,8 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
           incorrectAsyncModel: () => of({ emptyMessage }),
           // @ts-ignore
           incorrectAsyncModel$: () => Promise.resolve({ emptyMessage }),
+          returnNull: () => null,
+          returnNull$: () => null,
         },
       },
     ],
@@ -203,5 +212,48 @@ describe(`Test RSocket doesn't hide remoteService errors`, () => {
       );
       done();
     });
+  });
+
+  test(`
+    Scenario: proxy get exception reject after service invoke return null.
+    Given     proxy
+      And     remoteService
+              | method                | asyncModel definition | asyncModel reference|
+              | returnNull            | requestResponse         | requestResponse     |
+    When      remoteService invoke return null
+    Then      proxy receive exception
+  `, (done) => {
+    expect.assertions(1);
+    const proxy = microServiceWithoutServices.createProxy({
+      serviceDefinition: greetingServiceDefinition,
+    });
+
+    proxy.returnNull().catch((e: Error) => {
+      expect(e.message).toMatch(getIncorrectServiceInvoke(seedAddress, 'GreetingService/returnNull'));
+      done();
+    });
+  });
+
+  test(`
+    Scenario: proxy get exception reject after service invoke return null.
+    Given     proxy
+      And     remoteService
+              | method                | asyncModel definition | asyncModel reference|
+              | returnNull$           | requestStream         | requestStream     |
+    When      remoteService invoke return null
+    Then      proxy receive exception
+  `, (done) => {
+    expect.assertions(1);
+    const proxy = microServiceWithoutServices.createProxy({
+      serviceDefinition: greetingServiceDefinition,
+    });
+
+    proxy.returnNull$().subscribe(
+      (data: any) => {},
+      (e: Error) => {
+        expect(e.message).toMatch(getIncorrectServiceInvoke(seedAddress, 'GreetingService/returnNull$'));
+        done();
+      }
+    );
   });
 });

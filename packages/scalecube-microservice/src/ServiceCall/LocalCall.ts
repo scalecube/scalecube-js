@@ -6,36 +6,64 @@ import {
   getAsyncModelMissmatch,
   getIncorrectServiceImplementForObservable,
   getIncorrectServiceImplementForPromise,
+  getIncorrectServiceInvoke,
   getMethodNotFoundError,
+  INVALID_ASYNC_MODEL,
 } from '../helpers/constants';
+import { check } from '@scalecube/utils';
+import { MicroserviceApi } from '@scalecube/api';
+
+const throwException = (asyncModel: MicroserviceApi.AsyncModel, message: any) => {
+  if (asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE) {
+    return Promise.reject(message);
+  } else {
+    return new Observable((obs) => {
+      obs.error(message);
+    });
+  }
+};
 
 export const localCall = ({ localService, asyncModel, message, microserviceContext }: LocalCallOptions) => {
   const { reference, asyncModel: asyncModelProvider } = localService;
   const method = reference && reference[localService.methodName];
 
   if (!method) {
-    throw serviceCallError({
-      errorMessage: getMethodNotFoundError(message),
-      microserviceContext,
-    });
+    return throwException(
+      asyncModel,
+      serviceCallError({
+        errorMessage: getMethodNotFoundError(message),
+        microserviceContext,
+      })
+    );
+  }
+
+  if (asyncModelProvider !== asyncModel) {
+    return throwException(
+      asyncModel,
+      serviceCallError({
+        errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
+        microserviceContext,
+      })
+    );
+  }
+
+  const invoke = method(...message.data);
+
+  if (typeof invoke !== 'object' || !invoke) {
+    return throwException(
+      asyncModel,
+      serviceCallError({
+        errorMessage: getIncorrectServiceInvoke(microserviceContext.whoAmI, message.qualifier),
+        microserviceContext,
+      })
+    );
   }
 
   switch (asyncModel) {
     case ASYNC_MODEL_TYPES.REQUEST_STREAM:
       return new Observable((obs: any) => {
-        if (asyncModelProvider !== asyncModel) {
-          obs.error(
-            serviceCallError({
-              errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
-              microserviceContext,
-            })
-          );
-        }
-
-        const invoke = method(...message.data);
-
-        typeof invoke.subscribe === 'function'
-          ? invoke.subscribe(obs)
+        check.isFunction(invoke.subscribe)
+          ? invoke.subscribe((...data: any) => obs.next(...data), (err: Error) => obs.error(err), () => obs.complete())
           : obs.error(
               serviceCallError({
                 errorMessage: getIncorrectServiceImplementForObservable(microserviceContext.whoAmI, message.qualifier),
@@ -45,17 +73,7 @@ export const localCall = ({ localService, asyncModel, message, microserviceConte
       });
     case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
       return new Promise((resolve, reject) => {
-        if (asyncModelProvider !== asyncModel) {
-          reject(
-            serviceCallError({
-              errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
-              microserviceContext,
-            })
-          );
-        }
-        const invoke = method(...message.data);
-
-        typeof invoke.then === 'function'
+        check.isFunction(invoke.then)
           ? invoke.then(resolve).catch(reject)
           : reject(
               serviceCallError({
@@ -65,44 +83,12 @@ export const localCall = ({ localService, asyncModel, message, microserviceConte
             );
       });
     default:
-      throw new Error('invalid async model');
-  }
-};
-
-/*
-
-const { reference, asyncModel: asyncModelProvider } = localService;
-  const method = reference && reference[localService.methodName];
-
-  const invokeMethod = () => new Observable((obs: any) => {
-    if (asyncModelProvider !== asyncModel) {
-      obs.error(
+      return throwException(
+        asyncModel,
         serviceCallError({
-          errorMessage: getAsyncModelMissmatch(asyncModel, asyncModelProvider),
+          errorMessage: INVALID_ASYNC_MODEL,
           microserviceContext,
         })
       );
-    }
-
-    method
-      ? from(method(...message.data)).subscribe(obs)
-      : obs.error(serviceCallError({
-        errorMessage: getMethodNotFoundError(message),
-        microserviceContext,
-      }));
-
-  });
-  switch (asyncModel) {
-    case ASYNC_MODEL_TYPES.REQUEST_STREAM:
-      return invokeMethod();
-    case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
-      return invokeMethod().toPromise();
-    default:
-      throw new Error('invalid async model')
   }
-
-
 };
-
-
- */

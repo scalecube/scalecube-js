@@ -22,7 +22,11 @@ export const remoteCall = (options: RemoteCallOptions) => {
             transportClient
               .start({ remoteAddress: endpoint.address, logger })
               .then(({ requestStream }: TransportApi.RequestHandler) => {
-                requestStream(message).subscribe(obs);
+                requestStream(message).subscribe(
+                  (data: any) => obs.next(data),
+                  (err: Error) => obs.error(err),
+                  () => obs.complete()
+                );
               })
               .catch((error: Error) => obs.error(error));
           })
@@ -37,7 +41,7 @@ export const remoteCall = (options: RemoteCallOptions) => {
               .start({ remoteAddress: endpoint.address, logger })
               .then(({ requestResponse }: TransportApi.RequestHandler) => {
                 requestResponse(message)
-                  .then((response) => resolve(response))
+                  .then((response: any) => resolve(response))
                   .catch((e: Error) => reject(e));
               })
               .catch((e: Error) => reject(e));

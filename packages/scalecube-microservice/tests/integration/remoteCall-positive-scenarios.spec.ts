@@ -1,5 +1,5 @@
 import { greetingServiceDefinition, hello, greet$ } from '../mocks/GreetingService';
-import { createMS } from '../mocks/microserviceFactory';
+import { ASYNC_MODEL_TYPES, createMS } from '../mocks/microserviceFactory';
 import { getAddress, getFullAddress } from '@scalecube/utils';
 import { getNotFoundByRouterError } from '../../src/helpers/constants';
 import { MicroserviceApi } from '@scalecube/api';
@@ -187,5 +187,39 @@ describe(`Test positive-scenarios of usage
         done();
       });
     }, 1000);
+  });
+
+  test(`
+      Scenario: scalecube pass undefined remoteCall
+      When remoteService return undefined
+      Then proxy return value should be undefined`, (done) => {
+    const definition = {
+      serviceName: 'Test',
+      methods: {
+        test: {
+          asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+        },
+      },
+    };
+    createMS({
+      services: [
+        {
+          reference: {
+            test: () => Promise.resolve(undefined),
+          },
+          definition,
+        },
+      ],
+      address: 'AA',
+    });
+
+    const proxy = createMS({
+      seedAddress: 'AA',
+    }).createProxy({ serviceDefinition: definition });
+
+    proxy.test().then((response: any) => {
+      expect(response).toBe(undefined);
+      done();
+    });
   });
 });

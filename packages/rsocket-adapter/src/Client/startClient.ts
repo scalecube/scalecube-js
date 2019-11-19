@@ -59,7 +59,7 @@ export const setupClient = (configuration: any) => {
             });
 
             socketConnect.subscribe({
-              onComplete: ({ data = {}, metadata = {} }: RsocketEventsPayload) => resolve(data),
+              onComplete: ({ data, metadata }: RsocketEventsPayload) => resolve(data),
               onError: (err: { source: { message: string } }) => reject(getError(err)),
             });
           });
@@ -73,7 +73,7 @@ export const setupClient = (configuration: any) => {
 
           return new Observable((obs) => {
             socketConnect.subscribe({
-              onNext: ({ data = {}, metadata = {} }: RsocketEventsPayload) => obs.next(data),
+              onNext: ({ data, metadata }: RsocketEventsPayload) => obs.next(data),
               onError: (err: { source: { message: string } }) => obs.error(getError(err)),
               onComplete: () => obs.complete(),
               onSubscribe(subscription: ISubscription) {
