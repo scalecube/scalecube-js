@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.2-next.10",
+  "version": "0.1.2-next.12",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.10",
-    "@scalecube/transport-nodejs": "^0.0.3-next.8",
-    "@scalecube/utils": "^0.0.3-next.8"
+    "@scalecube/scalecube-microservice": "^0.1.4-next.12",
+    "@scalecube/transport-nodejs": "^0.0.3-next.9",
+    "@scalecube/utils": "^0.0.3-next.9"
   }
 }

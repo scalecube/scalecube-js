@@ -1,27 +1,8 @@
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { serviceCallError } from './ServiceCallUtils';
-import { LocalCallOptions } from '../helpers/types';
-import {
-  ASYNC_MODEL_TYPES,
-  getAsyncModelMissmatch,
-  getIncorrectServiceImplementForObservable,
-  getIncorrectServiceImplementForPromise,
-  getIncorrectServiceInvoke,
-  getMethodNotFoundError,
-  INVALID_ASYNC_MODEL,
-} from '../helpers/constants';
-import { check } from '@scalecube/utils';
-import { MicroserviceApi } from '@scalecube/api';
-
-const throwException = (asyncModel: MicroserviceApi.AsyncModel, message: any) => {
-  if (asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE) {
-    return Promise.reject(message);
-  } else {
-    return new Observable((obs) => {
-      obs.error(message);
-    });
-  }
-};
+import { AddMessageToResponseOptions, InvokeMethodOptions, LocalCallOptions } from '../helpers/types';
+import { getAsyncModelMissmatch, getMethodNotFoundError } from '../helpers/constants';
 
 export const localCall = ({ localService, asyncModel, message, microserviceContext }: LocalCallOptions) => {
   const { reference, asyncModel: asyncModelProvider } = localService;
