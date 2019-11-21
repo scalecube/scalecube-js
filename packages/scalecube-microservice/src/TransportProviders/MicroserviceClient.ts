@@ -42,9 +42,9 @@ export const remoteResponse = ({
       };
 
       const flowableError = (err: { source: any }) => {
-        if (err && err.source) {
+        if (err && err.source && err.source.message) {
           const { metadata, data } = err.source.message;
-          observer.error(metadata.isErrorFormat === true ? new Error(data) : data);
+          observer.error(metadata && metadata.isErrorFormat === true ? new Error(data) : data);
         } else {
           observer.error(new Error('RemoteCall exception occur.'));
         }
