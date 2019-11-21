@@ -41,8 +41,14 @@ export const remoteResponse = ({
         observer.next(data);
       };
 
-      const flowableError = (err: { source: { message: string } }) =>
-        observer.error(err && err.source ? err.source.message : new Error('RemoteCall exception occur.'));
+      const flowableError = (err: { source: any }) => {
+        if (err && err.source && err.source.message) {
+          const { metadata, data } = err.source.message;
+          observer.error(metadata && metadata.isErrorFormat === true ? new Error(data) : data);
+        } else {
+          observer.error(new Error('RemoteCall exception occur.'));
+        }
+      };
 
       switch (asyncModel) {
         case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:

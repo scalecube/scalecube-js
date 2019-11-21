@@ -71,7 +71,12 @@ const requestResponse = ({
       .catch((error: Error) => {
         saveToLogs(whoAmI, error.message, error, debug, 'warn');
         subscriber.onError({
-          message: error,
+          message: {
+            data: error instanceof Error ? error.message : error,
+            metadata: {
+              isErrorFormat: error instanceof Error,
+            },
+          },
         });
       });
   });
@@ -103,7 +108,12 @@ const requestStream = ({
       (error) => {
         saveToLogs(whoAmI, error.message, error, debug, 'warn');
         subscriber.onError({
-          message: error,
+          message: {
+            data: error instanceof Error ? error.message : error,
+            metadata: {
+              isErrorFormat: error instanceof Error,
+            },
+          },
         });
       },
       () => subscriber.onComplete()
