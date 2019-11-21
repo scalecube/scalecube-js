@@ -12,7 +12,7 @@ export default {
       format: 'cjs',
     },
   ],
-  external: ['@scalecube/api', '@scalecube/utils', 'rsocket-core', 'rsocket-flowable'],
+  external: ['@scalecube/api', '@scalecube/utils'],
   plugins: [
     commonjs({
       namedExports: {
@@ -25,7 +25,7 @@ export default {
     }),
     visualizer({
       filename: 'report.html',
-      title: 'transport-browser',
+      title: 'rsocket-adapter',
     }),
     filesize(),
   ],

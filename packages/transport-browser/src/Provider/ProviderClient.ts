@@ -1,4 +1,4 @@
-import { TransportApi, Address } from '@scalecube/api';
+import { Address } from '@scalecube/api';
 import { getFullAddress, validateAddress, constants } from '@scalecube/utils';
 // @ts-ignore
 import RSocketEventsClient from 'rsocket-events-client';

@@ -21,9 +21,6 @@ export default {
     resolve({ jsnext: true, main: true }),
     commonjs({
       include: /node_modules/,
-      namedExports: {
-        'rsocket-types': ['CONNECTION_STATUS'],
-      },
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),

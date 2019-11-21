@@ -3,7 +3,6 @@ import typescript from 'rollup-plugin-typescript2';
 import tscompile from 'typescript';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 
 export default {
@@ -18,11 +17,6 @@ export default {
   external: ['rxjs'],
   plugins: [
     resolve(),
-    commonjs({
-      namedExports: {
-        'rsocket-types': ['CONNECTION_STATUS'],
-      },
-    }),
     visualizer({
       filename: 'report.es.html',
       title: 'Microservice - es',
