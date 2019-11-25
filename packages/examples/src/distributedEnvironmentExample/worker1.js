@@ -1,4 +1,4 @@
-importScripts('http://localhost:8000/packages/scalecube-microservice/dist/index.js');
+importScripts('http://localhost:8000/packages/browser/dist/index.js');
 importScripts('./definitions.js');
 importScripts('./reactiveStream.js');
 

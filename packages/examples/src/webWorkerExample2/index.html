@@ -5,9 +5,10 @@
     <title>Scalecube webWorker Example</title>
   </head>
   <body>
-    <script type="text/javascript" src="definitions.js"></script>
-    <script type="text/javascript" src="utils.js"></script>
-    <script src="http://localhost:8000/packages/scalecube-microservice/dist/index.js"></script>
+    <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.6.0/polyfill.min.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/proxy-polyfill@0.3.0/proxy.min.js"></script>
+    <script type="text/javascript" src="./definitions.js"></script>
+    <script src="http://localhost:8000/packages/browser/dist/index.js"></script>
     <script type="text/javascript" src="index.js"></script>
     <div id="root">
       <div id="waitMessage"></div>
