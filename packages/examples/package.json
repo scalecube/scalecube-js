@@ -14,7 +14,7 @@
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
     "build": "rimraf .cache && npm-run-all build:commonJS build:es-bundle",
     "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
-    "build:es-bundle": "rimraf es-bundle && rimraf .cache && parcel build src/builds/index.ts --no-minify --no-source-maps --experimental-scope-hoisting --out-dir es-bundle",
+    "build:es-bundle": "rimraf es-bundle && rimraf .cache && parcel build src/builds/index.ts --no-minify --experimental-scope-hoisting --out-dir es-bundle",
     "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",

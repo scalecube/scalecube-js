@@ -48,10 +48,11 @@
     "tslint": "^5.11.0",
     "typescript": "^3.2.4",
     "@scalecube/routers": "^0.0.3-next.10",
-    "@scalecube/scalecube-discovery": "^0.1.2-next.9",
-    "@scalecube/transport-browser": "^0.0.3-next.9"
+    "@scalecube/transport-browser": "^0.0.3-next.9",
+    "@scalecube/cluster-browser": "^0.0.3-next.9"
   },
   "dependencies": {
+    "@scalecube/scalecube-discovery": "^0.1.2-next.9",
     "@scalecube/api": "^0.0.3-next.4",
     "@scalecube/utils": "^0.0.3-next.9",
     "rsocket-core": "^0.0.16",

@@ -40,7 +40,7 @@ export default {
             useBuiltIns: 'usage',
             corejs: 3,
             targets: {
-              chrome: '58',
+              chrome: '29',
               ie: '11',
             },
           },
