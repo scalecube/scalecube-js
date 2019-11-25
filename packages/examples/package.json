@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.2-next.13",
+  "version": "0.1.2-next.14",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/browser": "^0.0.1",
+    "@scalecube/browser": "^0.0.2-next.0",
     "@scalecube/transport-nodejs": "^0.0.3-next.9",
     "@scalecube/utils": "^0.0.3-next.9"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/browser",
-  "version": "0.0.1",
+  "version": "0.0.2-next.0",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
@@ -46,10 +46,10 @@
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/routers": "^0.0.3-next.10",
     "@scalecube/cluster-browser": "^0.0.3-next.9",
+    "@scalecube/routers": "^0.0.3-next.10",
+    "@scalecube/scalecube-microservice": "^0.1.4-next.14",
     "@scalecube/transport-browser": "^0.0.3-next.9",
-    "@scalecube/utils": "^0.0.3-next.9",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.13"
+    "@scalecube/utils": "^0.0.3-next.9"
   }
 }
