@@ -11,8 +11,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
-    "build": "rimraf .cache && yarn build:dist && yarn build:es && yarn build:cjs",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
+    "build": "rimraf .cache && yarn build:es && yarn build:cjs",
     "build:es": "rimraf es && rollup -c rollup.es.config.js",
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
