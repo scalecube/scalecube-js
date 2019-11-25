@@ -18,7 +18,6 @@
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env",
     "test-dom-env": "jest --config jest.config-dom.js",
-    "test-node-env": "jest --config jest.config-node.js",
     "coverage": "jest --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
@@ -37,11 +36,11 @@
     "ts-jest": "^23.10.5",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.2.4"
+    "typescript": "^3.2.4",
+    "@scalecube/cluster-browser": "^0.0.3-next.9"
   },
   "dependencies": {
     "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/cluster-browser": "^0.0.3-next.9",
     "@scalecube/utils": "^0.0.3-next.9",
     "rxjs": "^6.4.0"
   }

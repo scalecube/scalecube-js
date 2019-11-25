@@ -1,0 +1,11 @@
+.cache
+node_modules
+
+lib/
+es/
+dist-min/
+dist/
+
+report.iffe.html
+report.cjs.html
+report.es.html

@@ -40,6 +40,8 @@ export const getIncorrectServiceImplementForPromise = (whoAmI: string, qualifier
 export const getIncorrectServiceImplementForObservable = (whoAmI: string, qualifier: string) =>
   `MS0026 - ${whoAmI}'s service '${qualifier}' define as Observable but service return not Observable`;
 
+export const NO_PROXY_SUPPORT = 'MS0029 - Proxy not supported, please add Proxy polyfill';
+
 export const RSocketConnectionStatus = {
   NOT_CONNECTED: 'NOT_CONNECTED',
   CONNECTING: 'CONNECTING',

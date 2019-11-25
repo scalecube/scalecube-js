@@ -1,4 +1,4 @@
-import { createDiscovery } from '../../../src';
+import { createDiscovery } from '../../mockDiscovery';
 import { constants, getAddress } from '@scalecube/utils';
 import { INVALID_ITEMS_TO_PUBLISH } from '../../../src/helpers/constants';
 

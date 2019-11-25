@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
      * the remote service will be available only after 2s
      */
     setTimeout(() => {
-      console.log('provision remote microservice after 2s');
+      console.log('bootstrap remote microservice after 2s');
       createMicroservice({
         services: [
           {

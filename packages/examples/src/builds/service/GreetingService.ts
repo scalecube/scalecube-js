@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { ASYNC_MODEL_TYPES } from '@scalecube/browser';
 
 export default class GreetingService {
   public hello(name: string): Promise<string> {
