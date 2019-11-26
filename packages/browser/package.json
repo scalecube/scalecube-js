@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/browser",
-  "version": "0.0.1",
+  "version": "0.0.2-next.0",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
@@ -24,10 +24,10 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
+    "@scalecube/api": "^0.0.3-next.4",
     "@babel/core": "^7.7.4",
     "@babel/plugin-transform-arrow-functions": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "core-js": "^3.4.2",
     "regenerator-runtime": "^0.13.3",
     "rollup": "^1.27.4",
     "rollup-plugin-babel": "^4.3.3",
@@ -44,11 +44,11 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.3-next.4",
-    "@scalecube/routers": "^0.0.3-next.10",
+    "core-js": "^3.4.2",
     "@scalecube/cluster-browser": "^0.0.3-next.9",
     "@scalecube/transport-browser": "^0.0.3-next.9",
-    "@scalecube/utils": "^0.0.3-next.9",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.13"
+    "@scalecube/routers": "^0.0.3-next.10",
+    "@scalecube/scalecube-microservice": "^0.1.4-next.14",
+    "@scalecube/utils": "^0.0.3-next.9"
   }
 }

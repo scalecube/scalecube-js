@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.2-next.9",
+  "version": "0.1.2-next.10",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
