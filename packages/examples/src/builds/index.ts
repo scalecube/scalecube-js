@@ -15,11 +15,21 @@ const proxy = ms.createProxy({
   serviceDefinition: greetingServiceDefinition,
 });
 
+const resultEl = document.getElementById('result');
+
 proxy.hello('User').then((result: string) => {
+  const div = document.createElement('div');
+  div.innerHTML = result;
+  // @ts-ignore
+  resultEl.appendChild(div);
   console.info('result from greeting service - hello', result);
 });
 
 proxy.greet$(['User1', 'User2', 'User3']).subscribe((result: string) => {
+  const div = document.createElement('div');
+  div.innerHTML = result;
+  // @ts-ignore
+  resultEl.appendChild(div);
   console.info('result from greeting service - greet$', result);
 });
 

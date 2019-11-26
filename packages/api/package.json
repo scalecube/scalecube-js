@@ -19,7 +19,6 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@types/node": "10.1.4",
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.2.4"

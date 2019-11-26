@@ -14,7 +14,7 @@
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
     "build": "rimraf .cache && npm-run-all build:commonJS build:es-bundle",
     "build:commonJS": "rimraf lib && tsc --module commonjs --target es5 --outDir lib",
-    "build:es-bundle": "rimraf es-bundle && rimraf .cache && parcel build src/builds/index.ts --no-minify --experimental-scope-hoisting --out-dir es-bundle",
+    "build:es-bundle": "rimraf es-bundle && rimraf .cache && parcel build src/builds/index.ts --no-source-maps --experimental-scope-hoisting --out-dir es-bundle",
     "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
@@ -29,23 +29,23 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@types/node": "10.1.4",
+    "@scalecube/api": "^0.0.3-next.4",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
     "parcel-plugin-bundle-visualiser": "^1.2.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.4",
-    "webpack": "^4.38.0",
-    "webpack-cli": "^3.3.6"
+    "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.0.3-next.4",
     "@scalecube/browser": "^0.0.1",
     "@scalecube/transport-nodejs": "^0.0.3-next.9",
     "@scalecube/utils": "^0.0.3-next.9"
   },
   "browserslist": [
-    "since 2017-06",
-    "IE 11"
+    "ie 11",
+    "firefox > 39",
+    "chrome > 39",
+    "safari > 8",
+    "edge > 11"
   ]
 }

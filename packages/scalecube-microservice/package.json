@@ -31,8 +31,7 @@
     }
   },
   "devDependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/node": "10.1.4",
+    "@scalecube/api": "^0.0.3-next.4",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
@@ -53,7 +52,6 @@
   },
   "dependencies": {
     "@scalecube/scalecube-discovery": "^0.1.2-next.9",
-    "@scalecube/api": "^0.0.3-next.4",
     "@scalecube/utils": "^0.0.3-next.9",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",
