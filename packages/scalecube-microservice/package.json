@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "0.1.4-next.13",
+  "version": "0.1.4-next.14",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",

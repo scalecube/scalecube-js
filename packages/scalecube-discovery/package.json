@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.1.2-next.9",
+  "version": "0.1.2-next.10",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@scalecube/api": "^0.0.3-next.4",
     "@babel/core": "^7.4.5",
+    "@scalecube/cluster-browser": "^0.0.3-next.9",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
