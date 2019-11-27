@@ -7,7 +7,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "moduleResolution": "node",
-    "baseUrl": "./src/builds"
+    "baseUrl": "./src/builds",
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

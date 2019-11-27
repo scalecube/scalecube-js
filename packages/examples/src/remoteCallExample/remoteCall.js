@@ -7,8 +7,8 @@
  * Scalecube provide us a way to consume the service from any platform.
  */
 
-window.addEventListener('DOMContentLoaded', (event) => {
-  (function(createMicroservice, ASYNC_MODEL_TYPES, definitions) {
+window.addEventListener('DOMContentLoaded', function(event) {
+  (function(createMicroservice, ASYNC_MODEL_TYPES, remoteServiceDefinition) {
     var placeHolder = document.getElementById('placeHolder');
     var waitMessage = document.getElementById('waitMessage');
 
@@ -16,25 +16,27 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     var localMS = createMicroservice({ services: [], seedAddress: 'seed', address: 'local' });
 
-    var serviceNameProxy = localMS.createProxy({ serviceDefinition: definitions.remoteServiceDefinition });
+    var serviceNameProxy = localMS.createProxy({ serviceDefinition: remoteServiceDefinition });
 
-    serviceNameProxy
-      .hello('ME!!!')
-      .then((response) => {
-        createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
-      })
-      .catch(console.log);
-
-    serviceNameProxy.greet$(['ME!!!', 'YOU!!!']).subscribe((response) => {
-      createLineHTML({ response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
-    });
-
-    function createLineHTML({ response, type }) {
+    function createLineHTML(data) {
+      var response = data.response;
+      var type = data.type;
       waitMessage.innerText = 'Service is available:';
 
       var responseSpan = document.createElement('div');
-      responseSpan.innerText = `${type}: ${response}`;
+      responseSpan.innerText = type + ':' + response;
       placeHolder.appendChild(responseSpan);
     }
+
+    serviceNameProxy
+      .hello('ME!!!')
+      .then(function(response) {
+        createLineHTML({ response: response, type: ASYNC_MODEL_TYPES.REQUEST_RESPONSE });
+      })
+      .catch(console.log);
+
+    serviceNameProxy.greet$(['ME!!!', 'YOU!!!']).subscribe(function(response) {
+      createLineHTML({ response: response, type: ASYNC_MODEL_TYPES.REQUEST_STREAM });
+    });
   })(window.sc.createMicroservice, window.sc.ASYNC_MODEL_TYPES, definitions);
 });
