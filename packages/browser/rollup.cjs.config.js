@@ -17,7 +17,7 @@ export default {
       sourcemap: false,
     },
   ],
-  external: ['rxjs'],
+  external: ['rxjs', 'core-js'],
   plugins: [
     resolve({ jsnext: true, main: true }),
     commonjs({
@@ -30,7 +30,7 @@ export default {
     babel({
       plugins: ['@babel/plugin-transform-arrow-functions'],
       babelrc: false,
-      runtimeHelpers: true,
+      runtimeHelpers: false,
       presets: [
         [
           '@babel/preset-env',
@@ -38,8 +38,6 @@ export default {
             modules: false,
             spec: true,
             forceAllTransforms: true,
-            useBuiltIns: 'usage',
-            corejs: 3,
             targets: {
               chrome: '29',
               ie: '11',
@@ -58,6 +56,7 @@ export default {
     typescript({
       typescript: tscompile,
       clean: true,
+      include: '**/*.{ts,js}',
     }),
     // global(),
     filesize(),

@@ -11,7 +11,5 @@ var definitions = (function() {
     },
   };
 
-  return {
-    remoteServiceDefinition,
-  };
+  return remoteServiceDefinition;
 })();

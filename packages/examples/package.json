@@ -37,8 +37,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "core-js": "^3.4.2",
-    "@scalecube/browser": "^0.0.1",
+    "@scalecube/browser": "^0.0.2-next.0",
     "@scalecube/transport-nodejs": "^0.0.3-next.9",
     "@scalecube/utils": "^0.0.3-next.9"
   },

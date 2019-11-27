@@ -1711,18 +1711,6 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
-"@scalecube/browser@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@scalecube/browser/-/browser-0.0.1.tgz#58c412af2d07c0eafd29b2a8c27e99fc70fb5b56"
-  integrity sha512-IVOEJ4vO6va1Rfyy9p0duOkm5zP6Jev7THweaI+Zc1YteRogcZ6ZCUzcjFFFg9GAleAcg7MZuvnHrhkfmO0UoQ==
-  dependencies:
-    "@scalecube/api" "^0.0.3-next.4"
-    "@scalecube/routers" "^0.0.3-next.10"
-    "@scalecube/scalecube-discovery" "^0.1.2-next.9"
-    "@scalecube/scalecube-microservice" "^0.1.4-next.13"
-    "@scalecube/transport-browser" "^0.0.3-next.9"
-    "@scalecube/utils" "^0.0.3-next.9"
-
 "@types/babel__core@^7.1.0":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.3.tgz#e441ea7df63cd080dfcd02ab199e6d16a735fc30"
@@ -3188,11 +3176,6 @@ core-js@^2.4.0, core-js@^2.4.1, core-js@^2.6.5:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
-
-core-js@^3.4.2:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.4.3.tgz#09ea102412a368d5f73d24f082e41ac90c633a49"
-  integrity sha512-BVvHidX8uAmLCYPfLpXTEex7jz1uZJ1mW+shhIsBdA716O8Fg6TOwSgenSyO/bvEtnGdOTpKRZPSh4bSVI1k9w==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -8964,9 +8947,9 @@ resolve@1.10.1:
     path-parse "^1.0.6"
 
 resolve@1.x, resolve@^1.1.5, resolve@^1.1.6, resolve@^1.10.0, resolve@^1.11.0, resolve@^1.11.1, resolve@^1.3.2, resolve@^1.4.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.13.0.tgz#e879eb397efb40511056ede7300b6ac28c51290b"
-  integrity sha512-HHZ3hmOrk5SvybTb18xq4Ek2uLqLO5/goFCYUyvn26nWox4hdlKlfC/+dChIZ6qc4ZeYcN9ekTz0yyHsFgumMw==
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.13.1.tgz#be0aa4c06acd53083505abb35f4d66932ab35d16"
+  integrity sha512-CxqObCX8K8YtAhOBRg+lrcdn+LK+WYOS8tSjqSFbjtrI5PnS63QPhZl4+yKfrU9tdsbMu9Anr/amegT87M9Z6w==
   dependencies:
     path-parse "^1.0.6"
 

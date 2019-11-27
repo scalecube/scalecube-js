@@ -16,7 +16,7 @@ export default {
       name: 'sc',
       file: pkg.unpkg,
       format: 'iife',
-      sourcemap: 'inline',
+      sourcemap: false,
     },
   ],
   plugins: [
@@ -39,8 +39,6 @@ export default {
             modules: false,
             spec: true,
             forceAllTransforms: true,
-            useBuiltIns: 'usage',
-            corejs: 3,
             targets: {
               chrome: '29',
               ie: '11',
@@ -60,7 +58,7 @@ export default {
       typescript: tscompile,
       clean: true,
     }),
-    uglify(),
+    // uglify(),
     filesize(),
   ],
 };

@@ -4,19 +4,16 @@
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
-  "module": "es/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib",
-    "es",
     "dist"
   ],
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
-    "build": "rimraf .cache && yarn build:dist && yarn build:es && yarn build:cjs",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf dist",
+    "build": "rimraf .cache && yarn build:dist && yarn build:cjs",
     "build:dist": "rimraf dist  && rollup -c rollup.iife.config.js",
-    "build:es": "rimraf es && rollup -c rollup.es.config.js",
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
@@ -44,11 +41,11 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "core-js": "^3.4.2",
     "@scalecube/cluster-browser": "^0.0.3-next.9",
     "@scalecube/transport-browser": "^0.0.3-next.9",
     "@scalecube/routers": "^0.0.3-next.10",
     "@scalecube/scalecube-microservice": "^0.1.4-next.14",
-    "@scalecube/utils": "^0.0.3-next.9"
+    "@scalecube/utils": "^0.0.3-next.9",
+    "rxjs": "^6.4.0"
   }
 }
