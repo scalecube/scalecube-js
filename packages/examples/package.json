@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.2-next.15",
+  "version": "0.1.2-next.16",
   "private": false,
   "rollup": "rollup/index.js",
   "license": "MIT",
@@ -23,11 +23,10 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@babel/plugin-transform-arrow-functions": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
     "@babel/core": "^7.7.4",
+    "@babel/plugin-transform-arrow-functions": "^7.7.4",
     "@babel/plugin-transform-async-to-generator": "^7.7.4",
-    "rollup-plugin-node-globals": "^1.4.0",
+    "@babel/preset-env": "^7.7.4",
     "@scalecube/api": "^0.0.3-next.5",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
@@ -36,6 +35,7 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.21.1",
     "rollup-plugin-uglify-es": "^0.0.1",
@@ -43,10 +43,10 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/browser": "^0.0.2-next.1",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.15",
-    "@scalecube/transport-nodejs": "^0.0.3-next.10",
-    "@scalecube/utils": "^0.0.3-next.10"
+    "@scalecube/browser": "^0.0.2-next.2",
+    "@scalecube/scalecube-microservice": "^0.1.4-next.16",
+    "@scalecube/transport-nodejs": "^0.0.3-next.11",
+    "@scalecube/utils": "^0.0.3-next.11"
   },
   "browserslist": [
     "ie 11",
