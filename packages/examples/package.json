@@ -2,7 +2,7 @@
   "name": "@scalecube/examples",
   "version": "0.1.2-next.15",
   "private": false,
-  "dist": "./bundlers/builds/rollup/dist/index.js",
+  "dist": "./bundles/builds/rollup/dist/index.js",
   "files": [
     "dist"
   ],
@@ -10,8 +10,8 @@
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
     "build": "rimraf .cache && npm-run-all build:parcel build:rollup",
-    "build:parcel": "rimraf bundlers/builds/parcel/dist && parcel build bundlers/src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir bundlers/builds/parcel/dist",
-    "build:rollup": "rimraf bundlers/builds/rollup/dist  && rollup -c rollup.iife.config.js",
+    "build:parcel": "rimraf bundles/builds/parcel/dist && parcel build bundles/src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir bundles/builds/parcel/dist",
+    "build:rollup": "rimraf bundles/builds/rollup/dist  && rollup -c rollup.iife.config.js",
     "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",

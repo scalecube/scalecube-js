@@ -7,8 +7,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "moduleResolution": "node",
-    "baseUrl": "./bundlers/src",
+    "baseUrl": "./bundles/src",
     "skipLibCheck": true
   },
-  "include": ["bundlers/src/**/*"]
+  "include": ["bundles/src/**/*"]
 }

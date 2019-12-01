@@ -9,7 +9,7 @@ import babel from 'rollup-plugin-babel';
 import global from 'rollup-plugin-node-globals';
 
 export default {
-  input: './bundlers/src/index.ts',
+  input: './bundles/src/index.ts',
   output: [
     {
       name: 'sdk',
