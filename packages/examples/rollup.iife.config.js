@@ -13,7 +13,7 @@ export default {
   output: [
     {
       name: 'sdk',
-      file: pkg.dist,
+      file: pkg.rollup,
       format: 'iife',
       sourcemap: false,
     },

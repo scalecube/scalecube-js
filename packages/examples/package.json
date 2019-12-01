@@ -2,7 +2,7 @@
   "name": "@scalecube/examples",
   "version": "0.1.2-next.15",
   "private": false,
-  "dist": "rollup/index.js",
+  "rollup": "rollup/index.js",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache",
