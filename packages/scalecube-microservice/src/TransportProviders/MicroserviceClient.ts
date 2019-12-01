@@ -32,18 +32,40 @@ export const remoteResponse = ({
     });
 
     connection.then((socket: ReactiveSocket) => {
+      saveToLogs(
+        microserviceContext.whoAmI,
+        `send request to ${message.qualifier} with data ${message.data}`,
+        {},
+        microserviceContext.debug,
+        'log'
+      );
+
       const socketConnect: Single | Flowable = socket[asyncModel]({
         data: message,
         metadata: '',
       });
 
       const flowableNext = ({ data, metadata }: RsocketEventsPayload) => {
+        saveToLogs(
+          microserviceContext.whoAmI,
+          `remoteCall to ${message.qualifier} with data ${message.data} response with ${data}`,
+          {},
+          microserviceContext.debug,
+          'log'
+        );
         observer.next(data);
       };
 
       const flowableError = (err: { source: any }) => {
         if (err && err.source && err.source.message) {
           const { metadata, data } = err.source.message;
+          saveToLogs(
+            microserviceContext.whoAmI,
+            `remoteCall to ${message.qualifier} with data ${message.data} error ${data}`,
+            {},
+            microserviceContext.debug,
+            'log'
+          );
           observer.error(metadata && metadata.isErrorFormat === true ? new Error(data) : data);
         } else {
           observer.error(new Error('RemoteCall exception occur.'));

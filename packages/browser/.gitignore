@@ -2,8 +2,6 @@
 node_modules
 
 lib/
-es/
-dist-min/
 dist/
 
 report.iffe.html
