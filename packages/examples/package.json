@@ -3,9 +3,6 @@
   "version": "0.1.2-next.15",
   "private": false,
   "dist": "./bundles/builds/rollup/dist/index.js",
-  "files": [
-    "dist"
-  ],
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es && rimraf dist",
