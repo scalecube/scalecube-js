@@ -31,19 +31,15 @@ const ms3 = sc.createMicroservice({
 const proxyName = ms3.createProxy({ serviceDefinition: definitions.remoteServiceDefinition });
 const proxyName3 = ms3.createProxy({ serviceDefinition: definitions.remoteServiceDefinition3 });
 
-proxyName
-  .getInterval(1000)
-  .subscribe(
-    (res) => console.log(`webworker 1 - awaitProxyName is resolve every 1000ms: ${res}`),
-    (error) => console.log(error.message)
-  );
+proxyName.getInterval(1000).subscribe(
+  (res) => console.log(`webworker 1 - awaitProxyName is resolve every 1000ms: ${res}`),
+  (error) => console.log(error.message)
+);
 
-proxyName3
-  .getInterval(9000)
-  .subscribe(
-    (res) => console.log(`webworker 1 - awaitProxyName3 is resolve every 9000ms: ${res}`),
-    (error) => console.log(error.message)
-  );
+proxyName3.getInterval(9000).subscribe(
+  (res) => console.log(`webworker 1 - awaitProxyName3 is resolve every 9000ms: ${res}`),
+  (error) => console.log(error.message)
+);
 
 setTimeout(() => {
   ms1.destroy();
