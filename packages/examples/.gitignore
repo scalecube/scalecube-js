@@ -7,6 +7,5 @@ coverage/
 yarn-error.log
 .DS_Store
 
-lib/
-es/
-es-bundle/
+bundles/builds/parcel/dist
+bundles/builds/rollup/dist
