@@ -1,4 +1,4 @@
-import { createDiscovery } from '../../src';
+import { createDiscovery } from '../mockDiscovery';
 import { getAddress } from '@scalecube/utils';
 import { DiscoveryApi } from '@scalecube/api';
 

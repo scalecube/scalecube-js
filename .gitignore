@@ -5,6 +5,7 @@ es/
 es-bundle/
 lib/
 dist/
+cjs/
 flow-typed/
 doc/
 coverage/

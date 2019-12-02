@@ -16,7 +16,7 @@ import { Gateway as GatewayInterface } from '../src/api/Gateway';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
 import { from, throwError } from 'rxjs';
-import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 
 class ServiceA {
   public methodA() {

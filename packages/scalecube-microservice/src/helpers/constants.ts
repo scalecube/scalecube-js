@@ -16,7 +16,6 @@ export const MICROSERVICE_OPTIONS_IS_NOT_OBJECT = 'MS0000 - Not valid format, Mi
 export const QUALIFIER_IS_NOT_STRING = 'MS0011 - qualifier should not be empty string';
 export const TRANSPORT_NOT_PROVIDED = 'MS0013 - Transport provider is not define';
 export const ROUTER_NOT_PROVIDED = 'MS0024 - Router is not define';
-export const INVALID_ASYNC_MODEL = 'MS0028 - invalid async model';
 
 export const getServiceMethodIsMissingError = (methodName: string) =>
   `MS0014 - service method '${methodName}' missing in the serviceDefinition`;
@@ -43,3 +42,5 @@ export const getIncorrectServiceImplementForObservable = (whoAmI: string, qualif
 
 export const getIncorrectServiceInvoke = (whoAmI: string, qualifier: string) =>
   `MS0027 - ${whoAmI}'s ${qualifier} has no valid response, expect Promise or Observable`;
+
+export const NO_PROXY_SUPPORT = 'MS0029 - Proxy not supported, please add Proxy polyfill';
