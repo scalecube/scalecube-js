@@ -1,7 +1,6 @@
 import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 import { createDiscovery } from '@scalecube/scalecube-discovery';
-import { TransportBrowser } from '@scalecube/transport-browser';
-import { check, getAddress, getFullAddress, isNodejs } from '@scalecube/utils';
+import { check, getAddress, getFullAddress } from '@scalecube/utils';
 import { getServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
@@ -22,7 +21,6 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     },
     services: [],
     debug: false,
-    transport: !isNodejs() ? TransportBrowser : undefined,
     ...options,
   };
 
@@ -41,6 +39,10 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 
   const connectionManager = createConnectionManager();
   const { cluster, debug } = microserviceOptions;
+  if (!microserviceOptions.transport) {
+    throw Error('Transport not provided');
+  }
+  // @ts-ignore
   const transport = microserviceOptions.transport as TransportApi.Transport;
   const address = microserviceOptions.address as Address;
   const seedAddress = microserviceOptions.seedAddress as Address;

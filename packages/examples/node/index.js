@@ -1,6 +1,5 @@
-const { createMicroservice, ASYNC_MODEL_TYPES } = require('@scalecube/scalecube-microservice');
-const { TransportNodeJS } = require('@scalecube/transport-nodejs');
-const { joinCluster } = require('@scalecube/cluster-nodejs');
+const { createMicroservice, ASYNC_MODEL_TYPES } = require('@scalecube/node');
+const { retryRouter } = require('@scalecube/routers');
 
 console.log('process.env.whoAmI', process.env.whoAmI);
 console.log('process.env.seed', process.env.seed);
@@ -44,12 +43,22 @@ if (myPort === '7000') {
 }
 
 console.log(address, seedAddress);
+
 const proxy = createMicroservice({
-  cluster: joinCluster,
-  transport: TransportNodeJS,
   address,
   seedAddress,
   services,
+  defaultRouter: (...data) =>
+    new Promise((resolve) => {
+      const progress = setInterval(() => {
+        console.log(`${process.env.whoAmI} waiting...`);
+      }, 1000);
+
+      retryRouter({ period: 10 })(...data).then((response) => {
+        clearInterval(progress);
+        resolve(response);
+      });
+    }),
   debug: true,
 }).createProxy({
   serviceDefinition: definition,

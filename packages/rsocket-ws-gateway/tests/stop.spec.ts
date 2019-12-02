@@ -1,4 +1,4 @@
-import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
 
