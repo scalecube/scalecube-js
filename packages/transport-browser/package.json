@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/transport-browser",
-  "version": "0.0.3-next.11",
+  "version": "0.0.3-next.12",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -32,7 +32,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/utils": "^0.0.3-next.11",
+    "@scalecube/utils": "^0.0.3-next.12",
     "rsocket-core": "^0.0.16",
     "rsocket-events-client": "^0.0.21",
     "rsocket-events-server": "^0.0.21"
