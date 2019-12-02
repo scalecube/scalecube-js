@@ -13,11 +13,11 @@
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
-    "runNodejs01": "whoAmI=localHost:1000 seed=localHost:2000 node node/index.js -port 1000",
     "runNodejs02": "whoAmI=localHost:2000 node node/index.js -port 2000",
+    "runNodejs01": "whoAmI=localHost:1000 seed=localHost:2000 node node/index.js -port 1000",
     "runNodejs03": "whoAmI=localHost:3000 seed=localHost:2000 node node/index.js -port 3000",
-    "runNodejs04": "whoAmI=localHost:4000 seed=localHost:3000 node node/index.js -port 4000",
     "runNodejs05": "whoAmI=localHost:5000 seed=localHost:2000 node node/index.js -port 5000",
+    "runNodejs04": "whoAmI=localHost:4000 seed=localHost:3000 node node/index.js -port 4000",
     "runNodejs06": "whoAmI=localHost:6000 seed=localHost:5000 node node/index.js -port 6000",
     "runNodejs07": "whoAmI=localHost:7000 seed=localHost:5000 node node/index.js -port 7000"
   },
@@ -44,9 +44,10 @@
   },
   "dependencies": {
     "@scalecube/browser": "^0.0.2-next.2",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.16",
+    "@scalecube/node": "^0.0.1",
     "@scalecube/transport-nodejs": "^0.0.3-next.11",
-    "@scalecube/utils": "^0.0.3-next.11"
+    "@scalecube/utils": "^0.0.3-next.11",
+    "@scalecube/routers": "^0.0.3-next.12"
   },
   "browserslist": [
     "ie 11",

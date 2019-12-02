@@ -1,4 +1,4 @@
-import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/scalecube-microservice';
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
 
@@ -16,7 +16,10 @@ const definitionB = {
 };
 const serviceA = { methodA: () => Promise.resolve('ok') };
 const serviceB = { methodB: () => Promise.resolve('bye') };
-const services = [{ definition: definitionA, reference: serviceA }, { definition: definitionB, reference: serviceB }];
+const services = [
+  { definition: definitionA, reference: serviceA },
+  { definition: definitionB, reference: serviceB },
+];
 
 const ms = createMicroservice({ services });
 const serviceCall = ms.createServiceCall({});
