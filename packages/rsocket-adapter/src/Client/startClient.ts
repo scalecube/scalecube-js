@@ -22,7 +22,7 @@ export const setupClient = (configuration: any) => {
 
   const connectionManager = createConnectionManager();
 
-  const destroy: TransportApi.TDestroy = (options) => {
+  const destroy: TransportApi.TDestroy = (options: TransportApi.TDestroyOptions) => {
     const { address, logger } = options;
     const connection = connectionManager.getConnection(address);
     if (connection) {
@@ -39,16 +39,13 @@ export const setupClient = (configuration: any) => {
 
   return {
     start: async (options: TransportApi.ClientTransportOptions): Promise<TransportApi.RequestHandler> => {
-      const { remoteAddress } = options;
+      const { remoteAddress, logger } = options;
 
       const socket = await getClientConnection({
         address: remoteAddress,
         clientProvider,
         connectionManager,
       });
-
-      const getError = (err: { source: { message: string } }) =>
-        err && err.source ? err.source.message : new Error('RemoteCall exception occur.');
 
       return {
         requestResponse: (message: MicroserviceApi.Message) => {
@@ -60,7 +57,9 @@ export const setupClient = (configuration: any) => {
 
             socketConnect.subscribe({
               onComplete: ({ data, metadata }: RsocketEventsPayload) => resolve(data),
-              onError: (err: { source: { message: string } }) => reject(getError(err)),
+              onError: (err: { source: { message: string } }) => {
+                handleErrors({ rejectFn: (errMsg: any) => reject(errMsg), err, message, logger });
+              },
             });
           });
         },
@@ -74,7 +73,9 @@ export const setupClient = (configuration: any) => {
           return new Observable((obs) => {
             socketConnect.subscribe({
               onNext: ({ data, metadata }: RsocketEventsPayload) => obs.next(data),
-              onError: (err: { source: { message: string } }) => obs.error(getError(err)),
+              onError: (err: { source: { message: string } }) => {
+                handleErrors({ rejectFn: (errMsg: any) => obs.error(errMsg), err, message, logger });
+              },
               onComplete: () => obs.complete(),
               onSubscribe(subscription: ISubscription) {
                 subscription.request(max);
@@ -86,4 +87,25 @@ export const setupClient = (configuration: any) => {
     },
     destroy,
   };
+};
+
+const handleErrors = ({
+  rejectFn,
+  err,
+  logger,
+  message,
+}: {
+  rejectFn: any;
+  err: { source: any };
+  logger: TransportApi.TLogger;
+  message: { qualifier: string; data: any };
+}) => {
+  if (err && err.source && err.source.message) {
+    const { metadata, data } = err.source.message;
+    logger(`remoteCall to ${message.qualifier} with data ${message.data} error ${data}`, 'log');
+
+    rejectFn(metadata && metadata.isErrorFormat === true ? new Error(data) : data);
+  } else {
+    rejectFn(new Error('RemoteCall exception occur.'));
+  }
 };

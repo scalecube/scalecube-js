@@ -29,7 +29,12 @@ export const setupServer = (configuration: any): TransportApi.ServerTransport =>
           .catch((error: Error) => {
             logger(error.message, 'warn');
             subscriber.onError({
-              message: error.message || error,
+              message: {
+                data: error instanceof Error ? error.message : error,
+                metadata: {
+                  isErrorFormat: error instanceof Error,
+                },
+              },
             });
           });
       });
@@ -45,7 +50,12 @@ export const setupServer = (configuration: any): TransportApi.ServerTransport =>
           (error: Error) => {
             logger(error.message, 'warn');
             subscriber.onError({
-              message: error.message || error,
+              message: {
+                data: error instanceof Error ? error.message : error,
+                metadata: {
+                  isErrorFormat: error instanceof Error,
+                },
+              },
             });
           },
           () => subscriber.onComplete()

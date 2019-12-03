@@ -16,14 +16,13 @@ test(`Given microservices with gateway
     And   a service
     When  a client wants to access the service
     And   the client sends a request to the gateway
-    Then  gateway doesn't receive the request`, async () => {
-  try {
-    const gateway = new Gateway({ port: 8050 });
-    // gateway.start({ serviceCall });
-    const proxy: any = await createGatewayProxy('ws://localhost:8050', definition);
-  } catch (e) {
+    Then  gateway doesn't receive the request`, (done) => {
+  const gateway = new Gateway({ port: 8050 });
+  // gateway.start({ serviceCall });
+  createGatewayProxy('ws://localhost:8050', definition).catch((e) => {
     expect(e.message).toBe('Connection error');
-  }
+    done();
+  });
 });
 
 test(` Given microservices with gateway
@@ -51,7 +50,7 @@ Then  a message informing that gateway has already been activated is returned`, 
   gateway.stop();
 });
 
-test(`Given microservices with gateway
+test.only(`Given microservices with gateway
     And   start method was called and the microservice start listening 
     And   stop method was called 
     When  start method is called again and microservice starts listening
@@ -60,11 +59,11 @@ test(`Given microservices with gateway
     And   microservice handles the incoming request`, async () => {
   const ms = createMicroservice({ services });
   const serviceCall = ms.createServiceCall({});
-  const gateway = new Gateway({ port: 8053 });
+  const gateway = new Gateway({ port: 8153 });
   gateway.start({ serviceCall });
   gateway.stop();
   gateway.start({ serviceCall });
-  const proxy: any = await createGatewayProxy('ws://localhost:8053', definition);
+  const proxy: any = await createGatewayProxy('ws://localhost:8153', definition);
   const resp = await proxy.methodA();
   expect(resp).toEqual('ok');
   gateway.stop();

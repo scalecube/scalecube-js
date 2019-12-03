@@ -92,4 +92,9 @@ export type ServerStop = () => void;
 
 export type TLogger = (msg: any, type: 'warn' | 'log') => void;
 
-export type TDestroy = ({ address, logger }: { address: string; logger: TLogger }) => void;
+export type TDestroy = ({ address, logger }: TDestroyOptions) => void;
+
+export interface TDestroyOptions {
+  address: string;
+  logger: TLogger;
+}

@@ -8,4 +8,5 @@ export {
   ServerTransport,
   TDestroy,
   TLogger,
+  TDestroyOptions,
 } from './Transport';
