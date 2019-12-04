@@ -20,11 +20,11 @@ export default {
     },
   ],
   plugins: [
-    resolve({ jsnext: true, main: true }),
     commonjs({
       include: /node_modules/,
       browser: true,
     }),
+    resolve(),
     babel({
       plugins: ['@babel/plugin-transform-arrow-functions'],
       babelrc: false,

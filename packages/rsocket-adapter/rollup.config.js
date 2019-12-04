@@ -12,7 +12,7 @@ export default {
       format: 'cjs',
     },
   ],
-  external: ['@scalecube/api', '@scalecube/utils'],
+  external: ['@scalecube/api', '@scalecube/utils', 'rxjs'],
   plugins: [
     commonjs({
       namedExports: {

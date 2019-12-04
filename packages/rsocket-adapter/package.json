@@ -35,6 +35,7 @@
     "@scalecube/utils": "^0.0.3-next.8",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",
-    "rsocket-types": "^0.0.16"
+    "rsocket-types": "^0.0.16",
+    "rxjs": "^6.4.0"
   }
 }
