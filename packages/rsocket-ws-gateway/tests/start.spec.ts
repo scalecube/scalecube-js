@@ -50,7 +50,7 @@ Then  a message informing that gateway has already been activated is returned`, 
   gateway.stop();
 });
 
-test.only(`Given microservices with gateway
+test(`Given microservices with gateway
     And   start method was called and the microservice start listening 
     And   stop method was called 
     When  start method is called again and microservice starts listening

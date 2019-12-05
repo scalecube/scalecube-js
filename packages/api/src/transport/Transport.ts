@@ -22,7 +22,7 @@ export interface Transport {
 export interface ClientTransport {
   /**
    * @property start
-   *  start transport client
+   *  open connection to remote container and resolve with RequestHandler to call the remote container
    */
   start: (options: ClientTransportOptions) => Promise<RequestHandler>;
   /**
@@ -92,7 +92,7 @@ export type ServerStop = () => void;
 
 export type TLogger = (msg: any, type: 'warn' | 'log') => void;
 
-export type TDestroy = ({ address, logger }: TDestroyOptions) => void;
+export type TDestroy = (options: TDestroyOptions) => void;
 
 export interface TDestroyOptions {
   address: string;

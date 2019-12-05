@@ -2,6 +2,10 @@
 import { ReactiveSocket } from 'rsocket-types';
 import { CreateConnectionManager } from '../helpers/types';
 
+/**
+ * createConnectionManager manage all open connection per process
+ *
+ */
 export const createConnectionManager: CreateConnectionManager = () => {
   const openConnections: { [key: string]: Promise<ReactiveSocket> } = {};
 
