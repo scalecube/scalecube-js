@@ -6,16 +6,9 @@ import { createProxy } from '../Proxy/createProxy';
 import { destroy } from './Destroy';
 import { createServiceCall } from '../ServiceCall/ServiceCall';
 
-export const setMicroserviceInstance = ({
-  microserviceContext,
-  transportClientProvider,
-  serverStop,
-  discoveryInstance,
-  endPointsToPublishInCluster,
-  address,
-  debug,
-  defaultRouter,
-}: SetMicroserviceInstanceOptions): MicroserviceApi.Microservice => {
+export const setMicroserviceInstance = (options: SetMicroserviceInstanceOptions): MicroserviceApi.Microservice => {
+  const { transportClient, serverStop, discoveryInstance, debug, defaultRouter, microserviceContext } = options;
+
   const { remoteRegistry } = microserviceContext;
 
   discoveryInstance
@@ -25,18 +18,24 @@ export const setMicroserviceInstance = ({
 
   const serviceFactoryOptions = getServiceFactoryOptions({
     microserviceContext,
-    transportClientProvider,
+    transportClient,
     defaultRouter,
   });
   return Object.freeze({
-    destroy: () => destroy({ microserviceContext, discovery: discoveryInstance, serverStop }),
+    destroy: () =>
+      destroy({
+        microserviceContext,
+        discovery: discoveryInstance,
+        serverStop,
+        transportClientDestroy: transportClient.destroy,
+      }),
     ...serviceFactoryOptions,
   });
 };
 
 export const getServiceFactoryOptions = ({
   microserviceContext,
-  transportClientProvider,
+  transportClient,
   defaultRouter,
 }: GetServiceFactoryOptions) =>
   ({
@@ -45,13 +44,13 @@ export const getServiceFactoryOptions = ({
         serviceDefinition,
         router,
         microserviceContext,
-        transportClientProvider,
+        transportClient,
       }),
     createServiceCall: ({ router = defaultRouter }: { router: MicroserviceApi.Router }) =>
       createServiceCall({
         router,
         microserviceContext,
-        transportClientProvider,
+        transportClient,
       }),
   } as MicroserviceApi.ServiceFactoryOptions);
 
@@ -63,7 +62,7 @@ const printLogs = (whoAmI: string, debug?: boolean) =>
         whoAmI,
         `microservice received an updated`,
         {
-          [type]: items.map((item) => item.qualifier),
+          [type]: items.map((item: MicroserviceApi.Endpoint) => item.qualifier),
         },
         debug
       )

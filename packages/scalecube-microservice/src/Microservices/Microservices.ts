@@ -1,16 +1,15 @@
 import { Address, TransportApi, MicroserviceApi } from '@scalecube/api';
 import { createDiscovery } from '@scalecube/scalecube-discovery';
 import { check, getAddress, getFullAddress } from '@scalecube/utils';
-import { getServiceCall } from '../ServiceCall/ServiceCall';
+import { createServiceCall } from '../ServiceCall/ServiceCall';
 import { createRemoteRegistry } from '../Registry/RemoteRegistry';
 import { createLocalRegistry } from '../Registry/LocalRegistry';
 import { MicroserviceContext, MicroserviceContextOptions } from '../helpers/types';
 import { validateDiscoveryInstance, validateMicroserviceOptions } from '../helpers/validation';
-import { startServer } from '../TransportProviders/MicroserviceServer';
 import { flatteningServices } from '../helpers/serviceData';
-import { createConnectionManager } from '../TransportProviders/ConnectionManager';
 import { getServiceFactoryOptions, setMicroserviceInstance } from './MicroserviceInstance';
 import { ROUTER_NOT_PROVIDED } from '../helpers/constants';
+import { loggerUtil } from '../helpers/logger';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -21,6 +20,16 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     },
     services: [],
     debug: false,
+    transport: {
+      clientTransport: {
+        start: () => {
+          throw new Error('client transport not provided');
+        },
+      },
+      serverTransport: () => {
+        throw new Error('server transport not provided');
+      },
+    },
     ...options,
   };
 
@@ -37,30 +46,24 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 
   validateMicroserviceOptions(microserviceOptions);
 
-  const connectionManager = createConnectionManager();
   const { cluster, debug } = microserviceOptions;
-  if (!microserviceOptions.transport) {
-    throw Error('Transport not provided');
-  }
-  // @ts-ignore
   const transport = microserviceOptions.transport as TransportApi.Transport;
   const address = microserviceOptions.address as Address;
   const seedAddress = microserviceOptions.seedAddress as Address;
 
-  const transportClientProvider = transport && transport.clientProvider;
+  const transportClient = transport.clientTransport;
   const fallBackAddress = address || getAddress(Date.now().toString());
 
   // tslint:disable-next-line
   let microserviceContext: MicroserviceContext | null = createMicroserviceContext({
     address: fallBackAddress,
     debug: debug || false,
-    connectionManager,
   });
 
   const { remoteRegistry, localRegistry } = microserviceContext;
   const serviceFactoryOptions = getServiceFactoryOptions({
     microserviceContext,
-    transportClientProvider,
+    transportClient,
     defaultRouter: microserviceOptions.defaultRouter,
   });
   const services = microserviceOptions
@@ -93,33 +96,28 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   // if address is not available then microservice can't start a server and get serviceCall requests
   const serverStop =
     address && transport
-      ? startServer({
-          address,
-          // server use only localCall therefor, router is irrelevant
-          serviceCall: getServiceCall({
+      ? transport.serverTransport({
+          logger: loggerUtil(microserviceContext.whoAmI, microserviceContext.debug),
+          localAddress: address,
+          serviceCall: createServiceCall({
             router: microserviceOptions.defaultRouter,
             microserviceContext,
-            transportClientProvider,
+            transportClient,
           }),
-          transportServerProvider: transport.serverProvider,
-          debug,
-          whoAmI: getFullAddress(fallBackAddress),
         })
-      : null;
+      : () => {};
 
   return setMicroserviceInstance({
     microserviceContext,
-    transportClientProvider,
+    transportClient,
     discoveryInstance,
     serverStop,
-    address: fallBackAddress,
     debug,
-    endPointsToPublishInCluster,
     defaultRouter: microserviceOptions.defaultRouter,
   }) as MicroserviceApi.Microservice;
 };
 
-const createMicroserviceContext = ({ address, debug, connectionManager }: MicroserviceContextOptions) => {
+const createMicroserviceContext = ({ address, debug }: MicroserviceContextOptions) => {
   const remoteRegistry = createRemoteRegistry();
   const localRegistry = createLocalRegistry();
   return {
@@ -127,6 +125,5 @@ const createMicroserviceContext = ({ address, debug, connectionManager }: Micros
     localRegistry,
     debug,
     whoAmI: getFullAddress(address),
-    connectionManager,
   };
 };

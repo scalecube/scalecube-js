@@ -1,4 +1,4 @@
-import { TransportApi } from '@scalecube/api';
+import { Provider } from '@scalecube/rsocket-adapter';
 import { clientFactory } from './ProviderClient';
 import { serverFactory } from './ProviderServer';
 
@@ -13,15 +13,14 @@ const serializers = {
   },
 };
 
-export const TransportBrowser: TransportApi.Transport = {
-  clientProvider: {
-    providerFactory: clientFactory,
-    serializers,
-    factoryOptions: null,
-  },
-  serverProvider: {
-    providerFactory: serverFactory,
-    serializers,
-    factoryOptions: null,
-  },
+export const clientProvider: Provider = {
+  providerFactory: clientFactory,
+  serializers,
+  factoryOptions: null,
+};
+
+export const serverProvider: Provider = {
+  providerFactory: serverFactory,
+  serializers,
+  factoryOptions: null,
 };

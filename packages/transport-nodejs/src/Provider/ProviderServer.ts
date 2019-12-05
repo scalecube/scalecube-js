@@ -1,11 +1,12 @@
-import { TransportApi, Address } from '@scalecube/api';
+import { Address } from '@scalecube/api';
 import { validateAddress, constants } from '@scalecube/utils';
 // @ts-ignore
 import RSocketWebSocketServer from 'rsocket-websocket-server';
 // @ts-ignore
 import RSocketTCPServer from 'rsocket-tcp-server';
+import { ProviderFactory } from '@scalecube/rsocket-adapter';
 
-export const serverFactory: TransportApi.ProviderFactory = (options: { address: Address; factoryOptions?: any }) => {
+export const serverFactory: ProviderFactory = (options: { address: Address; factoryOptions?: any }) => {
   const { address, factoryOptions } = options;
 
   validateAddress(address);

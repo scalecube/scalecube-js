@@ -1,18 +1,18 @@
 {
-  "name": "@scalecube/transport-nodejs",
-  "version": "0.0.3-next.12",
+  "name": "@scalecube/rsocket-adapter",
+  "version": "0.0.1",
   "private": false,
-  "main": "lib/index.js",
+  "main": "cjs/index.js",
   "module": "es/index.js",
-  "types": "lib/index.d.ts",
+  "types": "cjs/index.d.ts",
   "files": [
-    "lib",
+    "cjs",
     "es"
   ],
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
-    "build": "yarn build-rollup",
+    "build": "yarn build-rollup && tsc",
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
@@ -20,27 +20,22 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.0.3-next.5",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-filesize": "^6.1.1",
-    "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.21.1",
     "rollup-plugin-visualizer": "^2.2.0",
     "ts-jest": "^24.2.0",
     "tslint": "^5.11.0",
+    "@scalecube/api": "^0.0.3-next.4",
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/utils": "^0.0.3-next.12",
-    "@scalecube/rsocket-adapter": "^0.0.1",
+    "@scalecube/utils": "^0.0.3-next.8",
     "rsocket-core": "^0.0.16",
-    "rsocket-tcp-client": "^0.0.16",
-    "rsocket-tcp-server": "^0.0.16",
-    "rsocket-websocket-client": "^0.0.16",
-    "rsocket-websocket-server": "^0.0.16",
-    "ws": ">=3.3.1"
+    "rsocket-flowable": "^0.0.14",
+    "rsocket-types": "^0.0.16",
+    "rxjs": "^6.4.0"
   }
 }

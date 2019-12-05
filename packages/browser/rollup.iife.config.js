@@ -20,14 +20,11 @@ export default {
     },
   ],
   plugins: [
-    resolve({ jsnext: true, main: true }),
     commonjs({
       include: /node_modules/,
       browser: true,
-      namedExports: {
-        'rsocket-types': ['CONNECTION_STATUS'],
-      },
     }),
+    resolve(),
     babel({
       plugins: ['@babel/plugin-transform-arrow-functions'],
       babelrc: false,

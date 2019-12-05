@@ -1,14 +1,13 @@
 import { Observable, throwError } from 'rxjs';
-import { take } from 'rxjs/operators';
 
-import { MicroserviceApi, TransportApi } from '@scalecube/api';
+import { MicroserviceApi } from '@scalecube/api';
 
 import {
   ServiceCall,
-  CreateServiceCallOptions,
+  GetServiceCallOptions,
   ServiceCallResponse,
   ServiceCallOptions,
-  MicroserviceContext,
+  CreateServiceCall,
 } from '../helpers/types';
 import { validateMessage } from '../helpers/validation';
 import { localCall } from './LocalCall';
@@ -16,12 +15,9 @@ import { remoteCall } from './RemoteCall';
 import { MICROSERVICE_NOT_EXISTS, ASYNC_MODEL_TYPES } from '../helpers/constants';
 import { serviceCallError } from './ServiceCallUtils';
 
-export const getServiceCall = ({
-  router,
-  microserviceContext,
-  transportClientProvider,
-}: CreateServiceCallOptions): ServiceCall => {
-  return ({ message, asyncModel, messageFormat }: ServiceCallOptions): ServiceCallResponse => {
+export const getServiceCall = (options: GetServiceCallOptions): ServiceCall => {
+  const { router, microserviceContext, transportClient } = options;
+  return ({ message, asyncModel }: ServiceCallOptions): ServiceCallResponse => {
     try {
       validateMessage(message);
     } catch (e) {
@@ -30,40 +26,31 @@ export const getServiceCall = ({
     }
 
     const localService = microserviceContext.localRegistry.lookUp({ qualifier: message.qualifier });
-    const res$: Observable<any> = localService
-      ? localCall({ localService, asyncModel, messageFormat, message, microserviceContext })
-      : remoteCall({ router, microserviceContext, message, asyncModel, transportClientProvider });
-
-    return asyncModel === ASYNC_MODEL_TYPES.REQUEST_RESPONSE ? res$.pipe(take(1)).toPromise() : res$;
+    return localService
+      ? localCall({ localService, asyncModel, message, microserviceContext })
+      : remoteCall({ router, microserviceContext, message, asyncModel, transportClient });
   };
 };
 
-export const createServiceCall = ({
-  router,
-  microserviceContext,
-  transportClientProvider,
-}: {
-  router: MicroserviceApi.Router;
-  microserviceContext: MicroserviceContext | null;
-  transportClientProvider?: TransportApi.Provider;
-}) => {
+export const createServiceCall = (options: CreateServiceCall) => {
+  const { router, microserviceContext, transportClient } = options;
+
   if (!microserviceContext) {
     throw new Error(MICROSERVICE_NOT_EXISTS);
   }
 
-  const serviceCall = getServiceCall({ router, microserviceContext, transportClientProvider });
+  const serviceCall = getServiceCall({ router, microserviceContext, transportClient });
+
   return Object.freeze({
-    requestStream: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
+    requestStream: (message: MicroserviceApi.Message) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM,
-        messageFormat,
-      }),
-    requestResponse: (message: MicroserviceApi.Message, messageFormat: boolean = false) =>
+      }) as Observable<any>,
+    requestResponse: (message: MicroserviceApi.Message) =>
       serviceCall({
         message,
         asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
-        messageFormat,
-      }),
+      }) as Promise<any>,
   });
 };

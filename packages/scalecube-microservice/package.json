@@ -19,7 +19,6 @@
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test-dom-env",
     "test-dom-env": "jest --config jest.config-dom.js",
-    "test-node-env": "jest --config jest.config-node.js",
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
@@ -52,9 +51,6 @@
   "dependencies": {
     "@scalecube/scalecube-discovery": "^0.1.2-next.13",
     "@scalecube/utils": "^0.0.3-next.12",
-    "rsocket-core": "^0.0.16",
-    "rsocket-flowable": "^0.0.14",
-    "rsocket-types": "^0.0.16",
     "rxjs": "^6.4.0"
   }
 }

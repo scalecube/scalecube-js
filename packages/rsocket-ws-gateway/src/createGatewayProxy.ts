@@ -36,12 +36,10 @@ export function createGatewayProxy(
   const proxies: Proxy[] = [];
   let socket;
   return new Promise(async (resolve, reject) => {
-    try {
-      socket = await connect(url);
-    } catch (e) {
-      // console.log('Err', e);
+    socket = await connect(url).catch((e) => {
       reject(e);
-    }
+    });
+
     defs.forEach((definition) => {
       const { serviceName, methods } = definition;
       validateServiceDefinition(definition);
@@ -88,7 +86,7 @@ const connect = (url) => {
       },
       onError: (error: any) => {
         // console.log('Err', error);
-        reject(new Error('Connection error'));
+        reject({ message: 'Connection error' });
       },
     });
   });

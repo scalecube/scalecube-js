@@ -1,11 +1,11 @@
-import { TransportBrowser } from '../src';
+import { clientProvider, serverProvider } from '../src/Provider/Provider';
 import { constants } from '@scalecube/utils';
 /* tslint:disable */
 
 const mockServer = jest.fn();
 const mockClient = jest.fn();
 
-jest.mock('rsocket-events-server', () => {
+jest.mock('rsocket-websocket-server', () => {
   return class RSocketEventsServer {
     constructor(data: any) {
       mockServer(data);
@@ -13,7 +13,23 @@ jest.mock('rsocket-events-server', () => {
   };
 });
 
-jest.mock('rsocket-events-client', () => {
+jest.mock('rsocket-websocket-client', () => {
+  return class RSocketEventsClient {
+    constructor(...data: any) {
+      mockClient(data);
+    }
+  };
+});
+
+jest.mock('rsocket-tcp-server', () => {
+  return class RSocketEventsServer {
+    constructor(data: any) {
+      mockServer(data);
+    }
+  };
+});
+
+jest.mock('rsocket-tcp-client', () => {
   return class RSocketEventsClient {
     constructor(...data: any) {
       mockClient(data);
@@ -43,11 +59,11 @@ describe(`
   describe.each([
     {
       mock: mockServer,
-      providerFactory: TransportBrowser.serverProvider.providerFactory,
+      providerFactory: serverProvider.providerFactory,
     },
     {
       mock: mockClient,
-      providerFactory: TransportBrowser.clientProvider.providerFactory,
+      providerFactory: clientProvider.providerFactory,
     },
   ])(
     `
@@ -56,7 +72,7 @@ describe(`
   # RSocketClientProvider - client
   `,
     ({ mock, providerFactory, options }) => {
-      test.each(['pm'])(
+      test.each(['ws', 'tcp'])(
         `
           Scenario: create RSocketServerProvider | RSocketClientProvider
           Given     protocol
@@ -106,7 +122,7 @@ describe(`
           address.fullAddress = `${protocol}://${address.host}:${address.port}/${address.path}`;
 
           try {
-            TransportBrowser.serverProvider.providerFactory({
+            serverProvider.providerFactory({
               factoryOptions: null,
               address,
             });

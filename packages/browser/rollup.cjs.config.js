@@ -19,7 +19,6 @@ export default {
   ],
   external: ['rxjs'],
   plugins: [
-    resolve({ jsnext: true, main: true }),
     commonjs({
       include: /node_modules/,
       browser: true,
@@ -27,6 +26,7 @@ export default {
         'rsocket-types': ['CONNECTION_STATUS'],
       },
     }),
+    resolve(),
     babel({
       plugins: ['@babel/plugin-transform-arrow-functions'],
       babelrc: false,
