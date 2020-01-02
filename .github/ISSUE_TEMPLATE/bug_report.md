@@ -1,20 +1,26 @@
 ---
-name: Bug report
-about: Create a report to help us fix the bug
+name: "\U0001F41B Bug report"
+about: Create a report to help us improve
 title: ''
-labels: 'Bug'
+labels: bug
 assignees: ''
+
 ---
 
 ## Describe the bug
 
-A clear and concise description of what the bug is.
+A clear and concise description of the bug.
 
 ## Reproduce
 
 #### Expected behavior
 
-A test case in _**Gherkin Syntax**_ or the link to this test case.
+Test case in _**[Gherkin Syntax](https://docs.cucumber.io/gherkin/reference/)**_ or the link to this test case.
+```gherkin
+Given A great package
+When I install it
+Then I don't find any bug
+```
 
 #### Actual behavior
 
@@ -32,13 +38,16 @@ Sandbox, snippet, repository etc..
 
 #### Attachments
 
-Screenshots, videos, documents, localStorage and cookies data etc..
+Screenshots, videos, documents, log etc.
 
 #### Environment
 
-- OS & Version: [e.g. iOS:11.10...]
-- Browser & Version [e.g. chrome:x..., safari:y..]
-- Device (the full name of the device)
+| Software         | Version(s) |
+| ---------------- | ---------- |
+| Node             |            |
+| npm/Yarn         |            |
+| Operating System |            |
+| Browser          |            |
 
 #### Additional context
 
