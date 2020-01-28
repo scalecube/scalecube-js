@@ -11,6 +11,21 @@ This package provides Scalecube's implementation for microservices architecture.
 please [Read](http://scalecube.io/javascript-docs) before starting to work with scalecube.
 
 ## Usage
+```typescript
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+import { TransportNodeJS } from '@scalecube/transport-nodejs';
+import { joinCluster } from '@scalecube/cluster-nodejs';
+
+const microserviceInstance = createMicroservice({
+  services: [/* array of services */],
+  seedAddress : 'pm://myOrganization:8080/ServiceA',
+  address : 'pm://myOrganization:8080/ServiceB',
+  transport: TransportNodeJS, // scalecube provide a default transport configuration when running on browser,
+  cluster: joinCluster, // scalecube provide a default cluster configuration when running on browser,
+  defaultRouter: retryRouter({period:10}),
+  debug: true // default is false
+})
+```
 
 #### Define a service
 
