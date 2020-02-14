@@ -12,6 +12,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (config: a
     transport,
     cluster: joinCluster,
     defaultRouter: retryRouter({ period: 10, maxRetry: 500 }),
+    address: stringToAddress(Date.now().toString()),
     ...config,
   });
 };
