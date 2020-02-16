@@ -1,6 +1,7 @@
 import { isNodejs } from './checkEnvironemnt';
 
 const workersMap: { [key: string]: Worker } = {};
+const iframes: { [key: string]: any } = {};
 
 export const initialize = () => {
   if (!isNodejs()) {
@@ -10,12 +11,19 @@ export const initialize = () => {
     } else {
       addEventListener('message', (ev) => {
         if (ev && ev.data && !ev.data.workerId) {
-          if (ev.data.detail) {
+          const detail = ev.data.detail;
+          if (detail) {
             ev.data.workerId = 1;
-            const propogateTo = workersMap[ev.data.detail.to] || workersMap[ev.data.detail.address]; // discoveryEvents || rsocketEvents
+            const propogateTo = workersMap[detail.to] || workersMap[detail.address]; // discoveryEvents || rsocketEvents
             if (propogateTo) {
               // @ts-ignore
               propogateTo.postMessage(ev.data, ev.ports);
+            }
+
+            const iframe = iframes[detail.to] || iframes[detail.address];
+            // @ts-ignore
+            if (iframe) {
+              iframe.contentWindow.postMessage(ev.data, '*', ev.ports);
             }
           }
         }
@@ -55,4 +63,14 @@ export const addWorker = (worker: Worker) => {
 
 export const removeWorker = (worker: Worker) => {
   worker.removeEventListener('message', workerEventHandler.bind(worker));
+};
+export const addIframe = (iframe: HTMLIFrameElement) => {
+  const iframeEventHandler = (ev: any) => {
+    if (ev.source === iframe.contentWindow) {
+      iframes[ev.data.detail.whoAmI] = iframe;
+      window.removeEventListener('message', iframeEventHandler);
+    }
+  };
+
+  window.addEventListener('message', iframeEventHandler);
 };

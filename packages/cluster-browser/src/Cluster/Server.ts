@@ -27,6 +27,14 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
   const eventHandlers = {
     [`globalEventsHandler${whoAmI}`]: (ev: any) => {
       const { type: evType, detail: membershipEvent } = ev.data;
+      if (evType === 'DiscoverIframes' && window.self !== window.top) {
+        genericPostMessage({
+          detail: {
+            whoAmI,
+          },
+          type: 'ConnectIframe',
+        });
+      }
       if (evType === MEMBERSHIP_EVENT) {
         const { metadata, type, to, from, origin } = membershipEvent;
 
@@ -180,6 +188,19 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
     },
   };
 
+  const notifyMainthreadType = () => {
+    // @ts-ignore
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+      return 'ConnectWorkerEvent';
+    }
+
+    if (window.self !== window.top) {
+      return 'ConnectIframe';
+    }
+
+    return '';
+  };
+
   return {
     start: () => {
       addEventListener(MESSAGE, eventHandlers[`globalEventsHandler${whoAmI}`]);
@@ -188,7 +209,7 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
         detail: {
           whoAmI,
         },
-        type: 'ConnectWorkerEvent',
+        type: notifyMainthreadType(),
       });
     },
     stop: () => {
