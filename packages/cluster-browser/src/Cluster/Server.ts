@@ -27,14 +27,6 @@ export const server: CreateClusterServer = (options: ClusterServerOptions) => {
   const eventHandlers = {
     [`globalEventsHandler${whoAmI}`]: (ev: any) => {
       const { type: evType, detail: membershipEvent } = ev.data;
-      if (evType === 'DiscoverIframes' && window.self !== window.top) {
-        genericPostMessage({
-          detail: {
-            whoAmI,
-          },
-          type: 'ConnectIframe',
-        });
-      }
       if (evType === MEMBERSHIP_EVENT) {
         const { metadata, type, to, from, origin } = membershipEvent;
 
