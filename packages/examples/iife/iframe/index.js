@@ -1,6 +1,9 @@
 window.addEventListener('DOMContentLoaded', (event) => {
   ((createMicroservice, workers, ASYNC_MODEL_TYPES, definitions) => {
+    const worker = new Worker('worker1.js');
+
     workers.initialize();
+    workers.addWorker(worker);
     workers.addIframe(document.getElementById('iframe'));
 
     const proxy = createMicroservice({

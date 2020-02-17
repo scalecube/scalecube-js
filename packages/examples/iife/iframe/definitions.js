@@ -26,9 +26,19 @@ definitions = (function() {
     },
   };
 
+  var remoteServiceDefinition4 = {
+    serviceName: 'RemoteService4',
+    methods: {
+      ack4: {
+        asyncModel: 'requestResponse',
+      },
+    },
+  };
+
   return {
     remoteServiceDefinition1,
     remoteServiceDefinition2,
     remoteServiceDefinition3,
+    remoteServiceDefinition4,
   };
 })();

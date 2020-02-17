@@ -16,7 +16,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       serviceDefinition: definitions.remoteServiceDefinition2,
     });
 
-    const proxy2 = createMicroservice({
+    const ms = createMicroservice({
       seedAddress: 'iframe', // 'main'
       address: 'iframe2',
       debug: true,
@@ -28,20 +28,33 @@ window.addEventListener('DOMContentLoaded', (event) => {
           },
         },
       ],
-    }).createProxy({
+    });
+
+    const proxy2 = ms.createProxy({
       serviceDefinition: definitions.remoteServiceDefinition1,
+    });
+
+    const proxy3 = ms.createProxy({
+      serviceDefinition: definitions.remoteServiceDefinition4,
     });
 
     const ack1 = document.getElementById('ack1');
     const ack2 = document.getElementById('ack2');
+    const ack4 = document.getElementById('ack4');
     ack1.innerHTML = 'no event yet - remote service on main';
     ack2.innerHTML = 'no event yet - remote service on the same iframe';
+    ack4.innerHTML = 'no event yet - remote service on worker';
+
     proxy.ack2().then((response) => {
       ack1.innerHTML = `receive ${response} from remote service on the main`;
     });
 
     proxy2.ack1().then((response) => {
       ack2.innerHTML = `receive ${response} from remote service on the same iframe`;
+    });
+
+    proxy3.ack4().then((response) => {
+      ack4.innerHTML = `receive ${response} from remote service on worker`;
     });
   })(window.sc.createMicroservice, window.sc.workers, window.sc.ASYNC_MODEL_TYPES, definitions);
 });
