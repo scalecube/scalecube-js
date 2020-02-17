@@ -1,5 +1,5 @@
 definitions = (function() {
-  var remoteServiceDefinition = {
+  var remoteServiceDefinition1 = {
     serviceName: 'RemoteService1',
     methods: {
       ack1: {
@@ -17,8 +17,18 @@ definitions = (function() {
     },
   };
 
+  var remoteServiceDefinition3 = {
+    serviceName: 'RemoteService3',
+    methods: {
+      ack3: {
+        asyncModel: 'requestResponse',
+      },
+    },
+  };
+
   return {
-    remoteServiceDefinition,
+    remoteServiceDefinition1,
     remoteServiceDefinition2,
+    remoteServiceDefinition3,
   };
 })();

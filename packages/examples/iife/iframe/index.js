@@ -2,6 +2,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
   ((createMicroservice, workers, ASYNC_MODEL_TYPES, definitions) => {
     workers.initialize();
     workers.addIframe(document.getElementById('iframe'));
+
     const proxy = createMicroservice({
       // seedAddress: 'iframe',
       address: 'main',
@@ -15,7 +16,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
       ],
       debug: true,
     }).createProxy({
-      serviceDefinition: definitions.remoteServiceDefinition,
+      serviceDefinition: definitions.remoteServiceDefinition1,
     });
 
     proxy.ack1().then((response) => {
