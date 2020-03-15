@@ -14,18 +14,24 @@ export const genericPostMessage = (data: any, transfer?: any[]) => {
       if (data.detail && data.detail.to && localAddress.indexOf(data.detail.to) > -1) {
         const event = new MessageEvent('message', {
           data,
-          ports: transfer ? transfer : undefined,
+          ports: transfer,
         });
         dispatchEvent(event);
       } else {
         // @ts-ignore
-        postMessage(data, transfer ? transfer : undefined);
+        postMessage(data, transfer);
       }
     } else {
       if (data.type === 'ConnectWorkerEvent') {
         return;
       }
-      postMessage(data, '*', transfer ? transfer : undefined);
+
+      if (window.self !== window.top) {
+        // @ts-ignore
+        window.parent && window.parent.postMessage(data, '*', transfer);
+      } else {
+        postMessage(data, '*', transfer);
+      }
     }
   } catch (e) {
     console.error('Unable to post message ', e);

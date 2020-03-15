@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/transport-nodejs",
-  "version": "0.0.3-next.13",
+  "version": "0.0.3-next.14",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -34,8 +34,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/rsocket-adapter": "^0.0.2-next.0",
-    "@scalecube/utils": "^0.0.3-next.13",
+    "@scalecube/rsocket-adapter": "^0.0.2-next.1",
+    "@scalecube/utils": "^0.0.3-next.14",
     "rsocket-core": "^0.0.16",
     "rsocket-tcp-client": "^0.0.16",
     "rsocket-tcp-server": "^0.0.16",
