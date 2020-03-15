@@ -35,7 +35,7 @@
     "@scalecube/rsocket-adapter": "^0.0.2-next.0",
     "@scalecube/utils": "^0.0.3-next.13",
     "rsocket-core": "^0.0.16",
-    "rsocket-events-client": "^0.0.21",
-    "rsocket-events-server": "^0.0.21"
+    "rsocket-events-client": "^0.0.22",
+    "rsocket-events-server": "^0.0.22"
   }
 }
