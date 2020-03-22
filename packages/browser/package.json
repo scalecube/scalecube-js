@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/browser",
-  "version": "0.0.2-next.5",
+  "version": "0.0.2-next.6",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
