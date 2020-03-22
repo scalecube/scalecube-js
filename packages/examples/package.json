@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.1.2-next.19",
+  "version": "0.1.2-next.20",
   "private": false,
   "rollup": "rollup/index.js",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/browser": "^0.0.2-next.5",
+    "@scalecube/browser": "^0.0.2-next.6",
     "@scalecube/node": "^0.0.2-next.2",
     "@scalecube/routers": "^0.0.3-next.15",
     "@scalecube/transport-nodejs": "^0.0.3-next.14",
