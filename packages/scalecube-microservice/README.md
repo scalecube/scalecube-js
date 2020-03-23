@@ -1,6 +1,7 @@
 [![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> **NOTICE** versions 0.0.x are experimental without LTS or the API and behavior might change from patch to patch
+> This is part of [scalecube-js](https://github.com/scalecube/scalecube-js) project, see more at https://github.com/scalecube/scalecube-js  
+> [Full documentation](http://scalecube.io/javascript-docs)
 
 # Microservices
 
@@ -11,6 +12,22 @@ This package provides Scalecube's implementation for microservices architecture.
 please [Read](http://scalecube.io/javascript-docs) before starting to work with scalecube.
 
 ## Usage
+
+```typescript
+import { createMicroservice } from '@scalecube/scalecube-microservice';
+import { TransportNodeJS } from '@scalecube/transport-nodejs';
+import { joinCluster } from '@scalecube/cluster-nodejs';
+
+const microserviceInstance = createMicroservice({
+  services: [/* array of services */],
+  seedAddress : 'pm://myOrganization:8080/ServiceA',
+  address : 'pm://myOrganization:8080/ServiceB',
+  transport: TransportNodeJS, // scalecube provide a default transport configuration when running on browser,
+  cluster: joinCluster, // scalecube provide a default cluster configuration when running on browser,
+  defaultRouter: retryRouter({period:10}),
+  debug: true // default is false
+})
+```
 
 #### Define a service
 
