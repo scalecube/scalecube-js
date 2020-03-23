@@ -11,7 +11,7 @@ if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
 
-    lerna publish --canary --dist-tag --skip-git snapshot --preid alpha.$(date +%s) --yes
+    lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes --skip-git
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
