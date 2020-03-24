@@ -4,6 +4,7 @@ set -e
 MSG_PUBLISH_SUCCESS="lerna publish: Succeed"
 MSG_PUBLISH_FAIL="lerna publish: Failed"
 
+
 git status
 
 if [[ "$TRAVIS_BRANCH" =~ ^feature\/.*$ ]]; then
