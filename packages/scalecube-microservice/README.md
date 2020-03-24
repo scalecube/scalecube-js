@@ -102,3 +102,4 @@ const proxyName = microservice.createProxy({
 
 proxyName.hello('ME').then(console.log) // Hello ME
 ```
+
