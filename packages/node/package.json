@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/node",
-  "version": "0.0.2-next.2",
+  "version": "0.0.0-next.555",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -18,7 +18,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.0.3-next.6",
+    "@scalecube/api": "^0.0.0-next.555",
     "rollup": "^1.27.4",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-filesize": "^6.1.1",
@@ -28,11 +28,11 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/cluster-nodejs": "^0.0.3-next.14",
-    "@scalecube/routers": "^0.0.3-next.15",
-    "@scalecube/scalecube-microservice": "^0.1.4-next.19",
-    "@scalecube/transport-nodejs": "^0.0.3-next.14",
-    "@scalecube/utils": "^0.0.3-next.14",
+    "@scalecube/cluster-nodejs": "^0.0.0-next.555",
+    "@scalecube/routers": "^0.0.0-next.555",
+    "@scalecube/scalecube-microservice": "^0.0.0-next.555",
+    "@scalecube/transport-nodejs": "^0.0.0-next.555",
+    "@scalecube/utils": "^0.0.0-next.555",
     "rxjs": "^6.4.0"
   }
 }

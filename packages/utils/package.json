@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/utils",
-  "version": "0.0.3-next.14",
+  "version": "0.0.0-next.555",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -21,7 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.0.3-next.6",
+    "@scalecube/api": "^0.0.0-next.555",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-filesize": "^6.1.1",
