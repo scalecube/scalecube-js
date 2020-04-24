@@ -18,7 +18,7 @@ createMicroservice({
   },
   services: [
     {
-      reference: { hello: () => Promise.resolve('hello') },
+      reference: { hello: ({ name }) => Promise.resolve(`hello: ${name}`) },
       definition: {
         serviceName: 'HelloService',
         methods: {

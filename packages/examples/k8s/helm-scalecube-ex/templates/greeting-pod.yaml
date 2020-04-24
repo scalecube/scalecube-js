@@ -12,7 +12,7 @@ spec:
       imagePullPolicy: { { $.Values.image.pullPolicy } }
       command: ['/bin/sh', '-c']
       args:
-        - 'until getent hosts seed.seed; do sleep 1; done; exit 0;'
+        - 'until getent hosts seed.seed; do sleep 1; done; sleep 10; exit 0;'
   containers:
     - name: greeting
       image: { { $.Values.image.name } }

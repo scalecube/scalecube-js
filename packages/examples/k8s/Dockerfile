@@ -1,9 +1,7 @@
-FROM mhart/alpine-node
-
-RUN apk add python make g++
+FROM node:alpine
 
 COPY . /var/app
 WORKDIR /var/app
-RUN npm i
+RUN yarn
 
 CMD /bin/sh

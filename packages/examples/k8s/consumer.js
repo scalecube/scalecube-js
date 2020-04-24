@@ -1,4 +1,6 @@
 const { createMicroservice, ASYNC_MODEL_TYPES } = require('@scalecube/node');
+const http = require('http');
+const url = require('url');
 
 console.log('seed', process.env.SEED);
 console.log('address', process.env.ADDRESS);
@@ -30,9 +32,29 @@ const proxy = createMicroservice({
   serviceDefinition: definition,
 });
 
-setInterval(() => {
-  proxy
-    .hello('test')
-    .then(console.log)
-    .catch(console.error);
-}, 10000);
+// setInterval(() => {
+//   proxy
+//     .hello('test')
+//     .then(console.log)
+//     .catch(console.error);
+// }, 10000);
+
+//create a server object:
+http
+  .createServer(function(req, res) {
+    console.log('got req: ', req.url);
+    var q = url.parse(req.url, true).query;
+    proxy
+      .hello({ name: q.name })
+      .then((r) => {
+        console.log(r);
+        res.write(JSON.stringify(r)); //write a response to the client
+        res.end(); //end the response
+      })
+      .catch((e) => {
+        console.log(res);
+        res.write(JSON.stringify(e)); //write a response to the client
+        res.end(); //end the response
+      });
+  })
+  .listen(80); //the server object listens on port 8080

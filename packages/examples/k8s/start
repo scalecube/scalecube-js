@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if hash go 2>/dev/null; then
+  export PATH=$PATH:$(go env GOPATH)/bin/
+fi
+
 for cmd in docker kind helm kubectl; do
 	if ! command -v $cmd &> /dev/null; then
 		echo >&2 "error: \"$cmd\" not found!, please install it and make sure it in PATH"
@@ -10,9 +14,9 @@ done
 # this is hack we need a public image name
 # it will work only on KinD
 # for real k8s publish docker image and use it
-docker build . -t mhart/alpine-node:scalecube
-kind create cluster --name scalecube-example || echo "cluster exists, for clean run: kind delete cluster --name scalecube-example"
-kind load docker-image --name scalecube-example mhart/alpine-node:scalecube
+docker build . -t scalecube-example:k8s
+kind create cluster --name scalecube-example --config cluster.yml || echo "cluster exists, for clean run: kind delete cluster --name scalecube-example"
+kind load docker-image --name scalecube-example scalecube-example:k8s
 kubectl config use-context kind-scalecube-example
 kubectl create namespace scalecube-example || kubectl delete namespace scalecube-example && kubectl create namespace scalecube-example
 helm install scalecube-example ./helm-scalecube-ex --wait -n scalecube-example --debug
