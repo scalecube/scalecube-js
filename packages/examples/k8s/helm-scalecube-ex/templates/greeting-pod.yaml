@@ -6,18 +6,13 @@ metadata:
 
 spec:
   restartPolicy: Never
-  initContainers:
-    - name: wait-seed
-      image: { { $.Values.image.name } }
-      imagePullPolicy: { { $.Values.image.pullPolicy } }
-      command: ['/bin/sh', '-c']
-      args:
-        - 'until getent hosts seed.seed; do sleep 1; done; sleep 10; exit 0;'
   containers:
     - name: greeting
       image: { { $.Values.image.name } }
       imagePullPolicy: { { $.Values.image.pullPolicy } }
-      command: ['node', 'greeting.js']
+      command: ['/bin/sh', '-c']
+      args:
+        - 'until getent hosts seed.seed; do sleep 1; done; until node greeting.js; do sleep 1; done;'
       env:
         - name: NAMESPACE
           valueFrom:
