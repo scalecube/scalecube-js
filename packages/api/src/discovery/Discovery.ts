@@ -29,7 +29,7 @@ export interface DiscoveryOptions {
    * @property
    * the address we want to use in-order to connect to the distributed environment.
    */
-  seedAddress?: Address;
+  seedAddress?: Address[];
   /**
    * @method
    * Pluggable cluster,

@@ -406,7 +406,7 @@ describe('Test the creation of Microservice', () => {
         And     using it as 'service'.
         When    creating a Microservice from the 'service'
         Then    exception will occur.
-          
+
                 |definition      | value
                 |string          | 'test'
                 |empty string    | ''
@@ -419,7 +419,7 @@ describe('Test the creation of Microservice', () => {
                 |double          | 10.1
                 |object          | {}
                 |null            | null
-                
+
         Then    invalid service error will occur
       `,
     (services) => {
@@ -440,11 +440,11 @@ describe('Test the creation of Microservice', () => {
         And     using it as 'service'.
         When    creating a Microservice from the 'service'
         Then    exception will occur.
-          
+
                 |service     | value
                 |null        | null
                 |undefined   | undefined
-                
+
         Then    invalid service error will occur
       `,
     (service) => {
@@ -465,11 +465,11 @@ describe('Test the creation of Microservice', () => {
         And     using it as 'microserviceOptions'.
         When    creating a Microservice from the 'microserviceOptions'
         Then    no error thrown and microservice instantiates with default options
-          
+
                 |microserviceOptions     | value
                 |null                    | null
                 |undefined               | undefined
-                
+
         Then    invalid service error will occur
       `,
     (microserviceOptions) => {

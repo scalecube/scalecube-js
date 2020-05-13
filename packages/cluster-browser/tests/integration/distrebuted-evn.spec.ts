@@ -21,7 +21,7 @@ describe(`
         | emit4	 | 'member2'	| [s1, c2]	| 'REMOVED'
         | emit5	 | 'member1'	| [s1, s2]	| 'REMOVED'
         `, () => {
-  const buildCluster = (name: string, items: any[], seedAddress?: Address) => {
+  const buildCluster = (name: string, items: any[], seedAddress?: Address[]) => {
     const address: Address = getAddress(name);
     const member = joinCluster({
       address,
@@ -35,21 +35,15 @@ describe(`
   };
 
   const [member0Address, member0, member0FullAddress, items0] = buildCluster('member0', ['s1', 's5']);
-  const [member1Address, member1, member1FullAddress, items1] = buildCluster(
-    'member1',
-    ['s1', 's2'],
-    member0Address as Address
-  );
-  const [member2Address, member2, member2FullAddress, items2] = buildCluster(
-    'member2',
-    ['s1', 'c2'],
-    member1Address as Address
-  );
-  const [member3Address, member3, member3FullAddress, items3] = buildCluster(
-    'member3',
-    ['s2', 'c1'],
-    member1Address as Address
-  );
+  const [member1Address, member1, member1FullAddress, items1] = buildCluster('member1', ['s1', 's2'], [
+    member0Address,
+  ] as Address[]);
+  const [member2Address, member2, member2FullAddress, items2] = buildCluster('member2', ['s1', 'c2'], [
+    member1Address,
+  ] as Address[]);
+  const [member3Address, member3, member3FullAddress, items3] = buildCluster('member3', ['s2', 'c1'], [
+    member1Address,
+  ] as Address[]);
 
   afterAll(() => {
     (member0 as ClusterApi.Cluster).destroy();

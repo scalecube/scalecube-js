@@ -6,7 +6,10 @@ import { client } from './Client';
 import { createMember } from './Member';
 
 export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
-  const { address, seedAddress, itemsToPublish, retry, debug } = options;
+  const { address, itemsToPublish, retry, debug } = options;
+  // browser cluster only support one seed atm
+  const seedAddress = options.seedAddress && options.seedAddress[0];
+
   const { port1, port2 } = new MessageChannel();
   const membersStatus: ClusterApi.MembersMap = {
     membersPort: {},

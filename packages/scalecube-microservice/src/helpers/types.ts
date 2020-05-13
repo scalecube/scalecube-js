@@ -132,7 +132,7 @@ export interface SetMicroserviceInstanceOptions {
   debug?: boolean;
   microserviceContext: MicroserviceContext;
   transportClient: TransportApi.ClientTransport;
-  discoveryInstance: DiscoveryApi.Discovery;
+  discoveryInstance: DiscoveryApi.Discovery | null;
   serverStop: TransportApi.ServerStop;
   defaultRouter: MicroserviceApi.Router;
 }
@@ -166,7 +166,7 @@ export interface CreateServiceCall {
 
 export interface Destroy {
   microserviceContext: MicroserviceContext | null;
-  discovery: DiscoveryApi.Discovery;
+  discovery: DiscoveryApi.Discovery | null;
   serverStop: TransportApi.ServerStop;
   transportClientDestroy: TransportApi.TDestroy;
 }

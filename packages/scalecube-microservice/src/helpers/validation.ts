@@ -1,4 +1,4 @@
-import { check, validateAddress, validateServiceDefinition, getQualifier } from '@scalecube/utils';
+import { check, validateAddress, validateServiceDefinition, getQualifier, constants } from '@scalecube/utils';
 import { MicroserviceApi } from '@scalecube/api';
 import {
   SERVICES_IS_NOT_ARRAY,
@@ -21,7 +21,14 @@ import {
 export const validateMicroserviceOptions = (microserviceOptions: any) => {
   check.assertObject(microserviceOptions, MICROSERVICE_OPTIONS_IS_NOT_OBJECT);
   const { services, seedAddress, address } = microserviceOptions;
-  validateAddress(seedAddress, true);
+
+  if (typeof seedAddress !== 'undefined') {
+    check.asserNotEmptytArray(seedAddress, constants.NOT_VALID_ADDRESS);
+    seedAddress.forEach((seed: any) => {
+      validateAddress(seed, true);
+    });
+  }
+
   validateAddress(address, true);
   validateMicroserviceServices(services);
 };

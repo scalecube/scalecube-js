@@ -21,7 +21,7 @@ export interface ClusterOptions {
    * @property seedAddress
    * address of the member that act as the seed
    */
-  seedAddress?: Address;
+  seedAddress?: Address[];
   /**
    * @property itemsToPublish
    * item to share with the different members
