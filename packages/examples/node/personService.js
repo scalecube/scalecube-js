@@ -18,12 +18,22 @@ process.on('message', () => {
       port: 3000,
       path: '',
     },
-    seedAddress: {
-      protocol: 'ws',
-      host: 'localhost',
-      port: 1000,
-      path: '',
-    },
+    seedAddress: [
+      // seed address not exists (or possible down)
+      {
+        protocol: 'ws',
+        host: 'localhost',
+        port: 5000,
+        path: '',
+      },
+      // seed address that exists
+      {
+        protocol: 'ws',
+        host: 'localhost',
+        port: 1000,
+        path: '',
+      },
+    ],
     services: [
       {
         // here is example to have dependency on another service,
