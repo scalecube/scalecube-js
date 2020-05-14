@@ -9,8 +9,8 @@ spec:
   restartPolicy: Never
   containers:
     - name: consumer
-      image: { { $.Values.image.name } }
-      imagePullPolicy: { { $.Values.image.pullPolicy } }
+      image: {{$.Values.image.name}}
+      imagePullPolicy: {{$.Values.image.pullPolicy}}
       command: ['/bin/sh', '-c']
       args:
         - 'until getent hosts seed.seed; do sleep 1; done; until node consumer.js; do sleep 1; done;'

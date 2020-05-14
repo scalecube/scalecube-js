@@ -10,7 +10,9 @@ module.exports = {
   overrides: [
     {
       files: '**/*.yaml',
-      bracketSpacing: false,
+      options: {
+        bracketSpacing: false,
+      },
     },
   ],
 };
