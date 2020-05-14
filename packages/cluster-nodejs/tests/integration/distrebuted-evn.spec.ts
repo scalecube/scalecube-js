@@ -23,7 +23,7 @@ describe(`
         `, () => {
   const http = require('http');
 
-  const buildCluster = (port: number, items: any[], seedAddress?: Address) => {
+  const buildCluster = (port: number, items: any[], seedAddress?: Address[]) => {
     const server = http.createServer().listen(port);
     const address = {
       protocol: 'ws',
@@ -44,21 +44,15 @@ describe(`
   };
 
   const [member0Address, member0, member0FullAddress, items0, s8000] = buildCluster(8000, ['s1', 's2']);
-  const [member1Address, member1, member1FullAddress, items1, s8001] = buildCluster(
-    8001,
-    ['s1', 's2'],
-    member0Address as Address
-  );
-  const [member2Address, member2, member2FullAddress, items2, s8002] = buildCluster(
-    8002,
-    ['s1', 'c2'],
-    member1Address as Address
-  );
-  const [member3Address, member3, member3FullAddress, items3, s8003] = buildCluster(
-    8003,
-    ['s2', 'c1'],
-    member1Address as Address
-  );
+  const [member1Address, member1, member1FullAddress, items1, s8001] = buildCluster(8001, ['s1', 's2'], [
+    member0Address,
+  ] as Address[]);
+  const [member2Address, member2, member2FullAddress, items2, s8002] = buildCluster(8002, ['s1', 'c2'], [
+    member1Address,
+  ] as Address[]);
+  const [member3Address, member3, member3FullAddress, items3, s8003] = buildCluster(8003, ['s2', 'c1'], [
+    member1Address,
+  ] as Address[]);
 
   afterAll((done) => {
     (member0 as ClusterApi.Cluster).destroy();

@@ -37,19 +37,19 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     microserviceOptions = { ...microserviceOptions, address: getAddress(microserviceOptions.address as string) };
   }
 
-  if (check.isString(microserviceOptions.seedAddress)) {
-    microserviceOptions = {
-      ...microserviceOptions,
-      seedAddress: getAddress(microserviceOptions.seedAddress as string),
-    };
-  }
+  microserviceOptions = {
+    ...microserviceOptions,
+    seedAddress: !!microserviceOptions.seedAddress
+      ? (multiSeedSupport(microserviceOptions.seedAddress) as Address[])
+      : microserviceOptions.seedAddress,
+  };
 
   validateMicroserviceOptions(microserviceOptions);
 
   const { cluster, debug } = microserviceOptions;
   const transport = microserviceOptions.transport as TransportApi.Transport;
   const address = microserviceOptions.address as Address;
-  const seedAddress = microserviceOptions.seedAddress as Address;
+  const seedAddress = microserviceOptions.seedAddress as Address[];
 
   const transportClient = transport.clientTransport;
   const fallBackAddress = address || getAddress(Date.now().toString());
@@ -91,7 +91,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
     debug,
   });
 
-  validateDiscoveryInstance(discoveryInstance);
+  discoveryInstance && validateDiscoveryInstance(discoveryInstance);
 
   // if address is not available then microservice can't start a server and get serviceCall requests
   const serverStop =
@@ -126,4 +126,16 @@ const createMicroserviceContext = ({ address, debug }: MicroserviceContextOption
     debug,
     whoAmI: getFullAddress(address),
   };
+};
+
+const multiSeedSupport = (seedAddress: string | Address | string[] | Address[]) => {
+  let seeds = [];
+  if (!check.isArray(seedAddress)) {
+    seeds = check.isString(seedAddress) ? [getAddress(seedAddress as string)] : [seedAddress];
+  } else {
+    seeds = (seedAddress as []).map((val: string | Address) => {
+      return check.isString(val) ? getAddress(val as string) : val;
+    });
+  }
+  return seeds;
 };

@@ -31,6 +31,10 @@ export const assertArray = (val: any, msg = 'Expected to be an array') => {
   assert(isArray(val), msg);
 };
 
+export const asserNotEmptytArray = (val: any, msg = 'Expected to be an array') => {
+  assert(isNonEmptyArray(val), msg);
+};
+
 export const isObject = (val: any): boolean => Object.prototype.toString.call(val) === '[object Object]';
 
 export const assertObject = (val: any, msg = 'Expected to be an object') => {

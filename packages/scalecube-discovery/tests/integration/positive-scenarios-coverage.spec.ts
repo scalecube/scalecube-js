@@ -39,7 +39,7 @@ describe('Test discovery success scenarios', () => {
 
     const discoveryA = createDiscovery({
       address: aAddress,
-      seedAddress: bAddress,
+      seedAddress: [bAddress],
       itemsToPublish: [],
     });
 
@@ -79,7 +79,7 @@ describe('Test discovery success scenarios', () => {
 
     const discoveryA = createDiscovery({
       address: aAddress,
-      seedAddress: bAddress,
+      seedAddress: [bAddress],
       itemsToPublish: [],
     });
 
@@ -117,7 +117,7 @@ describe('Test discovery success scenarios', () => {
 
     const discoveryA = createDiscovery({
       address: aAddress,
-      seedAddress: bAddress,
+      seedAddress: [bAddress],
       itemsToPublish: [],
     });
 

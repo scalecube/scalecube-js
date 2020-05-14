@@ -13,13 +13,7 @@
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
-    "runNodejs02": "whoAmI=localHost:2000 node node/index.js -port 2000",
-    "runNodejs01": "whoAmI=localHost:1000 seed=localHost:2000 node node/index.js -port 1000",
-    "runNodejs03": "whoAmI=localHost:3000 seed=localHost:2000 node node/index.js -port 3000",
-    "runNodejs05": "whoAmI=localHost:5000 seed=localHost:2000 node node/index.js -port 5000",
-    "runNodejs04": "whoAmI=localHost:4000 seed=localHost:3000 node node/index.js -port 4000",
-    "runNodejs06": "whoAmI=localHost:6000 seed=localHost:5000 node node/index.js -port 6000",
-    "runNodejs07": "whoAmI=localHost:7000 seed=localHost:5000 node node/index.js -port 7000"
+    "runBasicNode": "node node/index.js"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
