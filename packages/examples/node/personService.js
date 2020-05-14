@@ -15,7 +15,7 @@ process.on('message', () => {
     address: {
       protocol: 'ws',
       host: 'localhost',
-      port: 3000,
+      port: 6113,
       path: '',
     },
     seedAddress: [
@@ -23,14 +23,14 @@ process.on('message', () => {
       {
         protocol: 'ws',
         host: 'localhost',
-        port: 5000,
+        port: 6115,
         path: '',
       },
       // seed address that exists
       {
         protocol: 'ws',
         host: 'localhost',
-        port: 1000,
+        port: 6111,
         path: '',
       },
     ],

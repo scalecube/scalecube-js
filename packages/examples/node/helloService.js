@@ -14,13 +14,13 @@ process.on('message', () => {
     address: {
       protocol: 'ws',
       host: 'localhost',
-      port: 2000,
+      port: 6112,
       path: '',
     },
     seedAddress: {
       protocol: 'ws',
       host: 'localhost',
-      port: 1000,
+      port: 6111,
       path: '',
     },
     services: [

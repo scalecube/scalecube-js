@@ -5,7 +5,7 @@ process.on('message', () => {
     address: {
       protocol: 'ws',
       host: 'localhost',
-      port: 1000,
+      port: 6111,
       path: '',
     },
     debug: true,

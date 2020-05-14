@@ -6,13 +6,13 @@ process.on('message', () => {
     address: {
       protocol: 'ws',
       host: 'localhost',
-      port: 4000,
+      port: 6114,
       path: '',
     },
     seedAddress: {
       protocol: 'ws',
       host: 'localhost',
-      port: 1000,
+      port: 6111,
       path: '',
     },
     // override the default router (RoundRobin for nodejs) is not needed but possible.
@@ -34,10 +34,16 @@ process.on('message', () => {
     serviceDefinition: personDefinition,
   });
 
-  person
-    .requestGreeting()
-    .then((response) => {
-      console.log(`\nour distributed environment response with: `, response);
-    })
-    .catch(console.error);
+  try {
+    person
+      .requestGreeting()
+      .then((response) => {
+        console.log(`\nour distributed environment response with: `, response);
+      })
+      .catch((e) => {
+        console.error('service not available', e.message);
+      });
+  } catch (e) {
+    console.warn('catch error', e.message);
+  }
 });
