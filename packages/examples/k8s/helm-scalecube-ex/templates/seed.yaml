@@ -10,8 +10,8 @@ spec:
   subdomain: seed
   containers:
     - name: seed
-      image: { { $.Values.image.name } }
-      imagePullPolicy: { { $.Values.image.pullPolicy } }
+      image: {{$.Values.image.name}}
+      imagePullPolicy: {{$.Values.image.pullPolicy}}
       command: ['node', 'seed.js']
       env:
         - name: ADDRESS

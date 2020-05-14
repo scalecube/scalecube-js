@@ -8,8 +8,8 @@ spec:
   restartPolicy: Never
   containers:
     - name: greeting
-      image: { { $.Values.image.name } }
-      imagePullPolicy: { { $.Values.image.pullPolicy } }
+      image: {{$.Values.image.name}}
+      imagePullPolicy: {{$.Values.image.pullPolicy}}
       command: ['/bin/sh', '-c']
       args:
         - 'until getent hosts seed.seed; do sleep 1; done; until node greeting.js; do sleep 1; done;'
