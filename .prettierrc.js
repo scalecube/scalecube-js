@@ -9,7 +9,7 @@ module.exports = {
   arrowParens: 'always',
   overrides: [
     {
-      files: '*.yaml',
+      files: '**/*.yaml',
       bracketSpacing: false,
     },
   ],
