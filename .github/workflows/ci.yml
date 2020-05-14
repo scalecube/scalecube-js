@@ -23,7 +23,9 @@ jobs:
       - uses: actions/checkout@v1
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-      - name: Upload math result for job 1
+      - name: install
+        run: yarn
+      - name: upload install package
         uses: actions/upload-artifact@v1
         with:
           name: scalecube-${{ matrix.node-version }}
