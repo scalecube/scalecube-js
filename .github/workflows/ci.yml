@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: scalecube-${{ matrix.node-version }}
-          path: ./
+          path: /home/runner/work/scalecube-js
   build:
     needs: install
     runs-on: ubuntu-latest
