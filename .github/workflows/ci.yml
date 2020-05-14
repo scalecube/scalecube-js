@@ -25,6 +25,8 @@ jobs:
       #        run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
       - name: install
         run: yarn
+      - name: k8s
+        run: cd packages/examples/k8s && ./start
       - name: build
         run: yarn build
       - name: lint
