@@ -13,76 +13,20 @@ on:
     paths:
       - '**'
 jobs:
-  install:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [10.x]
-    name: install
+    name: CI
     steps:
       - uses: actions/checkout@v1
       #      - name: NPM TOKEN
       #        run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
       - name: install
-        run: yarn
-      - name: upload install package
-        uses: actions/upload-artifact@v1
-        with:
-          name: scalecube-${{ matrix.node-version }}
-          path: /home/runner/work/scalecube-js
-  build:
-    needs: install
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
-    name: build
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: scalecube-${{ matrix.node-version }}
-      - name: build
-        run: yarn build
-  test:
-    needs: install
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
-    name: test
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: scalecube-${{ matrix.node-version }}
-      - name: build
-        run: yarn test
-  lint:
-    needs: install
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
-    name: lint
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: scalecube-${{ matrix.node-version }}
-      - name: build
-        run: yarn lint
-  doc:
-    needs: install
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
-    name: doc
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: scalecube-${{ matrix.node-version }}
-      - name: build
-        run: yarn doc
+        run: |
+          yarn
+          yarn run build
+          yarn run lint
+          yarn run test
+          yarn run doc
