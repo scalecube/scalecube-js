@@ -37,7 +37,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   const swim = new Swim(opts);
 
   const sMembers = new Subject<ClusterApi.ClusterEvent>();
-  const hostsToJoin = seedAddress ? [`${seedAddress.host}:${seedAddress.port}`] : [];
+  const hostsToJoin = seedAddress ? seedAddress.map((seed) => `${seed.host}:${seed.port}`) : [];
 
   const retryTimer = setInterval(() => {
     swim.join(hostsToJoin);

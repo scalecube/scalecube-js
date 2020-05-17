@@ -30,8 +30,10 @@ export const createDiscovery: DiscoveryApi.CreateDiscovery = (
   validateAddress(address, false);
 
   if (seedAddress) {
-    validateAddress(seedAddress, false);
-    validateAddressCollision(address, seedAddress);
+    seedAddress.forEach((seed) => {
+      validateAddress(seed, false);
+      validateAddressCollision(address, seed);
+    });
   }
 
   check.assertArray(itemsToPublish, INVALID_ITEMS_TO_PUBLISH);
