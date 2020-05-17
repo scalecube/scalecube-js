@@ -13,7 +13,8 @@
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
-    "runBasicNode": "node node/index.js"
+    "runBasicNode": "node node/index.js",
+    "test": "jest"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
