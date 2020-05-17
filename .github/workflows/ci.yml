@@ -1,7 +1,16 @@
-name: CI
+name: MYCI
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
+      - '**'
+    paths:
+      - '**'
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    paths:
       - '**'
 jobs:
   ci:
