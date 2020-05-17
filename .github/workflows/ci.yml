@@ -1,16 +1,7 @@
 name: CI
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
     branches:
-      - '**'
-    paths:
-      - '**'
-  push:
-    branches:
-      - 'master'
-      - 'develop'
-    paths:
       - '**'
 jobs:
   ci:
@@ -24,5 +15,12 @@ jobs:
       #      - name: NPM TOKEN
       #        run: echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
       - name: install
-        run: |
-          yarn
+        run: yarn
+      - name: build
+        run: yarn build
+      - name: lint
+        run: yarn lint
+      - name: test
+        run: yarn test
+      - name: doc
+        run: yarn doc
