@@ -12,6 +12,7 @@ on:
       - 'develop'
     paths:
       - '**'
+
 jobs:
   ci:
     runs-on: ubuntu-latest
