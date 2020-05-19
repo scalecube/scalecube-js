@@ -34,7 +34,7 @@ jobs:
       - name: doc
         run: yarn doc
       - name: Create Release
-        if: ${{ GITHUB_EVENT_NAME != "pull_request" }}
+        if: ${{ github.event_name == "push" && !contains( "refs/tags/", github.ref ) }}
         id: create_release
         uses: actions/create-release@v1
         env:
