@@ -13,7 +13,8 @@
     "open-node-example": "node lib/index.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
-    "runBasicNode": "node node/index.js"
+    "runBasicNode": "node node/index.js",
+    "test": "jest"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
@@ -21,6 +22,7 @@
     "@babel/plugin-transform-arrow-functions": "^7.7.4",
     "@babel/plugin-transform-async-to-generator": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
+    "jest": "^25.4.0",
     "@scalecube/api": "^0.0.3-next.7",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
