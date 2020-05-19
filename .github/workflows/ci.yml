@@ -34,7 +34,10 @@ jobs:
         run: yarn test
       - name: doc
         run: yarn doc
-      - name: Create Release
+      - name: Clean Next Release
+        if: ${{ github.event_name == 'push' && !contains( 'refs/tags/', github.ref ) }}
+        run: git push origin -d next || echo "next not exist"
+      - name: Create Next Release
         if: ${{ github.event_name == 'push' && !contains( 'refs/tags/', github.ref ) }}
         id: create_release
         uses: actions/create-release@v1
