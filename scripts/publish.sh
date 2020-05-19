@@ -20,7 +20,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
 
-    lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
+    yarn lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
