@@ -7,4 +7,12 @@ module.exports = {
   trailingComma: 'es5',
   bracketSpacing: true,
   arrowParens: 'always',
+  overrides: [
+    {
+      files: '**/*.yaml',
+      options: {
+        bracketSpacing: false,
+      },
+    },
+  ],
 };

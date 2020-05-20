@@ -1,0 +1,51 @@
+name: CI
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
+    paths:
+      - '**'
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    paths:
+      - '**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    name: CI
+    steps:
+      - uses: actions/checkout@v1
+      - name: NPM TOKEN
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: install
+        run: yarn
+      - name: build
+        run: yarn build
+      - name: lint
+        run: yarn lint
+      - name: test
+        run: yarn test
+      - name: doc
+        run: yarn doc
+      #      - name: Create Next Release
+      #        if: ${{ github.event_name == 'push' && !contains( 'refs/tags/', github.ref ) }}
+      #        id: create_release
+      #        uses: actions/create-release@v1
+      #        env:
+      #          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # This token is provided by Actions, you do not need to create your own token
+      #        with:
+      #          tag_name: next
+      #          release_name: Next version perview
+      #          body: |
+      #            This tag is always reflect develop branch
+      #          draft: false
+      #          prerelease: true
+      - name: publish npm
+        run: bash scripts/publish.sh
