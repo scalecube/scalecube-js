@@ -24,13 +24,13 @@ describe('Test address collusion - 2 members with the same address that connect 
 
     const client = joinCluster({
       address: clientAddress,
-      seedAddress: serverAddress,
+      seedAddress: [serverAddress],
       itemsToPublish: ['s1', 'c2'],
     });
 
     const client2 = joinCluster({
       address: clientAddress,
-      seedAddress: serverAddress,
+      seedAddress: [serverAddress],
       itemsToPublish: ['s2', 'c1'],
     });
 

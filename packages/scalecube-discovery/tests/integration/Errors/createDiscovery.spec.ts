@@ -61,7 +61,7 @@ describe('check validations', () => {
       try {
         createDiscovery({
           address: getAddress('AA'),
-          seedAddress: value,
+          seedAddress: [value],
           itemsToPublish: [],
         });
       } catch (e) {

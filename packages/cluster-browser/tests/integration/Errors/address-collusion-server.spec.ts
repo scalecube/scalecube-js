@@ -28,7 +28,7 @@ describe('Test address collusion - 2 members with the same address that act as s
 
     const client = joinCluster({
       address: clientAddress,
-      seedAddress: serverAddress,
+      seedAddress: [serverAddress],
       itemsToPublish: ['s1', 'c2'],
       debug: true,
     });

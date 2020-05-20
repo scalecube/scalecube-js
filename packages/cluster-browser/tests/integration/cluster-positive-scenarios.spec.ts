@@ -35,7 +35,7 @@ describe('cluster-positive-scenarios', () => {
 
     const client = joinCluster({
       address: clientAddress,
-      seedAddress: serverAddress,
+      seedAddress: [serverAddress],
       itemsToPublish: ['s1', 'c2'],
     });
 
@@ -115,7 +115,7 @@ describe('cluster-positive-scenarios', () => {
 
     const client = joinCluster({
       address: clientAddress,
-      seedAddress: serverAddress,
+      seedAddress: [serverAddress],
       itemsToPublish: ['s1', 'c2'],
     });
 

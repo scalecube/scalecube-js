@@ -128,7 +128,7 @@ describe(`
 
     const discoveryA = createDiscovery({
       address: aAddress,
-      seedAddress: bAddress,
+      seedAddress: [bAddress],
       itemsToPublish: [aItem],
     });
 
@@ -159,7 +159,7 @@ describe(`
     const discoveryB = createDiscovery({
       address: bAddress,
       itemsToPublish: [],
-      seedAddress: dAddress,
+      seedAddress: [dAddress],
     });
 
     discoveryB.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
@@ -188,7 +188,7 @@ describe(`
 
     const discoveryC = createDiscovery({
       address: cAddress,
-      seedAddress: bAddress,
+      seedAddress: [bAddress],
       itemsToPublish: [cItem],
     });
 

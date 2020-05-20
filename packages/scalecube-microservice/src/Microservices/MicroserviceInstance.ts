@@ -11,10 +11,11 @@ export const setMicroserviceInstance = (options: SetMicroserviceInstanceOptions)
 
   const { remoteRegistry } = microserviceContext;
 
-  discoveryInstance
-    .discoveredItems$()
-    .pipe(printLogs(microserviceContext.whoAmI, debug))
-    .subscribe(remoteRegistry.update);
+  discoveryInstance &&
+    discoveryInstance
+      .discoveredItems$()
+      .pipe(printLogs(microserviceContext.whoAmI, debug))
+      .subscribe(remoteRegistry.update);
 
   const serviceFactoryOptions = getServiceFactoryOptions({
     microserviceContext,
