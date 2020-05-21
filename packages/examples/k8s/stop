@@ -1,0 +1,6 @@
+#!/bin/bash
+
+docker stop $(docker ps -q --filter name=scalecube-example-control-plane)
+kind delete cluster --name scalecube-example
+
+echo "STOPPED"
