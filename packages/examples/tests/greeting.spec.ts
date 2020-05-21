@@ -20,7 +20,7 @@ describe('k8s', () => {
             // The whole response has been received. Print out the result.
             resp.on('end', () => {
               expect(data).toBe('"hello: test"');
-              execSync('/bin/bash -c "cd k8s && ./end"', { stdio: 'inherit' });
+              execSync('/bin/bash -c "cd k8s && ./stop"', { stdio: 'inherit' });
               done();
             });
             resp.on('error', (err: Error) => {
@@ -35,7 +35,7 @@ describe('k8s', () => {
           });
       }, 10000);
     } catch (e) {
-      execSync('/bin/bash -c "cd k8s && ./end"', { stdio: 'inherit' });
+      execSync('/bin/bash -c "cd k8s && ./stop"', { stdio: 'inherit' });
     }
   });
 });
