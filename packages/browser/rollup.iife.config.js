@@ -6,7 +6,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import replace from 'rollup-plugin-replace';
-import uglify from 'rollup-plugin-uglify-es';
+import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
 
 export default {
@@ -27,7 +27,7 @@ export default {
     resolve(),
     babel({
       plugins: ['@babel/plugin-transform-arrow-functions'],
-      babelrc: false,
+      babelrc: true,
       runtimeHelpers: true,
       presets: [
         [
@@ -55,7 +55,7 @@ export default {
       typescript: tscompile,
       clean: true,
     }),
-    // uglify(),
+    terser(),
     filesize(),
   ],
 };
