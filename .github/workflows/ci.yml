@@ -22,7 +22,9 @@ jobs:
     name: CI
     steps:
       - name: test
-        run: echo $GITHUB_EVENT_AFTER
+        run: echo $SHA
+        env:
+          - SHA: ${{ github.event.after }}
       - uses: actions/checkout@v1
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
