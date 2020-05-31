@@ -24,7 +24,7 @@ jobs:
       - name: test
         run: echo $SHA
         env:
-          - SHA: ${{ github.event.after }}
+          SHA: ${{ github.event.after }}
       - uses: actions/checkout@v1
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
