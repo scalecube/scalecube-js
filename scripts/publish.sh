@@ -59,3 +59,4 @@ else
     echo "*   Not a pull request, npm publish skipped !   *"
     echo "*************************************************"
 fi
+
