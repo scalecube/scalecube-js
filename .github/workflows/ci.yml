@@ -21,6 +21,8 @@ jobs:
         node-version: [10.x]
     name: CI
     steps:
+      - name: test
+        run: echo $GITHUB_EVENT_AFTER
       - uses: actions/checkout@v1
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
