@@ -1,0 +1,32 @@
+name: release
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    name: CI
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
+    # develop to master
+    steps:
+      - name: Merge PR
+        run: echo '${{ toJSON(github.event.issue.pull_request) }}'
+#      - name: Create Release
+#      - name: Build
+#      - Name: Publish
+#      - name: Create Next Release
+#        if: ${{ github.event_name == 'push' && !contains( 'refs/tags/', github.ref ) }}
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # This token is provided by Actions, you do not need to create your own token
+#        with:
+#          tag_name: next
+#          release_name: Next version perview
+#          body: |
+#            This tag is always reflect develop branch
+#          draft: true
+#          prerelease: true
