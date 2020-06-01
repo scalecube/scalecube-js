@@ -8,8 +8,8 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x]
-    name: CI
-    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
+    name: release
+    #if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
     # develop to master
     steps:
       - name: Merge PR
