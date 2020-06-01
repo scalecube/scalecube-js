@@ -9,9 +9,42 @@ jobs:
       matrix:
         node-version: [10.x]
     name: release
-    #if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
     # develop to master
     steps:
+      - name: Get info
+        id: info
+        run: |
+          issue_url=$(jq -r ".issue.pull_request.url" "${GITHUB_EVENT_PATH}")
+          issue=$(curl $issue_url)
+          base=$(jq -r ".base.ref" $issue)
+          ref=$(jq -r ".head.ref" $issue)
+          commenter=$(jq -r ".comment.user.login" "${GITHUB_EVENT_PATH}")
+
+          user=$(curl --request  \
+          --url https://api.github.com/repos/scalecube/scalecube-js/collaborators/$commenter/permission \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json')
+          if [ "$(jq -r ".permission" $user)" = "admin" ]; then
+            is_admin=true
+          else
+            is_admin=false
+          fi
+
+          echo "##[set-output name=base;]$(echo ${base})"
+          echo "##[set-output name=ref;]$(echo ${ref})"
+          echo "##[set-output name=is_admin;]$(echo ${is_admin})"
+
+          author=$(jq -r ".issue.user.login" "${GITHUB_EVENT_PATH}")
+          org=$(jq -r ".repository.owner.login" "${GITHUB_EVENT_PATH}")
+          pr_number=$(jq -r ".issue.number" "${GITHUB_EVENT_PATH}")
+          project=$(jq -r ".repository.name" "${GITHUB_EVENT_PATH}")
+          repo=$(jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}")
+      - name: echo output
+        run: |
+          echo ${{ steps.info.outputs.base }}
+          echo ${{ steps.info.outputs.ref }}
+          echo ${{ steps.info.outputs.is_admin }}
       - name: Merge PR
         run: cat "${GITHUB_EVENT_PATH}"
 #      - name: Create Release
