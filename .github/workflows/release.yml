@@ -13,7 +13,7 @@ jobs:
     # develop to master
     steps:
       - name: Merge PR
-        run: echo '${{ toJSON(github.event.issue.pull_request) }}'
+        run: echo '${{ toJSON(github.event) }}'
 #      - name: Create Release
 #      - name: Build
 #      - Name: Publish
