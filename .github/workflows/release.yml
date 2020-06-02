@@ -24,7 +24,7 @@ jobs:
 
           user=$(curl -u scalecube-js:${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/scalecube/scalecube-js/collaborators/$commenter/permission)
 
-          if [ "$(jq -r ".permission" $user)" = "admin" ]; then
+          if [ "$(echo $user | jq -r ".permission")" = "admin" ]; then
             is_admin=true
           else
             is_admin=false
