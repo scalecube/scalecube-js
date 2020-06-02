@@ -17,14 +17,13 @@ jobs:
         run: |
           issue_url=$(jq -r ".issue.pull_request.url" "${GITHUB_EVENT_PATH}")
           issue=$(curl "$issue_url")
-          base=$(jq -r ".base.ref" $issue)
-          ref=$(jq -r ".head.ref" $issue)
+          base=$(echo $issue | jq -r ".base.ref")
+          ref=$(echo $issue | jq -r ".head.ref")
           commenter=$(jq -r ".comment.user.login" "${GITHUB_EVENT_PATH}")
 
-          user=$(curl --request  \
-          --url https://api.github.com/repos/scalecube/scalecube-js/collaborators/$commenter/permission \
-          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-          --header 'content-type: application/json')
+
+          user=$(curl -u scalecube-js:${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/scalecube/scalecube-js/collaborators/$commenter/permission)
+
           if [ "$(jq -r ".permission" $user)" = "admin" ]; then
             is_admin=true
           else
@@ -34,6 +33,7 @@ jobs:
           echo "##[set-output name=base;]$(echo ${base})"
           echo "##[set-output name=ref;]$(echo ${ref})"
           echo "##[set-output name=is_admin;]$(echo ${is_admin})"
+          echo "##[set-output name=user;]$(echo ${commenter})"
 
           author=$(jq -r ".issue.user.login" "${GITHUB_EVENT_PATH}")
           org=$(jq -r ".repository.owner.login" "${GITHUB_EVENT_PATH}")
