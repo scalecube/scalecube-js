@@ -16,7 +16,7 @@ jobs:
         id: info
         run: |
           issue_url=$(jq -r ".issue.pull_request.url" "${GITHUB_EVENT_PATH}")
-          issue=$(curl $issue_url)
+          issue=$(curl "$issue_url")
           base=$(jq -r ".base.ref" $issue)
           ref=$(jq -r ".head.ref" $issue)
           commenter=$(jq -r ".comment.user.login" "${GITHUB_EVENT_PATH}")
