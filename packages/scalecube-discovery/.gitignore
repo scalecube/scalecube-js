@@ -1,0 +1,15 @@
+.cache
+.idea/
+node_modules/
+flow-typed/
+coverage/
+.npmrc
+yarn-error.log
+.DS_Store
+
+es/
+cjs/
+
+
+report.cjs.html
+report.es.html

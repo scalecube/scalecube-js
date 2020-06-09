@@ -1,161 +1,132 @@
+[![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
+
+> ### Project Status
+>
+> [Scalecube v0.2.x](https://github.com/scalecube/scalecube-js/issues/30) is stable, the API will be supported until 1.1.2021.  
+> We want to collect feedback from the community before releasing 1.x.x but we don't foresee any majors API change.  
+> If you have any feedback please [open issue](https://github.com/scalecube/scalecube-js/issues)
+
 # Scalecube-js
-Microservices library inspired by the java scalecube-services. scalecube-js provides an abstraction toolkit to provision and consume microservices as such the interaction model is by a service api avoiding tight-coupeling between service implemntation and technology.
 
-With scalecube-js decouple service by interface and agnostic to the location of service implementaion, location, and technology.
-in the roadmap scalecube-js will support client side and server side. as such services may be:
-* Deployable unit of same application and technology
-* Deployable unit of diffrent application and diffrent technology
-* Diffrent service workers in a browser
-* Node-js services on same host
-* Node-js services on diffrent host communicating via api.
+Scalecube is a toolkit for creating microservices/micro-frontends based systems.  
+[Full documentation](http://scalecube.io/javascript-docs)
 
-## Project Status
-currently the project is at very early stage and only support the basic pattern of service provisioning and consuming (locally)
-it means it can be used to decouple components by interface for same running process.
+## quick start
 
-## Basic Usage
+We provide browser and NODE templates, configured and ready for use
 
-### Define service in TypeScript:
-```javascript
+### [Browser](packages/browser/README.md)
 
-@Service
-class GreetingService {
+`yarn add @scalecube/browser` or `npm i @scalecube/browser`
 
-  @ServiceMethod('Observable')
-  notifications(): Observable<Greeting> {
-  
-  }
-  
-  @ServiceMethod('Promise')
-  hello(): Promise<Greeting> {
-    return new Promise((resolve, reject) => {
-      // the resolve / reject functions control the fate of the promise
-    });
-  }
-}
-
+```typescript
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 ```
 
-### Bootstrap the service:
-```javascript
-// build microservices instance and provision (N) in this case two microservices to play role in our application.
-// the builder inspect the service instances and find the service api and register it.
-let microservices = Microservices.builder()
-  .services(new GreetingService())
-  .build();
+### [Node](packages/node/README.md)
 
-// create a proxy to the service based on a given service interface. 
-const greetingService = microservices.proxy()
-  .api(GreetingService)
-  .create();  
-  
-// invoke the service using the proxy. 
-// the proxy will locate and route and balance the request to the given matching instances.
-greetingService.hello('joe');
+`yarn add @scalecube/node` or `npm i @scalecube/node`
+
+```typescript
+import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/node';
 ```
 
-```javascript
-/// With proxies
+### Advanced
 
-const greetingService = Microservices
-  .builder()
-  .services(new GreetingService(), new GreetingService())
-  .build()
-  .proxy()
-  .api(GreetingService)
-  .create();  
-greetingService.hello();
+You can create your own customized setup, for more details: go to [Microservice](packages/scalecube-microservice/README.md): 
 
-const greetingService = Microservices
-  .builder()
-  .services(new GreetingService(), new GreetingService())
-  .build()
-  .proxy()
-  .api(GreetingService)
-  .create();
-greetingService.repeatToStream().subscribe(...);
+### Usage (Browser and node)
 
-/// direct 
-const microservices = Microservices.builder()
-  .services(new GreetingService())
-  .build();
+**create a seed**
 
-const dispatcher = microservices.dispatcher().create();
+```typescript
+// node - supported WS, WSS and TCP
+export const MySeedAddress: 'ws://localhost:8000';
+// Browser - under browser post message will be used as transport
+export const MySeedAddress: 'seed';
 
-const message: Message = {
+// Create a service
+createMicroservice({
+   address : MySeedAddress
+});
+```
+
+**Create a service**
+
+```typescript
+// Create service definition
+export const greetingServiceDefinition = {
   serviceName: 'GreetingService',
-  method: 'hello',
-  data: {user: 'Idan'}
+  methods: { 
+    hello: {
+      asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE,
+    }
+  },
 };
+// Create a service
+createMicroservice({
+  service : [{
+    definition: greetingServiceDefinition,
+    reference: {
+      hello : (name) => `Hello ${name}`
+    }, 
+   }],
+   seedAddress : MySeedAddress
+});
+```
 
+**Use a service**
 
-dispatcher.invoke(message);
+```typescript
+const microservice = createMicroservice({seedAddress : MySeedAddress})
 
-const microservices = Microservices.builder()
-  .services(new GreetingService())
-  .build();
+// With proxy
+const greetingService = microservice.createProxy({
+    serviceDefinition: greetingServiceDefinition
+});
 
-const dispatcher = microservices.dispatcher().create();
+greetingService.hello('ME').then(console.log) // Hello ME
+```
 
-const message: Message = {
-  serviceName: 'GreetingService',
-  method: 'repeatToStream',
-  data: [ 'Hello', 'Hey', 'Yo' ]
-};
+\*We let Scalecube choose our addresses for us, we know only the seed address.  
+After we connected to the seed we will see the whole cluster.
+In the browser we don't need to import modules, we can create multiple bundles, scalecube will discover the available services
 
-dispatcher.listen(message).subscribe();
+**\*NOTICE** For Node you have to set addresses, there isn't any default at the moment
 
-/// loaders
+**Dependency Injection**
 
-// on demand
-const greetingService = Microservices
-.builder()
-.serviceLoaders(
-  {
-    loader: () => ({
-      then: (func) => {
-        ImportGreetingService
-          .then((GreetingService) => func(new GreetingService.default()))
+```typescript
+createMicroservice({
+  seedAddress : MySeedAddress,
+  services: [
+    {
+      definition: serviceB,
+      reference: ({ createProxy, createServiceCall }) => {
+        const greetingService = createProxy({serviceDefinition: greetingServiceDefinition });
+
+        return new ServiceB(greetingService);
       }
-    }),
-    serviceClass: GreetingService
-  })
-.build()
-.proxy()
-.api(GreetingService)
-.create();
-
-// on start
-const greetingService = Microservices
-.builder()
-.serviceLoaders(
-  {
-    loader: () => new Promise((resolve, reject) =>
-      ImportGreetingService.then((GreetingService) => resolve(mockFn(GreetingService))).catch(e => reject(e))
-    ),
-    serviceClass: GreetingService
-  })
-.build()
-.proxy()
-.api(GreetingService)
-.create();
-
+    }    
+  ]
+})
 ```
-For more details how to use it see the tests
 
-## Run/Debug
-Install `yarn/npm install`  
-Build `npm build`  
-Run test `npm test`  
+For more examples go to [examples](packages/examples) or [full documentation](http://scalecube.io/javascript-docs)
 
-To run/debug jest tests:
-* jest options: --runInBand --no-cache --env=jsdom 
-* env variables: BABEL_ENV=commonjs
-* you can run/debug via Webstorm or npm test or directly with jest and debug with Chrome: https://facebook.github.io/jest/docs/en/troubleshooting.html
-![image](https://user-images.githubusercontent.com/4359435/30782375-e134617e-a139-11e7-8100-32f13ed3815f.png)
+## Scalecube tools
 
-## Version 
-* http://semver.org/ format
+[Router](packages/routers/README.md),  
+[Discovery](packages/scalecube-discovery/README.md),  
+[Transport-browser](packages/transport-browser/README.md),  
+[Transport-nodejs](packages/transport-nodejs/README.md),  
+[Gateway](packages/rsocket-ws-gateway/README.md),  
+[Cluster-browser](packages/cluster-browser/README.md),  
+[Cluster-nodejs](packages/cluster-nodejs/README.md).
+
+## Version
+
+-   [semver format](http://semver.org/)
 
 **MAJOR** version when you make incompatible API changes,
 

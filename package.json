@@ -1,72 +1,57 @@
 {
   "name": "@scalecube/scalecube-js",
-  "version": "0.0.6",
-  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browers (your client doesn't have to be mono!)",
+  "version": "0.1.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": "github:scalecube/scalecube-js",
+  "description": "Scalecube-js provides microservices pattern, in easy to use way. Supporting NodeJS and Browsers (your client doesn't have to be mono!)",
   "keywords": [
     "scalecube",
     "scalecube-js",
     "microservices",
-    "services"
+    "services",
+    "discovery",
+    "cluster"
   ],
   "scripts": {
-    "clean": "rimraf lib dist es coverage index.js.flow index.d.ts",
-    "test:debug": "cross-env BABEL_ENV=jest babel tests src --out-dir debug --watch",
-    "test": "cross-env BABEL_ENV=jest jest --runInBand --no-cache --env=jsdom",
-    "test:snapshot": "cross-env BABEL_ENV=jest jest --maxWorkers=4 -u",
-    "test:inspect": "cross-env BABEL_ENV=jest NODE_ENV=development node --debug-brk ./node_modules/jest/bin/jest.js --runInBand --no-cache",
-    "test:watch": "npm test -- --watch",
-    "test:cov": "npm test -- --coverage",
-    "test:cov:report": "cat \"coverage/lcov.info\" | codacy-coverage",
-    "build:es": "babel ./src --out-dir es",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build": "npm run clean && npm run build:es && npm run build:commonjs && npm run flow:gen",
-    "flow": "flow",
-    "flow:install": "flow-typed install",
-    "flow:gen": "flow gen-flow-files ./src/scalecube-services/services/libdef.js --out-dir . && npm run flow:gen:move && npm run flowToTs ",
-    "flow:gen:move": "rname \"./libdef.js.flow\" \"./index.js.flow\"",
-    "flowToTs": "node build/flowToTs index.js.flow index.d.ts",
-    "flow:reset": "flow stop && flow start"
+    "pre-push": "yarn lint && yarn build && yarn test && yarn doc",
+    "update-scalecube": "lerna clean --yes && rimraf node_modules/@scalecube && yarn bootstrap",
+    "start": "http-server -a localhost -p 8000",
+    "start-node-example": "lerna run start-node-example",
+    "bootstrap": "lerna bootstrap --npm-client=yarn",
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "test-dom-env": "lerna run test-dom-env",
+    "test-node-env": "lerna run test-node-env",
+    "lint": "remark . --output && lerna run lint",
+    "version": "lerna version --no-push --force-publish",
+    "doc": "lerna run doc"
   },
-  "main": "lib/scalecube-services/services/index.js",
-  "#module": "es/scalecube-services/services/index.js",
-  "files": [
-    "lib",
-    "es",
-    "src",
-    "index.d.ts",
-    "index.js.flow"
-  ],
-  "author": "Idan Levin (https://github.com/IdanILT)",
-  "license": "ISC",
-  "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-jest": "^21.2.0",
-    "babel-plugin-dynamic-import-node": "^1.2.0",
-    "babel-plugin-module-resolver": "^3.0.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
-    "cross-env": "^5.1.1",
-    "flow": "^0.2.3",
-    "flow-bin": "^0.59.0",
-    "flow-typed": "^2.2.3",
-    "jest": "^21.2.1",
-    "regenerator-runtime": "^0.11.0",
-    "rename-cli": "^5.0.0"
-  },
-  "jest": {
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "./"
-    ]
-  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "license": "MIT",
   "dependencies": {
-    "rxjs": "^5.5.5"
+    "husky": "^1.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "http-server": "^0.11.1",
+    "lerna": "^3.13.1",
+    "prettier": "^1.16.4",
+    "pretty-quick": "^1.10.0",
+    "remark-cli": "^6.0.1",
+    "remark-lint": "^6.0.4",
+    "remark-preset-lint-recommended": "^3.0.2",
+    "rimraf": "^2.6.3",
+    "tslint-config-prettier": "^1.17.0"
   }
 }

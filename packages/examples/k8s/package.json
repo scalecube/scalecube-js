@@ -1,0 +1,10 @@
+{
+  "name": "k8s",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@scalecube/node": "^0.0.2-alpha.1584274445.3"
+  }
+}

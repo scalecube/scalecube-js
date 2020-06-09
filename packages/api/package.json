@@ -1,0 +1,26 @@
+{
+  "name": "@scalecube/api",
+  "version": "0.2.0",
+  "private": false,
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
+    "build": "rimraf lib && tsc",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'",
+    "doc": "typedoc ./src --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.2.4"
+  }
+}

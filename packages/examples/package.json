@@ -1,0 +1,55 @@
+{
+  "name": "@scalecube/examples",
+  "version": "0.2.0",
+  "private": false,
+  "rollup": "rollup/index.js",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache",
+    "build": "rimraf .cache && npm-run-all build:parcel build:rollup",
+    "build:parcel": "rimraf parcel && parcel build bundles/src/index.ts --no-source-maps --experimental-scope-hoisting --out-dir parcel",
+    "build:rollup": "rimraf rollup  && rollup -c rollup.iife.config.js",
+    "start-node-example": "yarn run build:commonJS && yarn run open-node-example",
+    "open-node-example": "node lib/index.js",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src, tests}/**/*.{ts,tsx}'",
+    "runBasicNode": "node node/index.js",
+    "test": "jest"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-transform-arrow-functions": "^7.7.4",
+    "@babel/plugin-transform-async-to-generator": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@scalecube/api": "^0.2.0",
+    "jest": "^25.4.0",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
+    "rollup": "^1.27.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-uglify-es": "^0.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/browser": "^0.2.0",
+    "@scalecube/node": "^0.2.0",
+    "@scalecube/routers": "^0.2.0",
+    "@scalecube/transport-nodejs": "^0.2.0",
+    "@scalecube/utils": "^0.2.0"
+  },
+  "browserslist": [
+    "ie 11",
+    "firefox > 39",
+    "chrome > 39",
+    "safari > 8",
+    "edge > 11"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "@scalecube/browser",
+  "version": "0.2.0",
+  "private": false,
+  "unpkg": "dist/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf dist",
+    "build": "rimraf .cache && yarn build:dist && yarn build:cjs",
+    "build:dist": "rimraf dist  && rollup -c rollup.iife.config.js",
+    "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": ""
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-transform-arrow-functions": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@scalecube/api": "^0.2.0",
+    "regenerator-runtime": "^0.13.3",
+    "rollup": "^1.27.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-uglify-es": "^0.0.1",
+    "rollup-plugin-visualizer": "^2.6.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/cluster-browser": "^0.2.0",
+    "@scalecube/routers": "^0.2.0",
+    "@scalecube/scalecube-microservice": "^0.2.0",
+    "@scalecube/transport-browser": "^0.2.0",
+    "@scalecube/utils": "^0.2.0",
+    "rxjs": "^6.4.0"
+  }
+}

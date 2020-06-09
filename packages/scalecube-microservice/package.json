@@ -1,0 +1,56 @@
+{
+  "name": "@scalecube/scalecube-microservice",
+  "version": "0.2.0",
+  "private": false,
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "es"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
+    "build": "rimraf .cache && yarn build:es && yarn build:cjs",
+    "build:es": "rimraf es && rollup -c rollup.es.config.js",
+    "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": "yarn test-dom-env",
+    "test-dom-env": "jest --config jest.config-dom.js",
+    "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
+    }
+  },
+  "devDependencies": {
+    "@scalecube/api": "^0.2.0",
+    "@scalecube/cluster-browser": "^0.2.0",
+    "@scalecube/routers": "^0.2.0",
+    "@scalecube/transport-browser": "^0.2.0",
+    "jest": "^24.6.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-uglify-es": "^0.0.1",
+    "rollup-plugin-visualizer": "^2.6.0",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/scalecube-discovery": "^0.2.0",
+    "@scalecube/utils": "^0.2.0",
+    "rxjs": "^6.4.0"
+  }
+}

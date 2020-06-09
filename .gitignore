@@ -1,8 +1,15 @@
+.cache
 .idea/
 node_modules/
 es/
+es-bundle/
 lib/
 dist/
+cjs/
 flow-typed/
+doc/
 coverage/
 .npmrc
+yarn-error.log
+.DS_Store
+report.html

@@ -1,0 +1,7 @@
+.cache
+node_modules
+
+es/
+cjs/
+
+report.html

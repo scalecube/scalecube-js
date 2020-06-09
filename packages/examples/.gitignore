@@ -1,0 +1,11 @@
+.cache
+.idea/
+node_modules/
+flow-typed/
+coverage/
+.npmrc
+yarn-error.log
+.DS_Store
+
+parcel/
+rollup/
