@@ -3,14 +3,21 @@ on:
   issue_comment:
     types: [created]
 jobs:
-  ci:
+  details:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [10.x]
-    name: release
+    name: details
     if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/release')
     # develop to master
+    outputs:
+      base: ${{ steps.info.outputs.base }}
+      ref: ${{ steps.info.outputs.ref }}
+      is_admin: ${{ steps.info.outputs.is_admin }}
+      title: ${{ steps.info.outputs.title }}
+      body: ${{ steps.info.outputs.body }}
+      pr: ${{ steps.info.outputs.pr }}
     steps:
       - name: Get info
         id: info
@@ -19,47 +26,102 @@ jobs:
           issue=$(curl "$issue_url")
           base=$(echo $issue | jq -r ".base.ref")
           ref=$(echo $issue | jq -r ".head.ref")
+          title=$(echo $issue | jq -r ".title")
+          body=$(echo $issue | jq -r ".body")
+          body="${body//'%'/'%25'}"
+          body="${body//$'\n'/'%0A'}"
+          body="${body//$'\r'/'%0D'}"
           commenter=$(jq -r ".comment.user.login" "${GITHUB_EVENT_PATH}")
+          repo=$(jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}")
+          project=$(jq -r ".repository.name" "${GITHUB_EVENT_PATH}")
 
-
-          user=$(curl -u scalecube-js:${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/scalecube/scalecube-js/collaborators/$commenter/permission)
-
+          user=$(curl -u $project:${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/$repo/collaborators/$commenter/permission)
           if [ "$(echo $user | jq -r ".permission")" = "admin" ]; then
             is_admin=true
           else
             is_admin=false
           fi
-
+          pr_number=$(jq -r ".issue.number" "${GITHUB_EVENT_PATH}")
           echo "##[set-output name=base;]$(echo ${base})"
           echo "##[set-output name=ref;]$(echo ${ref})"
           echo "##[set-output name=is_admin;]$(echo ${is_admin})"
           echo "##[set-output name=user;]$(echo ${commenter})"
-
+          echo "##[set-output name=title;]$(echo ${title})"
+          echo "##[set-output name=body;]$(echo ${body})"
+          echo "##[set-output name=pr;]$(echo ${pr_number})"
           author=$(jq -r ".issue.user.login" "${GITHUB_EVENT_PATH}")
           org=$(jq -r ".repository.owner.login" "${GITHUB_EVENT_PATH}")
-          pr_number=$(jq -r ".issue.number" "${GITHUB_EVENT_PATH}")
-          project=$(jq -r ".repository.name" "${GITHUB_EVENT_PATH}")
-          repo=$(jq -r ".repository.full_name" "${GITHUB_EVENT_PATH}")
-      - name: echo output
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    name: release
+    needs: details
+    if: needs.details.outputs.base == 'master' && needs.details.outputs.ref == 'develop' && needs.details.outputs.is_admin == 'true'
+    steps:
+      - name: NPM TOKEN
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: 'develop'
+      - name: install
+        run: yarn
+      - name: update version
         run: |
-          echo ${{ steps.info.outputs.base }}
-          echo ${{ steps.info.outputs.ref }}
-          echo ${{ steps.info.outputs.is_admin }}
-      - name: Merge PR
-        run: cat "${GITHUB_EVENT_PATH}"
-#      - name: Create Release
-#      - name: Build
-#      - Name: Publish
-#      - name: Create Next Release
-#        if: ${{ github.event_name == 'push' && !contains( 'refs/tags/', github.ref ) }}
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # This token is provided by Actions, you do not need to create your own token
-#        with:
-#          tag_name: next
-#          release_name: Next version perview
-#          body: |
-#            This tag is always reflect develop branch
-#          draft: true
-#          prerelease: true
+          git config --global user.email "ci@scalecube.io"
+          git config --global user.name "scalecube ci"
+          yarn lerna version ${{ needs.details.outputs.title }} --no-push --force-publish  --yes
+          #git push -u origin master
+          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
+          git push "${remote_repo}" HEAD:develop
+      - name: merge
+        run: |
+          function retry {
+            local n=1
+            local max=5
+            local delay=5
+            while true; do
+              CMD="$@" && "$@" && break || {
+                if [[ $n -lt $max ]]; then
+                  ((n++))
+                  echo "Command \"$CMD\" failed. Attempt $n/$max:"
+                  sleep $delay;
+                else
+                  echo "The command \"$CMD\" has failed after $n attempts."
+                  exit 1
+                fi
+              }
+            done
+          }
+          sha=$(git rev-parse HEAD)
+          echo $sha
+          retry bash -c 'curl -u ci:${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/scalecube/scalecube-js/pulls/${{ needs.details.outputs.pr }}/merge \
+            --request PUT \
+            --data '"'"'{ "sha": "'"$sha"'", "merge_method": "merge", "commit_message": "", "commit_title": "Release v${{ needs.details.outputs.title }}" }'"'"' \
+             | grep -q "Pull Request successfully merged"'
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: v${{needs.details.outputs.title}}
+          release_name: v${{needs.details.outputs.title}}
+          body: '${{ needs.details.outputs.body }}'
+          draft: false
+          prerelease: false
+      - name: Publish
+        run: |
+          git fetch
+          yarn lerna publish from-git --yes
+      - name: patch
+        run: |
+          git config --global user.email "ci@scalecube.io"
+          git config --global user.name "scalecube ci"
+          git checkout develop
+          yarn lerna version patch --no-push --force-publish  --yes
+          #git push -u origin master
+          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
+          git push "${remote_repo}" HEAD:develop
