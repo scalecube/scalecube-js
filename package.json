@@ -34,6 +34,7 @@
     "test-dom-env": "lerna run test-dom-env",
     "test-node-env": "lerna run test-node-env",
     "lint": "remark . --output && lerna run lint",
+    "version": "lerna version --no-push --force-publish",
     "doc": "lerna run doc"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
