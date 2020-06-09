@@ -68,14 +68,18 @@ jobs:
           ref: 'develop'
       - name: install
         run: yarn
-      - name: update version
+      - name: verify version
         run: |
-          git config --global user.email "ci@scalecube.io"
-          git config --global user.name "scalecube ci"
-          yarn lerna version ${{ needs.details.outputs.title }} --no-push --force-publish  --yes
-          #git push -u origin master
-          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
-          git push "${remote_repo}" HEAD:develop
+          if [ "$(jq -r '.version' 'lerna.json')" != "{{ needs.details.outputs.title }}" ] ; then
+            echo "::error file=lerna.json::version mismatch"
+            exit 1;
+          fi
+      #          git config --global user.email "ci@scalecube.io"
+      #          git config --global user.name "scalecube ci"
+      #          yarn lerna version ${{ needs.details.outputs.title }} --no-push --force-publish  --yes
+      #          #git push -u origin master
+      #          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
+      #          git push "${remote_repo}" HEAD:develop
       - name: merge
         run: |
           function retry {
@@ -116,12 +120,13 @@ jobs:
         run: |
           git fetch
           yarn lerna publish from-git --yes
-      - name: patch
-        run: |
-          git config --global user.email "ci@scalecube.io"
-          git config --global user.name "scalecube ci"
-          git checkout develop
-          yarn lerna version patch --no-push --force-publish  --yes
-          #git push -u origin master
-          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
-          git push "${remote_repo}" HEAD:develop
+
+#      - name: patch
+#        run: |
+#          git config --global user.email "ci@scalecube.io"
+#          git config --global user.name "scalecube ci"
+#          git checkout develop
+#          yarn lerna version patch --no-push --force-publish  --yes
+#          #git push -u origin master
+#          remote_repo="https://idanilt:${{secrets.GITHUB_TOKEN}}@github.com/scalecube/scalecube-js.git"
+#          git push "${remote_repo}" HEAD:develop
