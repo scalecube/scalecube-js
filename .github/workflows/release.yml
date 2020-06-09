@@ -70,7 +70,7 @@ jobs:
         run: yarn
       - name: verify version
         run: |
-          if [ "$(jq -r '.version' 'lerna.json')" != "{{ needs.details.outputs.title }}" ] ; then
+          if [ "$(jq -r '.version' 'lerna.json')" != "${{ needs.details.outputs.title }}" ] ; then
             echo "::error file=lerna.json::version mismatch"
             exit 1;
           fi
