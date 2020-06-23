@@ -122,7 +122,8 @@ jobs:
         run: |
           git fetch
           yarn lerna publish from-git --yes
-
+      - name: Verify
+        run: scripts/./verify ${{needs.details.outputs.title}}
 #      - name: patch
 #        run: |
 #          git config --global user.email "ci@scalecube.io"

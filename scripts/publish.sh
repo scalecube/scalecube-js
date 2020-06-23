@@ -34,10 +34,12 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git checkout develop
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
-    yarn lerna publish prerelease --dist-tag next --preid develop.$(date +%s) --yes -m '[skip ci]' --no-git-tag-version --no-push
+    ID="develop.$(date +%s)"
+    yarn lerna publish prerelease --dist-tag next --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
+        bash ./verify.sh $ID
     else
         echo $MSG_PUBLISH_FAIL
     fi
