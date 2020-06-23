@@ -1,0 +1,13 @@
+{
+  "name": "@scalecube/e2e",
+  "version": "0.2.1",
+  "description": "e2e tests",
+  "main": "index.js",
+  "author": "idanilt",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@scalecube/browser": "^0.2.1",
+    "@scalecube/node": "^0.2.1"
+  }
+}
