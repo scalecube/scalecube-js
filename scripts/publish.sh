@@ -20,7 +20,8 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
 
-    yarn lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
+    yarn lerna publish --no-commit-hooks --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
+    cat lerna-debug.log
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
@@ -35,7 +36,7 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     git checkout develop
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
     ID="develop.$(date +%s)"
-    yarn lerna publish prerelease --dist-tag next --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
+    yarn lerna publish prerelease --no-commit-hooks --dist-tag next --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
