@@ -68,6 +68,8 @@ jobs:
           ref: 'develop'
       - name: install
         run: yarn
+      - name: build
+        run: yarn build
       - name: verify version
         run: |
           if [ "$(jq -r '.version' 'lerna.json')" != "${{ needs.details.outputs.title }}" ] ; then
