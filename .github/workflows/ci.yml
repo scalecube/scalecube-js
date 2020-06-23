@@ -20,8 +20,6 @@ jobs:
     name: CI
     steps:
       - uses: actions/checkout@v1
-      - name: lerna info
-        run: cat lerna.json
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - name: install
