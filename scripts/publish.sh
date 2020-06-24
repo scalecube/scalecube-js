@@ -22,6 +22,8 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     #git fetch --depth=50
     ID="snapshot.${BRANCH//\//-}.$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
+    git config --global user.email "ci@scalecube.io"
+    git config --global user.name "scalecube ci"
     git tag -a v$VERSION -m "[skip ci]"
     yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
     #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
