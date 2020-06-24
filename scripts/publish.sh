@@ -25,7 +25,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     git config --global user.email "ci@scalecube.io"
     git config --global user.name "scalecube ci"
     git tag -a v$VERSION -m "[skip ci]"
-    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
+    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
@@ -45,12 +45,14 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     ID="develop.$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
     git fetch --tags
+    git tag -a v$VERSION -m "[skip ci]"
     
-    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
+    #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
+    yarn lerna publish prerelease --force-publish --preid $ID --pre-dist-tag develop --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
-        bash ./verify.sh $ID
+        bash scripts/./verify.sh $ID.0
     else
         echo $MSG_PUBLISH_FAIL
     fi
