@@ -43,6 +43,8 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     echo "|     Deploying latest on npm registry     |"
     echo "--------------------------------------------"
 
+    git config --global user.email "ci@scalecube.io"
+    git config --global user.name "scalecube ci"
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git checkout develop
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
