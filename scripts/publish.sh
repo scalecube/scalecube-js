@@ -22,7 +22,12 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     #git fetch --depth=50
     #yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
     ID="snapshot.$BRANCH.$(date +%s)"
-    yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
+    VERSION=$(jq -r .version lerna.json)
+    #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
+    # --no-git-tag-version "turns off" all git operations for `lerna version`
+    yarn lerna version ${VERSION}-${id} --no-git-tag-version --exact --force-publish --yes
+    # "from-package" is the only bump argument for `lerna publish` that does not require git
+    yarn lerna publish from-package --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
