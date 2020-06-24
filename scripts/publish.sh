@@ -25,7 +25,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     VERSION=$(jq -r .version lerna.json)
     #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
     # --no-git-tag-version "turns off" all git operations for `lerna version`
-    yarn lerna version ${VERSION}-${id} --no-git-tag-version --exact --force-publish --yes
+    yarn lerna version ${VERSION}-${ID} --no-git-tag-version --exact --force-publish --yes
     # "from-package" is the only bump argument for `lerna publish` that does not require git
     yarn lerna publish from-package --yes
 
