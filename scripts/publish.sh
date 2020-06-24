@@ -25,7 +25,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     git config --global user.email "ci@scalecube.io"
     git config --global user.name "scalecube ci"
     git tag -a v$VERSION -m "[skip ci]"
-    yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
+    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
     #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
     # --no-git-tag-version "turns off" all git operations for `lerna version`
     #yarn lerna version ${VERSION}-${ID} --no-git-tag-version --exact --force-publish --yes
