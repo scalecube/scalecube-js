@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-microservice",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -30,10 +30,10 @@
     }
   },
   "devDependencies": {
-    "@scalecube/api": "^0.2.0",
-    "@scalecube/cluster-browser": "^0.2.0",
-    "@scalecube/routers": "^0.2.0",
-    "@scalecube/transport-browser": "^0.2.0",
+    "@scalecube/api": "^0.2.1",
+    "@scalecube/cluster-browser": "^0.2.1",
+    "@scalecube/routers": "^0.2.1",
+    "@scalecube/transport-browser": "^0.2.1",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
@@ -49,8 +49,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/scalecube-discovery": "^0.2.0",
-    "@scalecube/utils": "^0.2.0",
+    "@scalecube/scalecube-discovery": "^0.2.1",
+    "@scalecube/utils": "^0.2.1",
     "rxjs": "^6.4.0"
   }
 }

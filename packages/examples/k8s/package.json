@@ -5,6 +5,6 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@scalecube/node": "^0.0.2-alpha.1584274445.3"
+    "@scalecube/node": "snapshot"
   }
 }
