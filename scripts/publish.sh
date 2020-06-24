@@ -21,7 +21,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
     #git fetch --depth=50
     #yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
-    ID="snapshot.$BRANCH.$(date +%s)"
+    ID="snapshot.$(echo $BRANCH | sed 's_/_-_g' ).$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
     #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
     # --no-git-tag-version "turns off" all git operations for `lerna version`
