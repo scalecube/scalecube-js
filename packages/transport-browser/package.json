@@ -37,5 +37,6 @@
     "rsocket-core": "^0.0.16",
     "rsocket-events-client": "^0.0.22",
     "rsocket-events-server": "^0.0.22"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }

@@ -37,5 +37,6 @@
     "rsocket-flowable": "^0.0.14",
     "rsocket-types": "^0.0.16",
     "rxjs": "^6.4.0"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }

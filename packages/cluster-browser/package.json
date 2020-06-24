@@ -33,5 +33,6 @@
   "dependencies": {
     "@scalecube/utils": "^0.2.1",
     "rxjs": "^6.4.0"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }

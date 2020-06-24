@@ -22,5 +22,6 @@
     "tslint": "^5.11.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.2.4"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }

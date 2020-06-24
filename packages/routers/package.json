@@ -32,5 +32,6 @@
   },
   "dependencies": {
     "@scalecube/utils": "^0.2.1"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }

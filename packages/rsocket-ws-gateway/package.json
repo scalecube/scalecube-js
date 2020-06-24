@@ -41,5 +41,6 @@
     "rsocket-websocket-client": "^0.0.16",
     "rsocket-websocket-server": "^0.0.16",
     "ws": ">=3.3.1"
-  }
+  },
+  "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }
