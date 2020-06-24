@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/examples",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "private": false,
   "rollup": "rollup/index.js",
   "license": "MIT",
@@ -38,12 +38,12 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.2.1",
-    "@scalecube/browser": "^0.2.1",
-    "@scalecube/node": "^0.2.1",
-    "@scalecube/routers": "^0.2.1",
-    "@scalecube/transport-nodejs": "^0.2.1",
-    "@scalecube/utils": "^0.2.1"
+    "@scalecube/api": "^0.2.3",
+    "@scalecube/browser": "^0.2.3",
+    "@scalecube/node": "^0.2.3",
+    "@scalecube/routers": "^0.2.3",
+    "@scalecube/transport-nodejs": "^0.2.3",
+    "@scalecube/utils": "^0.2.3"
   },
   "browserslist": [
     "ie 11",

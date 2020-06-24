@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/api",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "private": false,
   "main": "lib/index.js",
   "module": "lib/index.js",
