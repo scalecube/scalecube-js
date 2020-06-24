@@ -20,14 +20,16 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
     #git fetch --depth=50
-    #yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
-    ID="snapshot.$(echo $BRANCH | sed 's_/_-_g' ).$(date +%s)"
+    ID="snapshot.${BRANCH//\//-}.$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
+    git tag -a v$VERSION -m "[skip ci]"
+    yarn lerna publish --loglevel debug --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
     #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
     # --no-git-tag-version "turns off" all git operations for `lerna version`
-    yarn lerna version ${VERSION}-${ID} --no-git-tag-version --exact --force-publish --yes
+    #yarn lerna version ${VERSION}-${ID} --no-git-tag-version --exact --force-publish --yes
     # "from-package" is the only bump argument for `lerna publish` that does not require git
-    yarn lerna publish from-package --yes
+    #yarn lerna publish from-package --yes
+    #yarn lerna publish ${VERSION}-${ID} --no-git-tag-version --force-publish --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
