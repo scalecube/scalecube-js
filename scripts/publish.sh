@@ -26,12 +26,6 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     git config --global user.name "scalecube ci"
     git tag -a v$VERSION -m "[skip ci]"
     yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --preid $ID --yes
-    #yarn lerna publish prerelease --no-commit-hooks --dist-tag snapshot --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
-    # --no-git-tag-version "turns off" all git operations for `lerna version`
-    #yarn lerna version ${VERSION}-${ID} --no-git-tag-version --exact --force-publish --yes
-    # "from-package" is the only bump argument for `lerna publish` that does not require git
-    #yarn lerna publish from-package --yes
-    #yarn lerna publish ${VERSION}-${ID} --no-git-tag-version --force-publish --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
@@ -50,7 +44,7 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
     ID="develop.$(date +%s)"
     git fetch --tags
-    yarn lerna publish prerelease --no-commit-hooks --dist-tag next --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
+    yarn lerna publish prepatch --no-commit-hooks --dist-tag next --preid $ID --yes -m '[skip ci]' --no-git-tag-version --no-push
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
