@@ -48,7 +48,7 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     #git tag -a v$VERSION-$ID -m "[skip ci]"
     
     #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
-    yarn lerna version $VERSION-$ID --no-push
+    yarn lerna version $VERSION-$ID --no-push --yes
     yarn lerna publish from-package --force-publish --dist-tag develop --loglevel debug --yes 
 
     if [[ "$?" == 0 ]]; then
