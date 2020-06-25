@@ -45,10 +45,10 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     ID="develop.$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
     git fetch --tags
-    git tag -a v$VERSION -m "[skip ci]"
+    git tag -a v$VERSION-$ID -m "[skip ci]"
     
     #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
-    yarn lerna publish prerelease --force-publish --preid $ID --pre-dist-tag develop --yes
+    yarn lerna publish from-git --force-publish --dist-tag develop --no-push --no-git-tag-version --yes 
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
