@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/routers",
-  "version": "0.2.4-develop.3465346.0",
+  "version": "0.2.5-develop.3465346.0",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -20,7 +20,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.2.4-develop.3465346.0",
+    "@scalecube/api": "^0.2.5-develop.3465346.0",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-filesize": "^6.1.1",
@@ -31,7 +31,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/utils": "^0.2.4-develop.3465346.0"
+    "@scalecube/utils": "^0.2.5-develop.3465346.0"
   },
   "gitHead": "77205050f65e00e9de5304b9c10ad1839f543b36"
 }
