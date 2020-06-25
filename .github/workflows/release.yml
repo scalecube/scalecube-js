@@ -123,7 +123,7 @@ jobs:
           git fetch
           yarn lerna publish from-git --force-publish --yes
       - name: Verify
-        run: scripts/./verify ${{needs.details.outputs.title}}
+        run: scripts/./verify.sh ${{needs.details.outputs.title}}
 #      - name: patch
 #        run: |
 #          git config --global user.email "ci@scalecube.io"
