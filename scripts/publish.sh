@@ -48,11 +48,11 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     git tag -a v$VERSION-$ID -m "[skip ci]"
     
     #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
-    yarn lerna publish from-git --force-publish --dist-tag develop --no-push --no-git-tag-version --yes 
+    yarn lerna publish from-git --force-publish --dist-tag develop --loglevel debug --yes 
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
-        bash scripts/./verify.sh $ID.0
+        bash scripts/./verify.sh $VERSION-$ID
     else
         echo $MSG_PUBLISH_FAIL
     fi
