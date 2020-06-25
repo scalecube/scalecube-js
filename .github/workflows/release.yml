@@ -121,7 +121,7 @@ jobs:
       - name: Publish
         run: |
           git fetch
-          yarn lerna publish from-git --yes
+          yarn lerna publish from-git --force-publish --yes
       - name: Verify
         run: scripts/./verify ${{needs.details.outputs.title}}
 #      - name: patch
