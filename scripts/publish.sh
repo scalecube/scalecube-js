@@ -19,8 +19,14 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
     echo "|    Deploying snapshot on npm registry    |"
     echo "--------------------------------------------"
+    #git fetch --depth=50
+    ID="snapshot.${BRANCH//\//-}.$(date +%s)"
+    VERSION=$(jq -r .version lerna.json)
+    git config --global user.email "ci@scalecube.io"
+    git config --global user.name "scalecube ci"
+    git tag -a v$VERSION -m "[skip ci]"
+    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --yes
 
-    yarn lerna publish --canary --dist-tag snapshot --preid alpha.$(date +%s) --yes
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
     else
@@ -31,13 +37,24 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     echo "|     Deploying latest on npm registry     |"
     echo "--------------------------------------------"
 
+    git config --global user.email "ci@scalecube.io"
+    git config --global user.name "scalecube ci"
     git remote set-url origin https://${GH_TOKEN}@github.com/scalecube/scalecube-js.git
     git checkout develop
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
-    yarn lerna publish prerelease --dist-tag next --preid develop.$(date +%s) --yes -m '[skip ci]' --no-git-tag-version --no-push
+    ID="develop.$(date +%s)"
+    git fetch --tags
+    VERSION=$(jq -r .version lerna.json)
+    #git tag -a v$VERSION-$ID -m "[skip ci]"
+    
+    #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
+    yarn lerna version $VERSION-$ID --no-push --yes
+    yarn lerna publish from-package --force-publish --dist-tag develop --loglevel debug --yes 
+    
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
+        bash scripts/./verify.sh $VERSION-$ID
     else
         echo $MSG_PUBLISH_FAIL
     fi

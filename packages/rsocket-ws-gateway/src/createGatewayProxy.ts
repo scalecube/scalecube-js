@@ -8,23 +8,31 @@ interface Proxy {
   [state: string]: any;
 }
 
+type ConnectionOptions = Partial<{
+  keepAlive: number;
+  lifetime: number;
+}>
+
 export function createGatewayProxy(
   url: string,
   definition: MicroserviceApi.ServiceDefinition,
   requestResponse?: any,
-  requestStream?: any
+  requestStream?: any,
+  options?: ConnectionOptions
 ): Promise<Proxy>;
 export function createGatewayProxy(
   url: string,
   definition: MicroserviceApi.ServiceDefinition[],
   requestResponse?: any,
-  requestStream?: any
+  requestStream?: any,
+  options?: ConnectionOptions
 ): Promise<Proxy[]>;
 export function createGatewayProxy(
   url: string,
   definitions: any,
   customRequestResponse?: any,
-  customRequestStream?: any
+  customRequestStream?: any,
+  options?: ConnectionOptions
 ): any {
   const isDefinitionsArray = Array.isArray(definitions);
   let defs: MicroserviceApi.ServiceDefinition[];
@@ -36,7 +44,7 @@ export function createGatewayProxy(
   const proxies: Proxy[] = [];
   let socket;
   return new Promise(async (resolve, reject) => {
-    socket = await connect(url).catch((e) => {
+    socket = await connect(url, options).catch((e) => {
       reject(e);
     });
 
@@ -67,14 +75,14 @@ export function createGatewayProxy(
   });
 }
 
-const connect = (url) => {
+const connect = (url, options: ConnectionOptions = {}) => {
   return new Promise((resolve, reject) => {
     const client = new RSocketClient({
       serializers: JsonSerializers,
       setup: {
         dataMimeType: 'application/json',
-        keepAlive: 100000,
-        lifetime: 100000,
+        keepAlive: options.keepAlive || 100000,
+        lifetime: options.lifetime || 100000,
         metadataMimeType: 'application/json',
       },
       transport: new RSocketWebSocketClient({ url }),

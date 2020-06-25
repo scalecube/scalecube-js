@@ -19,9 +19,16 @@ describe('k8s', () => {
             });
             // The whole response has been received. Print out the result.
             resp.on('end', () => {
-              expect(data).toBe('"hello: test"');
-              execSync('/bin/bash -c "cd k8s && ./stop"', { stdio: 'inherit' });
-              done();
+              if (data === '"hello: test"') {
+                expect(data).toBe('"hello: test"');
+                execSync('/bin/bash -c "cd k8s && ./stop"', { stdio: 'inherit' });
+                done();
+              } else {
+                tries--;
+                if (tries <= 0) {
+                  expect(data).toBe('"hello: test"');
+                }
+              }
             });
             resp.on('error', (err: Error) => {
               throw Error('Service responded with error: ' + err.message);
