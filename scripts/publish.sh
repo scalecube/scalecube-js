@@ -43,17 +43,17 @@ elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     git checkout develop
     #yarn lerna publish --canary --dist-tag next --preid develop.$(date +%s) --yes
     ID="develop.$(date +%s)"
-    VERSION=$(jq -r .version lerna.json)
     git fetch --tags
     #git tag -a v$VERSION-$ID -m "[skip ci]"
     
     #yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag develop --pre-dist-tag develop --preid $ID --yes
-    yarn lerna version $VERSION-$ID --no-push --yes
+    yarn lerna version prepath --preid $ID --no-push --yes
     yarn lerna publish from-package --force-publish --dist-tag develop --loglevel debug --yes 
+    VERSION=$(jq -r .version lerna.json)
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
-        bash scripts/./verify.sh $VERSION-$ID
+        bash scripts/./verify.sh $VERSION
     else
         echo $MSG_PUBLISH_FAIL
     fi
