@@ -1,15 +1,16 @@
+# Scalecube-js
+
+Scalecube is a toolkit for creating microservices/micro-frontends based systems.  
+[Full documentation](http://scalecube.io/javascript-docs)
+
 [![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
 
 > ### Project Status
 >
 > [Scalecube v0.2.x](https://github.com/scalecube/scalecube-js/issues/30) is stable, the API will be supported until 1.1.2021.  
 > We want to collect feedback from the community before releasing 1.x.x but we don't foresee any majors API change.  
-> If you have any feedback please [open issue](https://github.com/scalecube/scalecube-js/issues)
+> If you have any feedback please [open issue](https://github.com/scalecube/scalecube-js/issues) or talk with us on [gitter](https://gitter.im/scalecube-js/Lobby)
 
-# Scalecube-js
-
-Scalecube is a toolkit for creating microservices/micro-frontends based systems.  
-[Full documentation](http://scalecube.io/javascript-docs)
 
 ## quick start
 
