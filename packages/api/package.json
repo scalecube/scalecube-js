@@ -24,6 +24,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "rxjs": "^6.6.0"
+    "rxjs": "^6.4.0"
   }
 }
