@@ -24,8 +24,8 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     VERSION=$(jq -r .version lerna.json)
     git config --global user.email "ci@scalecube.io"
     git config --global user.name "scalecube ci"
-    git tag -a v$VERSION -m "[skip ci]"
-    yarn lerna publish --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --yes
+    #git tag -a v$VERSION -m "[skip ci]"
+    yarn lerna publish $VERSION-$ID --dist-tag snapshot --force-publish --no-git-tag-version --no-commit-hooks --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
