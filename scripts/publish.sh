@@ -25,7 +25,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     git config --global user.email "ci@scalecube.io"
     git config --global user.name "scalecube ci"
     git tag -a v$VERSION -m "[skip ci]"
-    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --yes
+    yarn lerna publish -- --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
