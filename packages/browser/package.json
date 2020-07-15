@@ -24,7 +24,6 @@
     "@babel/core": "^7.7.4",
     "@babel/plugin-transform-arrow-functions": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "@scalecube/api": "^0.2.10",
     "regenerator-runtime": "^0.13.3",
     "rollup": "^1.27.4",
     "rollup-plugin-babel": "^4.3.3",
@@ -41,6 +40,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/api": "^0.2.10",
     "@scalecube/cluster-browser": "^0.2.10",
     "@scalecube/routers": "^0.2.10",
     "@scalecube/scalecube-microservice": "^0.2.10",
