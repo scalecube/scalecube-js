@@ -17,7 +17,7 @@ git status
 
 if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
-    echo "|    Deploying snapshot on npm registry    |"
+    echo "|    Deploying snapshot on npm registry PR |"
     echo "--------------------------------------------"
     #git fetch --depth=50
     ID="snapshot.${BRANCH//\//-}.$(date +%s)"
@@ -34,7 +34,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     fi
 elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     echo "--------------------------------------------"
-    echo "|     Deploying latest on npm registry     |"
+    echo "|     Deploying latest on npm registry dev |"
     echo "--------------------------------------------"
 
     git config --global user.email "ci@scalecube.io"
