@@ -9,7 +9,7 @@ const test = (thread) => {
     port1.postMessage('ping');
     port1.onmessage = (msg) => {
       // tslint:disable-next-line:no-console
-      console.log(`${thread} got ${msg} from ${addr}`);
+      console.log(`${thread} got ${msg.data} from ${addr}`);
     };
   });
 };
