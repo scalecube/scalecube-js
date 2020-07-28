@@ -38,7 +38,7 @@ function fixture() {
     top: self,
   };
   const iframeWindow = {
-    postMessage: (m, _, p) => iframe.port1.postMessage.bind(iframe.port1)(m, p),
+    postMessage: (m: any, o: string, p: MessagePort[]) => iframe.port1.postMessage.bind(iframe.port1)(m, p),
     addEventListener: iframe.port2.addEventListener.bind(iframe.port2),
     top: {
       postMessage,
@@ -46,7 +46,7 @@ function fixture() {
     self: {},
   };
   const worker = {
-    postMessage: (msg, p) => postMessage(msg, '*', p),
+    postMessage: (msg: any, p: MessagePort[]) => postMessage(msg, '*', p),
     addEventListener,
   };
   return {
@@ -67,10 +67,10 @@ describe(`Scenario Outline: multiple threads ping pong`, () => {
     { thread: 'worker', address: 'iframe' },
     { thread: 'worker', address: 'worker' },
   ];
-  const threads = fixture();
+  const threads: any = fixture();
 
   for (const t in threads) {
-    threads[t].listen(t, (msg, p) => {
+    threads[t].listen(t, (msg: any, p: MessagePort) => {
       msg.data === 'ping' && p.postMessage('pong from ' + t);
     });
   }
@@ -80,7 +80,7 @@ describe(`Scenario Outline: multiple threads ping pong`, () => {
                     When  port.postmessage('ping')
                     Then  port should receive pong`, async (done) => {
       const port = await threads[example.thread].connect(example.address);
-      port.addEventListener('message', (e) => {
+      port.addEventListener('message', (e: any) => {
         expect(e.data).toBe('pong from ' + example.address);
         done();
       });

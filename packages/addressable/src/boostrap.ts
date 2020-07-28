@@ -5,14 +5,17 @@ export function bootstrap(window: any, worker: any) {
   const server = createConnectionServer();
   const client = createConnectionClient();
 
-  const W = Worker;
   // @ts-ignore
-  // tslint:disable-next-line:only-arrow-functions
-  Worker = function(url: string, options: WorkerOptions = {}) {
-    const w = new W(url, options);
-    w.addEventListener('message', server.channelHandler);
-    return w;
-  };
+  if (typeof Worker !== 'undefined') {
+    const W = Worker;
+    // @ts-ignore
+    // tslint:disable-next-line:only-arrow-functions
+    Worker = function(url: string, options: WorkerOptions = {}) {
+      const w = new W(url, options);
+      w.addEventListener('message', server.channelHandler);
+      return w;
+    };
+  }
 
   // worker
   if (typeof worker !== 'undefined') {
