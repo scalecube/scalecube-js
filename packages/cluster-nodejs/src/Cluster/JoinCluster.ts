@@ -4,6 +4,7 @@ import Swim from 'swim';
 import { ClusterApi } from '@scalecube/api';
 import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { SwimEvent } from '../helpers/types';
+import { MemberEventType } from '@scalecube/api/lib/cluster';
 
 export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
   const { address, seedAddress, itemsToPublish, retry = { timeout: 500 }, debug } = options;
@@ -75,7 +76,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
 
     // @ts-ignore
     sMembers.next({
-      type: swimStatusConverter[state],
+      type: swimStatusConverter[state] as MemberEventType,
       items,
       from,
     });

@@ -30,7 +30,6 @@
     }
   },
   "devDependencies": {
-    "@scalecube/api": "^0.2.9",
     "@scalecube/cluster-browser": "^0.2.9",
     "@scalecube/routers": "^0.2.9",
     "@scalecube/transport-browser": "^0.2.9",
@@ -49,6 +48,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/api": "^0.2.9",
     "@scalecube/scalecube-discovery": "^0.2.9",
     "@scalecube/utils": "^0.2.9",
     "rxjs": "^6.4.0"

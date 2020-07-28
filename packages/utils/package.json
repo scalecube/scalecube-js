@@ -20,8 +20,10 @@
     "coverage": "yarn test-dom-env --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "dependencies": {
+    "@scalecube/api": "^0.2.9"
+  },
   "devDependencies": {
-    "@scalecube/api": "^0.2.9",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-filesize": "^6.1.1",

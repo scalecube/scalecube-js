@@ -1,5 +1,5 @@
 {
-  "name": "@scalecube/browser",
+  "name": "@scalecube/addressable",
   "version": "0.2.9",
   "private": false,
   "unpkg": "dist/index.js",
@@ -11,20 +11,21 @@
   ],
   "license": "MIT",
   "scripts": {
-    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf dist",
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib && rimraf es",
     "build": "rimraf .cache && yarn build:dist && yarn build:cjs",
     "build:dist": "rimraf dist  && rollup -c rollup.iife.config.js",
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
+    "fixture": "yarn build && yarn fixture:build",
+    "fixture:build": "rimraf tests/fixtures/pingPong/dist && parcel build tests/fixtures/pingPong/pingPong.ts --no-source-maps --experimental-scope-hoisting --out-dir tests/fixtures/pingPong/dist",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": ""
+    "test": "jest --config jest.config.js",
+    "doc": "typedoc ./src --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/plugin-transform-arrow-functions": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
-    "regenerator-runtime": "^0.13.3",
+    "@scalecube/utils": "^0.2.9",
     "rollup": "^1.27.4",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -33,19 +34,11 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-typescript2": "^0.27.1",
     "rollup-plugin-uglify-es": "^0.0.1",
     "rollup-plugin-visualizer": "^2.6.0",
     "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.2.4"
-  },
-  "dependencies": {
-    "@scalecube/api": "^0.2.9",
-    "@scalecube/cluster-browser": "^0.2.9",
-    "@scalecube/routers": "^0.2.9",
-    "@scalecube/scalecube-microservice": "^0.2.9",
-    "@scalecube/transport-browser": "^0.2.9",
-    "@scalecube/utils": "^0.2.9",
-    "rxjs": "^6.4.0"
   }
 }

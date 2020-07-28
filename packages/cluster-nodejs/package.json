@@ -20,7 +20,6 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/api": "^0.2.9",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
@@ -35,6 +34,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@scalecube/api": "^0.2.9",
     "@scalecube/utils": "^0.2.9",
     "rxjs": "^6.4.0",
     "swim": "^0.6.0"

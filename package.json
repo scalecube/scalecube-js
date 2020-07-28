@@ -48,9 +48,9 @@
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "pretty-quick": "^1.10.0",
-    "remark-cli": "^6.0.1",
-    "remark-lint": "^6.0.4",
-    "remark-preset-lint-recommended": "^3.0.2",
+    "remark-cli": "^8.0.1",
+    "remark-lint": "^7.0.1",
+    "remark-preset-lint-recommended": "^4.0.1",
     "rimraf": "^2.6.3",
     "tslint-config-prettier": "^1.17.0"
   }
