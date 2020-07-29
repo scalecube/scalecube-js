@@ -13,16 +13,18 @@ describe(`Scenario Outline: multiple threads ping pong`, () => {
   const pongs = [];
   beforeAll(async () => {
     page.on('console', (msg) => {
+      console.log(msg.text());
       pongs.push(msg.text());
     });
     await page.goto('http://localhost:8000/packages/addressable/tests/fixtures/pingPong/');
+    console.log('page loaded');
   });
 
   examples.forEach((example) => {
     test(`Given port from connect(${example.address}) inside ${example.thread}
                     When  port.postmessage('ping')
                     Then  port should receive pong`, async (done) => {
-      setInterval(() => {
+      const val = setInterval(() => {
         if (pongs.includes(`${example.thread} got pong from ${example.address}`)) {
           done();
         }
