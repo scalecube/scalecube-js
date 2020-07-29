@@ -6,7 +6,7 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
   const peer = new Node();
   const listeners: { [address: string]: api.Listener } = {};
   // tslint:disable-next-line:no-console
-  const debug = DEBUG ? (...args: any[]) => console.log('debug', peer.id, ...args) : (...args: any[]) => {};
+  const debug = DEBUG ? (...args: any[]) => console.log('debug', peer.id, ...args) : () => {};
 
   peer.subscribe(({ port }) => {
     debug('client peer added');
@@ -30,24 +30,39 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
   });
 
   return {
-    createChannel: (pm: (msg: any, ports: MessagePort[]) => void) => {
-      const ch = new MessageChannel();
-      setTimeout(() => {
-        pm(
-          {
-            type: EVENT.addChannel,
-            nodeId: peer.id,
-          },
-          [ch.port1]
-        );
-        ch.port2.addEventListener('message', (e) => {
-          if (e.data.type === EVENT.channelInit) {
-            debug('connection init');
-            peer.add(e.data.nodeId, ch.port2);
-          }
-        });
-        ch.port2.start();
-      }, 0);
+    createChannel: (pm: (msg: any, ports: MessagePort[]) => void, timeout: number = 5000): Promise<any> => {
+      const endTime = Date.now() + timeout;
+      return new Promise((resolve, reject) => {
+        const tryCreate = () => {
+          const ch = new MessageChannel();
+          const to = setTimeout(() => {
+            ch.port1.close();
+            ch.port2.close();
+            if (Date.now() < endTime) {
+              tryCreate();
+            } else {
+              reject();
+            }
+          }, 100);
+          pm(
+            {
+              type: EVENT.addChannel,
+              nodeId: peer.id,
+            },
+            [ch.port1]
+          );
+          ch.port2.addEventListener('message', (e) => {
+            if (e.data.type === EVENT.channelInit) {
+              debug('connection init');
+              peer.add(e.data.nodeId, ch.port2);
+              clearTimeout(to);
+              resolve();
+            }
+          });
+          ch.port2.start();
+        };
+        tryCreate();
+      });
     },
     listen: (addr: string, fn: api.Listener) => {
       listeners[addr] = fn;

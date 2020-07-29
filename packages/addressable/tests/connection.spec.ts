@@ -69,4 +69,48 @@ describe('connection suite', () => {
       });
     }, 200);
   });
+  test('client before server', async (done) => {
+    const ch1 = new MessageChannel();
+    ch1.port1.start();
+    ch1.port2.start();
+
+    const client = createConnectionClient();
+    client.createChannel(ch1.port2.postMessage.bind(ch1.port2));
+
+    setTimeout(() => {
+      const server = createConnectionServer();
+      ch1.port1.addEventListener('message', server.channelHandler);
+    }, 200);
+    client.listen('my address', (msg, p) => {
+      msg.data === 'ping' && p.postMessage('pong');
+    });
+    const port = await client.connect('my address');
+    port.addEventListener('message', (e) => {
+      expect(e.data).toBe('pong');
+      done();
+    });
+    port.postMessage('ping');
+  });
+  test('create channel timeout', async (done) => {
+    const ch1 = new MessageChannel();
+    ch1.port1.start();
+    ch1.port2.start();
+
+    const client = createConnectionClient();
+    const ok = client.createChannel(ch1.port2.postMessage.bind(ch1.port2), 100);
+    ok.catch(done);
+
+    setTimeout(() => {
+      const server = createConnectionServer();
+      ch1.port1.addEventListener('message', server.channelHandler);
+    }, 200);
+    client.listen('my address', (msg, p) => {
+      msg.data === 'ping' && p.postMessage('pong');
+    });
+    const port = await client.connect('my address');
+    port.addEventListener('message', () => {
+      expect(1).toBe(0);
+    });
+    port.postMessage('ping');
+  });
 });

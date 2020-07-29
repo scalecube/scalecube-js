@@ -9,7 +9,7 @@ export function createConnectionServer() {
   const addresses: { [address: string]: string } = {};
   const address$ = new Subject();
   // tslint:disable-next-line:no-console
-  const debug = DEBUG ? (...args: any[]) => console.log('debug', peer.id, ...args) : (...args: any[]) => {};
+  const debug = DEBUG ? (...args: any[]) => console.log('debug', peer.id, ...args) : () => {};
 
   function handleRegisterAddress(e: any) {
     if (e.data.type === EVENT.registerAddress && e.data.address && e.data.peerId) {
