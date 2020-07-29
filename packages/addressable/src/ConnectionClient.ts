@@ -78,9 +78,10 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
           connectionId: `${Date.now()}-${Math.random()}`,
         };
         const clearEvents = () => {
-          peer.subscribe(({ port }) => {
-            port.removeEventListener('message', incomingConn);
-          });
+          const peers = peer.get();
+          for (const key in peers) {
+            peers[key].removeEventListener('message', incomingConn);
+          }
         };
         const timeout = setTimeout(() => {
           unsubscribe();

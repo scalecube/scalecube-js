@@ -16,7 +16,6 @@ export default {
       sourcemap: false,
     },
   ],
-  external: ['rxjs'],
   plugins: [
     commonjs({
       include: /node_modules/,

@@ -34,7 +34,7 @@ export function createConnectionServer() {
             connectionId: e.data.connectionId,
             sourceNodeId: e.data.sourceNodeId,
           };
-          peers[e.data.sourceNodeId].postMessage({ ...ev, type: 'incomingClientConnection' }, [ch.port2]);
+          peers[e.data.sourceNodeId].postMessage({ ...ev, type: EVENT.incomingClientConnection }, [ch.port2]);
           peers[addresses[e.data.remoteAddress]].postMessage({ ...ev, type: EVENT.incomingServerConnection }, [
             ch.port1,
           ]);

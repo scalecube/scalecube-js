@@ -22,8 +22,9 @@ describe(`Scenario Outline: multiple threads ping pong`, () => {
     test(`Given port from connect(${example.address}) inside ${example.thread}
                     When  port.postmessage('ping')
                     Then  port should receive pong`, async (done) => {
-      setInterval(() => {
+      const val = setInterval(() => {
         if (pongs.includes(`${example.thread} got pong from ${example.address}`)) {
+          clearInterval(val);
           done();
         }
       }, 0);

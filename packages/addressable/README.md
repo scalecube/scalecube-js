@@ -13,20 +13,20 @@ The solution, **addresses** like a plan tcp/ip network, or the WEB
 Add thread to network; you must add it to main thread in order iframe/workers will work
 
 ```ts
-import '@scalecube/addessable';
+import '@scalecube/addressable';
 ```
 
 listen for messages on address
 
 ```ts
-import {listen} from '@scalecube/addessable';
+import {listen} from '@scalecube/addressable';
 listen("address", (port: MessagePort)=>{port.postMessage("pong")});
 ```
 
 connect to address
 
 ```ts
-import {connect} from '@scalecube/addessable';
+import {connect} from '@scalecube/addressable';
 const port = connect("address");
 port.addEventListener("message", console.log);
 port.postMessage("ping");

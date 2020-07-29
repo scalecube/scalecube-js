@@ -1,5 +1,5 @@
 import { Subject } from './utils/Subject';
-import { eachUnique } from './utils/eachUnique';
+import { eachDelta } from './utils/eachDelta';
 import { map } from './utils/map';
 import { Peer } from './types';
 
@@ -24,7 +24,7 @@ export class Node {
    */
   public subscribe(fn: (peer: Peer) => void): () => void {
     // Peers act like unique reply subject
-    return map((o: Peer) => ({ id: o.key, port: o.value }), eachUnique(this.peers$)).subscribe(fn);
+    return map((o: Peer) => ({ id: o.key, port: o.value }), eachDelta(this.peers$)).subscribe(fn);
   }
   /**
    * @Method get

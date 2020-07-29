@@ -4,7 +4,6 @@ import Swim from 'swim';
 import { ClusterApi } from '@scalecube/api';
 import { getFullAddress, saveToLogs } from '@scalecube/utils';
 import { SwimEvent } from '../helpers/types';
-import { MemberEventType } from '@scalecube/api/lib/cluster';
 
 export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterOptions) => {
   const { address, seedAddress, itemsToPublish, retry = { timeout: 500 }, debug } = options;
@@ -76,7 +75,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
 
     // @ts-ignore
     sMembers.next({
-      type: swimStatusConverter[state] as MemberEventType,
+      type: swimStatusConverter[state] as ClusterApi.MemberEventType,
       items,
       from,
     });
@@ -94,7 +93,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   return Object.freeze({
     listen$: () => sMembers.asObservable(),
     getCurrentMembersData: () =>
-      new Promise<ClusterApi.MembersData>((resolve, reject) => {
+      new Promise<ClusterApi.MembersData>((resolve) => {
         const getMemberStateCluster = () => {
           resolve({ ...membersStatus });
         };
@@ -105,7 +104,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
         }
       }),
     destroy: () => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const destroyCluster = () => {
           swim.leave();
           resolve('');
