@@ -95,7 +95,23 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
             clearEvents();
             clearTimeout(timeout);
             e.ports[0].start();
-            resolve(e.ports[0]);
+            const port = new Proxy(e.ports[0], {
+              get: (target, prop) => {
+                if (prop === 'close') {
+                  return () => {
+                    target.postMessage('closeConnection');
+                    target.close();
+                  };
+                }
+                return target[prop];
+              },
+            });
+            //     {
+            //   postMessage: (msg: any, ports: MessagePort[]) => e.ports[0].postMessage(msg, ports),
+            //   addEventListener: (name: string, event: any) => e.ports[0].addEventListener(name, event);
+            //   close:
+            // }
+            resolve(port);
           }
         };
         const unsubscribe = peer.subscribe(({ id, port }) => {

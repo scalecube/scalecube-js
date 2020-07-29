@@ -46,13 +46,18 @@ export class Node {
     this.peers$.next(this.peers);
   }
   /**
+   * Peer removal right now is not needed
+   * Right now we create Node for every process
+   * There isn't any use case we are doing that the process will be remove
+   * At the moment it won't clear up the memory
+   *
    * @method remove
    * Remove peer from node
    *
    * @param id
    */
-  public remove(id: string) {
-    delete this.peers[id];
-    this.peers$.next(this.peers);
-  }
+  // public remove(id: string) {
+  //   delete this.peers[id];
+  //   this.peers$.next(this.peers);
+  // }
 }
