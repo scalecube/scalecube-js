@@ -21,7 +21,7 @@
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
     "test": "yarn test:unit && yarn test:browser",
     "test:unit": "jest --config jest.config.js",
-    "test:browser": "jest --forceExit --config jest-puppeteer.config.js",
+    "test:browser": "yarn fixture && jest --forceExit --config jest-puppeteer.config.js",
     "doc": "typedoc ./src --out ./doc --mode file --name 'Scalecube API' --hideGenerator --readme ./README.md"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
