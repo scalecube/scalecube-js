@@ -20,7 +20,7 @@ listen for messages on address
 
 ```ts
 import {listen} from '@scalecube/addressable';
-listen("address", (port: MessagePort)=>{port.postMessage("pong")});
+listen("address", (msg, port: MessagePort)=>{port.postMessage("pong")});
 ```
 
 connect to address
@@ -30,8 +30,24 @@ import {connect} from '@scalecube/addressable';
 const port = connect("address");
 port.addEventListener("message", console.log);
 port.postMessage("ping");
+```
 
+Cleaning connections
+```ts
+import {connect, listen} from '@scalecube/addressable';
+listen("address", (msg, port: MessagePort) => {
+    if( msg === "ping" ) {
+        port.postMessage("pong");
+    } else if (msg === "close") {
+        port.close();
+    }
+});
 
+const port = connect("address");
+port.addEventListener("message", console.log);
+port.postMessage("ping");
+port.postMessage("close");
+port.close();
 ```
 
 # How it's works

@@ -126,4 +126,9 @@ describe('connection suite', () => {
     });
     port.postMessage('ping');
   });
+  // TODO clean up after close connection
+  test('close connections', async () => {
+    // tslint:disable-next-line:no-console
+    console.log('FEATURE NOT IMPLEMENTED');
+  });
 });
