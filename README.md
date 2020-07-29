@@ -11,7 +11,6 @@ Scalecube is a toolkit for creating microservices/micro-frontends based systems.
 > We want to collect feedback from the community before releasing 1.x.x but we don't foresee any majors API change.  
 > If you have any feedback please [open issue](https://github.com/scalecube/scalecube-js/issues) or talk with us on [gitter](https://gitter.im/scalecube-js/Lobby)
 
-
 ## quick start
 
 We provide browser and NODE templates, configured and ready for use
