@@ -13,10 +13,12 @@ describe(`Scenario Outline: multiple threads ping pong`, () => {
   const pongs = [];
   beforeAll(async () => {
     page.on('console', (msg) => {
+      // tslint:disable-next-line:no-console
       console.log(msg.text());
       pongs.push(msg.text());
     });
     await page.goto('http://localhost:8000/packages/addressable/tests/fixtures/pingPong/');
+    // tslint:disable-next-line:no-console
     console.log('page loaded');
   });
 
