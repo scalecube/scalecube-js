@@ -8,6 +8,7 @@
     "strict": true,
     "moduleResolution": "node",
     "baseUrl": "./src",
+    "skipLibCheck": true,
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
