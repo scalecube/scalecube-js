@@ -20,7 +20,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "jest": "^26.1.0",
+    "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-filesize": "^6.1.1",
     "rollup-plugin-typescript2": "^0.21.1",
