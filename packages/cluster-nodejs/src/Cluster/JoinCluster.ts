@@ -75,7 +75,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
 
     // @ts-ignore
     sMembers.next({
-      type: swimStatusConverter[state],
+      type: swimStatusConverter[state] as ClusterApi.MemberEventType,
       items,
       from,
     });
@@ -93,7 +93,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
   return Object.freeze({
     listen$: () => sMembers.asObservable(),
     getCurrentMembersData: () =>
-      new Promise<ClusterApi.MembersData>((resolve, reject) => {
+      new Promise<ClusterApi.MembersData>((resolve) => {
         const getMemberStateCluster = () => {
           resolve({ ...membersStatus });
         };
@@ -104,7 +104,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
         }
       }),
     destroy: () => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const destroyCluster = () => {
           swim.leave();
           resolve('');
