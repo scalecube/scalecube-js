@@ -2170,6 +2170,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@scalecube/addressable@^0.2.10":
+  version "0.2.10-snapshot.feature-addressable.1596051005"
+  resolved "https://registry.yarnpkg.com/@scalecube/addressable/-/addressable-0.2.10-snapshot.feature-addressable.1596051005.tgz#a3ec60b5ec5a8fd828d6ec095ddf05edb8256e86"
+  integrity sha512-abTUIAN0lXMf2n/qvcw1yHjUF9Og/vet4pBwGpREPiaG3D8tOIMq3EgvI6WTA9zWduwfSAptVvQDYXEyvjhi+g==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"

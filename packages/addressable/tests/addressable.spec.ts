@@ -3,6 +3,8 @@ import { Node } from '../src/Node';
 import { createConnectionServer } from '../src/ConnectionServer';
 import { bootstrap } from '../src/boostrap';
 
+// Handle address collusion
+
 /*
 Feature: Addressable base
 

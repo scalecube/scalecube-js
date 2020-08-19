@@ -65,7 +65,7 @@ describe(`
 
 
   `, (done) => {
-    expect.assertions(9);
+    expect.assertions(11);
 
     const aAddress = getAddress('A');
     const bAddress = getAddress('B');
@@ -81,8 +81,8 @@ describe(`
 
     const discoveryDRegisteredEvents: { [key: string]: any } = { [cItem]: cItem, [aItem]: aItem };
     const discoveryBRegisteredEvents: { [key: string]: any } = { [cItem]: cItem, [aItem]: aItem };
-    const discoveryARegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
-    const discoveryCRegisteredEvents: { [key: string]: any } = { [aItem]: aItem };
+    const discoveryARegisteredEvents: { [key: string]: any } = { [cItem]: cItem, [aItem]: aItem };
+    const discoveryCRegisteredEvents: { [key: string]: any } = { [aItem]: aItem, [cItem]: cItem };
 
     const discoveryDUnRegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
     const discoveryAUnRegisteredEvents: { [key: string]: any } = { [cItem]: cItem };
@@ -203,8 +203,9 @@ describe(`
         items.forEach((item: string) => {
           expect(discoveryCRegisteredEvents[item]).toMatch(item);
           delete discoveryCRegisteredEvents[item];
-
-          discoveryC.destroy();
+          if (item === 'aItemData') {
+            discoveryC.destroy();
+          }
         });
       }
     });
