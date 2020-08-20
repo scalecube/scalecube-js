@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/addressable",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
