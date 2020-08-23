@@ -30,7 +30,7 @@
     "start-node-example": "lerna run start-node-example",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "build": "lerna run --stream --concurrency 1 build",
-    "test": "lerna run test",
+    "test": "lerna run test --stream",
     "test-dom-env": "lerna run test-dom-env",
     "test-node-env": "lerna run test-node-env",
     "lint": "remark . --output && lerna run lint",
