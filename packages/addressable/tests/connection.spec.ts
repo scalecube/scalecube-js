@@ -34,6 +34,23 @@ describe('connection suite', () => {
     });
     port.postMessage('ping');
   });
+  test('2 connections ping pong', async (done) => {
+    const { client1, client2 } = createServerAndClients();
+    client1.listen('my address', (msg, p) => {
+      msg.data === 'ping' && p.postMessage('pong');
+    });
+    const port1 = await client2.connect('my address');
+    port1.addEventListener('message', (_) => {
+      expect(1).toBe(0);
+      done();
+    });
+    const port2 = await client2.connect('my address');
+    port2.addEventListener('message', (e) => {
+      expect(e.data).toBe('pong');
+      done();
+    });
+    port2.postMessage('ping');
+  });
   test('close connection', async (done) => {
     const { client1, client2 } = createServerAndClients();
     client1.listen('my address', (msg, p) => {
