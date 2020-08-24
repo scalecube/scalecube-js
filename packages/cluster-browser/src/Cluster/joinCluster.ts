@@ -2,7 +2,7 @@ import { map, mergeAll, tap } from 'rxjs/operators';
 import { from, Observable, pipe, Subject } from 'rxjs';
 import { ClusterEvent, ClusterOptions, JoinCluster, MembersData } from '@scalecube/api/lib/cluster';
 import { getFullAddress } from '@scalecube/utils';
-import { createServer, send as sendAddress, on } from './connection';
+import { createServer, createConnection } from './connection';
 import { Address } from '@scalecube/api';
 
 function debug(ctx: Context, logname: string, filter: any, ...log: any[]) {
@@ -72,9 +72,9 @@ function updateMembers(ctx: Context, e: InternalClusterEvent) {
       break;
   }
 }
-function fromClusterEvent$(address: string) {
+function fromSeedAdress$(ctx: Context, seedAddress: string) {
   return new Observable<ClusterEvent>((obs) => {
-    on(address, (msg: ClusterEvent) => {
+    ctx.on(seedAddress, (msg: ClusterEvent) => {
       obs.next(msg);
     });
   });
@@ -85,6 +85,7 @@ interface InternalClusterEvent extends ClusterEvent {
 }
 
 interface Context {
+  on: any;
   send: any;
   address: string;
   members$: Subject<InternalClusterEvent>;
@@ -94,8 +95,10 @@ interface Context {
 export const joinCluster: JoinCluster = (options: ClusterOptions) => {
   const seeds$ = from(options.seedAddress || ([] as Address[])).pipe(map((i) => getFullAddress(i)));
   const seedServerEvents$ = createServer(getFullAddress(options.address));
+  const { send: sendAddress, on } = createConnection();
 
   const ctx: Context = {
+    on,
     send: sendAddress,
     address: getFullAddress(options.address),
     membersData: {
@@ -109,7 +112,7 @@ export const joinCluster: JoinCluster = (options: ClusterOptions) => {
       tap((seed) => sendInit(ctx, seed)),
       tap<string>((seed) => sendMembers(ctx, (msg: any) => ctx.send(seed, msg), seed)),
       tap<string>((seed) => notifyMembersChanged(ctx, (msg: any) => ctx.send(seed, msg), seed)),
-      map((seed) => fromClusterEvent$(seed)),
+      map((seed) => fromSeedAdress$(ctx, seed)),
       mergeAll((options.seedAddress && options.seedAddress.length) || 1),
       tap((event) => updateMembers(ctx, event))
     )

@@ -22,7 +22,52 @@ export function clusterSpec(joinCluster: JoinCluster) {
       });
       return { clusterA, clusterB, clusterC };
     }
+    function createABC2(perfix: string) {
+      const clusterA = joinCluster({
+        address: getAddress(perfix + 'A'),
+        itemsToPublish: ['A'],
+        seedAddress: [getAddress(perfix + 'C')],
+      });
 
+      const clusterB = joinCluster({
+        address: getAddress(perfix + 'B'),
+        itemsToPublish: ['B'],
+        seedAddress: [getAddress(perfix + 'C')],
+      });
+
+      const clusterC = joinCluster({
+        itemsToPublish: ['C'],
+        address: getAddress(perfix + 'C'),
+      });
+      return { clusterA, clusterB, clusterC };
+    }
+
+    it('When ClusterA and ClusterB join C all Cluster should be on all clusters', (done) => {
+      const { clusterA, clusterB, clusterC } = createABC2('t0-');
+
+      setTimeout(async () => {
+        const a = await clusterA.getCurrentMembersData();
+        const b = await clusterB.getCurrentMembersData();
+        const c = await clusterC.getCurrentMembersData();
+        expect(a).toEqual({
+          'pm://defaultHost:8080/t0-A': ['A'],
+          'pm://defaultHost:8080/t0-B': ['B'],
+          'pm://defaultHost:8080/t0-C': ['C'],
+        });
+        expect(b).toEqual({
+          'pm://defaultHost:8080/t0-A': ['A'],
+          'pm://defaultHost:8080/t0-B': ['B'],
+          'pm://defaultHost:8080/t0-C': ['C'],
+        });
+        expect(c).toEqual({
+          'pm://defaultHost:8080/t0-A': ['A'],
+          'pm://defaultHost:8080/t0-B': ['B'],
+          'pm://defaultHost:8080/t0-C': ['C'],
+        });
+
+        done();
+      }, 100);
+    });
     it('When clusterA join clusterB and B join C all cluster should be on all clusters', (done) => {
       const { clusterA, clusterB, clusterC } = createABC('t1-');
 
