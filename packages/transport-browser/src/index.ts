@@ -1,11 +1,7 @@
 import { TransportApi } from '@scalecube/api';
 import { ClientTransportOptions, RequestHandler } from '@scalecube/api/lib/transport';
-import { Message } from '@scalecube/api/lib/microservice';
-import { from, Observable } from 'rxjs';
 import { createConnection } from './connection';
-import { getAddress, getFullAddress } from '@scalecube/utils';
-
-const obs = new Observable<any>((o) => {});
+import { getFullAddress } from '@scalecube/utils';
 
 function createTransport() {
   const con = createConnection();
@@ -24,7 +20,7 @@ function createTransport() {
       con.server(getFullAddress(options.localAddress), options.serviceCall);
 
       return () => {
-        console.log('server stop not impl');
+        // console.log('server stop not impl');
       };
     },
   } as TransportApi.Transport;
