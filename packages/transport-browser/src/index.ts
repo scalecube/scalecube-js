@@ -1,5 +1,5 @@
 import { TransportApi } from '@scalecube/api';
-import { ClientTransportOptions, RequestHandler } from '@scalecube/api/lib/transport';
+import { ClientTransportOptions, Invoker } from '@scalecube/api/lib/transport';
 import { createConnection } from './connection';
 import { getFullAddress } from '@scalecube/utils';
 
@@ -8,7 +8,7 @@ function createTransport() {
 
   return {
     clientTransport: {
-      start: (options: ClientTransportOptions): Promise<RequestHandler> => {
+      start: (options: ClientTransportOptions): Promise<Invoker> => {
         return Promise.resolve({
           requestResponse: (message) => con.requestResponse(getFullAddress(options.remoteAddress), message),
           requestStream: (message) => con.requestStream(getFullAddress(options.remoteAddress), message),
