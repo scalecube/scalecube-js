@@ -81,7 +81,6 @@ export function createConnection() {
   }
   function server(address: string, serviceCall: ServiceCall) {
     listen(address + '/transport', (msg, port) => {
-      console.log(address);
       if (msg.data.header && msg.data.header.cid) {
         switch (msg.data.header.asyncModel as AsyncModel) {
           case 'requestResponse': {
