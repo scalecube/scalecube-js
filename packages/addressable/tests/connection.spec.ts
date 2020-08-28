@@ -144,8 +144,17 @@ describe('connection suite', () => {
     port.postMessage('ping');
   });
   // TODO clean up after close connection
-  test('close connections', async () => {
-    // tslint:disable-next-line:no-console
-    console.log('FEATURE NOT IMPLEMENTED');
+  test('close connections', async (done) => {
+    const { client1, client2 } = createServerAndClients();
+    const close = client1.listen('my address', (msg, p) => {
+      msg.data === 'ping' && p.postMessage('pong');
+    });
+    const port = await client2.connect('my address');
+    port.addEventListener('message', (_) => {
+      expect(1).toBe(0);
+    });
+    close();
+    port.postMessage('ping');
+    setTimeout(done, 100);
   });
 });

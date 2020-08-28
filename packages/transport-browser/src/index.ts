@@ -1,27 +1,25 @@
 import { TransportApi } from '@scalecube/api';
 import { ClientTransportOptions, Invoker } from '@scalecube/api/lib/transport';
-import { createConnection } from './connection';
+import { createClient, createServer } from './connection';
 import { getFullAddress } from '@scalecube/utils';
 
 function createTransport() {
-  const con = createConnection();
+  const client = createClient();
 
   return {
     clientTransport: {
       start: (options: ClientTransportOptions): Promise<Invoker> => {
         return Promise.resolve({
-          requestResponse: (message) => con.requestResponse(getFullAddress(options.remoteAddress), message),
-          requestStream: (message) => con.requestStream(getFullAddress(options.remoteAddress), message),
+          requestResponse: (message) => client.requestResponse(getFullAddress(options.remoteAddress), message),
+          requestStream: (message) => client.requestStream(getFullAddress(options.remoteAddress), message),
         });
       },
-      destroy: () => {},
+      destroy: (options) => {
+        client.shutdown(options.address);
+      },
     },
     serverTransport: (options) => {
-      con.server(getFullAddress(options.localAddress), options.serviceCall);
-
-      return () => {
-        // console.log('server stop not impl');
-      };
+      return createServer(getFullAddress(options.localAddress), options.serviceCall);
     },
   } as TransportApi.Transport;
 }
