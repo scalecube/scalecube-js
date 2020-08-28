@@ -24,19 +24,21 @@ export function bootstrap(window: any, worker: any) {
     localChannel.port2.start();
     worker.addEventListener('message', server.channelHandler);
     localChannel.port2.addEventListener('message', server.channelHandler);
-    client.createChannel(localChannel.port1.postMessage.bind(localChannel.port1)).catch();
-    client.createChannel(worker.postMessage.bind(worker)).catch();
+    client.createChannel(localChannel.port1.postMessage.bind(localChannel.port1)).catch(() => {});
+    client.createChannel(worker.postMessage.bind(worker)).catch(() => {});
     // iframe
   } else if (window && window.top && window.top !== window.self) {
-    client.createChannel((msg: any, port: MessagePort) => window.postMessage.bind(window)(msg, '*', port)).catch();
+    client
+      .createChannel((msg: any, port: MessagePort) => window.postMessage.bind(window)(msg, '*', port))
+      .catch(() => {});
     client
       .createChannel((msg: any, port: MessagePort) => window.top.postMessage.bind(window.top)(msg, '*', port))
-      .catch();
+      .catch(() => {});
     window.addEventListener('message', server.channelHandler);
   }
   // main
   else {
-    client.createChannel((msg: any, port: MessagePort) => window.postMessage(msg, '*', port)).catch();
+    client.createChannel((msg: any, port: MessagePort) => window.postMessage(msg, '*', port)).catch(() => {});
     window.addEventListener('message', server.channelHandler);
   }
 
