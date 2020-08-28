@@ -17,25 +17,29 @@ export function bootstrap(window: any, worker: any) {
     };
   }
 
-  // worker
-  if (typeof worker !== 'undefined') {
-    const localChannel = new MessageChannel();
-    localChannel.port1.start();
-    localChannel.port2.start();
-    worker.addEventListener('message', server.channelHandler);
-    localChannel.port2.addEventListener('message', server.channelHandler);
-    client.createChannel(localChannel.port1.postMessage.bind(localChannel.port1));
-    client.createChannel(worker.postMessage.bind(worker));
-    // iframe
-  } else if (window && window.top && window.top !== window.self) {
-    client.createChannel((msg: any, port: MessagePort) => window.postMessage.bind(window)(msg, '*', port));
-    client.createChannel((msg: any, port: MessagePort) => window.top.postMessage.bind(window.top)(msg, '*', port));
-    window.addEventListener('message', server.channelHandler);
-  }
-  // main
-  else {
-    client.createChannel((msg: any, port: MessagePort) => window.postMessage(msg, '*', port));
-    window.addEventListener('message', server.channelHandler);
+  try {
+    // worker
+    if (typeof worker !== 'undefined') {
+      const localChannel = new MessageChannel();
+      localChannel.port1.start();
+      localChannel.port2.start();
+      worker.addEventListener('message', server.channelHandler);
+      localChannel.port2.addEventListener('message', server.channelHandler);
+      client.createChannel(localChannel.port1.postMessage.bind(localChannel.port1));
+      client.createChannel(worker.postMessage.bind(worker));
+      // iframe
+    } else if (window && window.top && window.top !== window.self) {
+      client.createChannel((msg: any, port: MessagePort) => window.postMessage.bind(window)(msg, '*', port));
+      client.createChannel((msg: any, port: MessagePort) => window.top.postMessage.bind(window.top)(msg, '*', port));
+      window.addEventListener('message', server.channelHandler);
+    }
+    // main
+    else {
+      client.createChannel((msg: any, port: MessagePort) => window.postMessage(msg, '*', port));
+      window.addEventListener('message', server.channelHandler);
+    }
+  } catch (e) {
+    // create channel can be failed, it ok, this will catch the rejection
   }
 
   return client;
