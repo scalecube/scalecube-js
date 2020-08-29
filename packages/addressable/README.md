@@ -9,6 +9,7 @@ The solution, **addresses** like a plan tcp/ip network, or the WEB
 -   This package is independent it maintained under scalecube-js only for convenience.
 
 ## TODO
+
 Handle address collusion
 
 # API
@@ -36,6 +37,7 @@ port.postMessage("ping");
 ```
 
 Cleaning connections
+
 ```ts
 import {connect, listen} from '@scalecube/addressable';
 listen("address", (msg, port: MessagePort) => {
