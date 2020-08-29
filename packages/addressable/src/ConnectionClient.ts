@@ -19,10 +19,19 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
           e.ports[0]
         ) {
           debug('incoming server connection');
-          e.ports[0].addEventListener('message', (msg) => {
+          const l = (msg: any) => {
             debug('invoke', e.data.remoteAddress);
             listeners[e.data.remoteAddress](msg, e.ports[0]);
-          });
+          };
+          e.ports[0].addEventListener('message', l);
+          const clean = () => {
+            e.ports[0].removeEventListener('message', l);
+            e.ports[0].close();
+          };
+          if (Array.isArray(listeners[e.data.remoteAddress].cleanFns)) {
+            // @ts-ignore
+            listeners[e.data.remoteAddress].cleanFns.push(clean);
+          }
           e.ports[0].start();
         }
       }
@@ -66,9 +75,23 @@ export function createConnectionClient(): { listen: api.listen; connect: api.con
     },
     listen: (addr: string, fn: api.Listener) => {
       listeners[addr] = fn;
-      peer.subscribe(({ port }) => {
+      listeners[addr].cleanFns = [];
+
+      const sub = peer.subscribe(({ port }) => {
         port.postMessage({ type: EVENT.registerAddress, peerId: peer.id, address: addr });
       });
+
+      return () => {
+        sub();
+        for (const clean of listeners[addr].cleanFns || []) {
+          clean();
+        }
+        delete listeners[addr];
+        const peers = peer.get();
+        for (const p in peers) {
+          peers[p].postMessage({ type: EVENT.unregisterAddress, peerId: peer.id, address: addr });
+        }
+      };
     },
     connect: (addr: string, to = 5000): Promise<MessagePort> => {
       return new Promise((resolve, reject) => {

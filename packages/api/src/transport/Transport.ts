@@ -22,9 +22,9 @@ export interface Transport {
 export interface ClientTransport {
   /**
    * @property start
-   *  open connection to remote container and resolve with RequestHandler to call the remote container
+   *  open connection to remote container and resolve with Invoker to call the remote container
    */
-  start: (options: ClientTransportOptions) => Promise<RequestHandler>;
+  start: (options: ClientTransportOptions) => Promise<Invoker>;
   /**
    * @method destroy
    *  remove open connection to a specific microserivce container
@@ -60,7 +60,7 @@ export interface ServerTransportOptions {
    * @property serviceCall
    * callback for handling the request
    */
-  serviceCall: RequestHandler;
+  serviceCall: Invoker;
   /**
    * @method logger
    *  add logs to scalecube eco-system
@@ -69,9 +69,9 @@ export interface ServerTransportOptions {
 }
 
 /**
- * @interface RequestHandler
+ * @interface Invoker
  */
-export interface RequestHandler {
+export interface Invoker {
   /**
    * @method requestResponse
    * @message - data to pass in the request

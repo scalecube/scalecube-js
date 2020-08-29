@@ -31,7 +31,8 @@ function notifyMembersChanged(ctx: Context, send: any, to: string) {
     DEBUG(ctx, 'notify', to, member);
     if (member.from !== to && member.sender !== to) {
       send({
-        ...member,
+        from: member.from,
+        items: member.items,
         type: member.type === 'REMOVED' ? 'REMOVED' : 'ADDED',
         sender: ctx.address,
       });

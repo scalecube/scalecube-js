@@ -21,7 +21,7 @@ export const remoteCall = (options: RemoteCallOptions) => {
           .then((endpoint: MicroserviceApi.Endpoint) => {
             transportClient
               .start({ remoteAddress: endpoint.address, logger })
-              .then(({ requestStream }: TransportApi.RequestHandler) => {
+              .then(({ requestStream }: TransportApi.Invoker) => {
                 requestStream(message).subscribe(
                   (data: any) => obs.next(data),
                   (err: Error) => obs.error(err),
@@ -39,7 +39,7 @@ export const remoteCall = (options: RemoteCallOptions) => {
           .then((endpoint: MicroserviceApi.Endpoint) => {
             transportClient
               .start({ remoteAddress: endpoint.address, logger })
-              .then(({ requestResponse }: TransportApi.RequestHandler) => {
+              .then(({ requestResponse }: TransportApi.Invoker) => {
                 requestResponse(message)
                   .then((response: any) => resolve(response))
                   .catch((e: Error) => reject(e));

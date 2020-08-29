@@ -36,6 +36,7 @@
     "@scalecube/utils": "^0.2.10",
     "rsocket-core": "^0.0.16",
     "rsocket-events-client": "^0.0.22",
-    "rsocket-events-server": "^0.0.22"
+    "rsocket-events-server": "^0.0.22",
+    "rxjs": "^6.4.0"
   }
 }

@@ -1,7 +1,7 @@
 export {
   ServerTransportOptions,
   ClientTransportOptions,
-  RequestHandler,
+  Invoker,
   Transport,
   ServerStop,
   ClientTransport,

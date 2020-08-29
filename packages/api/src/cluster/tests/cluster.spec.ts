@@ -2,7 +2,7 @@ import { JoinCluster } from '../index';
 import { getAddress } from '@scalecube/utils';
 
 export function clusterSpec(joinCluster: JoinCluster) {
-  describe('Cluster suite', () => {
+  describe('Cluster API suite', () => {
     function createABC(perfix: string) {
       const clusterA = joinCluster({
         address: getAddress(perfix + 'A'),

@@ -5,7 +5,6 @@ import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
-import replace from 'rollup-plugin-replace';
 import babel from 'rollup-plugin-babel';
 
 export default {
@@ -28,7 +27,7 @@ export default {
     }),
     resolve(),
     babel({
-      plugins: ['@babel/plugin-transform-arrow-functions'],
+      plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-transform-runtime'],
       babelrc: false,
       runtimeHelpers: true,
       presets: [

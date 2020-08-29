@@ -11,6 +11,14 @@ export function createConnectionServer() {
   // tslint:disable-next-line:no-console
   const debug = DEBUG ? (...args: any[]) => console.log('debug', peer.id, ...args) : () => {};
 
+  function handleUnRegisterAddress(e: any) {
+    if (e.data.type === EVENT.unregisterAddress && e.data.address && e.data.peerId) {
+      debug('unregister address', e.data.address);
+      delete addresses[e.data.address];
+      return true;
+    }
+    return false;
+  }
   function handleRegisterAddress(e: any) {
     if (e.data.type === EVENT.registerAddress && e.data.address && e.data.peerId) {
       debug('register address', e.data.address);
@@ -19,6 +27,7 @@ export function createConnectionServer() {
         address: e.data.address,
         peerId: e.data.peerId,
       });
+      return true;
     }
     return false;
   }
@@ -40,12 +49,13 @@ export function createConnectionServer() {
           ]);
         }
       });
+      return true;
     }
     return false;
   }
   function eventHandler(e: any) {
     if (e && e.data) {
-      handleConnect(e) || handleRegisterAddress(e);
+      handleConnect(e) || handleRegisterAddress(e) || handleUnRegisterAddress(e);
     }
   }
 
