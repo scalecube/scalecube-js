@@ -34,7 +34,7 @@
     "test": "lerna run test --stream",
     "test-dom-env": "lerna run test-dom-env",
     "test-node-env": "lerna run test-node-env",
-    "lint": "remark . --output && lerna run lint",
+    "lint": "remark . --output -f && lerna run lint",
     "bumb": "lerna version --no-push --force-publish",
     "doc": "lerna run doc"
   },
