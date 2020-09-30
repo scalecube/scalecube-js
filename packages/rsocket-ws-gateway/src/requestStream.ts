@@ -2,14 +2,20 @@ import { Flowable } from 'rsocket-flowable';
 import { RequestHandler } from './api/Gateway';
 
 const flowableHandler: RequestHandler = (serviceCall, data, subscriber) => {
-  subscriber.onSubscribe();
-  serviceCall.requestStream(data).subscribe(
+  const sub = serviceCall.requestStream(data).subscribe(
     (response: any) => {
       subscriber.onNext({ data: response });
     },
     (error: any) => subscriber.onError(error),
     () => subscriber.onComplete()
   );
+
+  subscriber.onSubscribe({
+    cancel: () => {
+      sub.unsubscribe();
+    },
+    request: () => {},
+  });
 };
 
 export const requestStream = ({ data }, serviceCall, handler = flowableHandler) => {
