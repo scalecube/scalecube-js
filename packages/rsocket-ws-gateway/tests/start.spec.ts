@@ -20,7 +20,7 @@ test(`Given microservices with gateway
   const gateway = new Gateway({ port: 8050 });
   // gateway.start({ serviceCall });
   createGatewayProxy('ws://localhost:8050', definition).catch((e) => {
-    expect(e.message).toBe('Connection error');
+    expect(e.message).toContain('Connection error');
     done();
   });
 });

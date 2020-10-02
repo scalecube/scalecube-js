@@ -15,9 +15,12 @@
 import { Gateway as GatewayInterface } from '../src/api/Gateway';
 import { Gateway } from '../src/Gateway';
 import { createGatewayProxy } from '../src/createGatewayProxy';
-import { from, throwError } from 'rxjs';
+import { from, throwError, interval } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 
+let eDone = false;
+let fDone = false;
 class ServiceA {
   public methodA() {
     return Promise.resolve({ id: 1 });
@@ -31,6 +34,16 @@ class ServiceA {
   public methodD() {
     return throwError(new Error('methodD error'));
   }
+  public methodE() {
+    return interval(1000).pipe(finalize(() => (eDone = true)));
+  }
+  public methodF() {
+    return interval(1000).pipe(
+      finalize(() => {
+        fDone = true;
+      })
+    );
+  }
 }
 
 export const definition = {
@@ -40,6 +53,8 @@ export const definition = {
     methodB: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_RESPONSE },
     methodC: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
     methodD: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
+    methodE: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
+    methodF: { asyncModel: ASYNC_MODEL_TYPES.REQUEST_STREAM },
   },
 };
 
@@ -84,8 +99,33 @@ test('requestStream', (done) => {
   );
 });
 
+test('requestStream unsubscribe to cancel service call', (done) => {
+  const s = proxy.methodE().subscribe();
+  s.unsubscribe();
+  setTimeout(() => {
+    expect(eDone).toBe(true);
+    done();
+  }, 20);
+});
+test('requestStream error to cancel service call', (done) => {
+  proxy
+    .methodF()
+    .pipe(
+      map(() => {
+        throw Error();
+      })
+    )
+    .subscribe(
+      () => {},
+      () => {}
+    );
+  setTimeout(() => {
+    expect(fDone).toBe(true);
+    done();
+  }, 2000);
+});
+
 test('fail requestStream', (done) => {
-  const responses = [1, 2];
   proxy.methodD().subscribe(
     done.fail,
     (e) => {
