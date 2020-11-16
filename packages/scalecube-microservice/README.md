@@ -51,10 +51,10 @@ import { createMicroservice } from '@scalecube/scalecube-microservice';
 import { greetingServiceDefinition } from './definitions';
 
 createMicroservice({
-  service : [{
+  services : [{
     definition: greetingServiceDefinition,
     reference: {
-      hello : (name) => `Hello ${name}`
+      hello : async (name) => `Hello ${name}`
     }, 
    }],
    address : 'seed'
