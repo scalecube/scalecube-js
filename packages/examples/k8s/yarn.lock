@@ -2,69 +2,83 @@
 # yarn lockfile v1
 
 
-"@scalecube/cluster-nodejs@^0.0.3-next.11":
-  version "0.0.3-next.14"
-  resolved "https://registry.yarnpkg.com/@scalecube/cluster-nodejs/-/cluster-nodejs-0.0.3-next.14.tgz#cd8adf3e511d9d1ff94bd77f52418f110df70ffe"
-  integrity sha512-LtowwmBvIvw8DKE6I7zBCThy5MsT9DnXbzlEfTmyAInymx58EKxKQZH8mQHmjZhcIzsCBNj/v4/ZEXeppU+kCA==
+"@scalecube/api@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838", "@scalecube/api@^0.2.10-snapshot.feature-cluster-refactor.1598302712":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/api/-/api-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#1e5c3337daba29ab0a6956cdd936d8ba44d180e0"
+  integrity sha512-zITkiaanBEmUqZHlIWJU1xITcdLbhT2hDKKUyMDeu4cY7gcvzNBsL7SKMFYyK4GfAmB5+8YAHBlaMGT21e68Qg==
   dependencies:
-    "@scalecube/utils" "^0.0.3-next.14"
+    rxjs "^6.4.0"
+
+"@scalecube/cluster-nodejs@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/cluster-nodejs/-/cluster-nodejs-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#a71aa87b54fcdd52231b5559357b08e934a3b97a"
+  integrity sha512-xGx4i/zLmitYouGVYJG2dBUTIqLfc9Rkx1318kOUzRQnZdcYJqf3KUSM6N0fdgSSrqjSHUBrACq+evotZ+SrPQ==
+  dependencies:
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
     rxjs "^6.4.0"
     swim "^0.6.0"
 
-"@scalecube/node@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@scalecube/node/-/node-0.0.1.tgz#ba1a177719f3f06fad5e8201353a13a0acf217bf"
-  integrity sha512-wzbLaRsXlobkvwNIu580yF+TUpTm1l35Gf25LLQreqb4x+pDsIgDJVGogdakKaPvBlbDWC47RUGliWmeDuG0iw==
+"@scalecube/node@snapshot":
+  version "0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+  resolved "https://registry.yarnpkg.com/@scalecube/node/-/node-0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838.tgz#37b09096ce4ae5c47436099dfeec10a87aaba127"
+  integrity sha512-vLBQCcqNM6uqvvOV9eNyyqGRsZeLSDXL8hSyp4/ojHd433blZleUmbqWBDal+Q0fn7jCu/BCbB5+CYJIURAXQA==
   dependencies:
-    "@scalecube/cluster-nodejs" "^0.0.3-next.11"
-    "@scalecube/routers" "^0.0.3-next.12"
-    "@scalecube/scalecube-microservice" "^0.1.4-next.16"
-    "@scalecube/transport-nodejs" "^0.0.3-next.11"
-    "@scalecube/utils" "^0.0.3-next.11"
+    "@scalecube/api" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+    "@scalecube/cluster-nodejs" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+    "@scalecube/routers" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+    "@scalecube/scalecube-microservice" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+    "@scalecube/transport-nodejs" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838"
     rxjs "^6.4.0"
 
-"@scalecube/routers@^0.0.3-next.12":
-  version "0.0.3-next.15"
-  resolved "https://registry.yarnpkg.com/@scalecube/routers/-/routers-0.0.3-next.15.tgz#de7a6fc6f005ca2afececb5bea723dc67cdc456f"
-  integrity sha512-NPHdCEkkiZfSxzeMCiZjynj8NJ9fBYuFPklYebMPCn7eCnl4YJL3NE56WIA6vSaqtH/OZRNQJ8nn5GxthZLvWw==
+"@scalecube/routers@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/routers/-/routers-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#4d428259ad2522621f2dd403f9652a4bfe19b9fc"
+  integrity sha512-UItJKYyaLVgq3Va27tEpE9T3c5MuRi7WN72vR1wvEeiYwKb/SvEfoMXRSvfRb45yWQ4HdLdao9TYG3UFAdeq3g==
   dependencies:
-    "@scalecube/utils" "^0.0.3-next.14"
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
 
-"@scalecube/rsocket-adapter@^0.0.2-next.1":
-  version "0.0.2-next.1"
-  resolved "https://registry.yarnpkg.com/@scalecube/rsocket-adapter/-/rsocket-adapter-0.0.2-next.1.tgz#e950ac83d61b6d6373da7ef8dc257f22ae868314"
-  integrity sha512-sTF3de12jV0wpYhgalG2CeFSjxtrowTNsaAIkMDcusnUpnfUq9qet2qWkIdL4OZ0IJXGHxORtkFZy+PF/b0hUw==
+"@scalecube/rsocket-adapter@^0.2.10-snapshot.feature-cluster-refactor.1598302712":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/rsocket-adapter/-/rsocket-adapter-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#274a756290952ef81e4aebb6e1eebaf5a143fce4"
+  integrity sha512-ZeeTMUnKB7E2FyXAaegYUaFbkwsG9WaxNylJH9iE2RT10JUn5rhV3iOEony+yN9oAk48lavrv1RAPETjP/EAVg==
   dependencies:
-    "@scalecube/utils" "^0.0.3-next.14"
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
     rsocket-core "^0.0.16"
     rsocket-flowable "^0.0.14"
     rsocket-types "^0.0.16"
     rxjs "^6.4.0"
 
-"@scalecube/scalecube-discovery@^0.1.2-next.15":
-  version "0.1.2-next.15"
-  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-discovery/-/scalecube-discovery-0.1.2-next.15.tgz#d50b4aac47fa3156d8072abd3c4c44f7ad0801aa"
-  integrity sha512-YitQhk7dDOgHbdkVjtHoobzjBFA+aKfjjMMcerD1xJEQGGyZ6aMjsSzU6bIDV2PzlURTVt0Sc6tjlVfK0rmZLA==
+"@scalecube/scalecube-discovery@^0.2.10-snapshot.feature-cluster-refactor.1598302712":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-discovery/-/scalecube-discovery-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#e3dc49ff84d8cb1188fbfb82ca7002a27a02fde1"
+  integrity sha512-UVhn3xS72AnUAizp0nG9gZMg2krVDAF1YmtCiNtfgkSJBdxaU29QSHs9u3ebWxN5GWw52L3AmWdLHCKMF8xVJw==
   dependencies:
-    "@scalecube/utils" "^0.0.3-next.14"
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
     rxjs "^6.4.0"
 
-"@scalecube/scalecube-microservice@^0.1.4-next.16":
-  version "0.1.4-next.19"
-  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-microservice/-/scalecube-microservice-0.1.4-next.19.tgz#0a2a2219ad0c0821cd1e22f7abbf6ce1af8ad61a"
-  integrity sha512-aLjylSaZHorC6983L9Q804ZbeKI4g0wGujbJvJYk9W2yR7uxGMvU3ce/MzPI8qme+G2Ti3whAHK2g4D1F20DvA==
+"@scalecube/scalecube-microservice@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/scalecube-microservice/-/scalecube-microservice-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#ce73944df60395dda8b19d7f9b3047f81a79b515"
+  integrity sha512-UDntloHDhnkpfCwsxcE8Jal3ETpEyg2iZQr9rsreAIqkEr8RHX/3puuPfnObknpYp6GyZDTuaJy3S9PXKElZlg==
   dependencies:
-    "@scalecube/scalecube-discovery" "^0.1.2-next.15"
-    "@scalecube/utils" "^0.0.3-next.14"
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/scalecube-discovery" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
     rxjs "^6.4.0"
 
-"@scalecube/transport-nodejs@^0.0.3-next.11":
-  version "0.0.3-next.14"
-  resolved "https://registry.yarnpkg.com/@scalecube/transport-nodejs/-/transport-nodejs-0.0.3-next.14.tgz#a16dbf8f985222d585071d1a8b017d19b73e211d"
-  integrity sha512-Edp8apt6iwoEMK9fhoiXE+6wGqRqXKbaSIsI5cdSQjNVONRtlUOUQBH1IJLI5Eft/vKObvU7BNAbJNiWEGX+tw==
+"@scalecube/transport-nodejs@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/transport-nodejs/-/transport-nodejs-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#ed72d34016180dba134c03f71c2c0d10c926b9de"
+  integrity sha512-JmC5N598sBexNCMnSK1krz5BFhJYW8vDc0hcadwIWuBDuihPLDav11Jy7ZJfiu7xvgWfIaqI+gPAgOa0+BnEeQ==
   dependencies:
-    "@scalecube/rsocket-adapter" "^0.0.2-next.1"
-    "@scalecube/utils" "^0.0.3-next.14"
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/rsocket-adapter" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
+    "@scalecube/utils" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
     rsocket-core "^0.0.16"
     rsocket-tcp-client "^0.0.16"
     rsocket-tcp-server "^0.0.16"
@@ -72,10 +86,12 @@
     rsocket-websocket-server "^0.0.16"
     ws ">=3.3.1"
 
-"@scalecube/utils@^0.0.3-next.11", "@scalecube/utils@^0.0.3-next.14":
-  version "0.0.3-next.14"
-  resolved "https://registry.yarnpkg.com/@scalecube/utils/-/utils-0.0.3-next.14.tgz#21a748d20e50e8318e716f2f8e408d83c7f48321"
-  integrity sha512-EIohuUgLoapQvJ+us3Me8bedsSts4Cqu71ukTf8jINEVG4baDsHTAoCbXluB+b59qUlLFF2EcQ3ZAiPko1f2YQ==
+"@scalecube/utils@^0.2.10-snapshot.feature-bugfix-createGatewayProxy-unsubscribe-streams.1601511838", "@scalecube/utils@^0.2.10-snapshot.feature-cluster-refactor.1598302712":
+  version "0.2.10-snapshot.feature-cluster-refactor.1598302712"
+  resolved "https://registry.yarnpkg.com/@scalecube/utils/-/utils-0.2.10-snapshot.feature-cluster-refactor.1598302712.tgz#f8eb10dfdb5003a8abcabb4d6eec38b2bfbf3057"
+  integrity sha512-rFLiBLXjeH2DXzHZ4zpLnbe2XWpHuVhaC0mPaCCUg+3yb3dqobt0MGxk1Q5IMuaTkXtfgaQUihvhFt8ZI/A9qw==
+  dependencies:
+    "@scalecube/api" "^0.2.10-snapshot.feature-cluster-refactor.1598302712"
 
 ansi-regex@^2.0.0:
   version "2.1.1"
@@ -111,9 +127,9 @@ base64-js@^1.0.2:
   integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
 
 bl@^1.0.0:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/bl/-/bl-1.2.2.tgz#a160911717103c07410cef63ef51b397c025af9c"
-  integrity sha512-e8tQYnZodmebYDWGH7KMRvtzKXaJHx3BbilrgZCfvyLUYdKpK1t5PSPmpkny/SgiTSCnjfLW7v5rlONXVFkQEA==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/bl/-/bl-1.2.3.tgz#1e8dd80142eac80d7158c9dccc047fb620e035e7"
+  integrity sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww==
   dependencies:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
@@ -579,9 +595,9 @@ rxjs@^6.4.0:
     tslib "^1.9.0"
 
 safe-buffer@^5.0.1, safe-buffer@^5.1.1:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.0.tgz#b74daec49b1148f88c64b68d49b1e815c1f2f519"
-  integrity sha512-fZEwUGbVl7kouZs1jCdMLdt95hdIv0ZeHg6L7qPeciMZhZ+/gdesW4wgTARkrFWEpspjEATAzUGPG8N2jJiwbg==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
+  integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
 safe-buffer@~5.0.1:
   version "5.0.1"
@@ -767,6 +783,14 @@ ws@>=3.3.1:
   version "7.2.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.2.3.tgz#a5411e1fb04d5ed0efee76d26d5c46d830c39b46"
   integrity sha512-HTDl9G9hbkNDk98naoR/cHDws7+EyYMOdL1BmjsZXRUjf7d+MficC4B7HLUPlSiho0vg+CWKrGIt/VJBd1xunQ==
+
+ws@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-2.3.1.tgz#6b94b3e447cb6a363f785eaf94af6359e8e81c80"
+  integrity sha1-a5Sz5EfLajY/eF6vlK9jWejoHIA=
+  dependencies:
+    safe-buffer "~5.0.1"
+    ultron "~1.1.0"
 
 xtend@^4.0.0:
   version "4.0.2"
