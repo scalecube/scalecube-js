@@ -65,10 +65,10 @@ export const greetingServiceDefinition = {
 };
 // Create a service
 createMicroservice({
-  service : [{
+  services : [{
     definition: greetingServiceDefinition,
     reference: {
-      hello : (name) => `Hello ${name}`
+      hello : async (name) => `Hello ${name}`
     }, 
    }],
    seedAddress : MySeedAddress
