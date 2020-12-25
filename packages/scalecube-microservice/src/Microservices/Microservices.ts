@@ -10,6 +10,7 @@ import { flatteningServices } from '../helpers/serviceData';
 import { getServiceFactoryOptions, setMicroserviceInstance } from './MicroserviceInstance';
 import { ROUTER_NOT_PROVIDED } from '../helpers/constants';
 import { loggerUtil } from '../helpers/logger';
+import { minimized } from './endpointsUtil';
 
 export const createMicroservice: MicroserviceApi.CreateMicroservice = (
   options: MicroserviceApi.MicroserviceOptions
@@ -85,7 +86,7 @@ export const createMicroservice: MicroserviceApi.CreateMicroservice = (
 
   const discoveryInstance = createDiscovery({
     address: fallBackAddress,
-    itemsToPublish: endPointsToPublishInCluster,
+    itemsToPublish: [minimized(endPointsToPublishInCluster)],
     seedAddress,
     cluster,
     debug,
@@ -129,13 +130,8 @@ const createMicroserviceContext = ({ address, debug }: MicroserviceContextOption
 };
 
 const multiSeedSupport = (seedAddress: string | Address | string[] | Address[]) => {
-  let seeds = [];
   if (!check.isArray(seedAddress)) {
-    seeds = check.isString(seedAddress) ? [getAddress(seedAddress as string)] : [seedAddress];
-  } else {
-    seeds = (seedAddress as []).map((val: string | Address) => {
-      return check.isString(val) ? getAddress(val as string) : val;
-    });
+    return check.isString(seedAddress) ? [getAddress(seedAddress as string)] : [seedAddress];
   }
-  return seeds;
+  return (seedAddress as []).map((val: string | Address) => (check.isString(val) ? getAddress(val as string) : val));
 };

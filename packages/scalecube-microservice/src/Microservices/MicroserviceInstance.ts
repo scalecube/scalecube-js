@@ -1,10 +1,12 @@
 import { DiscoveryApi, MicroserviceApi } from '@scalecube/api';
 import { saveToLogs } from '@scalecube/utils';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { GetServiceFactoryOptions, SetMicroserviceInstanceOptions } from '../helpers/types';
 import { createProxy } from '../Proxy/createProxy';
 import { destroy } from './Destroy';
 import { createServiceCall } from '../ServiceCall/ServiceCall';
+import { ServiceDiscoveryEvent } from '@scalecube/api/lib/discovery';
+import { restore } from './endpointsUtil';
 
 export const setMicroserviceInstance = (options: SetMicroserviceInstanceOptions): MicroserviceApi.Microservice => {
   const { transportClient, serverStop, discoveryInstance, debug, defaultRouter, microserviceContext } = options;
@@ -14,7 +16,13 @@ export const setMicroserviceInstance = (options: SetMicroserviceInstanceOptions)
   discoveryInstance &&
     discoveryInstance
       .discoveredItems$()
-      .pipe(printLogs(microserviceContext.whoAmI, debug))
+      .pipe(
+        printLogs(microserviceContext.whoAmI, debug),
+        map((i: ServiceDiscoveryEvent) => ({
+          type: i.type,
+          items: restore(i.items[0]),
+        }))
+      )
       .subscribe(remoteRegistry.update);
 
   const serviceFactoryOptions = getServiceFactoryOptions({
