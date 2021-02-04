@@ -13,23 +13,23 @@ export const setMicroserviceInstance = (options: SetMicroserviceInstanceOptions)
 
   const { remoteRegistry } = microserviceContext;
 
-  discoveryInstance &&
-    discoveryInstance
-      .discoveredItems$()
-      .pipe(
-        printLogs(microserviceContext.whoAmI, debug),
-        map((i: ServiceDiscoveryEvent) => ({
-          type: i.type,
-          items: restore(i.items[0]),
-        }))
-      )
-      .subscribe(remoteRegistry.update);
-
   const serviceFactoryOptions = getServiceFactoryOptions({
     microserviceContext,
     transportClient,
     defaultRouter,
   });
+
+  discoveryInstance &&
+    discoveryInstance
+      .discoveredItems$()
+      .pipe(
+        map((i: ServiceDiscoveryEvent) => ({
+          type: i.type,
+          items: restore(i.items[0]),
+        })),
+        printLogs(microserviceContext.whoAmI, debug)
+      )
+      .subscribe(remoteRegistry.update);
   return Object.freeze({
     destroy: () =>
       destroy({

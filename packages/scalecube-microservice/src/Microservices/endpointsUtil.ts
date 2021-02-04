@@ -35,15 +35,13 @@ export function restore(endpoints: Endpoints): MicroserviceApi.Endpoint[] {
   for (const address in endpoints) {
     for (const service in endpoints[address]) {
       for (const method in endpoints[address][service]) {
-        if (endpoints[address][service][method]) {
-          res.push({
-            asyncModel: eAsyncModel[endpoints[address][service][method]],
-            methodName: method,
-            serviceName: service,
-            address: getAddress(address),
-            qualifier: `${service}/${method}`,
-          });
-        }
+        res.push({
+          asyncModel: eAsyncModel[endpoints[address][service][method]],
+          methodName: method,
+          serviceName: service,
+          address: getAddress(address),
+          qualifier: `${service}/${method}`,
+        });
       }
     }
   }
