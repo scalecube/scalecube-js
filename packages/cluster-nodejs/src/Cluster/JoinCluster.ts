@@ -26,7 +26,7 @@ export const joinCluster: ClusterApi.JoinCluster = (options: ClusterApi.ClusterO
     pingReqTimeout: 60, // optional
     pingReqGroupSize: 3, // optional
     suspectTimeout: 60, // optional
-    udp: { maxDgramSize: 512 }, // optional
+    udp: { maxDgramSize: 4096 }, // optional
     preferCurrentMeta: true, // optional
   };
 
