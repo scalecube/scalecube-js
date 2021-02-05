@@ -16,7 +16,7 @@
     "build-rollup": "rollup -c",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "jest --config jest.config.js"
+    "test": "jest --config jest.config.js --forceExit"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
