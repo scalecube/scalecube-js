@@ -23,9 +23,10 @@ export interface Endpoints {
 export function minimized(endpoints: MicroserviceApi.Endpoint[]): Endpoints {
   const res: Endpoints = {};
   endpoints.forEach((e) => {
-    res[getFullAddress(e.address)] = res[getFullAddress(e.address)] || {};
-    res[getFullAddress(e.address)][e.serviceName] = res[getFullAddress(e.address)][e.serviceName] || {};
-    res[getFullAddress(e.address)][e.serviceName][e.methodName] = sAsyncModel[e.asyncModel];
+    const addr = getFullAddress(e.address);
+    res[addr] = res[addr] || {};
+    res[addr][e.serviceName] = res[getFullAddress(e.address)][e.serviceName] || {};
+    res[addr][e.serviceName][e.methodName] = sAsyncModel[e.asyncModel];
   });
   return res;
 }
