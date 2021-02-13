@@ -9,7 +9,7 @@
 # Scalecube-js
 
 Scalecube is a toolkit for creating microservices/micro-frontends based systems.  
-[Full documentation](http://scalecube.io/javascript-docs)
+[Full documentation](https://scalecube.github.io/javascript-docs)
 
 ## quick start
 
@@ -112,7 +112,7 @@ createMicroservice({
 })
 ```
 
-For more examples go to [examples](packages/examples) or [full documentation](http://scalecube.io/javascript-docs)
+For more examples go to [examples](packages/examples) or [full documentation](https://scalecube.github.io/javascript-docs)
 
 ## Scalecube tools
 
