@@ -55,7 +55,7 @@ const buildAddress = ({
   key: string;
 }) => {
   let [v1, rest]: any = str.split(delimiter);
-  if (!rest) {
+  if (rest === undefined) {
     rest = v1;
     v1 = optionalValue;
   }

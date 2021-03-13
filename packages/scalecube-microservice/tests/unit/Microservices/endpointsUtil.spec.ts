@@ -28,6 +28,18 @@ describe('endpointsUtil', () => {
           path: 'B',
         },
       },
+      {
+        qualifier: 'GreetingService/greet$',
+        serviceName: 'GreetingService',
+        methodName: 'greet$',
+        asyncModel: 'requestStream' as AsyncModel,
+        address: {
+          protocol: 'pm',
+          host: 'defaultHost',
+          port: 1234,
+          path: '',
+        },
+      },
     ];
 
     expect(endpoints).toEqual(restore(minimized(endpoints)));
