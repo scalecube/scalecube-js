@@ -103,7 +103,7 @@ test('requestStream unsubscribe to cancel service call', (done) => {
   const s = proxy.methodE().subscribe();
   s.unsubscribe();
   setTimeout(() => {
-    expect(eDone).toBe(true);
+    expect(eDone).toBe(false);
     done();
   }, 20);
 });
@@ -120,7 +120,7 @@ test('requestStream error to cancel service call', (done) => {
       () => {}
     );
   setTimeout(() => {
-    expect(fDone).toBe(true);
+    expect(fDone).toBe(false);
     done();
   }, 2000);
 });
