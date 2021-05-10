@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/rsocket-ws-gateway-client",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
