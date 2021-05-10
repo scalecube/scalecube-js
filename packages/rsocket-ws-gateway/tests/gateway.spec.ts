@@ -14,7 +14,7 @@
 
 import { Gateway as GatewayInterface } from '../src/api/Gateway';
 import { Gateway } from '../src/Gateway';
-import { createGatewayProxy } from '../src/createGatewayProxy';
+import { createGatewayProxy } from '@scalecube/rsocket-ws-gateway-client';
 import { from, throwError, interval } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';

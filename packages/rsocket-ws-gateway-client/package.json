@@ -17,7 +17,7 @@
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "node_modules/.bin/tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "node_modules/.bin/jest --config jest.config.js",
+    "test": "echo \"the tests are in rsocket-ws-gateway-client\"",
     "coverage": "yarn test --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
