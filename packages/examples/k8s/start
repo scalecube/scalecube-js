@@ -15,6 +15,7 @@ done
 # it will work only on KinD
 # for real k8s publish docker image and use it
 docker build . -t scalecube-example:k8s
+docker images
 kind create cluster --name scalecube-example --config cluster.yml || echo "cluster exists, for clean run: kind delete cluster --name scalecube-example"
 kind load docker-image --name scalecube-example scalecube-example:k8s
 
