@@ -19,6 +19,14 @@ kind create cluster --name scalecube-example --config cluster.yml || echo "clust
 kind load docker-image --name scalecube-example scalecube-example:k8s
 kubectl config use-context kind-scalecube-example
 kubectl create namespace scalecube-example || kubectl delete namespace scalecube-example && kubectl create namespace scalecube-example
+kubectl get serviceAccounts -n scalecube-example default || cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+EOF
+
+
 
 helm install scalecube-example ./helm-scalecube-ex --wait -n scalecube-example --debug || echo "helm fail"
 

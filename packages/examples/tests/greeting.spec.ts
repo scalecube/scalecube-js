@@ -7,7 +7,7 @@ describe('k8s', () => {
     const http = require('http');
     // how many times to try before failing
     // the cluster require some time to get ready for action
-    let tries = 12;
+    let tries = 6;
     try {
       setInterval(() => {
         http
@@ -40,7 +40,7 @@ describe('k8s', () => {
               throw Error('http get error: ' + err.message);
             }
           });
-      }, 60000);
+      }, 10000);
     } catch (e) {
       execSync('/bin/bash -c "cd k8s && ./stop"', { stdio: 'inherit' });
     }
