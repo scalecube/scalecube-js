@@ -1,9 +1,10 @@
 {
-  "name": "@scalecube/rsocket-ws-gateway",
+  "name": "@scalecube/rsocket-ws-gateway-client",
   "version": "0.2.10",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "unpkg": "dist/index.js",
   "files": [
     "lib",
     "dist"
@@ -11,18 +12,16 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
-    "build": "yarn build-rollup && yarn build:dist",
-    "build-rollup": "rollup -c",
-    "build:dist": "tsc -p tsconfig.json --module CommonJS",
-    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "build": "rimraf .cache && yarn build:dist && yarn build:cjs",
+    "build:dist": "rimraf dist  && rollup -c rollup.iife.config.js",
+    "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
+    "lint": "node_modules/.bin/tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": "jest --config jest.config.js",
+    "test": "echo \"the tests are in rsocket-ws-gateway-client\"",
     "coverage": "yarn test --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
-    "@scalecube/browser": "^0.2.10",
-    "@scalecube/rsocket-ws-gateway-client": "^0.2.10",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
@@ -35,12 +34,10 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.2.10",
-    "@scalecube/utils": "^0.2.10",
+    "@scalecube/utils": "^0.2.9",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",
     "rsocket-websocket-client": "^0.0.16",
-    "rsocket-websocket-server": "^0.0.16",
     "ws": ">=3.3.1"
   }
 }

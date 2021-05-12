@@ -14,7 +14,7 @@
     "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
     "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
-    "test": ""
+    "test": "echo \"no tests\""
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {

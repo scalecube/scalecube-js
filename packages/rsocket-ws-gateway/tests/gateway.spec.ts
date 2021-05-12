@@ -14,7 +14,7 @@
 
 import { Gateway as GatewayInterface } from '../src/api/Gateway';
 import { Gateway } from '../src/Gateway';
-import { createGatewayProxy } from '../src/createGatewayProxy';
+import { createGatewayProxy } from '@scalecube/rsocket-ws-gateway-client';
 import { from, throwError, interval } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
@@ -103,7 +103,7 @@ test('requestStream unsubscribe to cancel service call', (done) => {
   const s = proxy.methodE().subscribe();
   s.unsubscribe();
   setTimeout(() => {
-    expect(eDone).toBe(true);
+    expect(eDone).toBe(false);
     done();
   }, 20);
 });
@@ -120,7 +120,7 @@ test('requestStream error to cancel service call', (done) => {
       () => {}
     );
   setTimeout(() => {
-    expect(fDone).toBe(true);
+    expect(fDone).toBe(false);
     done();
   }, 2000);
 });

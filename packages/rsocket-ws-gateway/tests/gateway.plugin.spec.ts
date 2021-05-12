@@ -22,7 +22,7 @@
 import { Observable, from, throwError } from 'rxjs';
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 import { Gateway } from '../src/Gateway';
-import { createGatewayProxy } from '../src/createGatewayProxy';
+import { createGatewayProxy } from '@scalecube/rsocket-ws-gateway-client';
 
 export class AppServiceError extends Error {
   public code: string;

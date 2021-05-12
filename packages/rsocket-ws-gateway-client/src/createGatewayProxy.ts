@@ -94,7 +94,7 @@ const connect = (url, options: ConnectionOptions = {}) => {
       },
       onError: (error: any) => {
         // console.log('Err', error);
-        reject({ message: 'Connection error ' + error.toString() });
+        reject({ message: 'Connection error: ' + error.message });
       },
     });
   });
@@ -125,10 +125,6 @@ const requestResponse = (socket, qualifier) => {
 const requestStream = (socket, qualifier) => {
   return (...args) => {
     return new Observable((observer) => {
-      let canceled = false;
-      let cancel = () => {
-        canceled = true;
-      };
       socket
         .requestStream({
           data: {
@@ -138,11 +134,6 @@ const requestStream = (socket, qualifier) => {
         })
         .subscribe({
           onSubscribe(subscription) {
-            if (canceled) {
-              subscription.cancel();
-              return;
-            }
-            cancel = subscription.cancel;
             subscription.request(2147483647);
           },
           onNext: ({ data }) => {
@@ -155,7 +146,6 @@ const requestStream = (socket, qualifier) => {
             observer.error(e);
           },
         });
-      return () => cancel();
     });
   };
 };
