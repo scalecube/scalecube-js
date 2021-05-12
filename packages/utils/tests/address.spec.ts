@@ -178,4 +178,19 @@ describe('Test address', () => {
       })
     );
   });
+  test(`
+  Given a string 'ws://localhost:1234'
+  When calling getAddress with the given string
+  Then result will matching address object
+  `, () => {
+    const address = getAddress('ws://localhost:1234/');
+    expect(address).toMatchObject(
+      expect.objectContaining({
+        protocol: 'ws',
+        path: '',
+        host: 'localhost',
+        port: 1234,
+      })
+    );
+  });
 });

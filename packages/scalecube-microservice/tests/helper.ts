@@ -1,4 +1,5 @@
 import EventEmitter = require('events');
+// @ts-ignore
 const myEmitter = new EventEmitter();
 
 // @ts-ignore

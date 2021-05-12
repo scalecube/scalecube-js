@@ -12,7 +12,7 @@ export const createServer = ({
 }: {
   address: Address;
   serverProvider: Provider;
-  serviceCall: TransportApi.RequestHandler;
+  serviceCall: TransportApi.Invoker;
 }) => {
   const { factoryOptions, providerFactory } = serverProvider;
 

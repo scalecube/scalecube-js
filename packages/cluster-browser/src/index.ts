@@ -1,3 +1,3 @@
-import { joinCluster } from './Cluster/JoinCluster';
+import { joinCluster } from './Cluster/joinCluster';
 
 export { joinCluster };

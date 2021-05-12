@@ -1,6 +1,6 @@
 import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/browser';
 import { Gateway } from '../src/Gateway';
-import { createGatewayProxy } from '../src/createGatewayProxy';
+import { createGatewayProxy } from '@scalecube/rsocket-ws-gateway-client';
 import { SERVICE_CALL_MUST_BE_OBJECT } from '../src/helpers/constants';
 
 const definition = {
@@ -20,7 +20,7 @@ test(`Given microservices with gateway
   const gateway = new Gateway({ port: 8050 });
   // gateway.start({ serviceCall });
   createGatewayProxy('ws://localhost:8050', definition).catch((e) => {
-    expect(e.message).toBe('Connection error');
+    expect(e.message).toContain('Connection error');
     done();
   });
 });

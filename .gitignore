@@ -13,3 +13,5 @@ coverage/
 yarn-error.log
 .DS_Store
 report.html
+/packages/addressable/report.cjs.html
+/packages/addressable/report.iffe.html

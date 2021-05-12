@@ -5,7 +5,7 @@ import { TransportApi } from '@scalecube/api';
 import { CLIENT_NOT_IMPL, SERVER_NOT_IMPL } from '../src/helpers/constants';
 
 describe('Test RSocket-adapter validation check', () => {
-  const serviceCall: TransportApi.RequestHandler = {
+  const serviceCall: TransportApi.Invoker = {
     requestStream: (message: any) => of({}),
     requestResponse: (message: any) => Promise.resolve(),
   };

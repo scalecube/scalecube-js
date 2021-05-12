@@ -45,6 +45,9 @@ describe('Test discovery success scenarios', () => {
 
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
       const { type, items } = discoveryEvent;
+      if (type === 'IDLE') {
+        return;
+      }
       expect(type).toBe('REGISTERED');
 
       items.forEach((item) => {
@@ -84,7 +87,7 @@ describe('Test discovery success scenarios', () => {
     });
 
     discoveryA.discoveredItems$().subscribe((discoveryEvent: DiscoveryApi.ServiceDiscoveryEvent) => {
-      const { type, items } = discoveryEvent;
+      const { type } = discoveryEvent;
       expect(type).toBe('IDLE');
 
       discoveryList.push(discoveryB);
@@ -132,7 +135,7 @@ describe('Test discovery success scenarios', () => {
         case 0:
           expect(type).toBe('REGISTERED');
           step++;
-          discoveryB.discoveredItems$().subscribe((discoveryEventB: DiscoveryApi.ServiceDiscoveryEvent) => {
+          discoveryB.discoveredItems$().subscribe((_: DiscoveryApi.ServiceDiscoveryEvent) => {
             discoveryB.destroy();
           });
           break;

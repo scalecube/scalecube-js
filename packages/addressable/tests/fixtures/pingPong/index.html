@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ping Pong test</title>
+  </head>
+  <body>
+    <h1>Open console, check for 9 messages "x got pong from y"</h1>
+    <script src="dist/pingPong.js"></script>
+    <iframe src="iframe.html" style="opacity: 0"></iframe>
+    <script>
+      const w = new Worker('dist/pingPong.js');
+    </script>
+  </body>
+</html>

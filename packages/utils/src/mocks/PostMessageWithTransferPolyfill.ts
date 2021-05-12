@@ -6,12 +6,7 @@ export const applyPostMessagePolyfill = () => {
     onMessageQueue.forEach((fn: any) => {
       fn({
         ports: transfer,
-        data: {
-          detail: {
-            ...message.detail,
-          },
-          type: message.type,
-        },
+        data: message,
         type: 'message',
       });
     });

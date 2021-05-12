@@ -17,15 +17,15 @@ git status
 
 if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     echo "--------------------------------------------"
-    echo "|    Deploying snapshot on npm registry    |"
+    echo "|    Deploying snapshot on npm registry PR |"
     echo "--------------------------------------------"
     #git fetch --depth=50
     ID="snapshot.${BRANCH//\//-}.$(date +%s)"
     VERSION=$(jq -r .version lerna.json)
     git config --global user.email "ci@scalecube.io"
     git config --global user.name "scalecube ci"
-    git tag -a v$VERSION -m "[skip ci]"
-    yarn lerna publish --loglevel debug --force-publish --no-git-tag-version --no-commit-hooks --canary --dist-tag snapshot --pre-dist-tag snapshot --preid $ID --yes
+    #git tag -a v$VERSION -m "[skip ci]"
+    yarn lerna publish $VERSION-$ID --dist-tag snapshot --force-publish --no-git-tag-version --no-commit-hooks --yes
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
@@ -34,7 +34,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
     fi
 elif [[ "$BRANCH" == "develop" ]] && [[ "$IS_PULL_REQUEST" == "false" ]]; then
     echo "--------------------------------------------"
-    echo "|     Deploying latest on npm registry     |"
+    echo "|     Deploying latest on npm registry dev |"
     echo "--------------------------------------------"
 
     git config --global user.email "ci@scalecube.io"

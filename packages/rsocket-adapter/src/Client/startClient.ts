@@ -38,7 +38,7 @@ export const setupClient = (configuration: any) => {
   };
 
   return {
-    start: async (options: TransportApi.ClientTransportOptions): Promise<TransportApi.RequestHandler> => {
+    start: async (options: TransportApi.ClientTransportOptions): Promise<TransportApi.Invoker> => {
       const { remoteAddress, logger } = options;
 
       const socket = await getClientConnection({

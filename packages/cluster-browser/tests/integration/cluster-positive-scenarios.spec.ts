@@ -64,7 +64,7 @@ describe('cluster-positive-scenarios', () => {
       expect(res).toMatchObject({
         from: getFullAddress(serverAddress),
         items: ['s1', 's2'],
-        type: 'INIT',
+        type: 'ADDED',
       });
       clientFlag = true;
       clientSubscription.unsubscribe();
@@ -75,7 +75,7 @@ describe('cluster-positive-scenarios', () => {
      Scenario:    Client do few retries until it finds a server
      Background:
           Given   cluster with address: 'server' and itemsToPublish: ['s1', 's2']
-          And     cluster with address: 'client' , seedAddress: 'server' and itemsToPublish: ['s1', 'c2']
+          And     cluster with address: 'client' , seedAddress: 'server' and itemsToPublish: ['c1', 'c2']
           And     'client' starting before 'server'
 
                   | emitID |	from    |	items   |	type   |
@@ -104,7 +104,7 @@ describe('cluster-positive-scenarios', () => {
       const serverSubscription = server.listen$().subscribe((res: ClusterEvent) => {
         expect(res).toMatchObject({
           from: getFullAddress(clientAddress),
-          items: ['s1', 'c2'],
+          items: ['c1', 'c2'],
           type: 'INIT',
         });
         serverFlag = true;
@@ -116,7 +116,7 @@ describe('cluster-positive-scenarios', () => {
     const client = joinCluster({
       address: clientAddress,
       seedAddress: [serverAddress],
-      itemsToPublish: ['s1', 'c2'],
+      itemsToPublish: ['c1', 'c2'],
     });
 
     const isDone = async () => {
@@ -129,8 +129,13 @@ describe('cluster-positive-scenarios', () => {
       }
     };
 
-    client.getCurrentMembersData().then((res: any) => {
-      expect(res).toMatchObject({ [getFullAddress(serverAddress)]: ['s1', 's2'] });
+    const clientSub = client.listen$().subscribe((res: any) => {
+      expect(res).toMatchObject({
+        from: getFullAddress(serverAddress),
+        items: ['s1', 's2'],
+        type: 'ADDED',
+      });
+      clientSub.unsubscribe();
       clientFlag = true;
       isDone();
     });

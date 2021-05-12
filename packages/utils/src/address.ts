@@ -37,7 +37,7 @@ export const getAddress = (address: string): Address => {
   address = buildAddress({ key: 'host', optionalValue: 'defaultHost', delimiter: ':', str: address, newAddress });
   address = buildAddress({ key: 'port', optionalValue: 8080, delimiter: '/', str: address, newAddress });
   newAddress.path = address;
-
+  newAddress.port = typeof newAddress.port === 'string' ? parseInt(newAddress.port, 10) : newAddress.port;
   return newAddress as Address;
 };
 
@@ -55,7 +55,7 @@ const buildAddress = ({
   key: string;
 }) => {
   let [v1, rest]: any = str.split(delimiter);
-  if (!rest) {
+  if (rest === undefined) {
     rest = v1;
     v1 = optionalValue;
   }
