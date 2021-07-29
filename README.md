@@ -33,11 +33,11 @@ import { createMicroservice, ASYNC_MODEL_TYPES } from '@scalecube/node';
 
 ### Advanced
 
-You can create your own customized setup, for more details: go to [Microservice](packages/scalecube-microservice/README.md): 
+You can create your own customized setup, for more details: go to [Microservice](packages/scalecube-microservice/README.md) 
 
 ### Usage (Browser and node)
 
-**create a seed**
+#### create a seed
 
 ```typescript
 // node - supported WS, WSS and TCP
@@ -51,7 +51,7 @@ createMicroservice({
 });
 ```
 
-**Create a service**
+#### Create a service
 
 ```typescript
 // Create service definition
@@ -75,7 +75,7 @@ createMicroservice({
 });
 ```
 
-**Use a service**
+#### Use a service
 
 ```typescript
 const microservice = createMicroservice({seedAddress : MySeedAddress})
@@ -94,7 +94,30 @@ In the browser we don't need to import modules, we can create multiple bundles, 
 
 **\*NOTICE** For Node you have to set addresses, there isn't any default at the moment
 
-**Dependency Injection**
+#### Worker, Iframes and seperate bundles 
+
+You can use scalecube with multiple bundles even inside iframes and *Web Workers, scalecube will be able to find and invoke the services by the address and seedAddress (via Post Messages).
+
+**\*NOTICE** In order to use Web Workers you need to load scalecube before loading the Web Worker (scalecube extends Worker class)
+
+**Good**
+```typescript
+import from "@scalecube/browser";
+
+new Worker(`assets/worker.js`, {
+  type: "module"
+});
+```
+
+**Bad**
+```typescript
+new Worker(`assets/worker.js`, {
+  type: "module"
+});
+```
+
+
+#### Dependency Injection
 
 ```typescript
 createMicroservice({
