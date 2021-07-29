@@ -36,11 +36,11 @@
     "@scalecube/api": "^0.2.10",
     "@scalecube/rsocket-adapter": "^0.2.10",
     "@scalecube/utils": "^0.2.10",
-    "rsocket-core": "^0.0.16",
-    "rsocket-tcp-client": "^0.0.16",
-    "rsocket-tcp-server": "^0.0.16",
-    "rsocket-websocket-client": "^0.0.16",
-    "rsocket-websocket-server": "^0.0.16",
+    "rsocket-core": "^0.0.27",
+    "rsocket-tcp-client": "^0.0.27",
+    "rsocket-tcp-server": "^0.0.27",
+    "rsocket-websocket-client": "^0.0.27",
+    "rsocket-websocket-server": "^0.0.27",
     "ws": ">=3.3.1"
   }
 }
