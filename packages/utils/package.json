@@ -21,7 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "dependencies": {
-    "@scalecube/api": "^0.2.10"
+    "@scalecube/api": "0.2.10"
   },
   "devDependencies": {
     "jest": "^24.6.0",
