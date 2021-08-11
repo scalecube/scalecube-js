@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/addressable",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "unpkg": "dist/index.js",
   "main": "lib/index.js",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^5.0.2",
-    "@scalecube/utils": "0.2.10",
+    "@scalecube/utils": "0.2.11",
     "@types/expect-puppeteer": "^4.4.3",
     "@types/jest-environment-puppeteer": "^4.3.2",
     "@types/puppeteer": "^3.0.1",

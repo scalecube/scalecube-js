@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/rsocket-adapter",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -31,8 +31,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "0.2.10",
-    "@scalecube/utils": "0.2.10",
+    "@scalecube/api": "0.2.11",
+    "@scalecube/utils": "0.2.11",
     "rsocket-core": "^0.0.16",
     "rsocket-flowable": "^0.0.14",
     "rsocket-types": "^0.0.16",
