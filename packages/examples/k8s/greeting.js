@@ -7,13 +7,13 @@ createMicroservice({
   seedAddress: {
     protocol: 'ws',
     host: process.env.SEED,
-    port: 8080,
+    port: 7001,
     path: '',
   },
   address: {
     protocol: 'ws',
     host: process.env.ADDRESS,
-    port: 8080,
+    port: 7003,
     path: '',
   },
   services: [
