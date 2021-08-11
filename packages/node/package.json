@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/node",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -27,12 +27,12 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "0.2.10",
-    "@scalecube/cluster-nodejs": "0.2.10",
-    "@scalecube/routers": "0.2.10",
-    "@scalecube/scalecube-microservice": "0.2.10",
-    "@scalecube/transport-nodejs": "0.2.10",
-    "@scalecube/utils": "0.2.10",
+    "@scalecube/api": "0.2.11",
+    "@scalecube/cluster-nodejs": "0.2.11",
+    "@scalecube/routers": "0.2.11",
+    "@scalecube/scalecube-microservice": "0.2.11",
+    "@scalecube/transport-nodejs": "0.2.11",
+    "@scalecube/utils": "0.2.11",
     "rxjs": "^6.4.0"
   }
 }
