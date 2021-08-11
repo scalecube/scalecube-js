@@ -26,7 +26,7 @@ export default {
     }),
     resolve(),
     babel({
-      plugins: ['@babel/plugin-transform-arrow-functions'],
+      plugins: ['@babel/plugin-transform-arrow-functions', '@babel/plugin-transform-runtime'],
       babelrc: true,
       runtimeHelpers: true,
       presets: [

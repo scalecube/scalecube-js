@@ -45,14 +45,18 @@ export class MessagePortPolyfill implements IMessagePortPolyfill {
     return true;
   }
 
-  public postMessage(message: string) {
+  public postMessage(message: string, ports?: MessagePort[]) {
+    const event = {
+      ports,
+      data: message,
+    };
     if (!this.otherPort) {
       return;
     }
     if (this.otherSideStart) {
-      this.otherPort.dispatchEvent({ data: message });
+      this.otherPort.dispatchEvent(event);
     } else {
-      this.queue.push(message);
+      this.queue.push(event);
     }
   }
 
@@ -87,7 +91,7 @@ export class MessagePortPolyfill implements IMessagePortPolyfill {
 
   public startSending() {
     this.otherSideStart = true;
-    this.queue.forEach((message: any) => this.otherPort && this.otherPort.dispatchEvent({ data: message }));
+    this.queue.forEach((event: any) => this.otherPort && this.otherPort.dispatchEvent(event));
   }
 
   public stopSending() {

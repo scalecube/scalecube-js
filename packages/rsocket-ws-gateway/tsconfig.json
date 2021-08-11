@@ -10,7 +10,8 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "esModuleInterop": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.*"]

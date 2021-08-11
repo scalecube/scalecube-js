@@ -16,21 +16,30 @@ export const remoteCall = (options: RemoteCallOptions) => {
 
   switch (asyncModel) {
     case ASYNC_MODEL_TYPES.REQUEST_STREAM:
+      let canceled = false;
+      let cancel = () => {
+        canceled = true;
+      };
       return new Observable((obs: any) => {
         getValidEndpoint(options)
           .then((endpoint: MicroserviceApi.Endpoint) => {
             transportClient
               .start({ remoteAddress: endpoint.address, logger })
-              .then(({ requestStream }: TransportApi.RequestHandler) => {
-                requestStream(message).subscribe(
+              .then(({ requestStream }: TransportApi.Invoker) => {
+                if (canceled) {
+                  return;
+                }
+                const sub = requestStream(message).subscribe(
                   (data: any) => obs.next(data),
                   (err: Error) => obs.error(err),
                   () => obs.complete()
                 );
+                cancel = () => sub.unsubscribe();
               })
               .catch((error: Error) => obs.error(error));
           })
           .catch((error: Error) => obs.error(error));
+        return () => cancel();
       });
 
     case ASYNC_MODEL_TYPES.REQUEST_RESPONSE:
@@ -39,7 +48,7 @@ export const remoteCall = (options: RemoteCallOptions) => {
           .then((endpoint: MicroserviceApi.Endpoint) => {
             transportClient
               .start({ remoteAddress: endpoint.address, logger })
-              .then(({ requestResponse }: TransportApi.RequestHandler) => {
+              .then(({ requestResponse }: TransportApi.Invoker) => {
                 requestResponse(message)
                   .then((response: any) => resolve(response))
                   .catch((e: Error) => reject(e));

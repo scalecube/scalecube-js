@@ -88,7 +88,7 @@ describe(`Test positive-scenarios of usage
             Then  successful RequestStream is emitted
             `, (done) => {
     expect.assertions(2);
-    const address = getAddress('createProxy-requestResponse');
+    const address = getAddress('createProxy-requestStream');
     const microserviceWithoutServices = createMS({
       services: [],
       address,
@@ -98,7 +98,7 @@ describe(`Test positive-scenarios of usage
 
     const proxy = microserviceWithoutServices.createProxy({ serviceDefinition, router: defaultRouter });
     proxy.greet$([defaultUser]).subscribe(
-      (res: string) => {},
+      (_: string) => {},
       (e: Error) => {
         expect(e.message).toMatch(
           getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/greet$`)
@@ -171,7 +171,7 @@ describe(`Test positive-scenarios of usage
     const serviceCall = microserviceWithoutServices.createServiceCall({ router: defaultRouter });
 
     serviceCall.requestStream(message).subscribe(
-      (res: MicroserviceApi.Message) => {},
+      (_: MicroserviceApi.Message) => {},
       (e: Error) => {
         expect(e.message).toMatch(
           getNotFoundByRouterError(getFullAddress(address), `${serviceDefinition.serviceName}/greet$`)

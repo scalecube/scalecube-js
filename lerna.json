@@ -2,5 +2,10 @@
   "npmClient": "yarn",
   "useWorkspaces": true,
   "packages": ["packages/*"],
-  "version": "0.2.9"
+  "command": {
+    "version": {
+      "exact": true
+    }
+  },
+  "version": "0.2.10"
 }

@@ -1,0 +1,43 @@
+{
+  "name": "@scalecube/rsocket-ws-gateway-client",
+  "version": "0.2.10",
+  "private": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "unpkg": "dist/index.js",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf node_modules && rimraf .cache && rimraf lib",
+    "build": "rimraf .cache && yarn build:dist && yarn build:cjs",
+    "build:dist": "rimraf dist  && rollup -c rollup.iife.config.js",
+    "build:cjs": "rimraf lib && rollup -c rollup.cjs.config.js",
+    "lint": "node_modules/.bin/tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": "echo \"the tests are in rsocket-ws-gateway-client\"",
+    "coverage": "yarn test --coverage --collectCoverageFrom='src/**/*.**' --collectCoverageFrom='!tests/**/*.**'"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "devDependencies": {
+    "jest": "^24.6.0",
+    "rollup": "^1.14.6",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-visualizer": "^2.2.0",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@scalecube/utils": "0.2.10",
+    "rsocket-core": "^0.0.16",
+    "rsocket-flowable": "^0.0.14",
+    "rsocket-websocket-client": "^0.0.16",
+    "ws": ">=3.3.1"
+  }
+}
