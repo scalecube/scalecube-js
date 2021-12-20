@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 30
     name: CI
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - name: install
