@@ -24,16 +24,6 @@ jobs:
         with:
           # The Node.js version to configure
           node-version: ${{ matrix.node }}
-      - name: Use Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
-        if: ${{ matrix.node == 16 }}
-        with:
-          python-version: '3.8'
-        env:
-          PYTHON_VERSION: '3.8'
-      - name: Update gyp
-        if: ${{ matrix.node == 16 }}
-        run: yarn global add node-gyp
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
