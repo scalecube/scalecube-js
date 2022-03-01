@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [14]
+        node: [10, 12, 14, 16]
     timeout-minutes: 30
     name: CI
     steps:
@@ -36,8 +36,10 @@ jobs:
       - name: test
         run: yarn test
       - name: doc
+        if: ${{ matrix.node == 16 }}
         run: yarn doc
       - name: publish npm
+        if: ${{ matrix.node == 16 }}
         run: bash scripts/publish.sh
         env:
           SHA: ${{ github.event.after }}
