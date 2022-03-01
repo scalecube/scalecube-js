@@ -31,7 +31,6 @@ jobs:
           python-version: '3.8'
         env:
           PYTHON_VERSION: '3.8'
-        run: npm install -g node-gyp
       - name: Update gyp
         if: ${{ matrix.node == 16 }}
         run: npm install -g node-gyp
