@@ -28,9 +28,9 @@ jobs:
         uses: actions/setup-python@v2
         if: ${{ matrix.node == 16 }}
         with:
-          python-version: '3.10'
+          python-version: '3.8'
         env:
-          PYTHON_VERSION: '3.10'
+          PYTHON_VERSION: '3.8'
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
