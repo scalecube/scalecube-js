@@ -24,6 +24,9 @@ jobs:
         with:
           # The Node.js version to configure
           node-version: ${{ matrix.node }}
+      - name: gyp
+        if: ${{ matrix.node == 16 }}
+        run: npm install -g node-gyp
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
