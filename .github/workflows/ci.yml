@@ -33,7 +33,7 @@ jobs:
           PYTHON_VERSION: '3.8'
       - name: Update gyp
         if: ${{ matrix.node == 16 }}
-        run: npm install -g node-gyp
+        run: yarn global add node-gyp
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
