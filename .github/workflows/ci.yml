@@ -16,10 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x]
+        node-version: [14]
     timeout-minutes: 30
     name: CI
     steps:
+      - uses: actions/setup-node@v2
+        with:
+          # The Node.js version to configure
+          node-version: ${{ matrix.node }}
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
