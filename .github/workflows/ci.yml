@@ -31,6 +31,7 @@ jobs:
           python-version: '3.8'
         env:
           PYTHON_VERSION: '3.8'
+        run: npm install -g node-gyp
       - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
