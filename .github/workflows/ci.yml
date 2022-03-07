@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [10, 12, 14, 16]
+        node: [10, 12, 14]
     timeout-minutes: 30
     name: CI
     steps:
