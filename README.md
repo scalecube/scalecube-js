@@ -3,7 +3,7 @@
 Scalecube is a toolkit for creating microservices/micro-frontends based systems.  
 [what is scalecube-js](https://idanilt.medium.com/scalecube-js-2785c491ae54) | [play with codesandbox](https://codesandbox.io/s/scalecube-full-tutorial-yjjvu?file=/package.json) | [full documentation](https://scalecube.github.io/javascript-docs)
 
-[![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/39bc4219854c4de09abf28a920a474ad)](https://www.codacy.com/app/ido/scalecube-js?utm_source=github.com&utm_medium=referral&utm_content=scalecube/scalecube-js&utm_campaign=Badge_Grade)
+[![Join the chat at https://gitter.im/scalecube-js/Lobby](https://badges.gitter.im/scalecube-js/Lobby.svg)](https://gitter.im/scalecube-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 > ### Project Status
 >
