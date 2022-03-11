@@ -23,6 +23,10 @@ export default {
     commonjs({
       include: /node_modules/,
       browser: true,
+      namedExports: {
+        'rsocket-types': ['CONNECTION_STATUS'],
+        'rsocket-core': ['RSocketClient', 'JsonSerializers'],
+      },
     }),
     resolve(),
     babel({
