@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/transport-browser",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -31,9 +31,13 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.2.10",
-    "@scalecube/addressable": "^0.2.10",
-    "@scalecube/utils": "^0.2.10",
+    "@scalecube/addressable": "0.2.11",
+    "@scalecube/api": "0.2.11",
+    "@scalecube/rsocket-adapter": "0.2.11",
+    "@scalecube/utils": "0.2.11",
+    "rsocket-core": "^0.0.16",
+    "rsocket-events-client": "^0.0.22",
+    "rsocket-events-server": "^0.0.22",
     "rxjs": "^6.4.0"
   }
 }

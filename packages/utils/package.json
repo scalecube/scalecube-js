@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/utils",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -21,7 +21,7 @@
   },
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "dependencies": {
-    "@scalecube/api": "^0.2.10"
+    "@scalecube/api": "0.2.11"
   },
   "devDependencies": {
     "jest": "^24.6.0",

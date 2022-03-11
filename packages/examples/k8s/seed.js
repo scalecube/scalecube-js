@@ -7,7 +7,7 @@ createMicroservice({
   address: {
     protocol: 'ws',
     host: process.env.ADDRESS,
-    port: 8080,
+    port: 7001,
     path: '',
   },
   debug: true,

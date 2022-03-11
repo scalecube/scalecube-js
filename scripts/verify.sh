@@ -9,5 +9,5 @@ DIR=$(pwd)
 cd $DIR/packages/examples/k8s
 npx json -I -f package.json -e "this.dependencies['@scalecube/node']='$VERSION'"
 cd $DIR/packages/examples/
-yarn test
+yarn run test:e2e
 docker build . -t scalecube-example:bundle --build-arg VERSION=$VERSION

@@ -29,6 +29,7 @@ if [[ "$BRANCH" =~ ^feature\/.*$ ]]; then
 
     if [[ "$?" == 0 ]]; then
         echo $MSG_PUBLISH_SUCCESS
+        bash scripts/./verify.sh $VERSION-$ID
     else
         echo $MSG_PUBLISH_FAIL
     fi

@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/rsocket-ws-gateway-client",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -34,7 +34,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/utils": "^0.2.9",
+    "@scalecube/utils": "^0.2.11",
     "rsocket-core": "^0.0.27",
     "rsocket-flowable": "^0.0.27",
     "rsocket-websocket-client": "^0.0.27",

@@ -1,6 +1,6 @@
 {
   "name": "@scalecube/scalecube-discovery",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -23,7 +23,7 @@
   "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "@scalecube/cluster-browser": "^0.2.10",
+    "@scalecube/cluster-browser": "0.2.11",
     "jest": "^24.6.0",
     "rollup": "^1.14.6",
     "rollup-plugin-babel": "^4.3.3",
@@ -38,8 +38,8 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@scalecube/api": "^0.2.10",
-    "@scalecube/utils": "^0.2.10",
+    "@scalecube/api": "0.2.11",
+    "@scalecube/utils": "0.2.11",
     "rxjs": "^6.4.0"
   }
 }
