@@ -27,6 +27,7 @@ export class Gateway implements GatewayInterface {
   }
 
   public start(opts: GatewayStartOptions) {
+    console.log('>>>>>>>>>>>>>>>>');
     if (this.started) {
       this.warn('Gateway is already started');
       return;
@@ -46,7 +47,7 @@ export class Gateway implements GatewayInterface {
       transport: this.transport,
     });
     this.server.start();
-    // console.log('Gateway started on port: ' + this.port);
+    console.log('Gateway started on port: ' + this.port);
     this.started = true;
   }
 

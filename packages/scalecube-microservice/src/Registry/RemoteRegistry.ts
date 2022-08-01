@@ -97,6 +97,7 @@ export const getEndpointsFromService = ({
       qualifier: getQualifier({ serviceName, methodName }),
       serviceName,
       methodName,
+      tags: methods[methodName].tags,
       asyncModel: methods[methodName].asyncModel,
       address,
     })) || []

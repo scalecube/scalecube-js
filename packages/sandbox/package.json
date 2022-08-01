@@ -1,0 +1,31 @@
+{
+  "name": "@scalecube/sandbox",
+  "version": "0.2.11",
+  "private": false,
+  "unpkg": "dist/index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist",
+    "es"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint '{src,tests}/**/*.{ts,tsx}' --fix",
+    "prettier": "prettier --write '{src,tests}/**/*.{ts,tsx}'",
+    "test": "jest --config jest.config.js"
+  },
+  "author": "Scalecube (https://github.com/scalecube/scalecube-js)",
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@scalecube/rsocket-ws-gateway-client": "^0.2.11",
+    "rxjs": "^7.5.5"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.4"
+  }
+}

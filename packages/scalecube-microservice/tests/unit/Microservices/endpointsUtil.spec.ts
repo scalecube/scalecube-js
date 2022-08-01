@@ -7,6 +7,7 @@ describe('endpointsUtil', () => {
       {
         qualifier: 'GreetingService/hello',
         serviceName: 'GreetingService',
+        tags: ['a', 'b'],
         methodName: 'hello',
         asyncModel: 'requestResponse' as AsyncModel,
         address: {
