@@ -20,10 +20,10 @@ export async function run(path: string) {
   const servers = conf.server || [];
   const benchmarks = conf.benchmark || [];
   const parallel = servers.length > 0 ? servers.length : 1;
-  const running_servers = [];
+  const runningServers = [];
 
   for (const server of servers) {
-    running_servers.push(exec(server.start).then(() => print('server is closed')));
+    runningServers.push(exec(server.start).then(() => print('server is closed')));
     if (server.warmup) {
       await exec(server.warmup);
     }
