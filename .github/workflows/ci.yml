@@ -16,11 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x]
+        node: [10, 12, 14]
     timeout-minutes: 30
     name: CI
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          # The Node.js version to configure
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v2
       - name: NPM TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - name: install
@@ -32,8 +36,10 @@ jobs:
       - name: test
         run: yarn test
       - name: doc
+        if: ${{ matrix.node == 16 }}
         run: yarn doc
       - name: publish npm
+        if: ${{ matrix.node == 16 }}
         run: bash scripts/publish.sh
         env:
           SHA: ${{ github.event.after }}
