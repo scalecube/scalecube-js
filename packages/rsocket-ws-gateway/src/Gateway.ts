@@ -5,6 +5,7 @@ import { requestResponse } from './requestResponse';
 import { requestStream } from './requestStream';
 import { RsocketEventsPayload } from './api/types';
 import { validateCustomHandlers, validateServiceCall } from './helpers/validation';
+import { Flowable } from 'rsocket-flowable';
 
 export class Gateway implements GatewayInterface {
   private port: number;
@@ -40,7 +41,19 @@ export class Gateway implements GatewayInterface {
         return {
           requestResponse: (payload: RsocketEventsPayload) =>
             requestResponse(payload, serviceCall, this.requestResponse),
-          requestStream: (payload: RsocketEventsPayload) => requestStream(payload, serviceCall, this.requestStream),
+          requestStream: (payload: RsocketEventsPayload, t) => {
+            console.log(t);
+            return new Flowable((subscriber) => {
+              subscriber.onSubscribe({
+                cancel: () => {
+                  console.log('clinet cancel');
+                },
+              });
+            });
+            // console.log(payload)
+            // const t = requestStream(payload, serviceCall, this.requestStream)
+            // return t;
+          },
         };
       },
       transport: this.transport,

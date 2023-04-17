@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import RSocketWebSocketClient from 'rsocket-websocket-client';
 import { RSocketClient, JsonSerializers } from 'rsocket-core';
 import { MicroserviceApi } from '@scalecube/api';
@@ -123,8 +123,10 @@ const requestResponse = (socket, qualifier) => {
 };
 
 const requestStream = (socket, qualifier) => {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
   return (...args) => {
     return new Observable((observer) => {
+      const cancel = new Subject();
       socket
         .requestStream({
           data: {
@@ -135,6 +137,10 @@ const requestStream = (socket, qualifier) => {
         .subscribe({
           onSubscribe(subscription) {
             subscription.request(2147483647);
+            cancel.subscribe(() => {
+              console.log('flow cancewl');
+              subscription.cancel();
+            });
           },
           onNext: ({ data }) => {
             observer.next(data);
@@ -146,6 +152,10 @@ const requestStream = (socket, qualifier) => {
             observer.error(e);
           },
         });
+      return () => {
+        console.log('ssssssssssssssssssssssss');
+        cancel.next();
+      };
     });
   };
 };

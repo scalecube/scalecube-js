@@ -1,10 +1,12 @@
 import { Flowable } from 'rsocket-flowable';
 import { RequestHandler } from './api/Gateway';
+import { Observable } from 'rxjs';
 
 const flowableHandler: RequestHandler = (serviceCall, data, subscriber) => {
   let sub;
   subscriber.onSubscribe({
     cancel: () => {
+      console.log('cancel', sub);
       sub && sub.unsubscribe();
     },
     request: () => {
@@ -20,5 +22,25 @@ const flowableHandler: RequestHandler = (serviceCall, data, subscriber) => {
 };
 
 export const requestStream = ({ data }, serviceCall, handler = flowableHandler) => {
-  return new Flowable(handler.bind(null, serviceCall, data));
+  const flowable = new Flowable(handler.bind(null, serviceCall, data));
+
+  const obs = new Observable((ob) => {
+    let cancel;
+    flowable.subscribe({
+      onNext: ob.next,
+      onError: ob.error,
+      onComplete: ob.complete,
+      onSubscribe: (sub) => {
+        console.log('sub');
+        cancel = sub.cancel;
+      },
+    });
+    return {
+      unsubscribe: () => {
+        console.log('obs unsub', cancel);
+        cancel();
+      },
+    };
+  });
+  return obs;
 };
