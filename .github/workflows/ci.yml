@@ -39,7 +39,7 @@ jobs:
         if: ${{ matrix.node == 16 }}
         run: yarn doc
       - name: publish npm
-        if: ${{ matrix.node == 16 }}
+        if: ${{ matrix.node == 14 }}
         run: bash scripts/publish.sh
         env:
           SHA: ${{ github.event.after }}
