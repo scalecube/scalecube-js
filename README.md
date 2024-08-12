@@ -7,9 +7,8 @@ Scalecube is a toolkit for creating microservices/micro-frontends based systems.
 
 > ### Project Status
 >
-> [Scalecube v0.2.x](https://github.com/scalecube/scalecube-js/issues/30) is stable, the API will be supported until 1.1.2022.  
-> We want to collect feedback from the community before releasing 1.x.x but we don't foresee any majors API change.  
-> If you have any feedback please [open issue](https://github.com/scalecube/scalecube-js/issues) or talk with us on [gitter](https://gitter.im/scalecube-js/Lobby)
+> scalecube-js curretly not maintained.  
+> If you intested become a maintainer you can reach me at https://www.linkedin.com/in/idanilt/.
 
 ## quick start
 > If you are new to scalecube, it's recommended to read [this introduction to scalecube](https://idanilt.medium.com/scalecube-js-2785c491ae54).  
