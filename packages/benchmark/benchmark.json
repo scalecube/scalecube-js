@@ -1,0 +1,28 @@
+{
+  "name": "benchmark name",
+  "server": [
+    {
+      "start": "echo start",
+      "warmup": "echo warm",
+      "stop": "echo stop"
+    }
+  ],
+  "benchmark": [
+    {
+      "name": "variant 1",
+      "client": {
+        "command": "echo '{\"1\": 5}'",
+        "repeat": 3,
+        "delay": 0
+      }
+    },
+    {
+      "name": "variant 2",
+      "client": {
+        "command": "echo '{\"3\": 5}'",
+        "repeat": 3,
+        "delay": 0
+      }
+    }
+  ]
+}

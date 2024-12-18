@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es6",
+    "lib": ["dom", "es2015", "es7", "es5", "es6", "ES2019"],
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*", "../../node_modules/@types/shelljs/make.d.ts"],
+  "exclude": ["node_modules", "**/*.spec.*"]
+}
